@@ -1,0 +1,690 @@
+import { useState, useEffect, useMemo } from 'react'
+import { useParams, useSearchParams, Link } from 'react-router-dom'
+import {
+  Briefcase,
+  TrendingUp,
+  Coins,
+  Download,
+  CheckCircle,
+  Circle,
+  Copy,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Search,
+  BookOpen,
+  HelpCircle,
+  Terminal,
+  Layers,
+  ExternalLink,
+  ChevronRight,
+  Sparkles
+} from 'lucide-react'
+import { getTechData } from '../data/db'
+import { printTechRoadmapPdf } from '../utils/printPdf'
+import { SEOHead } from '../components/ui/SEOHead'
+import { Card } from '../components/ui/SectionHeader'
+import { Button } from '../components/ui/Button'
+
+export function TechHubPage() {
+  const { technology } = useParams<{ technology: string }>()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const techKey = technology?.toLowerCase() || ''
+  const data = getTechData(techKey)
+
+  // URL Tab handling
+  const activeTab = searchParams.get('tab') || 'overview'
+
+  // Notes active chapter state
+  const [activeChapterId, setActiveChapterId] = useState<string>('')
+
+  // Interview collapsed states
+  const [openQuestionIndex, setOpenQuestionIndex] = useState<number | null>(null)
+
+  // Cheatsheets search & filter states
+  const [cheatsheetSearch, setCheatsheetSearch] = useState('')
+  const [selectedCheatsheetCat, setSelectedCheatsheetCat] = useState('All')
+
+  // Copy feedback state
+  const [copiedText, setCopiedText] = useState<string | null>(null)
+
+  // Roadmap Checklists state from LocalStorage
+  const [completedTopics, setCompletedTopics] = useState<Record<string, boolean>>(() => {
+    try {
+      const stored = localStorage.getItem(`stackforge-completed-${techKey}`)
+      return stored ? JSON.parse(stored) : {}
+    } catch {
+      return {}
+    }
+  })
+
+  // Set default chapter once data loads
+  useEffect(() => {
+    if (data && data.notes.length > 0) {
+      setActiveChapterId(data.notes[0].id)
+    }
+  }, [techKey, data])
+
+  // Save progress changes
+  useEffect(() => {
+    localStorage.setItem(`stackforge-completed-${techKey}`, JSON.stringify(completedTopics))
+  }, [completedTopics, techKey])
+
+  if (!data) {
+    return (
+      <div className="py-24 text-center">
+        <h2 className="text-2xl font-bold text-text-primary mb-2">Technology Not Found</h2>
+        <p className="text-text-secondary mb-6">We couldn't find a learning path for "{technology}".</p>
+        <Link to="/roadmaps" className="text-accent-purple font-semibold hover:underline">
+          Go back to Roadmaps
+        </Link>
+      </div>
+    )
+  }
+
+  const techTitle = data.roadmap.overview.title
+  const { overview, phases } = data.roadmap
+
+  // Calculate Roadmap Progress
+  const totalTopics = phases.reduce((acc, phase) => acc + phase.topics.length, 0)
+  const completedCount = Object.keys(completedTopics).filter(
+    (key) => completedTopics[key] && phases.some(p => p.topics.some(t => t.name === key))
+  ).length
+  const progressPercent = totalTopics > 0 ? Math.round((completedCount / totalTopics) * 100) : 0
+
+  const toggleTopic = (topicName: string) => {
+    setCompletedTopics((prev) => ({
+      ...prev,
+      [topicName]: !prev[topicName],
+    }))
+  }
+
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text)
+    setCopiedText(text)
+    setTimeout(() => setCopiedText(null), 2000)
+  }
+
+  // Get active chapter
+  const activeChapter = data.notes.find((ch) => ch.id === activeChapterId) || data.notes[0]
+
+  // Cheatsheet categories
+  const cheatsheetCategories = useMemo(() => {
+    const cats = new Set(data.cheatsheet.map((c) => c.category))
+    return ['All', ...Array.from(cats)]
+  }, [data.cheatsheet])
+
+  // Filtered cheatsheet items
+  const filteredCheatsheet = useMemo(() => {
+    return data.cheatsheet.filter((item) => {
+      const matchSearch =
+        item.command.toLowerCase().includes(cheatsheetSearch.toLowerCase()) ||
+        item.description.toLowerCase().includes(cheatsheetSearch.toLowerCase())
+      const matchCat = selectedCheatsheetCat === 'All' || item.category === selectedCheatsheetCat
+      return matchSearch && matchCat
+    })
+  }, [data.cheatsheet, cheatsheetSearch, selectedCheatsheetCat])
+
+  const setTab = (tabName: string) => {
+    setSearchParams({ tab: tabName })
+  }
+
+  return (
+    <>
+      <SEOHead
+        title={`Complete ${techTitle} Roadmap & Study Guide`}
+        description={`Master ${techTitle} with StackForge structured learning path, study notes, interview preparations, cheat sheets, and downloadable roadmap PDFs.`}
+      />
+
+      {/* Hero Header */}
+      <div className="relative py-12 md:py-16 overflow-hidden bg-surface-950/40 border-b border-black/[0.06] dark:border-white/[0.06]">
+        <div className="absolute inset-0 bg-gradient-to-r from-accent-purple/5 to-accent-cyan/5 pointer-events-none" />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-4xl">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-semibold bg-accent-purple/15 text-accent-purple border border-accent-purple/20 mb-4 uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5" /> Learning Path
+            </span>
+            <h1 className="text-4xl md:text-5xl font-extrabold text-text-primary tracking-tight mb-4">
+              Master <span className="gradient-text">{techTitle}</span>
+            </h1>
+            <p className="text-lg text-text-secondary leading-relaxed mb-6">
+              {overview.description}
+            </p>
+
+            {/* Quick Metrics */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="p-4 rounded-2xl glass-card flex items-center gap-3">
+                <TrendingUp className="w-5 h-5 text-accent-cyan" />
+                <div>
+                  <div className="text-xs text-text-muted">Jobs Demand</div>
+                  <div className="text-sm font-bold text-text-primary">Very High</div>
+                </div>
+              </div>
+              <div className="p-4 rounded-2xl glass-card flex items-center gap-3">
+                <Coins className="w-5 h-5 text-accent-emerald" />
+                <div>
+                  <div className="text-xs text-text-muted">Average Salary</div>
+                  <div className="text-sm font-bold text-text-primary">{overview.salaryInfo.split(',')[0]}</div>
+                </div>
+              </div>
+              <div className="p-4 rounded-2xl glass-card flex items-center gap-3 col-span-2">
+                <div className="w-full">
+                  <div className="flex justify-between items-center text-xs text-text-muted mb-1.5">
+                    <span>Syllabus Progress</span>
+                    <span className="font-semibold text-accent-purple">{progressPercent}%</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-surface-800 overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-accent-purple to-accent-violet transition-all duration-500"
+                      style={{ width: `${progressPercent}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs Selector Navigation */}
+      <div className="sticky top-16 md:top-[4.5rem] z-40 bg-surface-900/90 backdrop-blur-md border-b border-black/[0.06] dark:border-white/[0.06]">
+        <div className="container mx-auto px-4">
+          <div className="flex overflow-x-auto no-scrollbar py-3 gap-2">
+            {[
+              { id: 'overview', label: 'Overview' },
+              { id: 'roadmap', label: 'Roadmap Timeline' },
+              { id: 'notes', label: 'Study Notes' },
+              { id: 'cheatsheets', label: 'Cheat Sheet' },
+              { id: 'projects', label: 'Hands-on Projects' },
+              { id: 'interviews', label: 'Interview Prep' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setTab(tab.id)}
+                className={`shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                  activeTab === tab.id
+                    ? 'bg-accent-purple text-white shadow-lg shadow-accent-purple/20'
+                    : 'glass text-text-secondary hover:text-text-primary hover:bg-black/[0.02] dark:hover:bg-white/[0.02]'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Tab Contents */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        
+        {/* OVERVIEW TAB */}
+        {activeTab === 'overview' && (
+          <div className="max-w-4xl mx-auto space-y-8">
+            <Card>
+              <h2 className="text-xl font-bold text-text-primary mb-4 flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-accent-purple" /> What is {techTitle}?
+              </h2>
+              <p className="text-text-secondary leading-relaxed text-base">
+                {overview.whatIsIt}
+              </p>
+            </Card>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <h3 className="text-lg font-bold text-text-primary mb-3">Why Learn It?</h3>
+                <p className="text-text-secondary text-sm leading-relaxed">{overview.whyLearnIt}</p>
+              </Card>
+
+              <Card>
+                <h3 className="text-lg font-bold text-text-primary mb-3">Career Path Opportunities</h3>
+                <p className="text-text-secondary text-sm leading-relaxed">{overview.careerOpportunities}</p>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <h3 className="text-lg font-bold text-text-primary mb-2 flex items-center gap-2">
+                  <Coins className="w-5 h-5 text-accent-emerald" /> Salary & Earnings
+                </h3>
+                <p className="text-text-secondary text-sm leading-relaxed mb-2">
+                  A career specializing in {techTitle} yields premium compensations globally:
+                </p>
+                <div className="text-2xl font-extrabold text-accent-emerald">{overview.salaryInfo}</div>
+              </Card>
+
+              <Card>
+                <h3 className="text-lg font-bold text-text-primary mb-2 flex items-center gap-2">
+                  <Briefcase className="w-5 h-5 text-accent-cyan" /> Market Demand
+                </h3>
+                <p className="text-text-secondary text-sm leading-relaxed mb-2">
+                  How sought after is this technology by startups and enterprise sectors?
+                </p>
+                <div className="text-lg font-bold text-text-primary">{overview.industryDemand}</div>
+              </Card>
+            </div>
+
+            {/* Bottom PDF Download Card */}
+            <Card className="bg-gradient-to-r from-accent-purple/5 to-accent-violet/5 border-dashed border-accent-purple/30 text-center py-8">
+              <h3 className="text-lg font-bold text-text-primary mb-2">Download Complete Reference Guide</h3>
+              <p className="text-text-secondary text-sm mb-6 max-w-md mx-auto">
+                Get a beautifully formatted PDF containing the roadmap timeline, interview questions, projects, and tips.
+              </p>
+              <Button onClick={() => printTechRoadmapPdf(techKey, data)} variant="primary" size="md" className="gap-2">
+                <Download className="w-4 h-4" /> Download {techTitle} Roadmap PDF
+              </Button>
+            </Card>
+          </div>
+        )}
+
+        {/* ROADMAP TIMELINE TAB */}
+        {activeTab === 'roadmap' && (
+          <div className="max-w-4xl mx-auto">
+            <div className="flex justify-between items-center mb-8">
+              <div>
+                <h2 className="text-2xl font-bold text-text-primary">Syllabus Path</h2>
+                <p className="text-text-secondary text-sm">Check off topics as you learn to track your progress.</p>
+              </div>
+              <Button onClick={() => printTechRoadmapPdf(techKey, data)} variant="outline" size="sm" className="gap-2 shrink-0">
+                <Download className="w-4 h-4" /> Print PDF
+              </Button>
+            </div>
+
+            {/* Interactive Timeline Layout */}
+            <div className="relative border-l border-surface-800 pl-6 md:pl-8 space-y-12">
+              {phases.map((phase, phaseIdx) => (
+                <div key={phaseIdx} className="relative">
+                  {/* Timeline bullet dot */}
+                  <span className="absolute -left-[37px] md:-left-[45px] top-1.5 w-6 h-6 rounded-full bg-surface-900 border-2 border-accent-purple flex items-center justify-center">
+                    <span className="w-2.5 h-2.5 rounded-full bg-accent-purple" />
+                  </span>
+
+                  <div>
+                    <h3 className="text-lg font-extrabold text-text-primary mb-1">{phase.title}</h3>
+                    <p className="text-text-secondary text-sm mb-6">{phase.description}</p>
+
+                    {/* Progress Cards */}
+                    <div className="grid grid-cols-1 gap-4">
+                      {phase.topics.map((topic, topicIdx) => {
+                        const isCompleted = !!completedTopics[topic.name]
+                        return (
+                          <div
+                            key={topicIdx}
+                            onClick={() => toggleTopic(topic.name)}
+                            className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start gap-4 ${
+                              isCompleted
+                                ? 'bg-accent-purple/5 border-accent-purple/30 text-text-primary'
+                                : 'bg-surface-950/40 border-black/[0.05] dark:border-white/[0.05] hover:border-accent-purple/30 text-text-primary'
+                            }`}
+                          >
+                            <button
+                              type="button"
+                              className="mt-0.5 text-accent-purple focus:outline-none shrink-0"
+                              aria-label={isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
+                            >
+                              {isCompleted ? (
+                                <CheckCircle className="w-5 h-5 fill-accent-purple text-white" />
+                              ) : (
+                                <Circle className="w-5 h-5 text-text-muted hover:text-accent-purple" />
+                              )}
+                            </button>
+                            <div className="flex-1">
+                              <h4 className={`font-semibold text-sm ${isCompleted ? 'line-through text-text-secondary' : ''}`}>
+                                {topic.name}
+                              </h4>
+                              {topic.description && (
+                                <p className="text-xs text-text-secondary mt-1 leading-relaxed">
+                                  {topic.description}
+                                </p>
+                              )}
+                              {topic.resources && topic.resources.length > 0 && (
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                  {topic.resources.map((res, rIdx) => (
+                                    <span
+                                      key={rIdx}
+                                      className="inline-flex items-center gap-0.5 text-[10px] font-medium bg-surface-800 text-text-secondary px-2 py-0.5 rounded border border-black/[0.05] dark:border-white/[0.05]"
+                                    >
+                                      {res}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Bottom PDF Download Card */}
+            <Card className="bg-gradient-to-r from-accent-purple/5 to-accent-violet/5 border-dashed border-accent-purple/30 text-center py-8 mt-12">
+              <h3 className="text-lg font-bold text-text-primary mb-2">Printable Reference File</h3>
+              <p className="text-text-secondary text-sm mb-6 max-w-md mx-auto">
+                Generate the dynamic syllabus to display on your workspace or share with your team.
+              </p>
+              <Button onClick={() => printTechRoadmapPdf(techKey, data)} variant="primary" size="md" className="gap-2">
+                <Download className="w-4 h-4" /> Download Roadmap PDF
+              </Button>
+            </Card>
+          </div>
+        )}
+
+        {/* STUDY NOTES TAB */}
+        {activeTab === 'notes' && (
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Chapters sidebar list */}
+            <div className="lg:col-span-1 space-y-2">
+              <h3 className="font-bold text-xs uppercase tracking-wider text-text-muted px-2 mb-3">Syllabus Chapters</h3>
+              {data.notes.map((ch) => (
+                <button
+                  key={ch.id}
+                  onClick={() => setActiveChapterId(ch.id)}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center justify-between group ${
+                    activeChapterId === ch.id
+                      ? 'bg-accent-purple/10 text-accent-purple border border-accent-purple/20'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-black/[0.02] dark:hover:bg-white/[0.02] border border-transparent'
+                  }`}
+                >
+                  <span className="truncate">{ch.title.split(': ')[1] || ch.title}</span>
+                  <ChevronRight className={`w-4 h-4 shrink-0 transition-transform ${activeChapterId === ch.id ? 'translate-x-0.5' : 'opacity-0 group-hover:opacity-100'}`} />
+                </button>
+              ))}
+            </div>
+
+            {/* Active Chapter Details display */}
+            <div className="lg:col-span-3 space-y-6">
+              {activeChapter ? (
+                <Card className="space-y-6">
+                  <div>
+                    <h2 className="text-2xl font-bold text-text-primary">{activeChapter.title}</h2>
+                    <div className="h-0.5 w-12 bg-accent-purple mt-2" />
+                  </div>
+
+                  <p className="text-text-secondary leading-relaxed text-base">
+                    {activeChapter.content}
+                  </p>
+
+                  {/* Summary Box */}
+                  {activeChapter.summary && (
+                    <div className="p-4 rounded-xl bg-accent-purple/5 border border-accent-purple/20">
+                      <div className="text-xs font-bold uppercase tracking-wider text-accent-purple mb-1">Key Takeaway</div>
+                      <p className="text-text-secondary text-sm leading-relaxed">{activeChapter.summary}</p>
+                    </div>
+                  )}
+
+                  {/* Code Editor Snippet Playground */}
+                  {activeChapter.codeSnippet && (
+                    <div className="rounded-2xl border border-black/[0.06] dark:border-white/[0.06] overflow-hidden">
+                      <div className="bg-surface-850 px-4 py-2 flex justify-between items-center border-b border-black/[0.06] dark:border-white/[0.06]">
+                        <span className="text-xs font-mono text-text-muted capitalize">
+                          {activeChapter.codeSnippet.language} Playground
+                        </span>
+                        <button
+                          onClick={() => handleCopy(activeChapter.codeSnippet!.code)}
+                          className="p-1.5 rounded hover:bg-surface-800 text-text-muted hover:text-text-primary transition-all flex items-center gap-1 text-xs"
+                        >
+                          {copiedText === activeChapter.codeSnippet.code ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-accent-emerald" /> Copied
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3.5 h-3.5" /> Copy Code
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <pre className="bg-surface-950 p-5 overflow-x-auto font-mono text-sm text-[#cbd5e1] leading-relaxed">
+                        <code>{activeChapter.codeSnippet.code}</code>
+                      </pre>
+                    </div>
+                  )}
+                </Card>
+              ) : (
+                <div className="text-center py-12 text-text-secondary">Select a chapter on the sidebar to begin studying.</div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* CHEATSHEETS TAB */}
+        {activeTab === 'cheatsheets' && (
+          <div className="space-y-6">
+            <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+              <div className="relative w-full md:max-w-md">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+                <input
+                  type="text"
+                  placeholder="Search commands or syntax..."
+                  value={cheatsheetSearch}
+                  onChange={(e) => setCheatsheetSearch(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-950 border border-black/[0.06] dark:border-white/[0.06] text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-purple/20"
+                />
+              </div>
+
+              {/* Tag filters */}
+              <div className="flex flex-wrap gap-2 w-full md:w-auto">
+                {cheatsheetCategories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCheatsheetCat(cat)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                      selectedCheatsheetCat === cat
+                        ? 'bg-accent-purple/15 text-accent-purple border border-accent-purple/35'
+                        : 'glass text-text-secondary hover:text-text-primary'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* List grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {filteredCheatsheet.map((item, idx) => (
+                <Card key={idx} className="flex flex-col justify-between">
+                  <div>
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-accent-purple bg-accent-purple/10 px-2 py-0.5 rounded">
+                        {item.category}
+                      </span>
+                    </div>
+                    <h3 className="font-mono font-bold text-sm text-text-primary mb-2 bg-surface-850 p-2 rounded border border-black/[0.03] dark:border-white/[0.03]">
+                      {item.command}
+                    </h3>
+                    <p className="text-text-secondary text-xs leading-relaxed mb-4">
+                      {item.description}
+                    </p>
+                  </div>
+
+                  {item.example && (
+                    <div className="relative mt-auto">
+                      <pre className="bg-surface-950 p-3.5 rounded-lg font-mono text-xs text-[#94a3b8] overflow-x-auto">
+                        {item.example}
+                      </pre>
+                      <button
+                        onClick={() => handleCopy(item.example || '')}
+                        className="absolute right-2.5 top-2.5 p-1 rounded bg-surface-900/60 hover:bg-surface-900 text-text-muted hover:text-text-primary transition-all"
+                        title="Copy example"
+                      >
+                        {copiedText === item.example ? (
+                          <Check className="w-3.5 h-3.5 text-accent-emerald" />
+                        ) : (
+                          <Copy className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                    </div>
+                  )}
+                </Card>
+              ))}
+
+              {filteredCheatsheet.length === 0 && (
+                <div className="col-span-2 text-center py-12 text-text-secondary">
+                  No matching cheatsheet items found.
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* PROJECTS TAB */}
+        {activeTab === 'projects' && (
+          <div className="space-y-8">
+            <div className="text-center max-w-2xl mx-auto mb-8">
+              <h2 className="text-2xl font-bold text-text-primary">Hands-on Learning Projects</h2>
+              <p className="text-text-secondary text-sm mt-1">
+                Nothing beats writing lines of code. Build these tasks incrementally to solidifying your expertise.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-8">
+              {data.projects.map((proj, idx) => {
+                const diffColors =
+                  proj.difficulty === 'Beginner'
+                    ? 'text-accent-emerald bg-accent-emerald/10 border-accent-emerald/20'
+                    : proj.difficulty === 'Intermediate'
+                    ? 'text-accent-cyan bg-accent-cyan/10 border-accent-cyan/20'
+                    : 'text-accent-rose bg-accent-rose/10 border-accent-rose/20'
+
+                return (
+                  <Card key={idx} className="relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-1.5 h-full bg-accent-purple" />
+                    
+                    <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+                      <div>
+                        <span className={`inline-block text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border ${diffColors} mb-2`}>
+                          {proj.difficulty}
+                        </span>
+                        <h3 className="text-xl font-bold text-text-primary">{proj.title}</h3>
+                      </div>
+                    </div>
+
+                    <p className="text-text-secondary text-sm leading-relaxed mb-6">
+                      {proj.description}
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+                      <div>
+                        <h4 className="font-bold text-xs uppercase text-text-muted tracking-wider mb-2">Key Skills Acquired</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {proj.skillsLearned.map((skill, sIdx) => (
+                            <span
+                              key={sIdx}
+                              className="text-xs bg-surface-850 text-text-secondary px-2.5 py-1 rounded-lg border border-black/[0.05] dark:border-white/[0.05]"
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 className="font-bold text-xs uppercase text-text-muted tracking-wider mb-2">Stack / Technologies</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {proj.technologies.map((tech, tIdx) => (
+                            <span
+                              key={tIdx}
+                              className="text-xs bg-accent-purple/10 text-accent-purple px-2.5 py-1 rounded-lg border border-accent-purple/20 font-semibold"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Source Code Folder Structure Tree */}
+                    <div className="mb-6">
+                      <h4 className="font-bold text-xs uppercase text-text-muted tracking-wider mb-2">Project Folder Blueprint</h4>
+                      <pre className="bg-surface-950 p-4 rounded-xl font-mono text-xs text-[#94a3b8] overflow-x-auto border border-black/[0.05] dark:border-white/[0.05]">
+                        {proj.sourceCodeStructure}
+                      </pre>
+                    </div>
+
+                    {/* Step-by-Step Roadmap */}
+                    <div>
+                      <h4 className="font-bold text-xs uppercase text-text-muted tracking-wider mb-3">Development Roadmap Steps</h4>
+                      <ol className="space-y-3">
+                        {proj.developmentRoadmap.map((step, sIdx) => (
+                          <li key={sIdx} className="flex gap-3 text-sm text-text-secondary">
+                            <span className="shrink-0 w-6 h-6 rounded-full bg-surface-800 text-accent-purple flex items-center justify-center font-mono font-bold text-xs">
+                              {sIdx + 1}
+                            </span>
+                            <span className="pt-0.5 leading-relaxed">{step}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  </Card>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* INTERVIEWS TAB */}
+        {activeTab === 'interviews' && (
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="text-center max-w-2xl mx-auto mb-8">
+              <h2 className="text-2xl font-bold text-text-primary">Standard Interview Questions</h2>
+              <p className="text-text-secondary text-sm mt-1">
+                Prepare for technical exams and coding interview rounds with step-by-step conceptual explanations.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {data.interviews.map((item, idx) => {
+                const isOpen = openQuestionIndex === idx
+                const levelColors =
+                  item.level === 'Beginner'
+                    ? 'text-accent-emerald bg-accent-emerald/10'
+                    : item.level === 'Intermediate'
+                    ? 'text-accent-cyan bg-accent-cyan/10'
+                    : 'text-accent-rose bg-accent-rose/10'
+
+                return (
+                  <div
+                    key={idx}
+                    className="glass-card rounded-2xl overflow-hidden transition-colors border border-black/[0.06] dark:border-white/[0.06]"
+                  >
+                    <button
+                      onClick={() => setOpenQuestionIndex(isOpen ? null : idx)}
+                      className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left focus:outline-none"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${levelColors}`}>
+                          {item.level}
+                        </span>
+                        <span className="font-bold text-text-primary text-sm md:text-base">
+                          {item.question}
+                        </span>
+                      </div>
+                      <span className="shrink-0 w-8 h-8 rounded-lg bg-surface-800 flex items-center justify-center">
+                        {isOpen ? (
+                          <ChevronUp className="w-4 h-4 text-text-secondary" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4 text-text-secondary" />
+                        )}
+                      </span>
+                    </button>
+
+                    {isOpen && (
+                      <div className="px-6 pb-5 text-text-secondary text-sm leading-relaxed border-t border-black/[0.04] dark:border-white/[0.04] pt-4 bg-surface-950/20">
+                        <div className="font-semibold text-text-primary mb-1">Model Answer:</div>
+                        <p>{item.answer}</p>
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+      </div>
+    </>
+  )
+}
