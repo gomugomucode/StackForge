@@ -37,7 +37,7 @@ export function StatsSection() {
   const { ref, isVisible } = useScrollAnimation()
 
   return (
-    <section ref={ref} className="py-12 md:py-16 border-y border-white/[0.06]">
+    <section ref={ref} className="py-12 md:py-16 border-y border-black/[0.06] dark:border-white/[0.06]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <Stagger className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {stats.map((stat) => (

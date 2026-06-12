@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Layers } from 'lucide-react'
 import { navLinks, brandName } from '../../data/navigation'
 import { Button } from '../ui/Button'
+import { ThemeToggle } from '../ui/ThemeToggle'
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -18,7 +19,7 @@ export function Navbar() {
   return (
     <header
       className={`sticky top-0 z-50 transition-all duration-300 ${
-        scrolled ? 'glass-nav shadow-lg shadow-black/20' : 'bg-transparent border-b border-transparent'
+        scrolled ? 'glass-nav shadow-lg shadow-black/[0.03] dark:shadow-black/20' : 'bg-transparent border-b border-transparent'
       }`}
     >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
@@ -63,6 +64,7 @@ export function Navbar() {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle />
             <Button to="/blog" variant="ghost" size="sm">
               Articles
             </Button>
@@ -91,7 +93,7 @@ export function Navbar() {
               transition={{ duration: 0.25 }}
               className="md:hidden overflow-hidden"
             >
-              <div className="pb-4 pt-2 border-t border-white/[0.06]">
+              <div className="pb-4 pt-2 border-t border-black/[0.06] dark:border-white/[0.06]">
                 <div className="flex flex-col gap-1">
                   {navLinks.map((link) => (
                     <NavLink
@@ -103,15 +105,16 @@ export function Navbar() {
                         `px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                           isActive
                             ? 'text-accent-purple bg-accent-purple/10'
-                            : 'text-text-secondary hover:text-text-primary hover:bg-white/[0.03]'
+                            : 'text-text-secondary hover:text-text-primary hover:bg-black/[0.03] dark:hover:bg-white/[0.03]'
                         }`
                       }
                     >
                       {link.label}
                     </NavLink>
                   ))}
-                  <div className="pt-3 px-2">
-                    <Button to="/#weekly-challenge" variant="primary" size="md" className="w-full">
+                  <div className="pt-3 px-2 flex items-center justify-between gap-4">
+                    <ThemeToggle />
+                    <Button to="/#weekly-challenge" variant="primary" size="md" className="flex-1" onClick={() => setMobileOpen(false)}>
                       Get Started
                     </Button>
                   </div>

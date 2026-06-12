@@ -36,9 +36,9 @@ export function Hero() {
             transition={{ duration: 0.65, delay: 0.2 }}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] font-extrabold tracking-tight text-text-primary mb-6 leading-[1.08]"
           >
-            Master Code.
+            Master Modern
             <br />
-            <span className="gradient-text">Build Faster.</span>
+            <span className="gradient-text">Software Development</span>
           </motion.h1>
 
           <motion.p
@@ -58,12 +58,12 @@ export function Hero() {
           >
             <Button to="/#weekly-challenge" size="lg">
               <Zap className="w-5 h-5" />
-              Take a Quiz Now
+              Start Learning
               <ArrowRight className="w-5 h-5" />
             </Button>
             <Button to="/resources" variant="secondary" size="lg">
               <Play className="w-5 h-5" />
-              Explore Library
+              Explore Resources
             </Button>
           </motion.div>
 
@@ -73,7 +73,7 @@ export function Hero() {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="mt-14 flex flex-wrap items-center justify-center gap-x-8 gap-y-3"
           >
-            {['Free forever', 'No account needed', '480+ quiz questions'].map((item) => (
+            {['Free forever', 'No account needed', '500+ tutorials'].map((item) => (
               <span key={item} className="inline-flex items-center gap-2 text-sm text-text-muted">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent-emerald" />
                 {item}
@@ -91,7 +91,7 @@ export function Hero() {
           <div className="gradient-border rounded-2xl overflow-hidden glow-purple">
             <div className="glass p-1.5">
               <div className="bg-surface-950/80 rounded-xl overflow-hidden backdrop-blur-sm">
-                <div className="flex items-center gap-2 px-4 py-3 bg-surface-800/60 border-b border-white/[0.06]">
+                <div className="flex items-center gap-2 px-4 py-3 bg-surface-800/60 border-b border-black/[0.06] dark:border-white/[0.06]">
                   <div className="flex gap-1.5">
                     <div className="w-3 h-3 rounded-full bg-red-500/70" />
                     <div className="w-3 h-3 rounded-full bg-amber-500/70" />
