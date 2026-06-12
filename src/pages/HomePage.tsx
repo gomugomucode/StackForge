@@ -12,10 +12,15 @@ import { Testimonials } from '../components/home/Testimonials'
 import { FAQ } from '../components/home/FAQ'
 import { CTASection } from '../components/home/CTASection'
 import { FounderPreview } from '../components/about/FounderSection'
+import { SEOHead } from '../components/ui/SEOHead'
 
 export function HomePage() {
   return (
     <>
+      <SEOHead
+        title="Master Modern Software Development"
+        description="Structured programming courses, interactive quizzes, visual roadmaps, and cheat sheets to help you learn React, Python, DevOps, and more for free."
+      />
       <Hero />
       <StatsSection />
       <FeaturedCategories />
