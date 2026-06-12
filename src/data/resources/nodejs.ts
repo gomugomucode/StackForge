@@ -1,0 +1,318 @@
+import type { TechResourceData } from './types'
+
+export const nodejsResourceData: TechResourceData = {
+  sections: [
+    {
+      id: 'official-docs',
+      title: 'Official Documentation',
+      description: 'Primary references maintained by standard bodies and the Node.js core team.',
+      icon: 'BookOpen',
+      resources: [
+        {
+          title: 'Node.js Official Docs',
+          url: 'https://nodejs.org/en/docs/',
+          description: 'The official API reference documentation covering core modules like fs, path, http, and events.',
+          type: 'free',
+          difficulty: 'Beginner',
+          badge: 'Official',
+          author: 'Node.js Team',
+        },
+        {
+          title: 'Node.js Guides',
+          url: 'https://nodejs.org/en/learn/guides',
+          description: 'Step-by-step guides covering basic and advanced aspects of Node.js, including event loop, streams, and debugging.',
+          type: 'free',
+          difficulty: 'Beginner',
+          badge: 'Best Rated',
+        },
+      ],
+    },
+    {
+      id: 'books',
+      title: 'Books',
+      description: 'Must-read titles that stand the test of time for Node.js mastery.',
+      icon: 'Library',
+      resources: [
+        {
+          title: 'Node.js Design Patterns',
+          url: 'https://www.nodejsdesignpatterns.com/',
+          description: 'Master the best practices and design patterns to build highly scalable and robust Node.js applications.',
+          type: 'paid',
+          difficulty: 'Advanced',
+          badge: 'Must Read',
+          author: 'Mario Casciaro, Luciano Mammino',
+          estimatedHours: 40,
+        },
+        {
+          title: 'Distributed Systems with Node.js',
+          url: 'https://www.oreilly.com/library/view/distributed-systems-with/9781492077282/',
+          description: 'Learn how to build resilient, high-performance distributed systems using Node.js.',
+          type: 'paid',
+          difficulty: 'Advanced',
+          author: 'Thomas Hunter II',
+          estimatedHours: 30,
+        },
+      ],
+    },
+    {
+      id: 'video-courses',
+      title: 'Video Courses',
+      description: 'Structured video learning paths from beginner to expert level.',
+      icon: 'PlayCircle',
+      resources: [
+        {
+          title: 'Node.js, Express, MongoDB & More: The Complete Bootcamp',
+          url: 'https://www.udemy.com/course/nodejs-express-mongodb-bootcamp/',
+          description: 'Learn Node.js by building a real-world REST API with Express, Mongoose, and advanced features.',
+          type: 'paid',
+          difficulty: 'Beginner',
+          badge: 'Best Rated',
+          author: 'Jonas Schmedtmann',
+          estimatedHours: 42,
+        },
+        {
+          title: 'Learn Node.js — freeCodeCamp',
+          url: 'https://www.youtube.com/watch?v=Oe421EPjeBE',
+          description: 'A complete Node.js and Express tutorial for beginners in one video.',
+          type: 'free',
+          difficulty: 'Beginner',
+          badge: 'Free',
+          author: 'freeCodeCamp',
+          estimatedHours: 8,
+        },
+      ],
+    },
+    {
+      id: 'practice',
+      title: 'Practice Platforms',
+      description: 'Sharpen your Node.js with coding challenges and exercises.',
+      icon: 'Code2',
+      resources: [
+        {
+          title: 'NodeSchool',
+          url: 'https://nodeschool.io/',
+          description: 'Open-source workshops that teach Node.js web development through interactive terminal challenges.',
+          type: 'free',
+          difficulty: 'Beginner',
+          badge: 'Community Pick',
+        },
+      ],
+    },
+    {
+      id: 'github',
+      title: 'GitHub Repositories',
+      description: 'Open-source projects and curated lists worth starring.',
+      icon: 'Github',
+      resources: [
+        {
+          title: 'Awesome Node.js',
+          url: 'https://github.com/sindresorhus/awesome-nodejs',
+          description: 'A curated list of awesome Node.js packages, libraries, and resources.',
+          type: 'free',
+          difficulty: 'Beginner',
+          badge: 'Community Pick',
+        },
+        {
+          title: 'Node.js Best Practices',
+          url: 'https://github.com/goldbergyoni/nodebestpractices',
+          description: 'The largest container of Node.js best practices, guidelines, and style guides.',
+          type: 'free',
+          difficulty: 'Intermediate',
+          badge: 'Must Read',
+        },
+      ],
+    },
+    {
+      id: 'tools',
+      title: 'Developer Tools',
+      description: 'Essential tools for productive Node.js development.',
+      icon: 'Wrench',
+      resources: [
+        {
+          title: 'NPM (Node Package Manager)',
+          url: 'https://www.npmjs.com/',
+          description: 'The default package manager for Node.js to publish, install, and manage dependencies.',
+          type: 'free',
+          difficulty: 'Beginner',
+          badge: 'Official',
+        },
+        {
+          title: 'Nodemon',
+          url: 'https://nodemon.io/',
+          description: 'A tool that helps develop Node.js based applications by automatically restarting the node application when file changes in the directory are detected.',
+          type: 'free',
+          difficulty: 'Beginner',
+        },
+      ],
+    },
+    {
+      id: 'community',
+      title: 'Community & Forums',
+      description: 'Active communities to ask questions and stay current.',
+      icon: 'Users',
+      resources: [
+        {
+          title: 'Node.js Reddit Community',
+          url: 'https://www.reddit.com/r/node/',
+          description: 'Active discussions, news, articles, and community support on Node.js.',
+          type: 'free',
+          difficulty: 'Beginner',
+        },
+      ],
+    },
+  ],
+
+  learningPath: {
+    totalWeeks: 6,
+    totalHours: 90,
+    level: 'Beginner',
+    description: 'A comprehensive 6-week path from Node.js runtime foundations to server deployment, databases, and building APIs.',
+    weeks: [
+      {
+        week: 1,
+        title: 'Node.js Runtime & Fundamentals',
+        description: 'Understand the V8 engine, V8 event loop, non-blocking I/O, global objects, and core modules.',
+        topics: ['Node.js Architecture & V8 Engine', 'Event Loop & Non-Blocking I/O', 'Global Objects & Process API', 'File System (fs) & Path Modules', 'Event Emitter Class'],
+        estimatedHours: 12,
+        milestoneProject: 'Build a command-line file analyzer tool',
+      },
+      {
+        week: 2,
+        title: 'Asynchronous Programming & Streams',
+        description: 'Deep dive into asynchronous Node.js patterns, streams, and buffers for handling large data volumes.',
+        topics: ['Callback Patterns & Error-First Callbacks', 'Promises & Async/Await in Node', 'Understanding Buffers', 'Readable, Writable, and Transform Streams', 'Stream Piping'],
+        estimatedHours: 15,
+        milestoneProject: 'Build a high-performance log-parsing stream utility',
+      },
+      {
+        week: 3,
+        title: 'HTTP Module & Express Basics',
+        description: 'Build your first server using Node\'s http module and transition into Express.js routing, middleware, and request/response life cycle.',
+        topics: ['HTTP Server & HTTP Client Basics', 'Express.js Routing & Dynamic Parameters', 'Middleware Architecture & Custom Middlewares', 'Static File Serving', 'JSON Request Parsing'],
+        estimatedHours: 15,
+        milestoneProject: 'Build a local tasks REST API',
+      },
+      {
+        week: 4,
+        title: 'Databases & Mongoose/Sequelize',
+        description: 'Connect Node.js with SQL and NoSQL databases to persist server-side state.',
+        topics: ['MongoDB & Mongoose connection', 'Designing schemas & models', 'CRUD Operations in database', 'Relational Database setup with Node', 'Migrations & Queries'],
+        estimatedHours: 16,
+        milestoneProject: 'Build a blogging platform API with mongoose database integration',
+      },
+      {
+        week: 5,
+        title: 'Authentication & Security',
+        description: 'Implement JWT authentication, hashing passwords, CORS, rate limiting, and web security headers.',
+        topics: ['Password Hashing with bcryptjs', 'JSON Web Tokens (JWT) Generation & Verification', 'Role-Based Access Control', 'CORS & Rate Limiting', 'Securing with Helmet middleware'],
+        estimatedHours: 16,
+        milestoneProject: 'Build a secure user sign-in and user profiles REST API',
+      },
+      {
+        week: 6,
+        title: 'Testing & Server Deployment',
+        description: 'Learn testing in Node.js using Jest/Supertest, environment configuration, containerization, and PM2 deployment.',
+        topics: ['Unit & Integration Testing with Jest & Supertest', 'Environment Variable Configurations', 'Error Handling & Logging (Winston/Morgan)', 'Process Management with PM2', 'Dockerizing Node.js App'],
+        estimatedHours: 16,
+        milestoneProject: 'Deploy a tested, dockerized REST API with logging enabled',
+      },
+    ],
+  },
+
+  skillTree: [
+    {
+      id: 'node-core',
+      name: 'Node.js Core',
+      description: 'Understanding the inner workings of the runtime system and fundamental components.',
+      level: 'category',
+      children: [
+        {
+          id: 'node-eventloop',
+          name: 'Event Loop & Libuv',
+          description: 'How Node.js executes asynchronous, non-blocking I/O using Libuv.',
+          level: 'topic',
+          codeExample: `// Understanding execution phases
+console.log('1. Synchronous execution starts');
+
+setTimeout(() => {
+  console.log('3. SetTimeout (timer phase callback)');
+}, 0);
+
+process.nextTick(() => {
+  console.log('2. Process.nextTick callback (runs immediately after current phase)');
+});
+
+// Output order: 1, 2, 3`,
+        },
+        {
+          id: 'node-streams',
+          name: 'Streams & Buffer',
+          description: 'Handling chunk-by-chunk binary and text streams efficiently without filling memory.',
+          level: 'topic',
+          codeExample: `import fs from 'fs';
+import { Transform } from 'stream';
+
+const readStream = fs.createReadStream('largeInput.txt');
+const writeStream = fs.createWriteStream('upperOutput.txt');
+
+// Transform stream modifying data on the fly
+const upperCaseTransform = new Transform({
+  transform(chunk, encoding, callback) {
+    callback(null, chunk.toString().toUpperCase());
+  }
+});
+
+readStream.pipe(upperCaseTransform).pipe(writeStream);`,
+        },
+      ],
+    },
+    {
+      id: 'node-api',
+      name: 'Server & API Dev',
+      description: 'Routing, middleware, database modeling, and scalable REST server frameworks.',
+      level: 'category',
+      children: [
+        {
+          id: 'node-express',
+          name: 'Express.js & Middleware',
+          description: 'Mastering the middleware pattern and routing mechanics of Express framework.',
+          level: 'topic',
+          codeExample: `import express from 'express';
+const app = express();
+
+app.use(express.json()); // Global middleware
+
+// Custom Middleware
+app.use((req, res, next) => {
+  console.log(\`[\${new Date().toISOString()}] \${req.method} \${req.path}\`);
+  next();
+});
+
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'UP' });
+});
+
+app.listen(3000);`,
+        },
+      ],
+    },
+  ],
+
+  aiQA: [
+    {
+      keywords: ['event loop', 'libuv', 'concurrency'],
+      question: 'What is the role of the Event Loop and Libuv in Node.js?',
+      answer: 'Node.js runs Javascript on a single main thread. To achieve high performance without blocking, it delegates I/O operations (file reading, network queries) to Libuv. Libuv manages a thread pool and OS-level async polling. Once operations complete, their callbacks are pushed to the Event Loop, which executes them across multiple phases (timers, pending callbacks, poll, check, close callbacks).',
+    },
+    {
+      keywords: ['streams', 'stream', 'pipe'],
+      question: 'Why should we use Streams instead of fs.readFile?',
+      answer: '`fs.readFile` loads the entire file into memory before executing the callback. For large files (e.g., videos, huge logs), this can exhaust memory and crash the server. Streams read/write files in small chunks, maintaining a buffer. Piping streams passes chunks directly from source to destination, keeping memory usage constant and low.',
+    },
+    {
+      keywords: ['nexttick', 'setimmediate', 'difference'],
+      question: 'What is the difference between process.nextTick and setImmediate?',
+      answer: '`process.nextTick` executes its callback immediately after the current operation finishes, before the Event Loop moves to the next phase. `setImmediate` fires callbacks in the check phase of the event loop. Therefore, `process.nextTick` executes before `setImmediate` even if called in the same scope.',
+    },
+  ],
+}
