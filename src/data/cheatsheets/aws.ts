@@ -1,0 +1,28 @@
+import type { CheatsheetCommand } from '../types'
+
+export const awsCheatsheet: CheatsheetCommand[] = [
+  {
+    command: 'aws s3 ls',
+    description: 'Lists all S3 buckets associated with your credentials.',
+    example: 'aws s3 ls',
+    category: 'S3',
+  },
+  {
+    command: 'aws s3 sync <local-path> s3://<bucket-name>',
+    description: 'Synchronizes a local directory recursively to an S3 bucket destination.',
+    example: 'aws s3 sync ./dist s3://my-static-web-bucket',
+    category: 'S3',
+  },
+  {
+    command: 'aws ec2 describe-instances',
+    description: 'Lists metadata of all active EC2 VM instances under your account.',
+    example: 'aws ec2 describe-instances',
+    category: 'EC2',
+  },
+  {
+    command: 'aws lambda invoke --function-name <name> response.json',
+    description: 'Programmatically runs a remote AWS Lambda function and logs output to a local file.',
+    example: 'aws lambda invoke --function-name processPayment output.json',
+    category: 'Lambda',
+  },
+]
