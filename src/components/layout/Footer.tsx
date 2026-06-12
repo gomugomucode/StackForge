@@ -5,12 +5,13 @@ import { brandName, brandTagline, navLinks } from '../../data/navigation'
 import { FadeIn } from '../ui/Motion'
 
 const footerLinks = [
-  { label: 'Courses', href: '/resources' },
-  { label: 'Quizzes', href: '/#weekly-challenge' },
-  { label: 'Roadmaps', href: '/#roadmaps' },
-  { label: 'Blog', href: '/blog' },
-  { label: 'FAQ', href: '/#faq' },
-  { label: 'About', href: '/about' },
+  { label: 'Roadmaps', href: '/roadmaps' },
+  { label: 'Study Notes', href: '/notes' },
+  { label: 'Cheat Sheets', href: '/cheatsheets' },
+  { label: 'Interview Prep', href: '/interview-prep' },
+  { label: 'Projects', href: '/projects' },
+  { label: 'Certifications', href: '/certifications' },
+  { label: 'Tools & Utilities', href: '/tools' },
 ]
 
 export function Footer() {

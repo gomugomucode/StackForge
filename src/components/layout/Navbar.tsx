@@ -1,14 +1,17 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Layers } from 'lucide-react'
-import { navLinks, brandName } from '../../data/navigation'
+import { Menu, X, Layers, ChevronDown } from 'lucide-react'
+import { navLinks, academyLinks, brandName } from '../../data/navigation'
 import { Button } from '../ui/Button'
 import { ThemeToggle } from '../ui/ThemeToggle'
+import { SearchSystem } from '../ui/SearchSystem'
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [academyDropdownOpen, setAcademyDropdownOpen] = useState(false)
+  const [mobileAcademyOpen, setMobileAcademyOpen] = useState(false)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -24,7 +27,8 @@ export function Navbar() {
     >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
         <div className="flex items-center justify-between h-16 md:h-[4.5rem]">
-          <Link to="/" className="flex items-center gap-2.5 group" aria-label={`${brandName} home`}>
+          {/* Logo Brand */}
+          <Link to="/" className="flex items-center gap-2.5 group shrink-0" aria-label={`${brandName} home`}>
             <motion.div
               whileHover={{ scale: 1.05, rotate: 3 }}
               transition={{ type: 'spring', stiffness: 400 }}
@@ -35,14 +39,15 @@ export function Navbar() {
             <span className="text-xl font-bold text-text-primary tracking-tight">{brandName}</span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-1 p-1 rounded-xl glass">
+          {/* Desktop Navigation Links */}
+          <div className="hidden md:flex items-center gap-1.5 p-1 rounded-xl glass">
             {navLinks.map((link) => (
               <NavLink
                 key={link.href}
                 to={link.href}
                 end={link.href === '/'}
                 className={({ isActive }) =>
-                  `relative px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  `relative px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                     isActive ? 'text-text-primary' : 'text-text-secondary hover:text-text-primary'
                   }`
                 }
@@ -61,29 +66,72 @@ export function Navbar() {
                 )}
               </NavLink>
             ))}
+
+            {/* Academy Dropdown trigger */}
+            <div
+              className="relative"
+              onMouseEnter={() => setAcademyDropdownOpen(true)}
+              onMouseLeave={() => setAcademyDropdownOpen(false)}
+            >
+              <button
+                type="button"
+                className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all text-text-secondary hover:text-text-primary flex items-center gap-1 cursor-pointer`}
+              >
+                Academy <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${academyDropdownOpen ? 'rotate-185' : ''}`} />
+              </button>
+
+              <AnimatePresence>
+                {academyDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute top-full left-0 mt-1.5 w-48 rounded-xl bg-surface-900 border border-black/[0.08] dark:border-white/[0.08] p-1.5 shadow-xl shadow-black/20"
+                  >
+                    {academyLinks.map((sublink) => (
+                      <Link
+                        key={sublink.href}
+                        to={sublink.href}
+                        className="block px-3 py-2 rounded-lg text-sm text-text-secondary hover:text-text-primary hover:bg-black/[0.03] dark:hover:bg-white/[0.03] transition-all font-medium"
+                      >
+                        {sublink.label}
+                      </Link>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
+          {/* Search Bar + Controls */}
           <div className="hidden md:flex items-center gap-3">
+            <SearchSystem />
             <ThemeToggle />
-            <Button to="/blog" variant="ghost" size="sm">
-              Articles
+            <Button to="/roadmaps" variant="ghost" size="sm">
+              Syllabus
             </Button>
             <Button to="/#weekly-challenge" variant="primary" size="sm">
               Get Started
             </Button>
           </div>
 
-          <button
-            type="button"
-            className="md:hidden p-2.5 rounded-xl glass text-text-secondary hover:text-text-primary transition-colors"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-expanded={mobileOpen}
-            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-          >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+          {/* Mobile hamburger menu trigger */}
+          <div className="md:hidden flex items-center gap-2">
+            <SearchSystem />
+            <button
+              type="button"
+              className="p-2.5 rounded-xl glass text-text-secondary hover:text-text-primary transition-colors"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              aria-expanded={mobileOpen}
+              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
 
+        {/* Mobile menu expanded container */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
@@ -102,17 +150,53 @@ export function Navbar() {
                       end={link.href === '/'}
                       onClick={() => setMobileOpen(false)}
                       className={({ isActive }) =>
-                        `px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                        `px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                           isActive
-                            ? 'text-accent-purple bg-accent-purple/10'
-                            : 'text-text-secondary hover:text-text-primary hover:bg-black/[0.03] dark:hover:bg-white/[0.03]'
+                            ? 'text-accent-purple bg-accent-purple/10 font-semibold'
+                            : 'text-text-secondary hover:text-text-primary hover:bg-black/[0.02] dark:hover:bg-white/[0.02]'
                         }`
                       }
                     >
                       {link.label}
                     </NavLink>
                   ))}
-                  <div className="pt-3 px-2 flex items-center justify-between gap-4">
+
+                  {/* Collapsible Mobile Academy Section */}
+                  <div>
+                    <button
+                      onClick={() => setMobileAcademyOpen(!mobileAcademyOpen)}
+                      className="w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium text-text-secondary hover:text-text-primary flex items-center justify-between hover:bg-black/[0.02] dark:hover:bg-white/[0.02]"
+                    >
+                      <span>Academy Topics</span>
+                      <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileAcademyOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    <AnimatePresence>
+                      {mobileAcademyOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="pl-4 border-l border-black/[0.05] dark:border-white/[0.05] ml-4 mt-1 space-y-0.5"
+                        >
+                          {academyLinks.map((sublink) => (
+                            <Link
+                              key={sublink.href}
+                              to={sublink.href}
+                              onClick={() => {
+                                setMobileOpen(false)
+                                setMobileAcademyOpen(false)
+                              }}
+                              className="block px-4 py-2 rounded-xl text-xs font-semibold text-text-secondary hover:text-text-primary hover:bg-black/[0.01] dark:hover:bg-white/[0.01]"
+                            >
+                              {sublink.label}
+                            </Link>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  <div className="pt-3 px-2 flex items-center justify-between gap-4 border-t border-black/[0.04] dark:border-white/[0.04] mt-2">
                     <ThemeToggle />
                     <Button to="/#weekly-challenge" variant="primary" size="md" className="flex-1" onClick={() => setMobileOpen(false)}>
                       Get Started

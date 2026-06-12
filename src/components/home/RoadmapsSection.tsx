@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { Clock, Layers, ArrowRight } from 'lucide-react'
 import { roadmaps } from '../../data/roadmaps'
 import { SectionHeader } from '../ui/SectionHeader'
@@ -22,9 +23,10 @@ export function RoadmapsSection() {
           }`}
         >
           {roadmaps.map((roadmap) => (
-            <div
+            <Link
               key={roadmap.id}
-              className={`group relative overflow-hidden rounded-2xl border border-black/[0.06] dark:border-white/[0.06] bg-gradient-to-br ${roadmap.color} p-6 md:p-8 hover:border-accent-purple/40 transition-all duration-300 hover:-translate-y-1`}
+              to="/roadmaps"
+              className={`group relative block overflow-hidden rounded-2xl border border-black/[0.06] dark:border-white/[0.06] bg-gradient-to-br ${roadmap.color} p-6 md:p-8 hover:border-accent-purple/40 transition-all duration-300 hover:-translate-y-1`}
             >
               <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-3">
@@ -48,16 +50,15 @@ export function RoadmapsSection() {
                       {roadmap.duration}
                     </span>
                   </div>
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-1 text-sm font-semibold text-accent-purple hover:text-accent-violet transition-colors"
+                  <span
+                    className="inline-flex items-center gap-1 text-sm font-semibold text-accent-purple group-hover:text-accent-violet transition-colors animate-pulse"
                   >
-                    View Roadmap
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
+                    View Roadmaps
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                  </span>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
