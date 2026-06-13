@@ -25,6 +25,14 @@ export interface RoadmapData {
   phases: RoadmapPhase[]
 }
 
+export interface QuizQuestion {
+  id: string
+  question: string
+  options: string[]
+  correctIndex: number
+  explanation: string
+}
+
 export interface NoteChapter {
   id: string
   title: string
@@ -34,6 +42,8 @@ export interface NoteChapter {
     language: string
   }
   summary?: string
+  quizQuestions?: QuizQuestion[]
+  subtopicChecklist?: string[]
 }
 
 export interface CheatsheetCommand {
@@ -50,11 +60,16 @@ export interface InterviewQuestion {
 }
 
 export interface ProjectDetails {
+  slug?: string
   title: string
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced'
   description: string
   skillsLearned: string[]
   technologies: string[]
-  sourceCodeStructure: string // Text representation of the directory structure
-  developmentRoadmap: string[] // Steps to build
+  sourceCodeStructure: string
+  developmentRoadmap: string[]
+  estimatedHours?: number
+  features?: string[]
+  checklist?: string[]
+  relatedResources?: string[]
 }

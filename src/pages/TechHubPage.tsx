@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useParams, useSearchParams, Link } from 'react-router-dom'
 import {
   Briefcase,
@@ -16,7 +16,9 @@ import {
   ChevronRight,
   Sparkles,
   Bookmark,
-  Award
+  Award,
+  Maximize2,
+  X
 } from 'lucide-react'
 import { getTechData } from '../data/db'
 import type { FullTechData } from '../data/db'
@@ -31,6 +33,7 @@ import { ResourcesTab } from '../components/tech/ResourcesTab'
 import { LearningPathTab } from '../components/tech/LearningPathTab'
 import { SkillTreeTab } from '../components/tech/SkillTreeTab'
 import { AIAssistant } from '../components/tech/AIAssistant'
+import { MobileTabBar } from '../components/tech/MobileTabBar'
 
 // V2 Progress Hooks
 import { 
@@ -63,6 +66,15 @@ export function TechHubPage() {
 
   // Copy feedback state
   const [copiedText, setCopiedText] = useState<string | null>(null)
+
+  // New V3 Mobile UX states
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [readingMode, setReadingMode] = useState(false)
+  const [fullscreenCode, setFullscreenCode] = useState<string | null>(null)
+  
+  // Swipe refs
+  const touchStartX = useRef<number | null>(null)
+  const touchStartY = useRef<number | null>(null)
 
   // Load technology data asynchronously on mount/change
   useEffect(() => {
@@ -104,6 +116,40 @@ export function TechHubPage() {
   useEffect(() => {
     localStorage.setItem(`stackforge-completed-${techKey}`, JSON.stringify(completedTopics))
   }, [completedTopics, techKey])
+
+  // Swipe gesture detection between tabs on mobile
+  const tabOrder = ['overview', 'roadmap', 'notes', 'resources', 'projects', 'interviews', 'cheatsheets']
+  
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0]
+    touchStartX.current = touch.clientX
+    touchStartY.current = touch.clientY
+  }
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return
+    const touch = e.changedTouches[0]
+    const diffX = touch.clientX - touchStartX.current
+    const diffY = touch.clientY - touchStartY.current
+
+    // Detect horizontal swipe with minimal vertical movement
+    if (Math.abs(diffX) > 80 && Math.abs(diffY) < 40) {
+      const currentIndex = tabOrder.indexOf(activeTab)
+      if (diffX > 0) {
+        // Swipe Right -> Go to Previous Tab
+        if (currentIndex > 0) {
+          setTab(tabOrder[currentIndex - 1])
+        }
+      } else {
+        // Swipe Left -> Go to Next Tab
+        if (currentIndex < tabOrder.length - 1) {
+          setTab(tabOrder[currentIndex + 1])
+        }
+      }
+    }
+    touchStartX.current = null
+    touchStartY.current = null
+  }
 
   if (isLoading) {
     return <PageLoadingSpinner />
@@ -176,7 +222,7 @@ export function TechHubPage() {
       />
 
       {/* Hero Header */}
-      <div className="relative py-12 md:py-16 overflow-hidden bg-surface-950/40 border-b border-black/[0.06] dark:border-white/[0.06]">
+      <div className={`relative py-12 md:py-16 overflow-hidden bg-surface-950/40 border-b border-black/[0.06] dark:border-white/[0.06] ${readingMode ? 'hidden' : ''}`}>
         <div className="absolute inset-0 bg-gradient-to-r from-accent-purple/5 to-accent-cyan/5 pointer-events-none" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-4xl">
@@ -226,7 +272,7 @@ export function TechHubPage() {
       </div>
 
       {/* Tabs Selector Navigation */}
-      <div className="sticky top-16 md:top-[4.5rem] z-40 bg-surface-900/90 backdrop-blur-md border-b border-black/[0.06] dark:border-white/[0.06]">
+      <div className={`sticky top-16 md:top-[4.5rem] z-40 bg-surface-900/90 backdrop-blur-md border-b border-black/[0.06] dark:border-white/[0.06] ${readingMode ? 'hidden' : 'hidden md:block'}`}>
         <div className="container mx-auto px-4">
           <div className="flex overflow-x-auto no-scrollbar py-3 gap-2">
             {[
@@ -257,7 +303,11 @@ export function TechHubPage() {
       </div>
 
       {/* Tab Contents */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div 
+        className={`container mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-24 md:pb-10 ${readingMode ? 'pt-4' : ''}`}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
         
         {/* Certificate Banner */}
         {progressPercent === 100 && (
@@ -438,103 +488,200 @@ export function TechHubPage() {
 
         {/* STUDY NOTES TAB */}
         {activeTab === 'notes' && (
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            {/* Chapters sidebar list */}
-            <div className="lg:col-span-1 space-y-2">
-              <h3 className="font-bold text-xs uppercase tracking-wider text-text-muted px-2 mb-3">Syllabus Chapters</h3>
-              {data.notes.map((ch) => (
+          <div className="space-y-4">
+            
+            {/* Collapsible Sidebar selector for Mobile (visible only on mobile and when not in reading mode) */}
+            {!readingMode && (
+              <div className="lg:hidden mb-4">
                 <button
-                  key={ch.id}
-                  onClick={() => setActiveChapterId(ch.id)}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center justify-between group ${
-                    activeChapterId === ch.id
-                      ? 'bg-accent-purple/10 text-accent-purple border border-accent-purple/20'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-black/[0.02] dark:hover:bg-white/[0.02] border border-transparent'
-                  }`}
+                  onClick={() => setSidebarOpen(prev => !prev)}
+                  className="w-full flex items-center justify-between p-3.5 rounded-xl border border-black/[0.06] dark:border-white/[0.06] bg-surface-950/40 text-text-primary font-semibold text-sm"
                 >
-                  <span className="truncate">{ch.title.split(': ')[1] || ch.title}</span>
-                  <ChevronRight className={`w-4 h-4 shrink-0 transition-transform ${activeChapterId === ch.id ? 'translate-x-0.5' : 'opacity-0 group-hover:opacity-100'}`} />
+                  <span className="flex items-center gap-2">
+                    <BookOpen className="w-4 h-4 text-accent-purple" />
+                    {activeChapter?.title || 'Select Chapter'}
+                  </span>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${sidebarOpen ? 'rotate-180' : ''}`} />
                 </button>
-              ))}
-            </div>
-
-            {/* Active Chapter Details display */}
-            <div className="lg:col-span-3 space-y-6">
-              {activeChapter ? (
-                <Card className="space-y-6">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h2 className="text-2xl font-bold text-text-primary">{activeChapter.title}</h2>
-                      <div className="h-0.5 w-12 bg-accent-purple mt-2" />
-                    </div>
-                    <button
-                      onClick={() => {
-                        toggleBookmark({
-                          id: `${techKey}-note-${activeChapter.id}`,
-                          type: 'note',
-                          techId: techKey,
-                          title: activeChapter.title,
-                          subtitle: `${techTitle} Study Notes`,
-                          savedAt: new Date().toISOString()
-                        })
-                      }}
-                      className={`p-2 rounded-xl border transition-all ${
-                        isBookmarked(`${techKey}-note-${activeChapter.id}`)
-                          ? 'bg-accent-purple/20 border-accent-purple/30 text-accent-purple'
-                          : 'bg-transparent border-border/30 text-text-secondary hover:text-text-primary'
-                      }`}
-                      title="Bookmark Notes"
-                    >
-                      <Bookmark className="w-4 h-4" fill={isBookmarked(`${techKey}-note-${activeChapter.id}`) ? "currentColor" : "none"} />
-                    </button>
+                
+                {sidebarOpen && (
+                  <div className="mt-2 p-2 rounded-2xl bg-surface-900 border border-black/[0.06] dark:border-white/[0.06] space-y-1 z-30 relative shadow-xl">
+                    {data.notes.map((ch) => (
+                      <button
+                        key={ch.id}
+                        onClick={() => {
+                          setActiveChapterId(ch.id)
+                          setSidebarOpen(false)
+                        }}
+                        className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-semibold ${
+                          activeChapterId === ch.id
+                            ? 'bg-accent-purple text-white'
+                            : 'text-text-secondary hover:bg-surface-850 hover:text-text-primary'
+                        }`}
+                      >
+                        {ch.title}
+                      </button>
+                    ))}
                   </div>
+                )}
+              </div>
+            )}
 
-                  <p className="text-text-secondary leading-relaxed text-base">
-                    {activeChapter.content}
-                  </p>
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+              
+              {/* Chapters sidebar list (hidden on mobile and hidden in reading mode) */}
+              <div className={`lg:col-span-1 space-y-2 ${readingMode ? 'hidden' : 'hidden lg:block'}`}>
+                <h3 className="font-bold text-xs uppercase tracking-wider text-text-muted px-2 mb-3">Syllabus Chapters</h3>
+                {data.notes.map((ch) => (
+                  <button
+                    key={ch.id}
+                    onClick={() => setActiveChapterId(ch.id)}
+                    className={`w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center justify-between group ${
+                      activeChapterId === ch.id
+                        ? 'bg-accent-purple/10 text-accent-purple border border-accent-purple/20'
+                        : 'text-text-secondary hover:text-text-primary hover:bg-black/[0.02] dark:hover:bg-white/[0.02] border border-transparent'
+                    }`}
+                  >
+                    <span className="truncate">{ch.title.split(': ')[1] || ch.title}</span>
+                    <ChevronRight className={`w-4 h-4 shrink-0 transition-transform ${activeChapterId === ch.id ? 'translate-x-0.5' : 'opacity-0 group-hover:opacity-100'}`} />
+                  </button>
+                ))}
+              </div>
 
-                  {/* Summary Box */}
-                  {activeChapter.summary && (
-                    <div className="p-4 rounded-xl bg-accent-purple/5 border border-accent-purple/20">
-                      <div className="text-xs font-bold uppercase tracking-wider text-accent-purple mb-1">Key Takeaway</div>
-                      <p className="text-text-secondary text-sm leading-relaxed">{activeChapter.summary}</p>
+              {/* Active Chapter Details display */}
+              <div className={readingMode ? 'lg:col-span-4' : 'lg:col-span-3'}>
+                {activeChapter ? (
+                  <Card className="space-y-6">
+                    {/* Chapter reading progress indicator */}
+                    <div>
+                      {(() => {
+                        const activeIndex = data.notes.findIndex(ch => ch.id === activeChapter.id)
+                        const totalNotes = data.notes.length
+                        const pctRead = Math.round(((activeIndex + 1) / totalNotes) * 100)
+                        return (
+                          <div className="mb-4">
+                            <div className="flex justify-between items-center text-xs text-text-secondary mb-1.5 font-medium">
+                              <span className="bg-surface-850 px-2.5 py-1 rounded-lg border border-black/[0.04] dark:border-white/[0.04] text-[10px] font-bold text-text-muted uppercase tracking-wider">
+                                Notes Progress
+                              </span>
+                              <span className="font-bold text-accent-purple">
+                                Chapter {activeIndex + 1} of {totalNotes} ({pctRead}%)
+                              </span>
+                            </div>
+                            <div className="w-full h-1 bg-surface-800 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-gradient-to-r from-accent-purple to-accent-cyan transition-all duration-300"
+                                style={{ width: `${pctRead}%` }}
+                              />
+                            </div>
+                          </div>
+                        )
+                      })()}
                     </div>
-                  )}
 
-                  {/* Code Editor Snippet Playground */}
-                  {activeChapter.codeSnippet && (
-                    <div className="rounded-2xl border border-black/[0.06] dark:border-white/[0.06] overflow-hidden">
-                      <div className="bg-surface-850 px-4 py-2 flex justify-between items-center border-b border-black/[0.06] dark:border-white/[0.06]">
-                        <span className="text-xs font-mono text-text-muted capitalize">
-                          {activeChapter.codeSnippet.language} Playground
-                        </span>
+                    <div className="flex justify-between items-start gap-4">
+                      <div>
+                        <h2 className="text-2xl font-bold text-text-primary">{activeChapter.title}</h2>
+                        <div className="h-0.5 w-12 bg-accent-purple mt-2" />
+                      </div>
+                      
+                      <div className="flex items-center gap-2 shrink-0">
+                        {/* Reading mode toggle */}
                         <button
-                          onClick={() => handleCopy(activeChapter.codeSnippet!.code)}
-                          className="p-1.5 rounded hover:bg-surface-800 text-text-muted hover:text-text-primary transition-all flex items-center gap-1 text-xs"
+                          onClick={() => setReadingMode(prev => !prev)}
+                          className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                            readingMode
+                              ? 'bg-accent-purple/20 border-accent-purple/30 text-accent-purple'
+                              : 'bg-transparent border-border/30 text-text-secondary hover:text-text-primary'
+                          }`}
+                          title={readingMode ? "Exit Reading Mode" : "Enter Reading Mode"}
                         >
-                          {copiedText === activeChapter.codeSnippet.code ? (
-                            <>
-                              <Check className="w-3.5 h-3.5 text-accent-emerald" /> Copied
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="w-3.5 h-3.5" /> Copy Code
-                            </>
-                          )}
+                          <BookOpen className="w-4 h-4" />
+                        </button>
+
+                        {/* Bookmark note toggle */}
+                        <button
+                          onClick={() => {
+                            toggleBookmark({
+                              id: `${techKey}-note-${activeChapter.id}`,
+                              type: 'note',
+                              techId: techKey,
+                              title: activeChapter.title,
+                              subtitle: `${techTitle} Study Notes`,
+                              savedAt: new Date().toISOString()
+                            })
+                          }}
+                          className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                            isBookmarked(`${techKey}-note-${activeChapter.id}`)
+                              ? 'bg-accent-purple/20 border-accent-purple/30 text-accent-purple'
+                              : 'bg-transparent border-border/30 text-text-secondary hover:text-text-primary'
+                          }`}
+                          title="Bookmark Notes"
+                        >
+                          <Bookmark className="w-4 h-4" fill={isBookmarked(`${techKey}-note-${activeChapter.id}`) ? "currentColor" : "none"} />
                         </button>
                       </div>
-                      <pre className="bg-surface-950 p-5 overflow-x-auto font-mono text-sm text-[#cbd5e1] leading-relaxed">
-                        <code>{activeChapter.codeSnippet.code}</code>
-                      </pre>
                     </div>
-                  )}
-                </Card>
-              ) : (
-                <div className="text-center py-12 text-text-secondary">Select a chapter on the sidebar to begin studying.</div>
-              )}
+
+                    <p className="text-text-secondary leading-relaxed text-base whitespace-pre-line">
+                      {activeChapter.content}
+                    </p>
+
+                    {/* Summary Box */}
+                    {activeChapter.summary && (
+                      <div className="p-4 rounded-xl bg-accent-purple/5 border border-accent-purple/20">
+                        <div className="text-xs font-bold uppercase tracking-wider text-accent-purple mb-1">Key Takeaway</div>
+                        <p className="text-text-secondary text-sm leading-relaxed">{activeChapter.summary}</p>
+                      </div>
+                    )}
+
+                    {/* Code Editor Snippet Playground */}
+                    {activeChapter.codeSnippet && (
+                      <div className="rounded-2xl border border-black/[0.06] dark:border-white/[0.06] overflow-hidden">
+                        <div className="bg-surface-850 px-4 py-2 flex justify-between items-center border-b border-black/[0.06] dark:border-white/[0.06]">
+                          <span className="text-xs font-mono text-text-muted capitalize">
+                            {activeChapter.codeSnippet.language} Playground
+                          </span>
+                          
+                          <div className="flex items-center gap-2">
+                            {/* Full-screen toggle button */}
+                            <button
+                              onClick={() => setFullscreenCode(activeChapter.codeSnippet!.code)}
+                              className="p-1.5 rounded hover:bg-surface-800 text-text-muted hover:text-text-primary transition-all flex items-center gap-1.5 text-xs cursor-pointer"
+                              title="Full Screen Code Examples"
+                            >
+                              <Maximize2 className="w-3.5 h-3.5" /> Fullscreen
+                            </button>
+
+                            <button
+                              onClick={() => handleCopy(activeChapter.codeSnippet!.code)}
+                              className="p-1.5 rounded hover:bg-surface-800 text-text-muted hover:text-text-primary transition-all flex items-center gap-1 text-xs cursor-pointer"
+                            >
+                              {copiedText === activeChapter.codeSnippet.code ? (
+                                <>
+                                  <Check className="w-3.5 h-3.5 text-accent-emerald" /> Copied
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="w-3.5 h-3.5" /> Copy Code
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                        <pre className="bg-surface-950 p-5 overflow-x-auto font-mono text-sm text-[#cbd5e1] leading-relaxed">
+                          <code>{activeChapter.codeSnippet.code}</code>
+                        </pre>
+                      </div>
+                    )}
+                  </Card>
+                ) : (
+                  <div className="text-center py-12 text-text-secondary">Select a chapter on the sidebar to begin studying.</div>
+                )}
+              </div>
             </div>
-            </div>
-          )}
+          </div>
+        )}
 
         {/* RESOURCES TAB */}
         {activeTab === 'resources' && (
@@ -833,6 +980,35 @@ export function TechHubPage() {
 
       {/* Floating local AI Study Guide Assistant */}
       <AIAssistant techTitle={techTitle} qaPairs={data.resources.aiQA} />
+
+      {/* Mobile-friendly bottom tab bar */}
+      <MobileTabBar activeTab={activeTab} onChangeTab={setTab} />
+
+      {/* Full-screen Code Block Overlay */}
+      {fullscreenCode && (
+        <div className="fixed inset-0 z-50 bg-[#030305]/95 flex flex-col p-4 md:p-8 overflow-hidden animate-fadeIn">
+          <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-3">
+            <span className="text-sm font-bold text-text-primary">Full-Screen Code Block</span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleCopy(fullscreenCode)}
+                className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs flex items-center gap-1.5 cursor-pointer font-semibold"
+              >
+                {copiedText === fullscreenCode ? <Check className="w-3.5 h-3.5 text-accent-emerald" /> : <Copy className="w-3.5 h-3.5" />} Copy Code
+              </button>
+              <button
+                onClick={() => setFullscreenCode(null)}
+                className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+          <pre className="flex-1 bg-black/40 rounded-xl p-5 overflow-auto font-mono text-sm leading-relaxed text-[#cbd5e1] border border-white/[0.05]">
+            <code>{fullscreenCode}</code>
+          </pre>
+        </div>
+      )}
     </>
   )
 }
