@@ -4,6 +4,7 @@ import { Layout } from './components/layout/Layout'
 import { ScrollToTop } from './components/layout/ScrollToTop'
 import { ProgressProvider } from './context/ProgressContext'
 import { AchievementProvider } from './context/AchievementContext'
+import { PageLoadingSpinner } from './components/ui/PageLoadingSpinner'
 
 
 // Lazy loaded page components
