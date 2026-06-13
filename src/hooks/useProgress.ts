@@ -40,6 +40,8 @@ const keys = {
   activity: `${PREFIX}-activity`,
   userName: `${PREFIX}-user-name`,
   pdfDownloads: `${PREFIX}-pdf-downloads`,
+  quiz: (techId: string, chapterId: string) => `${PREFIX}-quiz-${techId}-${chapterId}`,
+  achievements: `${PREFIX}-achievements`,
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -256,4 +258,67 @@ export function getAllTechProgress(
       : 0
     return { techId, completedCount, totalTopics: topicNames.length, percent }
   })
+}
+
+// ─── Chapter Quiz Scores ──────────────────────────────────────────────────────
+
+export interface QuizScore {
+  score: number
+  total: number
+}
+
+export function getQuizScore(techId: string, chapterId: string): QuizScore | null {
+  return readJson<QuizScore | null>(keys.quiz(techId, chapterId), null)
+}
+
+export function saveQuizScore(techId: string, chapterId: string, score: number, total: number): void {
+  writeJson(keys.quiz(techId, chapterId), { score, total })
+  recordActivity()
+}
+
+export function getQuizAverage(techId: string): number {
+  const prefix = `${PREFIX}-quiz-${techId}-`
+  const scores: number[] = []
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)
+    if (!key?.startsWith(prefix)) continue
+    const data = readJson<QuizScore | null>(key, null)
+    if (data && data.total > 0) {
+      scores.push(Math.round((data.score / data.total) * 100))
+    }
+  }
+
+  if (scores.length === 0) return 0
+  return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
+}
+
+export function hasPerfectQuizScore(): boolean {
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)
+    if (!key?.includes(`${PREFIX}-quiz-`)) continue
+    const data = readJson<QuizScore | null>(key, null)
+    if (data && data.total > 0 && data.score === data.total) return true
+  }
+  return false
+}
+
+export function countTechsWithProgress(techIds: string[]): number {
+  return techIds.filter((id) => {
+    const completed = getCompletedTopics(id)
+    return Object.values(completed).some(Boolean)
+  }).length
+}
+
+// ─── Achievements ─────────────────────────────────────────────────────────────
+
+export function getUnlockedAchievements(): string[] {
+  return readJson<string[]>(keys.achievements, [])
+}
+
+export function unlockAchievement(achievementId: string): boolean {
+  const current = getUnlockedAchievements()
+  if (current.includes(achievementId)) return false
+  writeJson(keys.achievements, [...current, achievementId])
+  return true
 }

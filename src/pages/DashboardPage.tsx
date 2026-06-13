@@ -26,6 +26,7 @@ import {
   getAllTechProgress
 } from '../hooks/useProgress'
 import { SEOHead } from '../components/ui/SEOHead'
+import { AchievementsPanel } from '../components/dashboard/AchievementsPanel'
 
 export function DashboardPage() {
   const [name, setName] = useState(getUserName())
@@ -161,6 +162,9 @@ export function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Achievements */}
+      <AchievementsPanel />
 
       {/* Main Grid: Goals & Tech Progress */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

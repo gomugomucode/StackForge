@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, X, Layers, BookOpen, Terminal, Briefcase, HelpCircle, Loader2, Filter } from 'lucide-react'
+import { Search, X, Layers, BookOpen, Terminal, Briefcase, HelpCircle, Loader2, Filter, Link2 } from 'lucide-react'
 
 interface SearchResult {
   title: string
   subtitle?: string
   link: string
-  type: 'Roadmap' | 'Study Chapter' | 'Cheatsheet' | 'Project' | 'Interview'
+  type: 'Roadmap' | 'Study Chapter' | 'Cheatsheet' | 'Project' | 'Interview' | 'Resource'
   techId: string
 }
 
@@ -126,6 +126,20 @@ export function SearchSystem() {
                 techId: slug
               })
             })
+
+            // 6. Index Resources sections
+            data.resources.sections.forEach((section) => {
+              section.resources.forEach((res) => {
+                const tags = [res.type, res.difficulty, res.badge].filter(Boolean).join(' · ')
+                items.push({
+                  title: res.title,
+                  subtitle: `${res.description}${tags ? ` · ${tags}` : ''}`,
+                  link: `/learn/${slug}?tab=resources`,
+                  type: 'Resource',
+                  techId: slug
+                })
+              })
+            })
           })
 
           setSearchIndex(items)
@@ -164,7 +178,8 @@ export function SearchSystem() {
         (selectedCategory === 'Chapters' && item.type === 'Study Chapter') ||
         (selectedCategory === 'Cheatsheets' && item.type === 'Cheatsheet') ||
         (selectedCategory === 'Projects' && item.type === 'Project') ||
-        (selectedCategory === 'Interviews' && item.type === 'Interview')
+        (selectedCategory === 'Interviews' && item.type === 'Interview') ||
+        (selectedCategory === 'Resources' && item.type === 'Resource')
 
       const matchesTech = selectedTech === 'All' || item.techId === selectedTech
 
@@ -226,6 +241,8 @@ export function SearchSystem() {
         return <Briefcase className="w-4 h-4 text-accent-emerald" />
       case 'Interview':
         return <HelpCircle className="w-4 h-4 text-accent-violet" />
+      case 'Resource':
+        return <Link2 className="w-4 h-4 text-accent-amber" />
       default:
         return <Search className="w-4 h-4" />
     }
@@ -261,7 +278,7 @@ export function SearchSystem() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search roadmaps, chapters, cheatsheets, projects, interviews..."
+                placeholder="Search roadmaps, chapters, cheatsheets, projects, interviews, resources..."
                 className="flex-1 bg-transparent border-none focus:outline-none text-text-primary px-3 text-sm placeholder:text-text-muted h-9"
               />
               {isIndexing ? (
@@ -295,6 +312,7 @@ export function SearchSystem() {
                   <option value="Cheatsheets">Cheatsheets</option>
                   <option value="Projects">Projects</option>
                   <option value="Interviews">Interviews</option>
+                  <option value="Resources">Resources</option>
                 </select>
 
                 {/* Technology Selector */}

@@ -1,5 +1,6 @@
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useParams, useSearchParams, Link } from 'react-router-dom'
+import { motion, AnimatePresence, type PanInfo } from 'framer-motion'
 import {
   Briefcase,
   TrendingUp,
@@ -34,14 +35,21 @@ import { LearningPathTab } from '../components/tech/LearningPathTab'
 import { SkillTreeTab } from '../components/tech/SkillTreeTab'
 import { AIAssistant } from '../components/tech/AIAssistant'
 import { MobileTabBar } from '../components/tech/MobileTabBar'
+import { ChapterQuiz } from '../components/tech/ChapterQuiz'
+import { useAchievementToast } from '../components/ui/AchievementContext'
 
 // V2 Progress Hooks
 import { 
   recordVisit, 
   isBookmarked, 
   toggleBookmark, 
-  recordPdfDownload 
+  recordPdfDownload,
+  getQuizScore,
 } from '../hooks/useProgress'
+import { checkAchievements } from '../data/achievements'
+import { getAllTechnologies } from '../data/db'
+
+const MOBILE_TAB_ORDER = ['overview', 'roadmap', 'notes', 'resources', 'projects', 'interviews', 'cheatsheets']
 
 export function TechHubPage() {
   const { technology } = useParams<{ technology: string }>()
@@ -71,10 +79,9 @@ export function TechHubPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [readingMode, setReadingMode] = useState(false)
   const [fullscreenCode, setFullscreenCode] = useState<string | null>(null)
-  
-  // Swipe refs
-  const touchStartX = useRef<number | null>(null)
-  const touchStartY = useRef<number | null>(null)
+  const [quizScoreVersion, setQuizScoreVersion] = useState(0)
+  const [slideDirection, setSlideDirection] = useState(0)
+  const { showAchievement } = useAchievementToast()
 
   // Load technology data asynchronously on mount/change
   useEffect(() => {
@@ -117,39 +124,44 @@ export function TechHubPage() {
     localStorage.setItem(`stackforge-completed-${techKey}`, JSON.stringify(completedTopics))
   }, [completedTopics, techKey])
 
-  // Swipe gesture detection between tabs on mobile
-  const tabOrder = ['overview', 'roadmap', 'notes', 'resources', 'projects', 'interviews', 'cheatsheets']
-  
-  const handleTouchStart = (e: React.TouchEvent) => {
-    const touch = e.touches[0]
-    touchStartX.current = touch.clientX
-    touchStartY.current = touch.clientY
-  }
+  // Cheatsheet categories (must be before early returns)
+  const cheatsheetCategories = useMemo(() => {
+    if (!data) return ['All']
+    const cats = new Set(data.cheatsheet.map((c) => c.category))
+    return ['All', ...Array.from(cats)]
+  }, [data])
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null || touchStartY.current === null) return
-    const touch = e.changedTouches[0]
-    const diffX = touch.clientX - touchStartX.current
-    const diffY = touch.clientY - touchStartY.current
+  const filteredCheatsheet = useMemo(() => {
+    if (!data) return []
+    return data.cheatsheet.filter((item) => {
+      const matchSearch =
+        item.command.toLowerCase().includes(cheatsheetSearch.toLowerCase()) ||
+        item.description.toLowerCase().includes(cheatsheetSearch.toLowerCase())
+      const matchCat = selectedCheatsheetCat === 'All' || item.category === selectedCheatsheetCat
+      return matchSearch && matchCat
+    })
+  }, [data, cheatsheetSearch, selectedCheatsheetCat])
 
-    // Detect horizontal swipe with minimal vertical movement
-    if (Math.abs(diffX) > 80 && Math.abs(diffY) < 40) {
-      const currentIndex = tabOrder.indexOf(activeTab)
-      if (diffX > 0) {
-        // Swipe Right -> Go to Previous Tab
-        if (currentIndex > 0) {
-          setTab(tabOrder[currentIndex - 1])
-        }
-      } else {
-        // Swipe Left -> Go to Next Tab
-        if (currentIndex < tabOrder.length - 1) {
-          setTab(tabOrder[currentIndex + 1])
-        }
-      }
+  const setTab = useCallback((tabName: string) => {
+    setSearchParams({ tab: tabName })
+  }, [setSearchParams])
+
+  const handleDragEnd = useCallback((_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    if (Math.abs(info.offset.x) < 80) return
+    const currentIndex = MOBILE_TAB_ORDER.indexOf(activeTab)
+    if (info.offset.x < 0 && currentIndex < MOBILE_TAB_ORDER.length - 1) {
+      setSlideDirection(-1)
+      setTab(MOBILE_TAB_ORDER[currentIndex + 1])
+    } else if (info.offset.x > 0 && currentIndex > 0) {
+      setSlideDirection(1)
+      setTab(MOBILE_TAB_ORDER[currentIndex - 1])
     }
-    touchStartX.current = null
-    touchStartY.current = null
-  }
+  }, [activeTab, setTab])
+
+  const triggerAchievementCheck = useCallback(() => {
+    const unlocked = checkAchievements(getAllTechnologies())
+    unlocked.forEach((a) => showAchievement(a))
+  }, [showAchievement])
 
   if (isLoading) {
     return <PageLoadingSpinner />
@@ -178,10 +190,11 @@ export function TechHubPage() {
   const progressPercent = totalTopics > 0 ? Math.round((completedCount / totalTopics) * 100) : 0
 
   const toggleTopic = (topicName: string) => {
-    setCompletedTopics((prev) => ({
-      ...prev,
-      [topicName]: !prev[topicName],
-    }))
+    setCompletedTopics((prev) => {
+      const next = { ...prev, [topicName]: !prev[topicName] }
+      return next
+    })
+    setTimeout(triggerAchievementCheck, 0)
   }
 
   const handleCopy = (text: string) => {
@@ -192,26 +205,17 @@ export function TechHubPage() {
 
   // Get active chapter
   const activeChapter = data.notes.find((ch) => ch.id === activeChapterId) || data.notes[0]
+  const activeChapterIndex = data.notes.findIndex((ch) => ch.id === activeChapter?.id)
+  const notesProgressPct = data.notes.length > 0
+    ? Math.round(((activeChapterIndex + 1) / data.notes.length) * 100)
+    : 0
 
-  // Cheatsheet categories
-  const cheatsheetCategories = useMemo(() => {
-    const cats = new Set(data.cheatsheet.map((c) => c.category))
-    return ['All', ...Array.from(cats)]
-  }, [data.cheatsheet])
+  void quizScoreVersion
 
-  // Filtered cheatsheet items
-  const filteredCheatsheet = useMemo(() => {
-    return data.cheatsheet.filter((item) => {
-      const matchSearch =
-        item.command.toLowerCase().includes(cheatsheetSearch.toLowerCase()) ||
-        item.description.toLowerCase().includes(cheatsheetSearch.toLowerCase())
-      const matchCat = selectedCheatsheetCat === 'All' || item.category === selectedCheatsheetCat
-      return matchSearch && matchCat
-    })
-  }, [data.cheatsheet, cheatsheetSearch, selectedCheatsheetCat])
-
-  const setTab = (tabName: string) => {
-    setSearchParams({ tab: tabName })
+  const getChapterQuizPercent = (chapterId: string): number | null => {
+    const score = getQuizScore(techKey, chapterId)
+    if (!score || score.total === 0) return null
+    return Math.round((score.score / score.total) * 100)
   }
 
   return (
@@ -302,12 +306,23 @@ export function TechHubPage() {
         </div>
       </div>
 
+      {/* Sticky reading progress bar — Notes tab (mobile) */}
+      {activeTab === 'notes' && data.notes.length > 0 && (
+        <>
+          <div
+            className="reading-progress-bar md:hidden"
+            style={{ width: `${notesProgressPct}%` }}
+          />
+          <div className="sticky top-16 z-30 md:hidden bg-surface-900/95 backdrop-blur-md border-b border-black/[0.06] dark:border-white/[0.06] px-4 py-2">
+            <span className="text-xs font-bold text-text-secondary">
+              Chapter {activeChapterIndex + 1} of {data.notes.length}
+            </span>
+          </div>
+        </>
+      )}
+
       {/* Tab Contents */}
-      <div 
-        className={`container mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-24 md:pb-10 ${readingMode ? 'pt-4' : ''}`}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-      >
+      <div className={`container mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-24 md:pb-10 ${readingMode ? 'pt-4' : ''}`}>
         
         {/* Certificate Banner */}
         {progressPercent === 100 && (
@@ -332,6 +347,19 @@ export function TechHubPage() {
           </div>
         )}
 
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={activeTab}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.15}
+            onDragEnd={handleDragEnd}
+            initial={{ opacity: 0, x: slideDirection >= 0 ? 40 : -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: slideDirection >= 0 ? -40 : 40 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            className="touch-pan-y"
+          >
         {/* OVERVIEW TAB */}
         {activeTab === 'overview' && (
           <div className="max-w-4xl mx-auto space-y-8">
@@ -519,7 +547,12 @@ export function TechHubPage() {
                             : 'text-text-secondary hover:bg-surface-850 hover:text-text-primary'
                         }`}
                       >
-                        {ch.title}
+                        <span className="flex items-center justify-between gap-2">
+                          <span className="truncate">{ch.title}</span>
+                          {getChapterQuizPercent(ch.id) === 100 && (
+                            <CheckCircle className="w-3.5 h-3.5 shrink-0" />
+                          )}
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -542,8 +575,16 @@ export function TechHubPage() {
                         : 'text-text-secondary hover:text-text-primary hover:bg-black/[0.02] dark:hover:bg-white/[0.02] border border-transparent'
                     }`}
                   >
-                    <span className="truncate">{ch.title.split(': ')[1] || ch.title}</span>
-                    <ChevronRight className={`w-4 h-4 shrink-0 transition-transform ${activeChapterId === ch.id ? 'translate-x-0.5' : 'opacity-0 group-hover:opacity-100'}`} />
+                    <span className="truncate flex-1">{ch.title.split(': ')[1] || ch.title}</span>
+                    <span className="flex items-center gap-1 shrink-0">
+                      {(() => {
+                        const pct = getChapterQuizPercent(ch.id)
+                        if (pct === 100) return <CheckCircle className="w-4 h-4 text-accent-emerald" />
+                        if (pct !== null) return <span className="text-[10px] font-bold text-text-muted">{pct}%</span>
+                        return null
+                      })()}
+                      <ChevronRight className={`w-4 h-4 transition-transform ${activeChapterId === ch.id ? 'translate-x-0.5' : 'opacity-0 group-hover:opacity-100'}`} />
+                    </span>
                   </button>
                 ))}
               </div>
@@ -610,6 +651,7 @@ export function TechHubPage() {
                               subtitle: `${techTitle} Study Notes`,
                               savedAt: new Date().toISOString()
                             })
+                            triggerAchievementCheck()
                           }}
                           className={`p-2 rounded-xl border transition-all cursor-pointer ${
                             isBookmarked(`${techKey}-note-${activeChapter.id}`)
@@ -673,6 +715,16 @@ export function TechHubPage() {
                           <code>{activeChapter.codeSnippet.code}</code>
                         </pre>
                       </div>
+                    )}
+
+                    {activeChapter.quizQuestions && activeChapter.quizQuestions.length > 0 && (
+                      <ChapterQuiz
+                        techId={techKey}
+                        chapterId={activeChapter.id}
+                        chapterTitle={activeChapter.title}
+                        questions={activeChapter.quizQuestions}
+                        onScoreSaved={() => setQuizScoreVersion((v) => v + 1)}
+                      />
                     )}
                   </Card>
                 ) : (
@@ -976,6 +1028,9 @@ export function TechHubPage() {
           </div>
         )}
 
+          </motion.div>
+        </AnimatePresence>
+
       </div>
 
       {/* Floating local AI Study Guide Assistant */}
@@ -986,7 +1041,7 @@ export function TechHubPage() {
 
       {/* Full-screen Code Block Overlay */}
       {fullscreenCode && (
-        <div className="fixed inset-0 z-50 bg-[#030305]/95 flex flex-col p-4 md:p-8 overflow-hidden animate-fadeIn">
+        <div className="code-overlay animate-fadeIn">
           <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-3">
             <span className="text-sm font-bold text-text-primary">Full-Screen Code Block</span>
             <div className="flex items-center gap-2">
