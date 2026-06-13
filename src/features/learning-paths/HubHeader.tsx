@@ -36,7 +36,7 @@ const HubHeader: React.FC = () => {
               placeholder="What do you want to learn today? (e.g. 'React Server Components')" 
               className="w-full bg-transparent border-none focus:ring-0 text-white placeholder:text-gray-500"
             />
-          </div>
+          </div>>
           <button className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-bold flex items-center gap-2 hover:bg-indigo-500 transition-all active:scale-95">
             Explore <ArrowRight size={18} />
           </button>
