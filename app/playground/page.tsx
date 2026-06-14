@@ -1,17 +1,18 @@
-import { useState } from 'react'
-import { Play, Save, Share2, Code2, RotateCcw, BookOpen } from 'lucide-react'
-import { usePlayground } from '../features/playground/usePlayground'
-import { CodeEditor } from '../features/playground/CodeEditor'
-import { OutputPanel } from '../features/playground/OutputPanel'
-import { LanguageSelector } from '../features/playground/LanguageSelector'
-import { ShareModal } from '../features/playground/ShareModal'
-import { saveSnippet, getSavedSnippets, DEFAULT_CODE } from '../features/playground/playgroundService'
-import type { PlaygroundLanguage } from '../core/types/phase5'
-import { SEOHead } from '../components/ui/SEOHead'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Braces, ChevronDown } from 'lucide-react'
+'use client'
 
-export function PlaygroundPage() {
+import { useState } from 'react'
+import { Play, Save, Share2, Code2, RotateCcw, BookOpen, Braces, ChevronDown } from 'lucide-react'
+import { usePlayground } from '@/features/playground/usePlayground'
+import { CodeEditor } from '@/features/playground/CodeEditor'
+import { OutputPanel } from '@/features/playground/OutputPanel'
+import { LanguageSelector } from '@/features/playground/LanguageSelector'
+import { ShareModal } from '@/features/playground/ShareModal'
+import { saveSnippet, getSavedSnippets, DEFAULT_CODE } from '@/features/playground/playgroundService'
+import type { PlaygroundLanguage } from '@/lib/core/types/phase5'
+import { SEOHead } from '@/components/ui/SEOHead'
+import { motion, AnimatePresence } from 'framer-motion'
+
+export default function PlaygroundPage() {
   const {
     language, setLanguage,
     code, setCode,

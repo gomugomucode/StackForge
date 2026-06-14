@@ -1,6 +1,7 @@
+'use client'
 
-import { ContentBrowser } from '../features/content-browser/ContentBrowser';
-import { contentService } from '../core/content/contentService';
+import { ContentBrowser } from '@/features/content-browser/ContentBrowser';
+import { contentService } from '@/lib/core/content/contentService';
 
 const TutorialsPage = () => {
   const tutorials = contentService.getContentByType('tutorial');
