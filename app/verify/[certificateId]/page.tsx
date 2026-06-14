@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { SEOHead } from '@/components/ui/SEOHead'
-import { certificateService } from '../features/certificates/certificateService'
-import { CertificateCard } from '../features/certificates/CertificateCard'
-import type { CertificateRecord } from '../features/certificates/types'
+import { certificateService } from '@/features/certificates/certificateService'
+import { CertificateCard } from '@/features/certificates/CertificateCard'
+import type { CertificateRecord } from '@/features/certificates/types'
 import { ShieldCheck, Search, ShieldAlert, FileSearch, ArrowLeft, Loader2 } from 'lucide-react'
 
 export function VerifyPage() {

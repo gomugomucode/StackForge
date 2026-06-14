@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom'
 import { SEOHead } from '@/components/ui/SEOHead'
 import { technologyMetadata } from '@/lib/data/db'
 import { getAllTechProgress, getUserName, setUserName } from '@/lib/core/hooks/useProgress'
-import { certificateService } from '../features/certificates/certificateService'
-import { QRCodeDisplay } from '../features/certificates/QRCodeDisplay'
-import type { CertificateRecord } from '../features/certificates/types'
+import { certificateService } from '@/features/certificates/certificateService'
+import { QRCodeDisplay } from '@/features/certificates/QRCodeDisplay'
+import type { CertificateRecord } from '@/features/certificates/types'
 import { Award, Lock, ShieldCheck, ArrowRight, User, Check, X, QrCode, ExternalLink, Trophy } from 'lucide-react'
 
 export function CertificateCenterPage() {
