@@ -63,11 +63,11 @@ export function WeeklyChallenge() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3">
-                <Button to="/#weekly-challenge" size="lg">
+                <Button href="/#weekly-challenge" size="lg">
                   Start This Week&apos;s Quiz
                   <ArrowRight className="w-5 h-5" />
                 </Button>
-                <Button to="/resources" variant="secondary" size="lg">
+                <Button href="/resources" variant="secondary" size="lg">
                   Browse All Quizzes
                 </Button>
               </div>

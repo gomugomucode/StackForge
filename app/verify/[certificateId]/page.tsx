@@ -71,7 +71,7 @@ export function VerifyPage() {
           {/* Header */}
           <div className="flex items-center gap-3">
             <Link
-              to="/certificates"
+              href="/certificates"
               className="p-2 bg-[#161b22] border border-white/[0.06] rounded-xl hover:bg-[#1f242c] transition-colors text-[#8b949e] hover:text-white"
             >
               <ArrowLeft className="w-4 h-4" />

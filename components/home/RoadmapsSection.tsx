@@ -25,7 +25,7 @@ export function RoadmapsSection() {
           {roadmaps.map((roadmap) => (
             <Link
               key={roadmap.id}
-              to="/roadmaps"
+              href="/roadmaps"
               className={`group relative block overflow-hidden rounded-2xl border border-black/[0.06] dark:border-white/[0.06] bg-gradient-to-br from-surface-900 to-surface-800 p-6 md:p-8 hover:border-accent-purple/40 transition-all duration-300 hover:-translate-y-1`}
             >
               <div className="relative z-10">

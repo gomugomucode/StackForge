@@ -56,12 +56,12 @@ export function Hero() {
             transition={{ duration: 0.65, delay: 0.45 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <Button to="/#weekly-challenge" size="lg">
+            <Button href="/#weekly-challenge" size="lg">
               <Zap className="w-5 h-5" />
               Start Learning
               <ArrowRight className="w-5 h-5" />
             </Button>
-            <Button to="/resources" variant="secondary" size="lg">
+            <Button href="/resources" variant="secondary" size="lg">
               <Play className="w-5 h-5" />
               Explore Resources
             </Button>

@@ -107,7 +107,7 @@ export function LatestArticles() {
 
         <div className="text-center mt-10">
           <Link
-            to="/blog"
+            href="/blog"
             className="inline-flex items-center gap-2 text-accent-purple font-semibold hover:text-accent-violet transition-colors"
           >
             View All Articles

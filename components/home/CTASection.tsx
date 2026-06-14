@@ -59,11 +59,11 @@ export function CTASection({ variant = 'primary' }: CTASectionProps) {
                 Join thousands of learners mastering code with free courses, quizzes, and resources — no signup required.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Button to="/#weekly-challenge" size="lg">
+                <Button href="/#weekly-challenge" size="lg">
                   Start Learning Free
                   <ArrowRight className="w-5 h-5" />
                 </Button>
-                <Button to="/resources" variant="secondary" size="lg">
+                <Button href="/resources" variant="secondary" size="lg">
                   Browse Resources
                 </Button>
               </div>
