@@ -30,6 +30,12 @@ const BookmarksPage = lazy(() => import('./pages/BookmarksPage'))
 const ComparePage = lazy(() => import('./pages/ComparePage').then(m => ({ default: m.ComparePage })))
 const SkillTreePage = lazy(() => import('./pages/SkillTreePage').then(m => ({ default: m.SkillTreePage })))
 const CertificatePage = lazy(() => import('./pages/CertificatePage').then(m => ({ default: m.CertificatePage })))
+const PlaygroundPage = lazy(() => import('./pages/PlaygroundPage').then(m => ({ default: m.PlaygroundPage })))
+const AIMentorPage = lazy(() => import('./pages/AIMentorPage').then(m => ({ default: m.AIMentorPage })))
+const CertificateCenterPage = lazy(() => import('./pages/CertificateCenterPage'))
+const VerifyPage = lazy(() => import('./pages/VerifyPage'))
+const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'))
+const MarketplacePage = lazy(() => import('./pages/MarketplacePage'))
 
 export default function App() {
   return (
@@ -61,14 +67,20 @@ export default function App() {
                     <Route path="/cheatsheets" element={<CheatsheetsPage />} />
                     <Route path="/interview-prep" element={<InterviewPrepPage />} />
                     <Route path="/projects" element={<ProjectsPage />} />
-                    <Route path="/certifications" element={<CertificationsPage />} />
+                    <Route path="/certifications" element={<CertificateCenterPage />} />
+                    <Route path="/certificates" element={<CertificateCenterPage />} />
+                    <Route path="/verify" element={<VerifyPage />} />
+                    <Route path="/analytics" element={<AnalyticsPage />} />
+                    <Route path="/marketplace" element={<MarketplacePage />} />
                     <Route path="/tools" element={<ToolsPage />} />
                     <Route path="/u/:username" element={<ProfilePage />} />
                     <Route path="/community" element={<CommunityPage />} />
                     
                     {/* Tech Hub Page */}
                     <Route path="/learn/:technology" element={<TechHubPage />} />
-<Route path="/skill-tree/:technology" element={<SkillTreePage />} />
+                    <Route path="/skill-tree/:technology" element={<SkillTreePage />} />
+                    <Route path="/playground" element={<PlaygroundPage />} />
+                    <Route path="/mentor/:technology" element={<AIMentorPage />} />
                   </Route>
                 </Routes>
               </Suspense>
