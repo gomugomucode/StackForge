@@ -79,3 +79,4 @@ export function SkillTreePage() {
     </div>
   )
 }
+export default SkillTreePage;

@@ -28,6 +28,7 @@ const TechHubPage = lazy(() => import('./pages/TechHubPage').then(m => ({ defaul
 const DashboardPage = lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })))
 const BookmarksPage = lazy(() => import('./pages/BookmarksPage'))
 const ComparePage = lazy(() => import('./pages/ComparePage').then(m => ({ default: m.ComparePage })))
+const SkillTreePage = lazy(() => import('./pages/SkillTreePage').then(m => ({ default: m.SkillTreePage })))
 const CertificatePage = lazy(() => import('./pages/CertificatePage').then(m => ({ default: m.CertificatePage })))
 
 export default function App() {
@@ -67,6 +68,7 @@ export default function App() {
                     
                     {/* Tech Hub Page */}
                     <Route path="/learn/:technology" element={<TechHubPage />} />
+<Route path="/skill-tree/:technology" element={<SkillTreePage />} />
                   </Route>
                 </Routes>
               </Suspense>
