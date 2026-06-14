@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Lock, Trophy } from 'lucide-react'
 import { ACHIEVEMENTS } from '../../data/achievements'
-import { getUnlockedAchievements } from '../../hooks/useProgress'
+import { getUnlockedAchievements } from '../../core/hooks/useProgress'
 
 export function AchievementsPanel() {
   const unlockedIds = useMemo(() => new Set(getUnlockedAchievements()), [])

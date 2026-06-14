@@ -17,18 +17,18 @@ export const syncService = {
 
   async syncBookmarks(userId: string, localBookmarks: string[]) {
     // 1. Get current cloud bookmarks
-    const { data: cloudBookmarks } = await supabase
+    const { dataS } = await supabase
       .from('bookmarks')
       .select('content_slug')
       .eq('user_id', userId);
 
-    const cloudSlugs = cloudBookmarks?.map(b => b.content_slug) || [];
+    const cloudSlugs = dataS?.map((b: any) => b.content_slug) || [];
     
     // 2. Find what to add (in local, not in cloud)
     const toAdd = localBookmarks.filter(slug => !cloudSlugs.includes(slug));
     
     // 3. Find what to remove (in cloud, not in local)
-    const toRemove = cloudSlugs.filter(slug => !localBookmarks.includes(slug));
+    const toRemove = cloudSlugs.filter((slug: string) => !localBookmarks.includes(slug));
 
     if (toAdd.length > 0) {
       await supabase.from('bookmarks').insert(

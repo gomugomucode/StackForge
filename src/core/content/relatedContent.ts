@@ -1,5 +1,5 @@
 import { ContentIndexer } from './contentIndexer';
-import { ContentMetadata } from '../types/content';
+import type { ContentMetadata } from '../types/content';
 
 export const relatedContentService = {
   getRelatedContent(currentSlug: string, currentType: string, limit = 4): ContentMetadata[] {

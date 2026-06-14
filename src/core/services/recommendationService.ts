@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import { ContentMetadata } from '../types/content';
+import type { ContentMetadata } from '../types/content';
 
 export const recommendationService = {
   async getRecommendedContent(userId: string): Promise<ContentMetadata[]> {
@@ -14,7 +14,7 @@ export const recommendationService = {
 
     // 2. Simple Recommendation Logic:
     // Find items in the same categories as completed ones, but not yet completed
-    const categories = [...new Set(completed.map(c => c.category))];
+    const categories = [...new Set(completed.map((c: any) => c.category))];
     
     // This would normally call a dedicated API, here we filter from our content index
     // In a real app, this would be a Supabase RPC call to a specialized recommendation function

@@ -1,5 +1,5 @@
 import { ContentIndexer } from './contentIndexer';
-import { ContentItem, ContentMetadata } from '../types/content';
+import type { ContentItem, ContentMetadata } from '../types/content';
 
 export const contentService = {
   async init() {

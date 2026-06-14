@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { Clock, Layers, ArrowRight } from 'lucide-react'
 import { roadmaps } from '../../data/roadmaps'
 import { SectionHeader } from '../ui/SectionHeader'
-import { useScrollAnimation } from '../../hooks/useScrollAnimation'
+import { useScrollAnimation } from '../../core/hooks/useScrollAnimation'
 
 export function RoadmapsSection() {
   const { ref, isVisible } = useScrollAnimation()

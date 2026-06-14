@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import type { Article } from '../../data/articles'
 import { articles } from '../../data/articles'
 import { SectionHeader } from '../ui/SectionHeader'
-import { useScrollAnimation } from '../../hooks/useScrollAnimation'
+import { useScrollAnimation } from '../../core/hooks/useScrollAnimation'
 
 interface HighlightTextProps {
   text: string

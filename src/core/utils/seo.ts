@@ -1,4 +1,4 @@
-import { ContentMetadata } from '../core/types/content';
+import type { ContentMetadata } from '../core/types/content';
 
 export const seoService = {
   generateMetaTags(item: ContentMetadata) {

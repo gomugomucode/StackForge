@@ -23,8 +23,6 @@ const BookmarksPage = () => {
 
     if (error) console.error(error);
     
-    // In a real app, we'd resolve the slugs to actual metadata from our ContentIndexer
-    // For now, we simulate the metadata resolution
     const resolved = data?.map(b => ({
       title: b.content_slug.replace(/-/g, ' '),
       slug: b.content_slug,

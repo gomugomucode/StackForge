@@ -1,6 +1,6 @@
 import { CheckCircle, ArrowRight, Trophy } from 'lucide-react'
 import { Button } from '../ui/Button'
-import { useScrollAnimation } from '../../hooks/useScrollAnimation'
+import { useScrollAnimation } from '../../core/hooks/useScrollAnimation'
 
 const features = [
   'New questions every week',

@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ContentCard } from '../../components/ui/ContentCard';
-import { Roadmap } from '../../core/types/content';
+import type { Roadmap } from '../../core/types/content-extensions';
 
 interface LearningPathGridProps {
   roadmaps: Roadmap[];
