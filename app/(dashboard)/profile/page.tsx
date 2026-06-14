@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAuth } from '../context/AuthProvider';
+import { useAuth } from '@/lib/core/context/AuthProvider';
 import { supabase } from '../lib/supabase';
 import { User, GitBranch, Globe, Camera, Save } from 'lucide-react';
 

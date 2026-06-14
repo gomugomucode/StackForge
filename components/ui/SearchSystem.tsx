@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import { Search, X, Layers, BookOpen, Terminal, Briefcase, HelpCircle, Loader2, Filter, Link2 } from 'lucide-react'
 
 interface SearchResult {
@@ -20,7 +20,7 @@ export function SearchSystem() {
   
   const modalRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const navigate = useNavigate()
+  const navigate = useRouter()
 
   // Toggle modal on keyboard shortcut Cmd+K or Ctrl+K
   useEffect(() => {

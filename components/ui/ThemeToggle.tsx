@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sun, Moon } from 'lucide-react'
-import { useTheme } from '../../context/ThemeProvider'
+import { useTheme } from '@/lib/core/context/ThemeProvider'
 
 interface ThemeToggleProps {
   className?: string

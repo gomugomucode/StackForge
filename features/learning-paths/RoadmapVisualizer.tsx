@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Lock } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 export interface VisualizerNode {
   id: string;

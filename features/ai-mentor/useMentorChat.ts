@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { MentorMode, MentorMessage, QuizQuestion } from './types'
 import { getMentorResponse, getWelcomeMessage } from './aiMentorService'
-import { useProgress } from '../../context/ProgressContext'
+import { useProgress } from '@/lib/core/context/ProgressContext'
 
 export function useMentorChat(techId: string, initialMode: MentorMode = 'explain') {
   const { addXP } = useProgress()

@@ -1,6 +1,6 @@
-import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthProvider';
+import React, { useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useAuth } from '@/lib/core/context/AuthProvider';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -8,7 +8,14 @@ interface ProtectedRouteProps {
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user, loading } = useAuth();
-  const location = useLocation();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user && pathname !== '/login') {
+      router.push('/login');
+    }
+  }, [user, loading, pathname, router]);
 
   if (loading) {
     return (
@@ -18,8 +25,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
-  if (!user && location.pathname !== '/login') {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  if (!user && pathname !== '/login') {
+    return null;
   }
 
   return <>{children}</>;

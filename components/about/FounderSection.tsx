@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { ArrowRight, Award, CheckCircle } from 'lucide-react'
 import { founder, missionStatement } from '@/lib/data/founder'
 import { getIcon } from '@/lib/core/utils/icons'
@@ -44,7 +44,7 @@ export function FounderPreview() {
                   ))}
                 </div>
 
-                <Button to="/about" variant="outline" size="sm">
+                <Button href="/about" variant="outline" size="sm">
                   View Full Profile
                   <ArrowRight className="w-4 h-4" />
                 </Button>
@@ -153,7 +153,7 @@ export function AboutContent() {
                   Message on WhatsApp
                 </Button>
                 <Link
-                  to="/blog"
+                  href="/blog"
                   className="block text-center text-sm text-accent-purple hover:text-accent-violet transition-colors pt-2"
                 >
                   Read our latest articles →

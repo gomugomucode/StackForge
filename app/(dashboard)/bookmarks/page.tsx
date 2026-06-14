@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthProvider';
+import { useAuth } from '@/lib/core/context/AuthProvider';
 import { supabase } from '../lib/supabase';
 import { Bookmark, Trash2, BookOpen } from 'lucide-react';
 import { ContentCard } from '@/components/ui/ContentCard';

@@ -1,5 +1,5 @@
 import { Calendar, Clock, ArrowRight } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import type { Article } from '@/lib/data/articles'
 import { articles } from '@/lib/data/articles'
 import { SectionHeader } from '../ui/SectionHeader'
@@ -107,7 +107,7 @@ export function LatestArticles() {
 
         <div className="text-center mt-10">
           <Link
-            to="/blog"
+            href="/blog"
             className="inline-flex items-center gap-2 text-accent-purple font-semibold hover:text-accent-violet transition-colors"
           >
             View All Articles

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { Users, ChevronRight } from 'lucide-react'
 import { popularLanguages } from '@/lib/data/languages'
 import { SectionHeader } from '../ui/SectionHeader'
@@ -25,7 +25,7 @@ export function PopularLanguages() {
           {popularLanguages.map((lang) => (
             <Link
               key={lang.slug}
-              to={`/learn/${lang.slug}`}
+              href={`/learn/${lang.slug}`}
               className="group text-left p-5 rounded-2xl bg-surface-950/80 border border-black/[0.06] dark:border-white/[0.06] hover:border-accent-purple/40 hover:bg-surface-850 transition-all duration-300 hover:-translate-y-0.5 block"
             >
               <div className="flex items-center gap-3 mb-3">

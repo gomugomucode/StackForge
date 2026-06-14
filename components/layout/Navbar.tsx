@@ -1,5 +1,6 @@
-import { Link, NavLink } from 'react-router-dom'
+import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Layers, ChevronDown } from 'lucide-react'
 import { navLinks, academyLinks, brandName } from '@/lib/data/navigation'
@@ -12,6 +13,7 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [academyDropdownOpen, setAcademyDropdownOpen] = useState(false)
   const [mobileAcademyOpen, setMobileAcademyOpen] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -28,7 +30,7 @@ export function Navbar() {
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
         <div className="flex items-center justify-between h-16 md:h-[4.5rem]">
           {/* Logo Brand */}
-          <Link to="/" className="flex items-center gap-2.5 group shrink-0" aria-label={`${brandName} home`}>
+          <Link href="/" className="flex items-center gap-2.5 group shrink-0" aria-label={`${brandName} home`}>
             <motion.div
               whileHover={{ scale: 1.05, rotate: 3 }}
               transition={{ type: 'spring', stiffness: 400 }}
@@ -41,31 +43,27 @@ export function Navbar() {
 
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center gap-1.5 p-1 rounded-xl glass">
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.href}
-                to={link.href}
-                end={link.href === '/'}
-                className={({ isActive }) =>
-                  `relative px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`relative px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                     isActive ? 'text-text-primary' : 'text-text-secondary hover:text-text-primary'
-                  }`
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    {isActive && (
-                      <motion.span
-                        layoutId="nav-pill"
-                        className="absolute inset-0 bg-accent-purple/15 border border-accent-purple/20 rounded-lg"
-                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                      />
-                    )}
-                    <span className="relative z-10">{link.label}</span>
-                  </>
-                )}
-              </NavLink>
-            ))}
+                  }`}
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-pill"
+                      className="absolute inset-0 bg-accent-purple/15 border border-accent-purple/20 rounded-lg"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10">{link.label}</span>
+                </Link>
+              )
+            })}
 
             {/* Academy Dropdown trigger */}
             <div
@@ -97,7 +95,7 @@ export function Navbar() {
                     {academyLinks.map((sublink) => (
                       <Link
                         key={sublink.href}
-                        to={sublink.href}
+                        href={sublink.href}
                         role="menuitem"
                         className="block px-3 py-2 rounded-lg text-sm text-text-secondary hover:text-text-primary hover:bg-black/[0.03] dark:hover:bg-white/[0.03] transition-all font-medium"
                       >
@@ -114,13 +112,13 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             <SearchSystem />
             <ThemeToggle />
-            <Button to="/dashboard" variant="ghost" size="sm">
+            <Button href="/dashboard" variant="ghost" size="sm">
               Dashboard
             </Button>
-            <Button to="/roadmaps" variant="ghost" size="sm">
+            <Button href="/roadmaps" variant="ghost" size="sm">
               Syllabus
             </Button>
-            <Button to="/#weekly-challenge" variant="primary" size="sm">
+            <Button href="/#weekly-challenge" variant="primary" size="sm">
               Get Started
             </Button>
           </div>
@@ -152,23 +150,23 @@ export function Navbar() {
             >
               <div className="pb-4 pt-2 border-t border-black/[0.06] dark:border-white/[0.06]">
                 <div className="flex flex-col gap-1">
-                  {navLinks.map((link) => (
-                    <NavLink
-                      key={link.href}
-                      to={link.href}
-                      end={link.href === '/'}
-                      onClick={() => setMobileOpen(false)}
-                      className={({ isActive }) =>
-                        `px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                  {navLinks.map((link) => {
+                    const isActive = pathname === link.href
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        onClick={() => setMobileOpen(false)}
+                        className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                           isActive
                             ? 'text-accent-purple bg-accent-purple/10 font-semibold'
                             : 'text-text-secondary hover:text-text-primary hover:bg-black/[0.02] dark:hover:bg-white/[0.02]'
-                        }`
-                      }
-                    >
-                      {link.label}
-                    </NavLink>
-                  ))}
+                        }`}
+                      >
+                        {link.label}
+                      </Link>
+                    )
+                  })}
 
                   {/* Collapsible Mobile Academy Section */}
                   <div>
@@ -194,7 +192,7 @@ export function Navbar() {
                           {academyLinks.map((sublink) => (
                             <Link
                               key={sublink.href}
-                              to={sublink.href}
+                              href={sublink.href}
                               role="menuitem"
                               onClick={() => {
                                 setMobileOpen(false)
@@ -212,7 +210,7 @@ export function Navbar() {
 
                   <div className="pt-3 px-2 flex items-center justify-between gap-4 border-t border-black/[0.04] dark:border-white/[0.04] mt-2">
                     <ThemeToggle />
-                    <Button to="/#weekly-challenge" variant="primary" size="md" className="flex-1" onClick={() => setMobileOpen(false)}>
+                    <Button href="/#weekly-challenge" variant="primary" size="md" className="flex-1" onClick={() => setMobileOpen(false)}>
                       Get Started
                     </Button>
                   </div>

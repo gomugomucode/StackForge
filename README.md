@@ -43,54 +43,91 @@ app/
 ├───(api)
 │   └───auth
 │       └───[...nextauth]
+│           └───route.ts
 ├───(auth)
 │   └───login
+│       └───page.tsx
 ├───(dashboard)
 │   ├───bookmarks
+│   │   └───page.tsx
 │   └───profile
+│       └───page.tsx
 ├───about
+│   └───page.tsx
 ├───analytics
+│   └───page.tsx
 ├───blog
+│   └───page.tsx
 ├───certificates
+│   ├───page.tsx
 │   └───[id]
+│       └───page.tsx
 ├───certifications
+│   └───page.tsx
 ├───cheatsheets
+│   ├───page.tsx
 │   ├───[slug]
-│   │   └───
+│   │   └───page.tsx
 │   └───[slug]
+│       └───page.tsx
 ├───community
+│   └───page.tsx
 ├───compare
+│   └───page.tsx
 ├───interview-prep
+│   └───page.tsx
 ├───learn
+│   (no files)
 ├───marketplace
+│   └───page.tsx
 ├───mentor
+│   └───page.tsx
 ├───notes
+│   └───page.tsx
 ├───playground
+│   └───page.tsx
 ├───profile
+│   (no files)
 ├───projects
+│   ├───page.tsx
 │   ├───[slug]
-│   │   └───
+│   │   └───page.tsx
 │   └───[slug]
+│       └───page.tsx
 ├───resources
+│   └───page.tsx
 ├───roadmaps
+│   ├───page.tsx
 │   ├───[slug]
-│   │   └───
+│   │   └───page.tsx
 │   └───[slug]
+│       └───page.tsx
 ├───settings
+│   (no files)
 ├───skill-tree
+│   └───page.tsx
 ├───tech-hub
+│   └───page.tsx
 ├───tools
+│   └───page.tsx
 ├───tutorials
+│   ├───page.tsx
 │   ├───[slug]
-│   │   └───
+│   │   └───page.tsx
 │   └───[slug]
+│       └───page.tsx
 └───verify
     ├───[certificateId]
-    │   └───
+    │   └───page.tsx
     └───[certificateId]
-├─ api/
-├─ layout.tsx
-└─ page.tsx
+        └───page.tsx
+
+globals.css
+layout.tsx
+page.tsx
+api/
+    auth/
+        route.ts
 auth.ts
 middleware.ts
 components/
@@ -101,10 +138,10 @@ public/
 features/
 scripts/
 server/
-├─ db/
-└─ repositories/
+    db/
+    repositories/
 supabase/
-└─ migrations/e
+    migrations/
 ```
 
 ## License

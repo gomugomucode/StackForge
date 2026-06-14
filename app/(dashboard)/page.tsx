@@ -9,8 +9,8 @@ import {
   ArrowRight, 
   Bookmark
 } from 'lucide-react';
-import { useProgress } from '../context/ProgressContext';
-import { useAchievements } from '../context/AchievementContext';
+import { useProgress } from '@/lib/core/context/ProgressContext';
+import { useAchievements } from '@/lib/core/context/AchievementContext';
 import { SEOHead } from '@/components/ui/SEOHead';
 import { Button } from '@/components/ui/Button';
 

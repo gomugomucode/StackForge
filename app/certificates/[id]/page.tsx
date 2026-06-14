@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams } from 'next/navigation'
+import Link from 'next/link'
 import { Lock, ArrowLeft, Printer, Check, User } from 'lucide-react'
 import { getTechData } from '@/lib/data/db'
 import type { FullTechData } from '@/lib/data/db'
@@ -8,9 +9,10 @@ import { printStudyCertificate } from '@/lib/core/utils/printCertificate'
 import { SEOHead } from '@/components/ui/SEOHead'
 import { PageLoadingSpinner } from '@/components/ui/PageLoadingSpinner'
 
-export function CertificatePage() {
-  const { technology } = useParams<{ technology: string }>()
-  const techId = technology?.toLowerCase() || ''
+export default function CertificatePage() {
+  const params = useParams()
+  const technology = (params.technology as string) || ''
+  const techId = technology.toLowerCase()
   
   const [data, setData] = useState<FullTechData | null>(null)
   const [isLoading, setIsLoading] = useState(true) // true on init — avoids sync setState in effect
@@ -85,7 +87,7 @@ export function CertificatePage() {
       <div className="py-24 text-center">
         <h2 className="text-2xl font-bold text-text-primary mb-2">Technology Not Found</h2>
         <p className="text-text-secondary mb-6">We couldn't find a learning path for "{technology}".</p>
-        <Link to="/dashboard" className="text-accent-purple font-semibold hover:underline">
+        <Link href="/dashboard" className="text-accent-purple font-semibold hover:underline">
           Go to Dashboard
         </Link>
       </div>
@@ -118,7 +120,7 @@ export function CertificatePage() {
       {/* Navigation and Title */}
       <div className="flex items-center gap-3">
         <Link 
-          to={`/roadmap/${techId}`} 
+          href={`/roadmap/${techId}`} 
           className="p-2 bg-background-card/50 border border-border/20 rounded-xl hover:bg-background-card/80 transition-colors text-text-secondary hover:text-text-primary"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -163,7 +165,7 @@ export function CertificatePage() {
 
           <div className="pt-2">
             <Link
-              to={`/roadmap/${techId}`}
+              href={`/roadmap/${techId}`}
               className="inline-flex px-6 py-3 bg-accent-purple hover:bg-accent-purple/95 text-white text-sm font-bold rounded-2xl shadow-lg shadow-accent-purple/15 transition-all"
             >
               Continue Study Roadmap

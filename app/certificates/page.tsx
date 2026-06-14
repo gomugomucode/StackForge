@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { SEOHead } from '@/components/ui/SEOHead'
 import { technologyMetadata } from '@/lib/data/db'
 import { getAllTechProgress, getUserName, setUserName } from '@/lib/core/hooks/useProgress'
@@ -110,7 +110,7 @@ export function CertificateCenterPage() {
             </div>
             <div className="flex items-center gap-3">
               <Link
-                to="/verify"
+                href="/verify"
                 className="flex items-center gap-1.5 px-4.5 py-2.5 bg-[#161b22] hover:bg-[#1f242c] border border-white/[0.06] rounded-xl text-xs text-white font-bold transition-all duration-200"
               >
                 <ShieldCheck className="w-4 h-4 text-accent-cyan" />
@@ -208,7 +208,7 @@ export function CertificateCenterPage() {
                       {isClaimed ? (
                         <div className="flex gap-2">
                           <Link
-                            to={`/certificate/${track.id}`}
+                            href={`/certificate/${track.id}`}
                             className="flex-1 flex items-center justify-center gap-1 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 hover:border-emerald-500/35 rounded-xl text-xs font-bold text-emerald-400 transition-all duration-200"
                           >
                             <span>View / Download</span>
@@ -238,7 +238,7 @@ export function CertificateCenterPage() {
                         </button>
                       ) : (
                         <Link
-                          to={`/roadmap/${track.id}`}
+                          href={`/roadmap/${track.id}`}
                           className="w-full flex items-center justify-center gap-1.5 py-2.5 bg-[#21262d] hover:bg-[#2c333f] border border-white/[0.06] rounded-xl text-xs text-[#c9d1d9] font-bold transition-all duration-200"
                         >
                           <span>Resume Learning</span>
@@ -345,7 +345,7 @@ export function CertificateCenterPage() {
 
             <div className="flex flex-col sm:flex-row gap-2 relative z-10 max-w-md mx-auto pt-2">
               <Link
-                to={`/certificate/${successCert.tech_id}`}
+                href={`/certificate/${successCert.tech_id}`}
                 onClick={() => setSuccessCert(null)}
                 className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-accent-purple hover:bg-accent-purple-hover text-white rounded-xl text-xs font-bold transition-all duration-200"
               >
