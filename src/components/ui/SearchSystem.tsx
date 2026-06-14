@@ -199,9 +199,9 @@ export function SearchSystem() {
     return groups
   }, [filteredResults])
 
-  // Helper to highlight search query terms in matching content
-  const highlightText = (text: string, search: string) => {
-    if (!search.trim()) return text
+  // Helper to highlight search query terms safely without dangerouslySetInnerHTML
+  const HighlightText = ({ text, search }: { text: string; search: string }) => {
+    if (!search.trim()) return <>{text}</>
     
     // Escape regex characters
     const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -218,9 +218,20 @@ export function SearchSystem() {
       }
     }
 
-    return displayText.replace(
-      regex,
-      '<mark class="bg-accent-purple/20 text-accent-purple dark:text-accent-cyan dark:bg-accent-cyan/10 px-1 py-0.5 rounded font-semibold">$1</mark>'
+    const parts = displayText.split(regex)
+
+    return (
+      <>
+        {parts.map((part, i) => 
+          part.toLowerCase() === search.toLowerCase() ? (
+            <mark key={i} className="bg-accent-purple/20 text-accent-purple dark:text-accent-cyan dark:bg-accent-cyan/10 px-1 py-0.5 rounded font-semibold">
+              {part}
+            </mark>
+          ) : (
+            <span key={i}>{part}</span>
+          )
+        )}
+      </>
     )
   }
 
@@ -374,13 +385,15 @@ export function SearchSystem() {
                           <div className="flex-1 min-w-0">
                             <div 
                               className="font-semibold text-text-primary text-sm truncate group-hover:text-accent-purple transition-colors"
-                              dangerouslySetInnerHTML={{ __html: highlightText(res.title, query) }}
-                            />
+                            >
+                              <HighlightText text={res.title} search={query} />
+                            </div>
                             {res.subtitle && (
                               <div
                                 className="text-xs text-text-muted truncate mt-0.5"
-                                dangerouslySetInnerHTML={{ __html: highlightText(res.subtitle, query) }}
-                              />
+                              >
+                                <HighlightText text={res.subtitle} search={query} />
+                              </div>
                             )}
                           </div>
                         </button>
