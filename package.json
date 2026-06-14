@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "create:tutorial": "node scripts/create-content.js tutorial",
+    "create:project": "node scripts/create-content.js project",
+    "create:roadmap": "node scripts/create-content.js roadmap",
+    "create:cheatsheet": "node scripts/create-content.js cheatsheet"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.1",

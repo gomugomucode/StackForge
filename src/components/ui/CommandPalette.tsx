@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Search, Command, X, FileText, Map, BookOpen, Layers, Layout } from 'lucide-react';
-import { contentService } from '../../core/services/ContentService';
-import { ContentDoc } from '../../core/types/content';
+import { contentService } from '../../core/content/contentService';
+import { ContentMetadata } from '../../core/types/content';
 
 interface SearchResult {
   title: string;
@@ -34,16 +34,15 @@ export default function CommandPalette() {
     
     const allContent = contentService.getAllContent();
     return allContent
-      .filter(doc => 
-        doc.frontmatter.title.toLowerCase().includes(query.toLowerCase()) ||
-        doc.frontmatter.description.toLowerCase().includes(query.toLowerCase()) ||
-        doc.frontmatter.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
+      .filter(item => 
+        item.title.toLowerCase().includes(query.toLowerCase()) ||
+        item.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
       )
-      .map(doc => ({
-        title: doc.frontmatter.title,
-        slug: doc.metadata.slug,
-        type: doc.frontmatter.category,
-        description: doc.frontmatter.description
+      .map(item => ({
+        title: item.title,
+        slug: item.slug,
+        type: item.type,
+        description: item.category
       }));
   }, [query]);
 

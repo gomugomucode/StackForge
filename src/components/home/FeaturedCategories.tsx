@@ -1,6 +1,6 @@
 import { ArrowRight, Users } from 'lucide-react'
 import { featuredCategories } from '../../data/categories'
-import { getIcon } from '../../utils/icons'
+import { getIcon } from '../../core/utils/icons'
 import { SectionHeader, Card } from '../ui/SectionHeader'
 import { Stagger, StaggerItem } from '../ui/Motion'
 

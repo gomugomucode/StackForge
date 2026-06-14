@@ -1,9 +1,9 @@
 import { ArrowRight } from 'lucide-react'
 import type { QuizGameTool } from '../../data/quizGamesTools'
 import { quizGamesTools } from '../../data/quizGamesTools'
-import { getIcon } from '../../utils/icons'
+import { getIcon } from '../../core/utils/icons'
 import { SectionHeader } from '../ui/SectionHeader'
-import { useScrollAnimation } from '../../hooks/useScrollAnimation'
+import { useScrollAnimation } from '../../core/hooks/useScrollAnimation'
 
 const typeColors = {
   quiz: 'bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20',

@@ -1,33 +1,35 @@
+export type ContentDifficulty = 'Beginner' | 'Intermediate' | 'Advanced';
+
 export interface ContentFrontmatter {
   title: string;
-  description: string;
+  slug: string;
   category: string;
+  difficulty: ContentDifficulty;
   tags: string[];
-  date: string;
-  author?: string;
-  duration?: string;
-  level: 'Beginner' | 'Intermediate' | 'Advanced';
-  related?: string[];
-  image?: string;
+  estimatedTime: number; // in minutes
+  author: string;
+  featured?: boolean;
+  lastUpdated: string;
+  description: string;
+}
+
+export interface ContentItem<T = ContentFrontmatter> {
+  id: string;
+  slug: string;
+  content: string;
+  frontmatter: T;
+  type: 'tutorial' | 'roadmap' | 'cheatsheet' | 'project' | 'interview' | 'blog' | 'doc';
 }
 
 export interface ContentMetadata {
+  title: string;
   slug: string;
-  path: string;
-  readingTime: string;
-  toc: TocItem[];
+  category: string;
+  difficulty: ContentDifficulty;
+  tags: string[];
+  estimatedTime: number;
+  author: string;
+  featured: boolean;
+  lastUpdated: string;
+  type: string;
 }
-
-export interface TocItem {
-  text: string;
-  slug: string;
-  level: number;
-}
-
-export interface ContentDoc {
-  frontmatter: ContentFrontmatter;
-  metadata: ContentMetadata;
-  content: string;
-}
-
-export type ContentType = 'tutorial' | 'roadmap' | 'cheatsheet' | 'project' | 'interview' | 'blog' | 'doc';

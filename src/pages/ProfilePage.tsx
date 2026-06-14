@@ -61,7 +61,7 @@ export default function ProfilePage() {
             <div className="flex gap-4 mt-6">
               {profile.github_url && (
                 <a href={profile.github_url} target="_blank" className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-indigo-500 transition-colors">
-                  <Github className="w-4 h-4" /> GitHub
+                  <Github className="w-4 h-4" /> GitHub 
                 </a>
               )}
               {profile.website_url && (
@@ -117,6 +117,5 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-    </div>
   );
 }

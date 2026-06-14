@@ -1,8 +1,8 @@
 import { ArrowRight } from 'lucide-react'
 import { offerItems } from '../../data/offers'
-import { getIcon } from '../../utils/icons'
-import { SectionHeader, Card } from '../ui/SectionHeader'
-import { useScrollAnimation } from '../../hooks/useScrollAnimation'
+import { getIcon } from '../../core/utils/icons'
+import { SectionHeader } from '../ui/SectionHeader'
+import { useScrollAnimation } from '../../core/hooks/useScrollAnimation'
 
 export function WhatWeOffer() {
   const { ref, isVisible } = useScrollAnimation()
