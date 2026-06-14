@@ -4,6 +4,7 @@ import { Layout } from './components/layout/Layout'
 import { ScrollToTop } from './components/layout/ScrollToTop'
 import { ProgressProvider } from './context/ProgressContext'
 import { AchievementProvider } from './context/AchievementContext'
+import { AuthProvider } from './context/AuthProvider'
 import { PageLoadingSpinner } from './components/ui/PageLoadingSpinner'
 import CommandPalette from './components/ui/CommandPalette'
 
@@ -27,12 +28,13 @@ const CertificatePage = lazy(() => import('./pages/CertificatePage').then(m => (
 
 export default function App() {
   return (
-    <ProgressProvider>
-      <AchievementProvider>
-        <BrowserRouter>
-          <ScrollToTop />
-          <CommandPalette />
-          <Suspense fallback={<PageLoadingSpinner />}>
+    <AuthProvider>
+      <ProgressProvider>
+        <AchievementProvider>
+          <BrowserRouter>
+            <ScrollToTop />
+            <CommandPalette />
+            <Suspense fallback={<PageLoadingSpinner />}>
             <Routes>
               <Route element={<Layout />}>
                 <Route path="/" element={<HomePage />} />
@@ -54,6 +56,7 @@ export default function App() {
                 <Route path="/projects" element={<ProjectsPage />} />
                 <Route path="/certifications" element={<CertificationsPage />} />
                 <Route path="/tools" element={<ToolsPage />} />
+                <Route path="/u/:username" element={<ProfilePage />} />
                 
                 {/* Tech Hub Page */}
                 <Route path="/learn/:technology" element={<TechHubPage />} />
