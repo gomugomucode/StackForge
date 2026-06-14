@@ -5,6 +5,7 @@ import { ScrollToTop } from './components/layout/ScrollToTop'
 import { ProgressProvider } from './context/ProgressContext'
 import { AchievementProvider } from './context/AchievementContext'
 import { AuthProvider } from './context/AuthProvider'
+import { AIProvider } from './context/AIProvider'
 import { PageLoadingSpinner } from './components/ui/PageLoadingSpinner'
 import CommandPalette from './components/ui/CommandPalette'
 
@@ -20,6 +21,8 @@ const InterviewPrepPage = lazy(() => import('./pages/InterviewPrepPage').then(m 
 const ProjectsPage = lazy(() => import('./pages/ProjectsPage').then(m => ({ default: m.ProjectsPage })))
 const CertificationsPage = lazy(() => import('./pages/CertificationsPage').then(m => ({ default: m.CertificationsPage })))
 const ToolsPage = lazy(() => import('./pages/ToolsPage').then(m => ({ default: m.ToolsPage })))
+const ProfilePage = lazy(() => import('./pages/ProfilePage').then(m => ({ default: m.ProfilePage })))
+const CommunityPage = lazy(() => import('./pages/CommunityPage').then(m => ({ default: m.CommunityPage })))
 const TechHubPage = lazy(() => import('./pages/TechHubPage').then(m => ({ default: m.TechHubPage })))
 const DashboardPage = lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })))
 const BookmarksPage = lazy(() => import('./pages/BookmarksPage').then(m => ({ default: m.BookmarksPage })))
@@ -29,12 +32,13 @@ const CertificatePage = lazy(() => import('./pages/CertificatePage').then(m => (
 export default function App() {
   return (
     <AuthProvider>
-      <ProgressProvider>
-        <AchievementProvider>
-          <BrowserRouter>
-            <ScrollToTop />
-            <CommandPalette />
-            <Suspense fallback={<PageLoadingSpinner />}>
+      <AIProvider>
+        <ProgressProvider>
+          <AchievementProvider>
+            <BrowserRouter>
+              <ScrollToTop />
+              <CommandPalette />
+              <Suspense fallback={<PageLoadingSpinner />}>
             <Routes>
               <Route element={<Layout />}>
                 <Route path="/" element={<HomePage />} />
@@ -57,6 +61,7 @@ export default function App() {
                 <Route path="/certifications" element={<CertificationsPage />} />
                 <Route path="/tools" element={<ToolsPage />} />
                 <Route path="/u/:username" element={<ProfilePage />} />
+                <Route path="/community" element={<CommunityPage />} />
                 
                 {/* Tech Hub Page */}
                 <Route path="/learn/:technology" element={<TechHubPage />} />

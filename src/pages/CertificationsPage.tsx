@@ -1,110 +1,89 @@
-import { useState } from 'react'
-import { Award, CheckCircle, Shield, Clock, BookOpen } from 'lucide-react'
-import { SEOHead } from '../components/ui/SEOHead'
-import { SectionHeader, Card } from '../components/ui/SectionHeader'
-import { Button } from '../components/ui/Button'
+import React from 'react';
+import { supabase } from '../core/services/supabase';
+import { Trophy, Download, ShieldCheck, Award } from 'lucide-react';
 
-const certsList = [
-  { id: 'fe-arch', title: 'Frontend Systems Architect Certificate', provider: 'StackForge Academy', duration: '60 mins', difficulty: 'Advanced', questions: 40 },
-  { id: 'js-basic', title: 'JavaScript Certified Associate', provider: 'StackForge Academy', duration: '45 mins', difficulty: 'Beginner', questions: 30 },
-  { id: 'py-data', title: 'Python Application Engineering Specialist', provider: 'StackForge Academy', duration: '50 mins', difficulty: 'Intermediate', questions: 35 },
-  { id: 'do-cloud', title: 'DevOps & Containers Practitioner', provider: 'StackForge Academy', duration: '60 mins', difficulty: 'Advanced', questions: 40 }
-]
+interface Certificate {
+  id: string;
+  user_id: string;
+  track_name: string;
+  certificate_id: string;
+  issued_at: string;
+}
 
-export function CertificationsPage() {
-  const [startedCert, setStartedCert] = useState<string | null>(null)
-  const [examPassed, setExamPassed] = useState<string[]>([])
+export default function CertificationEngine() {
+  const [certificates, setCertificates] = React.useState<Certificate[]>([]);
+  const [loading, setLoading] = React.useState(true);
 
-  const handleStartExam = (id: string) => {
-    setStartedCert(id)
-    setTimeout(() => {
-      setStartedCert(null)
-      setExamPassed((prev) => [...prev, id])
-      alert('Congratulations! You passed the assessment exam and earned your StackForge certificate.')
-    }, 2500)
-  }
+  React.useEffect(() => {
+    async function fetchCerts() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      const { data } = await supabase
+        .from('certificates')
+        .select('*')
+        .eq('user_id', user.id);
+      
+      if (data) setCertificates(data);
+      setLoading(false);
+    }
+
+    fetchCerts();
+  }, []);
+
+  const downloadCertificate = (cert: Certificate) => {
+    // Implementation for PDF generation would go here
+    alert(`Downloading certificate ${cert.certificate_id} for ${cert.track_name}...`);
+  };
+
+  if (loading) return <div className="p-8 text-center">Loading certifications...</div>;
 
   return (
-    <>
-      <SEOHead
-        title="Professional Programming Certifications - StackForge"
-        description="Verify your coding credentials. Take StackForge Academy exams to test your knowledge and receive certifications."
-      />
-
-      <div className="py-16 md:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeader
-            badge="Credentials"
-            title="Academy Certificates"
-            highlight="& Badges"
-            description="Certify your expertise. Complete learning roadmaps, finish project specs, and pass validation challenges."
-          />
-
-          <div className="max-w-4xl mx-auto space-y-8">
-            {/* Certifications Dashboard Info */}
-            <Card className="bg-gradient-to-r from-accent-purple/5 to-accent-cyan/5 border-accent-purple/20 flex flex-col md:flex-row items-center gap-6 p-8">
-              <Award className="w-16 h-16 text-accent-purple shrink-0" />
-              <div>
-                <h3 className="text-xl font-bold text-text-primary mb-2">How Certifications Work</h3>
-                <p className="text-text-secondary text-sm leading-relaxed mb-4">
-                  StackForge credentials verify your practical skills. Complete all phases of a technology path, push the portfolio project checklists, and pass the timed multiple-choice assessments.
-                </p>
-                <div className="flex gap-4 text-xs font-semibold text-text-primary">
-                  <span className="flex items-center gap-1"><Shield className="w-4 h-4 text-accent-cyan" /> Free Assessments</span>
-                  <span className="flex items-center gap-1"><CheckCircle className="w-4 h-4 text-accent-emerald" /> Verifiable URL</span>
-                </div>
-              </div>
-            </Card>
-
-            {/* List of Certificates */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {certsList.map((cert) => {
-                const isPassed = examPassed.includes(cert.id)
-                const isPending = startedCert === cert.id
-
-                return (
-                  <Card key={cert.id} className="flex flex-col justify-between">
-                    <div>
-                      <div className="flex justify-between items-start mb-3">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-accent-purple bg-accent-purple/10 px-2.5 py-0.5 rounded">
-                          {cert.difficulty}
-                        </span>
-                        {isPassed && (
-                          <span className="text-xs font-bold text-accent-emerald flex items-center gap-1">
-                            <CheckCircle className="w-4 h-4" /> Earned
-                          </span>
-                        )}
-                      </div>
-                      <h3 className="font-bold text-lg text-text-primary mb-2">
-                        {cert.title}
-                      </h3>
-                      <p className="text-text-secondary text-xs mb-6">
-                        Issued by {cert.provider} &bull; Covers advanced paradigms.
-                      </p>
-                    </div>
-
-                    <div className="flex items-center justify-between border-t border-black/[0.04] dark:border-white/[0.04] pt-4 mt-auto">
-                      <div className="flex gap-3 text-[11px] text-text-muted">
-                        <span className="flex items-center gap-0.5"><Clock className="w-3.5 h-3.5" /> {cert.duration}</span>
-                        <span className="flex items-center gap-0.5"><BookOpen className="w-3.5 h-3.5" /> {cert.questions} Qs</span>
-                      </div>
-                      <Button
-                        onClick={() => handleStartExam(cert.id)}
-                        variant={isPassed ? 'secondary' : 'primary'}
-                        size="sm"
-                        className="min-w-[100px]"
-                        disabled={isPending}
-                      >
-                        {isPending ? 'Verifying...' : isPassed ? 'Retake Exam' : 'Start Assessment'}
-                      </Button>
-                    </div>
-                  </Card>
-                )
-              })}
-            </div>
-          </div>
+    <div className="max-w-5xl mx-auto px-4 py-10">
+      <div className="flex items-center justify-between mb-10">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">My Certifications</h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-2">Verify your skills and showcase your achievements.</p>
+        </div>
+        <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-2xl text-indigo-600 dark:text-indigo-400">
+          <Award className="w-8 h-8" />
         </div>
       </div>
-    </>
-  )
+
+      {certificates.length === 0 ? (
+        <div className="text-center py-20 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-700">
+          <Trophy className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white">No Certifications Yet</h3>
+          <p className="text-slate-500 dark:text-slate-400 mt-2 mb-6">Complete courses and pass quizzes to earn your certificates.</p>
+          <a href="/roadmaps" className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors">
+            Start Learning
+          </a>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {certificates.map(cert => (
+            <div key={cert.id} className="p-6 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 hover:border-indigo-500 transition-all group">
+              <div className="flex items-start justify-between mb-6">
+                <div className="p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl text-indigo-600 dark:text-indigo-400">
+                  <ShieldCheck className="w-6 h-6" />
+                </div>
+                <span className="text-xs font-mono text-slate-400">{cert.certificate_id}</span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">{cert.track_name}</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">Issued on {new Date(cert.issued_at).toLocaleDateString()}</p>
+              <button 
+                onClick={() => downloadCertificate(cert)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-indigo-600 hover:text-white transition-all"
+              >
+                <Download className="w-4 h-4" /> Download PDF
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
