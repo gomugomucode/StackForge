@@ -6,7 +6,7 @@ export default async function AnalyticsPage() {
     { date: '2024-01-01', xp: 100 },
     { date: '2024-01-02', xp: 250 },
     { date: '2024-01-03', xp: 400 },
-    { date: '2024-01-04', xp': 300 },
+    { date: '2024-01-04', xp: 300 },
     { date: '2024-01-05', xp: 600 },
     { date: '2024-01-06', xp: 800 },
     { date: '2024-01-07', xp: 1100 },
