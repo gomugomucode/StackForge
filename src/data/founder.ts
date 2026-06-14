@@ -14,7 +14,7 @@ export const founder: Founder = {
   role: 'Founder & Lead Educator',
   bio: 'Alex founded StackForge with a simple belief: high-quality programming education should be free and accessible to everyone. With a background in full-stack engineering and developer advocacy, Alex and the team build tools, courses, and resources that help learners go from curious beginner to confident builder.',
   location: 'San Francisco, CA',
-  avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face',
+  avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face&fm=webp&q=80',
   stats: [
     { label: 'Students', value: '4.8K+' },
     { label: 'Years Exp.', value: '6+' },

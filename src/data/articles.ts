@@ -22,7 +22,7 @@ export const articles: Article[] = [
     author: 'Alex Rivera',
     date: '2026-06-08',
     readTime: '8 min',
-    image: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['JavaScript', 'Scope', 'Advanced'],
     featured: true,
   },
@@ -35,7 +35,7 @@ export const articles: Article[] = [
     author: 'Sarah Chen',
     date: '2026-06-05',
     readTime: '6 min',
-    image: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['Python', 'Clean Code', 'Tips'],
     featured: true,
   },
@@ -48,7 +48,7 @@ export const articles: Article[] = [
     author: 'Marcus Lee',
     date: '2026-06-01',
     readTime: '12 min',
-    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['Node.js', 'Express', 'API'],
   },
   {
@@ -60,7 +60,7 @@ export const articles: Article[] = [
     author: 'Priya Sharma',
     date: '2026-05-28',
     readTime: '10 min',
-    image: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['DSA', 'Algorithms', 'Interview Prep'],
   },
   {
@@ -72,7 +72,7 @@ export const articles: Article[] = [
     author: 'Alex Rivera',
     date: '2026-05-26',
     readTime: '11 min',
-    image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['React', 'Next.js', 'Server Components'],
   },
   {
@@ -84,7 +84,7 @@ export const articles: Article[] = [
     author: 'Elena Vasquez',
     date: '2026-05-24',
     readTime: '9 min',
-    image: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['TypeScript', 'Static Typing', 'Advanced'],
   },
   {
@@ -96,7 +96,7 @@ export const articles: Article[] = [
     author: 'David Kim',
     date: '2026-05-20',
     readTime: '8 min',
-    image: 'https://images.unsplash.com/photo-1607799279861-4dd421887fb3?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1607799279861-4dd421887fb3?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['Docker', 'DevOps', 'Containers'],
   },
   {
@@ -108,7 +108,7 @@ export const articles: Article[] = [
     author: 'Sarah Chen',
     date: '2026-05-18',
     readTime: '13 min',
-    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['AI', 'Python', 'Neural Networks'],
   },
   {
@@ -120,7 +120,7 @@ export const articles: Article[] = [
     author: 'Marcus Lee',
     date: '2026-05-15',
     readTime: '9 min',
-    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['Next.js', 'React', 'Frontend'],
   },
   {
@@ -132,7 +132,7 @@ export const articles: Article[] = [
     author: 'David Kim',
     date: '2026-05-12',
     readTime: '10 min',
-    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['AWS', 'Serverless', 'Cloud'],
   },
   {
@@ -144,7 +144,7 @@ export const articles: Article[] = [
     author: 'Elena Vasquez',
     date: '2026-05-09',
     readTime: '7 min',
-    image: 'https://images.unsplash.com/photo-1556075794-3d410dfed317?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1556075794-3d410dfed317?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['Git', 'Dev Tools', 'Tips'],
   },
   {
@@ -156,7 +156,7 @@ export const articles: Article[] = [
     author: 'Alex Rivera',
     date: '2026-05-06',
     readTime: '8 min',
-    image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['React', 'Performance', 'Hooks'],
   },
   {
@@ -168,7 +168,7 @@ export const articles: Article[] = [
     author: 'Marcus Lee',
     date: '2026-05-03',
     readTime: '12 min',
-    image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['Career', 'Interview', 'Interview Prep'],
   },
   {
@@ -180,7 +180,7 @@ export const articles: Article[] = [
     author: 'Priya Sharma',
     date: '2026-04-30',
     readTime: '9 min',
-    image: 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['SQL', 'Database', 'Backend'],
   },
   {
@@ -192,7 +192,7 @@ export const articles: Article[] = [
     author: 'Sarah Chen',
     date: '2026-04-27',
     readTime: '10 min',
-    image: 'https://images.unsplash.com/photo-1509228468518-180dd4864904?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1509228468518-180dd4864904?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['Machine Learning', 'Python', 'ML'],
   },
   {
@@ -204,7 +204,7 @@ export const articles: Article[] = [
     author: 'David Kim',
     date: '2026-04-24',
     readTime: '8 min',
-    image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['Security', 'Node.js', 'Cybersecurity'],
   },
   {
@@ -216,7 +216,7 @@ export const articles: Article[] = [
     author: 'Sarah Chen',
     date: '2026-04-21',
     readTime: '9 min',
-    image: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['Python', 'Testing', 'Clean Code'],
   },
   {
@@ -228,7 +228,7 @@ export const articles: Article[] = [
     author: 'David Kim',
     date: '2026-04-18',
     readTime: '11 min',
-    image: 'https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['Kubernetes', 'Containers', 'DevOps'],
   },
   {
@@ -240,7 +240,7 @@ export const articles: Article[] = [
     author: 'Elena Vasquez',
     date: '2026-04-15',
     readTime: '10 min',
-    image: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['TypeScript', 'Generics', 'Static Typing'],
   },
   {
@@ -252,7 +252,7 @@ export const articles: Article[] = [
     author: 'Marcus Lee',
     date: '2026-04-12',
     readTime: '8 min',
-    image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['Career', 'Portfolio', 'Resume'],
   },
   {
@@ -264,7 +264,7 @@ export const articles: Article[] = [
     author: 'Priya Sharma',
     date: '2026-04-09',
     readTime: '7 min',
-    image: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['DSA', 'HashMaps', 'Algorithms'],
   },
   {
@@ -276,7 +276,7 @@ export const articles: Article[] = [
     author: 'David Kim',
     date: '2026-04-06',
     readTime: '6 min',
-    image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['Security', 'Web', 'CORS'],
   },
   {
@@ -288,7 +288,7 @@ export const articles: Article[] = [
     author: 'Sarah Chen',
     date: '2026-04-03',
     readTime: '11 min',
-    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['AI', 'Python', 'NLP'],
   },
   {
@@ -300,7 +300,7 @@ export const articles: Article[] = [
     author: 'Alex Rivera',
     date: '2026-03-31',
     readTime: '9 min',
-    image: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=600&h=340&fit=crop',
+    image: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=600&h=340&fit=crop&fm=webp&q=80',
     tags: ['JavaScript', 'Async', 'Promises'],
   },
 ]

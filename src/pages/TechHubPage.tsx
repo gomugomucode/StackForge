@@ -51,7 +51,7 @@ export function TechHubPage() {
   const techKey = technology?.toLowerCase() || ''
   
   const [data, setData] = useState<FullTechData | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true) // true on init — avoids sync setState in effect
 
   // URL Tab handling
   const activeTab = searchParams.get('tab') || 'overview'
@@ -71,21 +71,30 @@ export function TechHubPage() {
   const { showAchievement } = useAchievementToast()
 
   // Load technology data asynchronously on mount/change
+  // NOTE: isLoading is initialized to `true` above; we only call setIsLoading inside
+  // async promise callbacks (external-system responses) to satisfy react-hooks/set-state-in-effect.
   useEffect(() => {
-    setIsLoading(true)
-    getTechData(techKey).then((res) => {
-      setData(res || null)
-      if (res && res.notes.length > 0) {
-        setActiveChapterId(res.notes[0].id)
-      } else {
-        setActiveChapterId('')
-      }
-      setIsLoading(false)
-    }).catch(() => {
-      setData(null)
-      setActiveChapterId('')
-      setIsLoading(false)
-    })
+    let cancelled = false
+    getTechData(techKey)
+      .then((res) => {
+        if (!cancelled) {
+          setData(res || null)
+          if (res && res.notes.length > 0) {
+            setActiveChapterId(res.notes[0].id)
+          } else {
+            setActiveChapterId('')
+          }
+          setIsLoading(false)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setData(null)
+          setActiveChapterId('')
+          setIsLoading(false)
+        }
+      })
+    return () => { cancelled = true }
   }, [techKey])
 
   // Record visit

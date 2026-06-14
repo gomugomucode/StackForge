@@ -13,22 +13,32 @@ export function CertificatePage() {
   const techId = technology?.toLowerCase() || ''
   
   const [data, setData] = useState<FullTechData | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true) // true on init — avoids sync setState in effect
 
   const [userName, setLocalUserName] = useState(getUserName())
   const [isEditingName, setIsEditingName] = useState(false)
   const [nameInput, setNameInput] = useState(userName)
 
   // Load technology data asynchronously on mount/change
+  // NOTE: isLoading is initialized to `true` above; we reset it only inside the async
+  // promise callbacks (which are external-system responses) to satisfy the ESLint rule
+  // react-hooks/set-state-in-effect that forbids synchronous setState inside effect bodies.
   useEffect(() => {
-    setIsLoading(true)
-    getTechData(techId).then((res) => {
-      setData(res || null)
-      setIsLoading(false)
-    }).catch(() => {
-      setData(null)
-      setIsLoading(false)
-    })
+    let cancelled = false
+    getTechData(techId)
+      .then((res) => {
+        if (!cancelled) {
+          setData(res || null)
+          setIsLoading(false)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setData(null)
+          setIsLoading(false)
+        }
+      })
+    return () => { cancelled = true }
   }, [techId])
 
 
