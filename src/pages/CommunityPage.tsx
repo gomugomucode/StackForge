@@ -98,7 +98,7 @@ export default function CommunityPage() {
               <div>
                 <div className="text-sm font-bold text-slate-900 dark:text-white">{post.profiles?.username || 'Anonymous'}</div>
                 <div className="text-xs text-slate-400">{new Date(post.created_at).toLocaleDateString()}</div>
-              </div}
+              </div>
             </div>
             <div className="text-slate-600 dark:text-slate-300 mb-6 whitespace-pre-wrap">{post.content}</div>
             <div className="flex items-center gap-6 text-slate-400">

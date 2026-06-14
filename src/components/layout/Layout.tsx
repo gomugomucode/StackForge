@@ -17,7 +17,7 @@ export function Layout() {
           <Outlet />
           <div className={`fixed top-0 right-0 h-screen transition-all duration-300 z-40 ${isAiOpen ? 'translate-x-0 w-96' : 'translate-x-full w-0'}`}>
             <AIMentorPanel />
-          </div
+          </div>
         </main>
         <Footer />
         <InstallPrompt />
