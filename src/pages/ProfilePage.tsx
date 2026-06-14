@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import  { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { supabase } from '../core/services/supabase';
-import { Github, Globe, Mail, Trophy, BookOpen, Target, User } from 'lucide-react';
+import { Globe, Trophy, BookOpen, Target } from 'lucide-react';
 
 interface Profile {
   username: string;
@@ -20,20 +20,42 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchProfile() {
+ useEffect(() => {
+  if (!username) {
+    setLoading(false);
+    return;
+  }
+
+  let mounted = true;
+
+  async function fetchProfile() {
+    try {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('username', username)
         .single();
 
-      if (!error) setProfile(data);
-      setLoading(false);
-    }
+      if (error) throw error;
 
-    fetchProfile();
-  }, [username]);
+      if (mounted) {
+        setProfile(data);
+      }
+    } catch (err) {
+      console.error('Failed to load profile:', err);
+    } finally {
+      if (mounted) {
+        setLoading(false);
+      }
+    }
+  }
+
+  fetchProfile();
+
+  return () => {
+    mounted = false;
+  };
+}, [username]);
 
   if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
   if (!profile) return <div className="flex justify-center items-center h-screen">Profile not found</div>;
@@ -61,7 +83,7 @@ export default function ProfilePage() {
             <div className="flex gap-4 mt-6">
               {profile.github_url && (
                 <a href={profile.github_url} target="_blank" className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-indigo-500 transition-colors">
-                  <Github className="w-4 h-4" /> GitHub 
+                  <Globe className="w-4 h-4" /> GitHub 
                 </a>
               )}
               {profile.website_url && (
@@ -117,5 +139,6 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+    </div>
   );
 }
