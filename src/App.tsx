@@ -5,6 +5,7 @@ import { ScrollToTop } from './components/layout/ScrollToTop'
 import { ProgressProvider } from './context/ProgressContext'
 import { AchievementProvider } from './context/AchievementContext'
 import { PageLoadingSpinner } from './components/ui/PageLoadingSpinner'
+import CommandPalette from './components/ui/CommandPalette'
 
 
 // Lazy loaded page components
@@ -30,6 +31,7 @@ export default function App() {
       <AchievementProvider>
         <BrowserRouter>
           <ScrollToTop />
+          <CommandPalette />
           <Suspense fallback={<PageLoadingSpinner />}>
             <Routes>
               <Route element={<Layout />}>
