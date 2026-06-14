@@ -1,4 +1,4 @@
-import type { FullTechData } from '../data/db'
+import type { FullTechData } from '../../data/db'
 
 export function printTechRoadmapPdf(tech: string, data: FullTechData) {
   const printWindow = window.open('', '_blank')
@@ -255,14 +255,14 @@ export function printTechRoadmapPdf(tech: string, data: FullTechData) {
         </div>
 
         <div class="section-title">Learning Roadmap</div>
-        ${phases.map((phase) => `
+        ${phases.map((phase: any) => `
           <div class="phase-card">
             <div class="phase-header">
               <h3 class="phase-title">${phase.title}</h3>
             </div>
             <div class="phase-desc">${phase.description}</div>
             <div class="topic-grid">
-              ${phase.topics.map(topic => `
+              ${phase.topics.map((topic: any) => `
                 <div class="topic-item">
                   <div class="topic-name">${topic.name}</div>
                   ${topic.description ? `<div class="topic-desc">${topic.description}</div>` : ''}
@@ -277,7 +277,7 @@ export function printTechRoadmapPdf(tech: string, data: FullTechData) {
 
         ${projects && projects.length > 0 ? `
           <div class="section-title">Recommended Hands-on Projects</div>
-          ${projects.map(proj => `
+          ${projects.map((proj: any) => `
             <div class="project-card">
               <div class="project-title">${proj.title} <span class="project-diff">(${proj.difficulty})</span></div>
               <p style="margin: 4px 0 8px 0; font-size: 13px; color: #475569;">${proj.description}</p>
@@ -298,7 +298,7 @@ export function printTechRoadmapPdf(tech: string, data: FullTechData) {
               </tr>
             </thead>
             <tbody>
-              ${cheatsheet.slice(0, 8).map(item => `
+              ${cheatsheet.slice(0, 8).map((item: any) => `
                 <tr>
                   <td style="padding: 10px; border: 1px solid #e2e8f0; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;">${item.command}</td>
                   <td style="padding: 10px; border: 1px solid #e2e8f0; color: #475569;">${item.description}</td>

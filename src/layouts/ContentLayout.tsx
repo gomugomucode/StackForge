@@ -8,9 +8,8 @@ import {
   User,
   ChevronRight
 } from 'lucide-react';
-import { tocGenerator, TOCItem } from '../core/content/tocGenerator';
-import { ContentMetadata } from '../core/types/content';
-import { relatedContentService } from '../core/content/relatedContent';
+import { tocGenerator } from '../core/content/tocGenerator';
+import type { ContentMetadata } from '../core/types/content';
 
 interface ContentLayoutProps {
   metadata: ContentMetadata;

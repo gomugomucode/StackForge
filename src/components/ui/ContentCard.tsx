@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ContentMetadata } from '../../core/types/content';
+import type { ContentMetadata } from '../../core/types/content';
 import { ChevronRight, Clock, Gauge, Tag } from 'lucide-react';
 import { Link } from 'react-router-dom';
 

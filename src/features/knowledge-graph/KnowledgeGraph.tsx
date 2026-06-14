@@ -7,10 +7,9 @@ import {
   useNodesState,
   useEdgesState,
   addEdge,
-  Node,
-  Edge,
-  Connection,
-  EdgeProviderProps,
+  type Node,
+  type Edge,
+  type Connection,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -45,7 +44,7 @@ const initialEdges: Edge[] = [
 ];
 
 export default function KnowledgeGraph() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const onConnect = useCallback(
@@ -53,7 +52,7 @@ export default function KnowledgeGraph() {
     [setEdges]
   );
 
-  const onNodeClick = (event: React.MouseEvent, node: Node) => {
+  const onNodeClick = (_event: React.MouseEvent, node: Node) => {
     console.log('Node clicked:', node.id);
     // Here we would navigate to the content related to this node
     // window.location.href = `/docs/${node.id}`;

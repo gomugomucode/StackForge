@@ -4,7 +4,7 @@ import { SEOHead } from '../components/ui/SEOHead'
 import { SectionHeader, Card } from '../components/ui/SectionHeader'
 import { Button } from '../components/ui/Button'
 import { getTechData } from '../data/db'
-import { printTechRoadmapPdf } from '../utils/printPdf'
+import { printTechRoadmapPdf } from '../core/utils/printPdf'
 
 const notesList = [
   { slug: 'javascript', title: 'JavaScript Study Notes', desc: 'Variables scope, Array operations, functional loops, Event Loop, closures, and Promises.' },

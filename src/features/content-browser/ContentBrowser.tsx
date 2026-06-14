@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Search, Filter, ChevronDown } from 'lucide-react';
-import type { ContentMetadata } from '../core/types/content';
-import { ContentCard } from '../components/ui/ContentCard';
+import type { ContentMetadata } from '../../core/types/content';
+import { ContentCard } from '../../components/ui/ContentCard';
 
 interface ContentBrowserProps {
   title: string;

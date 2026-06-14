@@ -8,14 +8,16 @@ import {
   CheckCircle, 
   Star, 
   ArrowRight, 
-  Bookmark 
+  Bookmark,
+  Target,
+  TrendingUp,
+  ChevronRight
 } from 'lucide-react';
-import { useProgress } from '../../context/ProgressContext';
-import { useAchievements } from '../../context/AchievementContext';
-import { SEOHead } from '../../components/ui/SEOHead';
-import { Card } from '../../components/ui/SectionHeader';
-import { Button } from '../../components/ui/Button';
-import { Link } from 'react-router-dom';
+import { useProgress } from '../context/ProgressContext';
+import { useAchievements } from '../context/AchievementContext';
+import { SEOHead } from '../components/ui/SEOHead';
+import { SectionHeader } from '../components/ui/SectionHeader';
+import { Button } from '../components/ui/Button';
 
 const StatCard = ({ icon: Icon, label, value, color, trend }: any) => (
   <motion.div 
@@ -39,8 +41,9 @@ const StatCard = ({ icon: Icon, label, value, color, trend }: any) => (
 );
 
 export function DashboardPage() {
-  const { progress, markCompleted } = useProgress();
-  const { unlockedAchievements } = useAchievements();
+  const { progress } = useProgress();
+  const { achievements } = useAchievements();
+  const unlockedAchievements = achievements.filter((a: any) => a.unlocked);
 
   return (
     <div className="min-h-screen bg-slate-950 py-12 px-4 sm:px-6 lg:px-8">
@@ -106,8 +109,7 @@ export function DashboardPage() {
             </h2>
             
             <div className="space-y-4">
-              {/* Placeholder for "Continue Watching/Reading" */}
-              <Card className="p-6 group hover:border-indigo-500/50 transition-all cursor-pointer">
+              <div className="p-6 rounded-2xl bg-white/5 border border-white/10 group hover:border-indigo-500/50 transition-all cursor-pointer">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400">
@@ -125,9 +127,9 @@ export function DashboardPage() {
                     </div>
                   </div>
                 </div>
-              </Card>
+              </div>
 
-              <Card className="p-6 group hover:border-indigo-500/50 transition-all cursor-pointer">
+              <div className="p-6 rounded-2xl bg-white/5 border border-white/10 group hover:border-emerald-500/50 transition-all cursor-pointer">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
@@ -145,7 +147,7 @@ export function DashboardPage() {
                     </div>
                   </div>
                 </div>
-              </Card>
+              </div>
             </div>
           </div>
 
@@ -156,7 +158,7 @@ export function DashboardPage() {
             </h2>
             <div className="grid grid-cols-3 gap-4">
               {unlockedAchievements.length > 0 ? (
-                unlockedAchievements.map(ach => (
+                unlockedAchievements.slice(0, 6).map((ach: any) => (
                   <div 
                     key={ach.id} 
                     title={ach.description}

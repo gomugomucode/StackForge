@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { CheckCircle, RotateCcw, HelpCircle } from 'lucide-react'
 import type { QuizQuestion } from '../../data/types'
-import { saveQuizScore } from '../../hooks/useProgress'
+import { saveQuizScore } from '../../core/hooks/useProgress'
 import { checkAchievements } from '../../data/achievements'
 import { getAllTechnologies } from '../../data/db'
 import { useAchievementToast } from '../ui/AchievementContext'

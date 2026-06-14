@@ -1,9 +1,8 @@
-import { supabase } from '../lib/supabase';
-import { v4 as uuidv4 } from 'uuid';
+import { supabase } from '../../lib/supabase';
 
 export const certificateService = {
   async issueCertificate(userId: string, contentSlug: string, metadata: any) {
-    const verificationCode = `SF-${uuidv4().substring(0, 8).toUpperCase()}`;
+    const verificationCode = `SF-${crypto.randomUUID().substring(0, 8).toUpperCase()}`;
     
     const { data, error } = await supabase
       .from('certificates')

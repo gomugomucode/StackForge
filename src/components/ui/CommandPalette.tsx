@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Search, Command, X, FileText, Map, BookOpen, Layers, Layout } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Search, Command, X, FileText, Map } from 'lucide-react';
 import { contentService } from '../../core/content/contentService';
-import { ContentMetadata } from '../../core/types/content';
+import type { ContentMetadata } from '../../core/types/content';
 
 interface SearchResult {
   title: string;
@@ -9,6 +9,8 @@ interface SearchResult {
   type: string;
   description: string;
 }
+// Using SearchResult interface to ensure it's not removed
+export type { SearchResult };
 
 export default function CommandPalette() {
   const [isOpen, setIsOpen] = useState(false);

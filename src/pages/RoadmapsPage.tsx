@@ -1,4 +1,4 @@
-import { useState } from 'react'
+
 import { Search } from 'lucide-react'
 import { SEOHead } from '../components/ui/SEOHead'
 import { SectionHeader } from '../components/ui/SectionHeader'

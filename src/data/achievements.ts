@@ -6,7 +6,7 @@ import {
   countTechsWithProgress,
   getUnlockedAchievements,
   unlockAchievement,
-} from '../hooks/useProgress'
+} from '../core/hooks/useProgress'
 
 export interface Achievement {
   id: string

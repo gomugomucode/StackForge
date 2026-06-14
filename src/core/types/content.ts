@@ -1,3 +1,5 @@
+export type { Cheatsheet, CheatsheetItem, Roadmap, RoadmapNode } from './content-extensions';
+
 export type ContentDifficulty = 'Beginner' | 'Intermediate' | 'Advanced';
 
 export interface ContentFrontmatter {

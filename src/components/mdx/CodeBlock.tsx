@@ -31,7 +31,7 @@ interface CodeBlockProps {
   children?: React.ReactNode;
 }
 
-export const CodeBlock = ({ code, language = 'typescript', title, children }: CodeBlockProps) => {
+export const CodeBlock = ({ code, language: _language = 'typescript', title, children }: CodeBlockProps) => {
   // If children are provided, we use them instead of code string (for syntax highlighting libraries)
   const content = children || (
     <pre className="font-mono text-sm overflow-x-auto p-4 rounded-lg bg-slate-900 text-slate-100">

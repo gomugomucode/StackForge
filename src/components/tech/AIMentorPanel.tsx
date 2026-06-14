@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { useAI, AIResponse } from '../../context/AIProvider';
-import { MessageSquare, BookOpen, Brain, FileText, UserCheck, Send, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import type { AIResponse } from '../../context/AIProvider';
+import { useAI } from '../../context/AIProvider';
+import { BookOpen, Brain, FileText, UserCheck, Send, Sparkles } from 'lucide-react';
 
 type AIContextType = 'explain' | 'quiz' | 'coach' | 'resume' | 'interview';
 

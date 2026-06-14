@@ -1,11 +1,19 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Circle, Lock, ArrowRight } from 'lucide-react';
-import { RoadmapNode } from '../../core/types/content';
+import { CheckCircle2, Lock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+export interface VisualizerNode {
+  id: string;
+  title: string;
+  description: string;
+  status: 'completed' | 'current' | 'locked';
+  links: string[];
+  dependencies: string[];
+}
+
 interface RoadmapVisualizerProps {
-  nodes: RoadmapNode[];
+  nodes: VisualizerNode[];
 }
 
 const RoadmapVisualizer: React.FC<RoadmapVisualizerProps> = ({ nodes }) => {
@@ -40,7 +48,7 @@ const RoadmapVisualizer: React.FC<RoadmapVisualizerProps> = ({ nodes }) => {
               <h3 className="text-xl font-bold mb-2">{node.title}</h3>
               <p className="text-sm opacity-80 mb-4 leading-relaxed">{node.description}</p>
               <div className="flex flex-wrap gap-2">
-                {node.links.map((link, i) => (
+                {node.links.map((link: string, i: number) => (
                   <Link 
                     key={i} 
                     to={link} 

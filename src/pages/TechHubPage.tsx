@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useSearchParams, Link } from 'react-router-dom'
 import { motion, AnimatePresence, type PanInfo } from 'framer-motion'
 import {
@@ -12,7 +12,6 @@ import {
   Check,
   ChevronDown,
   ChevronUp,
-  Search,
   BookOpen,
   ChevronRight,
   Sparkles,
@@ -23,7 +22,7 @@ import {
 } from 'lucide-react'
 import { getTechData } from '../data/db'
 import type { FullTechData } from '../data/db'
-import { printTechRoadmapPdf } from '../utils/printPdf'
+import { printTechRoadmapPdf } from '../core/utils/printPdf'
 import { SEOHead } from '../components/ui/SEOHead'
 import { Card } from '../components/ui/SectionHeader'
 import { Button } from '../components/ui/Button'
@@ -37,8 +36,8 @@ import { AIAssistant } from '../components/tech/AIAssistant'
 import { MobileTabBar } from '../components/tech/MobileTabBar'
 import { ChapterQuiz } from '../components/tech/ChapterQuiz'
 import { useAchievementToast } from '../components/ui/AchievementContext'
-import { RoadmapVisualizer } from '../features/learning-paths/RoadmapVisualizer';
-import { CheatsheetViewer } from '../features/cheatsheet-viewer/CheatsheetViewer';
+import RoadmapVisualizer from '../features/learning-paths/RoadmapVisualizer';
+import CheatsheetViewer from '../features/cheatsheet-viewer/CheatsheetViewer';
 
 
 // V2 Progress Hooks
@@ -48,7 +47,7 @@ import {
   toggleBookmark, 
   recordPdfDownload,
   getQuizScore,
-} from '../hooks/useProgress'
+} from '../core/hooks/useProgress'
 import { checkAchievements } from '../data/achievements'
 import { getAllTechnologies } from '../data/db'
 
@@ -170,13 +169,7 @@ export function TechHubPage() {
   ).length
   const progressPercent = totalTopics > 0 ? Math.round((completedCount / totalTopics) * 100) : 0
 
-  const toggleTopic = (topicName: string) => {
-    setCompletedTopics((prev) => {
-      const next = { ...prev, [topicName]: !prev[topicName] }
-      return next
-    })
-    setTimeout(triggerAchievementCheck, 0)
-  }
+  // toggleTopic was unused
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)

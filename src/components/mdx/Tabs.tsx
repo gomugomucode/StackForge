@@ -40,6 +40,6 @@ export const Tabs = ({ children }: TabsProps) => {
   );
 };
 
-export const Tab = ({ label, children }: TabProps) => {
+export const Tab = ({ label: _label, children }: TabProps) => {
   return <div className="invisible">{children}</div>; // Rendered by Tabs
 };

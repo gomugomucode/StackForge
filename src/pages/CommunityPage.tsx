@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { MessageSquare, ThumbsUp, Share2, User, Send } from 'lucide-react';
+import { MessageSquare, ThumbsUp, Share2, Send } from 'lucide-react';
 
 interface Post {
   id: string;

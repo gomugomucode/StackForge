@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import * as Icons from 'lucide-react'
 import type { TechResourceData, TechResource } from '../../data/resources/types'
-import { isBookmarked, toggleBookmark } from '../../hooks/useProgress'
+import { isBookmarked, toggleBookmark } from '../../core/hooks/useProgress'
 
 interface ResourcesTabProps {
   techId: string

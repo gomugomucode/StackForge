@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Copy, Check, BookOpen, Filter } from 'lucide-react';
-import { Cheatsheet, CheatsheetItem } from '../../core/types/content';
+import { Search, Copy, Check, BookOpen } from 'lucide-react';
+import type { Cheatsheet, CheatsheetItem } from '../../core/types/content-extensions';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface CheatsheetViewerProps {
@@ -14,12 +14,12 @@ const CheatsheetViewer: React.FC<CheatsheetViewerProps> = ({ cheatsheet }) => {
 
   const categories = useMemo(() => {
     const cats = new Set(['All']);
-    cheatsheet.items.forEach(item => cats.add(item.category));
+    cheatsheet.items.forEach((item: CheatsheetItem) => cats.add(item.category));
     return Array.from(cats);
   }, [cheatsheet]);
 
   const filteredItems = useMemo(() => {
-    return cheatsheet.items.filter(item => {
+    return cheatsheet.items.filter((item: CheatsheetItem) => {
       const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                             item.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
                             item.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -69,7 +69,7 @@ const CheatsheetViewer: React.FC<CheatsheetViewerProps> = ({ cheatsheet }) => {
       {/* Cheatsheet Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
         <AnimatePresence mode='popLayout'>
-          {filteredItems.map(item => (
+          {filteredItems.map((item: CheatsheetItem) => (
             <motion.div 
               layout
               initial={{ opacity: 0, scale: 0.9 }}

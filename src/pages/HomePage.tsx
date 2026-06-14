@@ -2,7 +2,7 @@ import { SEOHead } from '../components/ui/SEOHead'
 import HubHeader from '../features/learning-paths/HubHeader'
 import LearningPathGrid from '../features/learning-paths/LearningPathGrid'
 import { roadmaps } from '../data/roadmaps'
-import { motion } from 'framer-motion'
+
 import { Link } from 'react-router-dom'
 import { Book, Layout, Code2, Terminal, Layers, Cpu } from 'lucide-react'
 
@@ -19,7 +19,7 @@ const QuickAccess = () => {
   return (
     <section className="py-16 px-4 max-w-7xl mx-auto">
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        {links.map((link, i) => (
+        {links.map((link) => (
           <Link 
             key={link.title} 
             to={link.path} 

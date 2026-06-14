@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { ContentBrowser } from '../features/content-browser/ContentBrowser';
 import { contentService } from '../core/content/contentService';
 
