@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Link } from 'next/navigation'
+import Link from 'next/link'
 import { SEOHead } from '@/components/ui/SEOHead'
 import { technologyMetadata } from '@/lib/data/db'
 import { getAllTechProgress, getUserName, setUserName } from '@/lib/core/hooks/useProgress'

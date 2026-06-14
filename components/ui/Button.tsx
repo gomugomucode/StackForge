@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Link } from 'next/navigation'
+import Link from 'next/link'
 import type { ReactNode } from 'react'
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline'

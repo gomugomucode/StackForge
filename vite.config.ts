@@ -67,7 +67,7 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('react-router-dom') || id.includes('react-dom') || id.includes('react/')) {
+            if (id.includes('next/navigation') || id.includes('react-dom') || id.includes('react/')) {
               return 'react-vendor';
             }
             if (id.includes('lucide-react') || id.includes('framer-motion')) {
