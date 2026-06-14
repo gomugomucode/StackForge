@@ -13,9 +13,12 @@ import type { SkillTreeData } from '../../core/types/phase5'
 import { useSkillTree } from './useSkillTree'
 import { SkillNode } from './SkillNode'
 import { SkillDetailPanel } from './SkillDetailPanel'
+import { SkillEdge } from './SkillEdge'
 import { RotateCcw, Trophy, Zap, Star } from 'lucide-react'
 
 const nodeTypes = { skillNode: SkillNode }
+const edgeTypes = { skillEdge: SkillEdge }
+
 
 interface SkillTreeCanvasProps {
   tree: SkillTreeData
@@ -61,11 +64,10 @@ export function SkillTreeCanvas({ tree }: SkillTreeCanvasProps) {
           id: e.id,
           source: e.source,
           target: e.target,
-          animated: isActive,
-          style: {
-            stroke: isActive ? '#7c3aed' : targetStatus === 'locked' ? '#21262d' : '#30363d',
-            strokeWidth: isActive ? 2 : 1,
-            opacity: targetStatus === 'locked' ? 0.3 : 1,
+          type: 'skillEdge',
+          data: {
+            isActive,
+            isLocked: targetStatus === 'locked',
           },
         }
       }),
@@ -143,6 +145,7 @@ export function SkillTreeCanvas({ tree }: SkillTreeCanvasProps) {
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         fitView
         fitViewOptions={{ padding: 0.3 }}
         minZoom={0.3}
