@@ -10,7 +10,7 @@ import { registerSW } from 'virtual:pwa-register'
 registerSW({ immediate: true })
 
 // Initialize content system
-contentService.initialize().then(() => {
+contentService.init().then(() => {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <ThemeProvider>

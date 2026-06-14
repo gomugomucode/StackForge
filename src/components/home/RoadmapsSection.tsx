@@ -26,7 +26,7 @@ export function RoadmapsSection() {
             <Link
               key={roadmap.id}
               to="/roadmaps"
-              className={`group relative block overflow-hidden rounded-2xl border border-black/[0.06] dark:border-white/[0.06] bg-gradient-to-br ${roadmap.color} p-6 md:p-8 hover:border-accent-purple/40 transition-all duration-300 hover:-translate-y-1`}
+              className={`group relative block overflow-hidden rounded-2xl border border-black/[0.06] dark:border-white/[0.06] bg-gradient-to-br from-surface-900 to-surface-800 p-6 md:p-8 hover:border-accent-purple/40 transition-all duration-300 hover:-translate-y-1`}
             >
               <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-3">
@@ -43,7 +43,7 @@ export function RoadmapsSection() {
                   <div className="flex items-center gap-4 text-xs text-text-muted">
                     <span className="inline-flex items-center gap-1">
                       <Layers className="w-3.5 h-3.5" />
-                      {roadmap.steps} steps
+                      {roadmap.tags?.length || 0} topics
                     </span>
                     <span className="inline-flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5" />

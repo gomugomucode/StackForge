@@ -17,12 +17,12 @@ export const syncService = {
 
   async syncBookmarks(userId: string, localBookmarks: string[]) {
     // 1. Get current cloud bookmarks
-    const { dataS } = await supabase
+    const { data } = await supabase
       .from('bookmarks')
       .select('content_slug')
       .eq('user_id', userId);
 
-    const cloudSlugs = dataS?.map((b: any) => b.content_slug) || [];
+    const cloudSlugs = data?.map((b: any) => b.content_slug) || [];
     
     // 2. Find what to add (in local, not in cloud)
     const toAdd = localBookmarks.filter(slug => !cloudSlugs.includes(slug));

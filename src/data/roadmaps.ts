@@ -1,4 +1,4 @@
-import { Roadmap } from '../core/types/content';
+import type { Roadmap } from '../core/types/content-extensions';
 
 export const roadmaps: Roadmap[] = [
   {
@@ -11,13 +11,8 @@ export const roadmaps: Roadmap[] = [
     tags: ['React', 'Tailwind', 'TypeScript', 'Next.js'],
     lastUpdated: 'Oct 2023',
     duration: '6 Months',
+    featured: true,
     type: 'roadmap',
-    nodes: [
-      { id: 'html', title: 'HTML5 Basics', description: 'Learn the structure of the web.', status: 'completed', links: ['/tutorials/html-basics'], dependencies: [] },
-      { id: 'css', title: 'CSS3 & Layouts', description: 'Master Flexbox and Grid.', status: 'completed', links: ['/tutorials/css-layouts'], dependencies: ['html'] },
-      { id: 'js', title: 'JavaScript Modern', description: 'ES6+, Async/Await, and DOM.', status: 'current', links: ['/tutorials/js-modern'], dependencies: ['css'] },
-      { id: 'react', title: 'React Ecosystem', description: 'Hooks, State Management, and Routing.', status: 'locked', links: ['/tutorials/react-core'], dependencies: ['js'] },
-    ]
   },
   {
     id: 'backend',
@@ -29,12 +24,8 @@ export const roadmaps: Roadmap[] = [
     tags: ['Node.js', 'PostgreSQL', 'Redis', 'Docker'],
     lastUpdated: 'Nov 2023',
     duration: '5 Months',
+    featured: true,
     type: 'roadmap',
-    nodes: [
-      { id: 'node', title: 'Node.js Runtime', description: 'Understanding event loops and async.', status: 'completed', links: ['/tutorials/node-basics'], dependencies: [] },
-      { id: 'express', title: 'API Design', description: 'REST, GraphQL, and Middleware.', status: 'current', links: ['/tutorials/express-api'], dependencies: ['node'] },
-      { id: 'db', title: 'Database Design', description: 'SQL vs NoSQL and ACID properties.', status: 'locked', links: ['/tutorials/databases'], dependencies: ['express'] },
-    ]
   },
   {
     id: 'devops',
@@ -46,11 +37,7 @@ export const roadmaps: Roadmap[] = [
     tags: ['AWS', 'Kubernetes', 'Terraform', 'GitHub Actions'],
     lastUpdated: 'Dec 2023',
     duration: '4 Months',
+    featured: true,
     type: 'roadmap',
-    nodes: [
-      { id: 'linux', title: 'Linux Fundamentals', description: 'Bash, SSH and Permissions.', status: 'completed', links: ['/tutorials/linux'], dependencies: [] },
-      { id: 'docker', title: 'Containerization', description: 'Docker and Docker Compose.', status: 'current', links: ['/tutorials/docker'], dependencies: ['linux'] },
-      { id: 'k8s', title: 'Orchestration', description: 'Kubernetes clusters and pods.', status: 'locked', links: ['/tutorials/k8s'], dependencies: ['docker'] },
-    ]
   },
 ];

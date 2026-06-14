@@ -7,7 +7,6 @@ import {
   Coins,
   Download,
   CheckCircle,
-  Circle,
   Copy,
   Check,
   ChevronDown,
@@ -101,7 +100,7 @@ export function TechHubPage() {
   }, [techKey, data, activeTab])
 
   // Roadmap Checklists state from LocalStorage
-  const [completedTopics, setCompletedTopics] = useState<Record<string, boolean>>(() => {
+  const [completedTopics] = useState<Record<string, boolean>>(() => {
     try {
       const stored = localStorage.getItem(`stackforge-completed-${techKey}`)
       return stored ? JSON.parse(stored) : {}
@@ -679,6 +678,7 @@ export function TechHubPage() {
               thumbnail: '', 
               tags: [],
               lastUpdated: '2023',
+              duration: 'Quick Ref',
               type: 'cheatsheet',
               items: data.cheatsheet.map((item, idx) => ({
                 id: `cs-${idx}`,

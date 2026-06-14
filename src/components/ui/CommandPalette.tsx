@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Search, Command, X, FileText, Map } from 'lucide-react';
 import { contentService } from '../../core/content/contentService';
-import type { ContentMetadata } from '../../core/types/content';
+
 
 interface SearchResult {
   title: string;

@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { 
   Trophy, 
@@ -8,15 +7,11 @@ import {
   CheckCircle, 
   Star, 
   ArrowRight, 
-  Bookmark,
-  Target,
-  TrendingUp,
-  ChevronRight
+  Bookmark
 } from 'lucide-react';
 import { useProgress } from '../context/ProgressContext';
 import { useAchievements } from '../context/AchievementContext';
 import { SEOHead } from '../components/ui/SEOHead';
-import { SectionHeader } from '../components/ui/SectionHeader';
 import { Button } from '../components/ui/Button';
 
 const StatCard = ({ icon: Icon, label, value, color, trend }: any) => (
@@ -42,8 +37,7 @@ const StatCard = ({ icon: Icon, label, value, color, trend }: any) => (
 
 export function DashboardPage() {
   const { progress } = useProgress();
-  const { achievements } = useAchievements();
-  const unlockedAchievements = achievements.filter((a: any) => a.unlocked);
+  const { unlockedAchievements } = useAchievements();
 
   return (
     <div className="min-h-screen bg-slate-950 py-12 px-4 sm:px-6 lg:px-8">
