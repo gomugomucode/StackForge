@@ -19,13 +19,14 @@ const NotesPage = lazy(() => import('./pages/NotesPage').then(m => ({ default: m
 const CheatsheetsPage = lazy(() => import('./pages/CheatsheetsPage').then(m => ({ default: m.CheatsheetsPage })))
 const InterviewPrepPage = lazy(() => import('./pages/InterviewPrepPage'))
 const ProjectsPage = lazy(() => import('./pages/ProjectsPage'))
-const CertificationsPage = lazy(() => import('./pages/CertificationsPage').then(m => ({ default: m.default })))
+const TutorialsPage = lazy(() => import('./pages/TutorialsPage'))
+const CertificationsPage = lazy(() => import('./pages/CertificationsPage'))
 const ToolsPage = lazy(() => import('./pages/ToolsPage').then(m => ({ default: m.ToolsPage })))
-const ProfilePage = lazy(() => import('./pages/ProfilePage').then(m => ({ default: m.default })))
-const CommunityPage = lazy(() => import('./pages/CommunityPage').then(m => ({ default: m.default })))
+const ProfilePage = lazy(() => import('./pages/ProfilePage'))
+const CommunityPage = lazy(() => import('./pages/CommunityPage'))
 const TechHubPage = lazy(() => import('./pages/TechHubPage').then(m => ({ default: m.TechHubPage })))
 const DashboardPage = lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })))
-const BookmarksPage = lazy(() => import('./pages/BookmarksPage').then(m => ({ default: m.BookmarksPage })))
+const BookmarksPage = lazy(() => import('./pages/BookmarksPage'))
 const ComparePage = lazy(() => import('./pages/ComparePage').then(m => ({ default: m.ComparePage })))
 const CertificatePage = lazy(() => import('./pages/CertificatePage').then(m => ({ default: m.CertificatePage })))
 
@@ -53,6 +54,7 @@ export default function App() {
                     
                     {/* Separate Academy Pages */}
                     <Route path="/roadmaps" element={<RoadmapsPage />} />
+                    <Route path="/tutorials" element={<TutorialsPage />} />
                     <Route path="/resources" element={<RoadmapsPage />} /> {/* Backward compatibility redirect */}
                     <Route path="/notes" element={<NotesPage />} />
                     <Route path="/cheatsheets" element={<CheatsheetsPage />} />

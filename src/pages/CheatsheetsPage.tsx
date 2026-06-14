@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Search } from 'lucide-react'
 import { SEOHead } from '../components/ui/SEOHead'
 import { SectionHeader } from '../components/ui/SectionHeader'
-import ContentCard from '../components/ui/ContentCard'
+import { ContentCard } from '../components/ui/ContentCard'
 import { cheatsheets } from '../data/cheatsheets'
 import { useContentSearch } from '../core/hooks/useContentSearch'
 
@@ -40,8 +40,20 @@ export function CheatsheetsPage() {
             {filteredItems.map((sheet) => (
               <ContentCard 
                 key={sheet.id} 
-                content={sheet} 
-                type="cheatsheet" 
+                item={{
+                  title: sheet.title,
+                  slug: sheet.id,
+                  category: sheet.category,
+                  difficulty: (sheet.level as any),
+                  tags: sheet.tags,
+                  estimatedTime: 0, // Cheatsheets are quick ref
+                  author: 'StackForge',
+                  featured: false,
+                  lastUpdated: sheet.lastUpdated,
+                  type: 'cheatsheet',
+                  thumbnail: sheet.thumbnail
+                }} 
+                link={`/cheatsheets/${sheet.id}`} 
               />
             ))}
           </div>

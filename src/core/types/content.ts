@@ -32,4 +32,5 @@ export interface ContentMetadata {
   featured: boolean;
   lastUpdated: string;
   type: string;
+  thumbnail?: string;
 }

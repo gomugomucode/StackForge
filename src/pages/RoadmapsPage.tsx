@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Search } from 'lucide-react'
 import { SEOHead } from '../components/ui/SEOHead'
 import { SectionHeader } from '../components/ui/SectionHeader'
-import ContentCard from '../components/ui/ContentCard'
+import { ContentCard } from '../components/ui/ContentCard'
 import { roadmaps } from '../data/roadmaps'
 import { useContentSearch } from '../core/hooks/useContentSearch'
 
@@ -40,8 +40,20 @@ export function RoadmapsPage() {
             {filteredItems.map((roadmap) => (
               <ContentCard 
                 key={roadmap.id} 
-                content={roadmap} 
-                type="roadmap" 
+                item={{
+                  title: roadmap.title,
+                  slug: roadmap.id,
+                  category: 'Roadmaps',
+                  difficulty: (roadmap.level as any),
+                  tags: roadmap.tags || [],
+                  estimatedTime: typeof roadmap.duration === 'number' ? roadmap.duration : 0,
+                  author: 'StackForge',
+                  featured: roadmap.featured || false,
+                  lastUpdated: roadmap.lastUpdated,
+                  type: 'roadmap',
+                  thumbnail: roadmap.thumbnail
+                }} 
+                link={`/roadmaps/${roadmap.id}`} 
               />
             ))}
           </div>

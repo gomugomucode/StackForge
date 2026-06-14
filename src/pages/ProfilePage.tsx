@@ -1,144 +1,135 @@
-import  { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { supabase } from '../core/services/supabase';
-import { Globe, Trophy, BookOpen, Target } from 'lucide-react';
+import { useState } from 'react';
+import { useAuth } from '../context/AuthProvider';
+import { supabase } from '../lib/supabase';
+import { User, GitBranch, Globe, Camera, Save } from 'lucide-react';
 
-interface Profile {
-  username: string;
-  full_name: string;
-  avatar_url: string;
-  bio: string;
-  github_url: string;
-  website_url: string;
-  xp: number;
-  level: number;
-  skills: string[];
-}
+const ProfilePage = () => {
+  const { user, profile } = useAuth();
+  const [editing, setEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    username: profile?.username || '',
+    bio: profile?.bio || '',
+    github_url: profile?.github_url || '',
+    website_url: profile?.website_url || '',
+  });
 
-export default function ProfilePage() {
-  const { username } = useParams();
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const handleSave = async () => {
+    const { error } = await supabase
+      .from('profiles')
+      .update(formData)
+      .eq('id', user?.id);
 
- useEffect(() => {
-  if (!username) {
-    setLoading(false);
-    return;
-  }
-
-  let mounted = true;
-
-  async function fetchProfile() {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('username', username)
-        .single();
-
-      if (error) throw error;
-
-      if (mounted) {
-        setProfile(data);
-      }
-    } catch (err) {
-      console.error('Failed to load profile:', err);
-    } finally {
-      if (mounted) {
-        setLoading(false);
-      }
-    }
-  }
-
-  fetchProfile();
-
-  return () => {
-    mounted = false;
+    if (error) alert(error.message);
+    else setEditing(false);
   };
-}, [username]);
-
-  if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  if (!profile) return <div className="flex justify-center items-center h-screen">Profile not found</div>;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-10">
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-200 dark:border-slate-800">
-        <div className="flex flex-col md:flex-row items-start gap-8">
-          <div className="relative">
-            <img 
-              src={profile.avatar_url || 'https://via.placeholder.com/150'} 
-              alt={profile.username} 
-              className="w-32 h-32 rounded-full object-cover border-4 border-indigo-500"
-            />
-            <div className="absolute bottom-0 right-0 bg-indigo-600 text-white p-2 rounded-full shadow-lg">
-              <Trophy className="w-4 h-4" />
+    <div className="max-w-4xl mx-auto px-4 py-12">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+        <div className="h-32 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
+        <div className="px-8 pb-8">
+          <div className="relative flex justify-between items-end -mt-12 mb-6">
+            <div className="relative">
+              <div className="w-24 h-24 rounded-2xl bg-slate-200 dark:bg-slate-800 border-4 border-white dark:border-slate-900 overflow-hidden">
+                {profile?.avatar_url ? (
+                  <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-slate-300 dark:bg-slate-700 text-slate-500 font-bold text-2xl">
+                    {profile?.username?.[0].toUpperCase() || 'U'}
+                  </div>
+                )}
+              </div>
+              <button className="absolute bottom-0 right-0 p-2 bg-white dark:bg-slate-800 rounded-full shadow-lg border border-slate-200 dark:border-slate-700 hover:text-blue-600 transition-colors">
+                <Camera className="w-4 h-4" />
+              </button>
             </div>
-          </div>
-          
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">{profile.full_name}</h1>
-            <p className="text-slate-500 dark:text-slate-400">@{profile.username}</p>
-            <p className="mt-4 text-slate-600 dark:text-slate-300 max-w-2xl">{profile.bio}</p>
-            
-            <div className="flex gap-4 mt-6">
-              {profile.github_url && (
-                <a href={profile.github_url} target="_blank" className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-indigo-500 transition-colors">
-                  <Globe className="w-4 h-4" /> GitHub 
-                </a>
-              )}
-              {profile.website_url && (
-                <a href={profile.website_url} target="_blank" className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-indigo-500 transition-colors">
-                  <Globe className="w-4 h-4" /> Website
-                </a>
-              )}
-            </div>
+            <button 
+              onClick={() => editing ? handleSave() : setEditing(true)}
+              className="px-4 py-2 rounded-lg bg-blue-600 text-white font-medium text-sm hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+              {editing ? <Save className="w-4 h-4" /> : <User className="w-4 h-4" />}
+              {editing ? 'Save Changes' : 'Edit Profile'}
+            </button>
           </div>
 
-          <div className="flex flex-col items-end gap-4">
-            <div className="text-center p-4 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl border border-indigo-100 dark:border-indigo-800">
-              <div className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase">Level</div>
-              <div className="text-3xl font-black text-indigo-700 dark:text-indigo-300">{profile.level}</div>
-            </div>
-            <div className="text-center p-4 bg-amber-50 dark:bg-amber-900/30 rounded-2xl border border-amber-100 dark:border-amber-800">
-              <div className="text-xs font-semibold text-amber-600 dark:text-amber-400 uppercase">Total XP</div>
-              <div className="text-3xl font-black text-amber-700 dark:text-amber-300">{profile.xp}</div>
-            </div>
-          </div>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="md:col-span-2 space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-slate-500 mb-2">Username</label>
+                {editing ? (
+                  <input 
+                    className="w-full p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" 
+                    value={formData.username} 
+                    onChange={e => setFormData({...formData, username: e.target.value})}
+                  />
+                ) : (
+                  <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{profile?.username}</h2>
+                )}
+              </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-          <div className="space-y-6">
-            <h3 className="text-lg font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-              <Target className="w-5 h-5 text-indigo-500" /> Skills
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {profile.skills.map(skill => (
-                <span key={skill} className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full text-xs font-medium">
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </div>
-          
-          <div className="space-y-6">
-            <h3 className="text-lg font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-              <BookOpen className="w-5 h-5 text-indigo-500" /> Learning History
-            </h3>
-            <div className="text-sm text-slate-500 dark:text-slate-400">
-              Learning path data would be fetched and displayed here.
-            </div>
-          </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-500 mb-2">Bio</label>
+                {editing ? (
+                  <textarea 
+                    className="w-full p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" 
+                    value={formData.bio} 
+                    onChange={e => setFormData({...formData, bio: e.target.value})}
+                  />
+                ) : (
+                  <p className="text-slate-600 dark:text-slate-400">{profile?.bio || 'No bio yet...'}</p>
+                )}
+              </div>
 
-          <div className="space-y-6">
-            <h3 className="text-lg font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-              <Trophy className="w-5 h-5 text-indigo-500" /> Achievements
-            </h3>
-            <div className="text-sm text-slate-500 dark:text-slate-400">
-              Badges and certifications.
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-500 mb-2">GitHub</label>
+                  {editing ? (
+                    <input 
+                      className="w-full p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" 
+                      value={formData.github_url} 
+                      onChange={e => setFormData({...formData, github_url: e.target.value})}
+                    />
+                  ) : (
+                    <div className="flex items-center gap-2 text-blue-600">
+                      <GitBranch className="w-4 h-4" /> <span>{profile?.github_url || 'Not linked'}</span>
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-500 mb-2">Website</label>
+                  {editing ? (
+                    <input 
+                      className="w-full p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" 
+                      value={formData.website_url} 
+                      onChange={e => setFormData({...formData, website_url: e.target.value})}
+                    />
+                  ) : (
+                    <div className="flex items-center gap-2 text-blue-600">
+                      <Globe className="w-4 h-4" /> <span>{profile?.website_url || 'Not linked'}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-4">Stats</h3>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-600 dark:text-slate-400">XP Earned</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{profile?.xp || 0}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-600 dark:text-slate-400">Current Level</span>
+                  <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-600 text-xs font-bold">Lvl {profile?.level || 1}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default ProfilePage;

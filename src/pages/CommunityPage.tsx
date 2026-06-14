@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../core/services/supabase';
+import { supabase } from '../lib/supabase';
 import { MessageSquare, ThumbsUp, Share2, User, Send } from 'lucide-react';
 
 interface Post {

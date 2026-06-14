@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle2, ArrowRight, Target, Layers, Zap, ExternalLink, Play, ChevronRight } from 'lucide-react';
+import { CheckCircle2, ArrowRight, Zap, ExternalLink, Play, ChevronRight } from 'lucide-react';
 
 interface RoadmapStepProps {
   title: string;
@@ -89,7 +89,7 @@ export const ProjectCard = ({ title, description, techStack, level, estimatedTim
         <span className="px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-medium">{level}</span>
         <span className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
           <Zap className="w-3 h-3" /> {estimatedTime}
-        </span
+        </span>
       </div>
       <h4 className="text-lg font-bold mb-2 text-slate-900 dark:text-slate-100">{title}</h4>
       <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 line-clamp-2">{description}</p>
@@ -98,7 +98,7 @@ export const ProjectCard = ({ title, description, techStack, level, estimatedTim
           <span key={tech} className="px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs border border-slate-200 dark:border-slate-700">{tech}</span>
         ))}
       </div>
-    </div>
+      </div>
   );
 };
 

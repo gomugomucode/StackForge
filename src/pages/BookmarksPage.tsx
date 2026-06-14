@@ -1,184 +1,104 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { 
-  Bookmark, 
-  Trash2, 
-  ExternalLink, 
-  BookOpen, 
-  Zap, 
-  HelpCircle, 
-  Search, 
-  Compass,
-  FolderOpen
-} from 'lucide-react'
-import { getBookmarks, removeBookmark, type BookmarkItem } from '../hooks/useProgress'
-import { SEOHead } from '../components/ui/SEOHead'
+import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthProvider';
+import { supabase } from '../lib/supabase';
+import { Bookmark, Trash2, BookOpen } from 'lucide-react';
+import { ContentCard } from '../components/ui/ContentCard';
+import type { ContentMetadata } from '../core/types/content';
 
-export function BookmarksPage() {
-  const [bookmarks, setBookmarks] = useState<BookmarkItem[]>([])
-  const [searchQuery, setSearchQuery] = useState('')
-  const [activeTab, setActiveTab] = useState<'all' | 'note' | 'cheatsheet' | 'interview' | 'resource'>('all')
+const BookmarksPage = () => {
+  const { user } = useAuth();
+  const [bookmarks, setBookmarks] = useState<ContentMetadata[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Load bookmarks
   useEffect(() => {
-    setBookmarks(getBookmarks())
-  }, [])
+    if (user) fetchBookmarks();
+  }, [user]);
 
-  const handleRemove = (id: string) => {
-    removeBookmark(id)
-    setBookmarks(prev => prev.filter(b => b.id !== id))
-  }
+  const fetchBookmarks = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('bookmarks')
+      .select('*')
+      .eq('user_id', user?.id);
 
-  // Filter bookmarks
-  const filteredBookmarks = bookmarks.filter(b => {
-    const matchesTab = activeTab === 'all' || b.type === activeTab
-    const matchesSearch = searchQuery === '' || 
-      b.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (b.subtitle && b.subtitle.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      b.techId.toLowerCase().includes(searchQuery.toLowerCase())
+    if (error) console.error(error);
     
-    return matchesTab && matchesSearch
-  })
+    // In a real app, we'd resolve the slugs to actual metadata from our ContentIndexer
+    // For now, we simulate the metadata resolution
+    const resolved = data?.map(b => ({
+      title: b.content_slug.replace(/-/g, ' '),
+      slug: b.content_slug,
+      category: b.content_type,
+      difficulty: 'Intermediate' as any,
+      tags: [],
+      estimatedTime: 20,
+      author: 'StackForge',
+      featured: false,
+      lastUpdated: new Date().toISOString(),
+      type: b.content_type
+    })) || [];
 
-  // Format type icons
-  const getTypeIcon = (type: string) => {
-    switch(type) {
-      case 'note': return <BookOpen className="w-4 h-4 text-accent-purple" />
-      case 'cheatsheet': return <Zap className="w-4 h-4 text-accent-cyan" />
-      case 'interview': return <HelpCircle className="w-4 h-4 text-orange-400" />
-      default: return <FolderOpen className="w-4 h-4 text-accent-emerald" />
-    }
-  }
+    setBookmarks(resolved);
+    setLoading(false);
+  };
 
-  // Resolve target tab in TechHub
-  const getTabParam = (type: string) => {
-    switch(type) {
-      case 'note': return 'notes'
-      case 'cheatsheet': return 'cheatsheets'
-      case 'interview': return 'interviews'
-      default: return 'resources'
-    }
-  }
+  const toggleBookmark = async (slug: string) => {
+    const { error } = await supabase
+      .from('bookmarks')
+      .delete()
+      .eq('user_id', user?.id)
+      .eq('content_slug', slug);
+
+    if (error) alert(error.message);
+    else fetchBookmarks();
+  };
+
+  if (!user) return <div className="py-20 text-center text-slate-500">Please sign in to view bookmarks.</div>;
 
   return (
-    <div className="space-y-6 py-6 select-text">
-      <SEOHead 
-        title="My Study Bookmarks — StackForge"
-        description="Access all your bookmarked notes, cheat sheets, interview questions, and tech resources in one place."
-      />
-
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 glass rounded-2xl">
+    <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-xl font-bold text-text-primary flex items-center gap-2">
-            <Bookmark className="w-6 h-6 text-accent-purple fill-accent-purple/15" /> My Bookmarks
-          </h2>
-          <p className="text-sm text-text-secondary">Your saved study notes, cheat sheets, interview prep questions, and resources.</p>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">My Bookmarks</h1>
+          <p className="text-slate-500">Your curated library of learning resources</p>
         </div>
-        <div className="relative w-full md:w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
-          <input
-            type="text"
-            placeholder="Search bookmarks..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-background-card/50 border border-border/40 rounded-xl text-xs focus:outline-none focus:border-accent-purple/50 text-text-primary"
-          />
+        <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 rounded-full text-sm font-medium">
+          <Bookmark className="w-4 h-4" /> {bookmarks.length} Saved
         </div>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex flex-wrap gap-2 pb-2 border-b border-border/10">
-        {(['all', 'note', 'cheatsheet', 'interview', 'resource'] as const).map(tab => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all capitalize border ${
-              activeTab === tab 
-                ? 'bg-accent-purple text-white border-accent-purple shadow-md shadow-accent-purple/10'
-                : 'bg-background-card/30 text-text-secondary border-border/10 hover:text-text-primary hover:border-border/30'
-            }`}
-          >
-            {tab === 'all' ? 'All Saved' : `${tab}s`}
-          </button>
-        ))}
-      </div>
-
-      {/* Bookmarks List Grid */}
-      {filteredBookmarks.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredBookmarks.map((bookmark) => (
-            <div
-              key={bookmark.id}
-              className="glass-card p-5 rounded-2xl border border-border/15 hover:border-accent-purple/30 transition-all flex flex-col justify-between"
-            >
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-border/20 flex items-center justify-center">
-                    {getTypeIcon(bookmark.type)}
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-accent-purple uppercase tracking-wider capitalize">
-                      {bookmark.techId} • {bookmark.type}
-                    </span>
-                    <span className="text-[9px] text-text-secondary block">
-                      Saved on {new Date(bookmark.savedAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <h3 className="font-bold text-sm text-text-primary leading-snug">
-                    {bookmark.title}
-                  </h3>
-                  {bookmark.subtitle && (
-                    <p className="text-xs text-text-secondary leading-normal">
-                      {bookmark.subtitle}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="mt-5 pt-3 border-t border-border/10 flex items-center justify-between">
-                <Link
-                  to={`/roadmap/${bookmark.techId}?tab=${getTabParam(bookmark.type)}`}
-                  className="text-xs font-bold text-accent-purple hover:underline flex items-center gap-1"
-                >
-                  Go to Source <ExternalLink className="w-3.5 h-3.5" />
-                </Link>
-
-                <button
-                  onClick={() => handleRemove(bookmark.id)}
-                  className="p-2 text-text-secondary hover:text-red-400 hover:bg-red-500/5 rounded-xl border border-transparent hover:border-red-500/10 transition-all"
-                  title="Remove Bookmark"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[1,2,3].map(i => <div key={i} className="h-64 bg-slate-100 dark:bg-slate-800 animate-pulse rounded-2xl" />)}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {bookmarks.map(item => (
+            <div key={item.slug} className="group relative">
+              <ContentCard item={item} link={`/${item.type}s/${item.slug}`} />
+              <button 
+                onClick={() => toggleBookmark(item.slug)}
+                className="absolute top-4 right-4 p-2 bg-white dark:bg-slate-800 rounded-full text-slate-400 hover:text-red-500 shadow-sm border border-slate-200 dark:border-slate-700 opacity-0 group-hover:opacity-100 transition-all"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
             </div>
           ))}
         </div>
-      ) : (
-        <div className="text-center py-20 glass rounded-2xl">
-          <Compass className="w-12 h-12 text-text-secondary mx-auto mb-3" />
-          <h3 className="font-bold text-text-primary">No Bookmarks Found</h3>
-          <p className="text-sm text-text-secondary mt-1">
-            {bookmarks.length === 0 
-              ? "You haven't bookmarked any items yet." 
-              : "No bookmarks match your search or filter."}
-          </p>
-          {bookmarks.length === 0 && (
-            <Link
-              to="/roadmaps"
-              className="inline-block mt-4 px-6 py-2.5 bg-accent-purple hover:bg-accent-purple/95 text-white rounded-xl text-xs font-bold transition-all shadow-md"
-            >
-              Browse Roadmaps
-            </Link>
-          )}
+      )}
+
+      {!loading && bookmarks.length === 0 && (
+        <div className="text-center py-20 bg-slate-50 dark:bg-slate-900/30 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-700">
+          <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-slate-900 dark:text-white">No bookmarks yet</h3>
+          <p className="text-slate-500 mb-6">Save tutorials, projects, and guides to access them later.</p>
+          <a href="/tutorials" className="px-6 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors">
+            Explore Tutorials
+          </a>
         </div>
       )}
     </div>
-  )
-}
+  );
+};
+
+export default BookmarksPage;

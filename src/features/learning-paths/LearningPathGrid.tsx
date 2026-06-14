@@ -23,8 +23,19 @@ const LearningPathGrid: React.FC<LearningPathGridProps> = ({ roadmaps }) => {
         {roadmaps.map((roadmap) => (
           <ContentCard 
             key={roadmap.id} 
-            content={roadmap} 
-            type="roadmap" 
+            item={{
+              title: roadmap.title,
+              slug: roadmap.id,
+              category: 'Roadmaps',
+              difficulty: roadmap.difficulty as any,
+              tags: roadmap.tags || [],
+              estimatedTime: typeof roadmap.estimatedTime === 'string' ? parseInt(roadmap.estimatedTime) || 0 : roadmap.estimatedTime,
+              author: 'StackForge',
+              featured: roadmap.featured || false,
+              lastUpdated: roadmap.lastUpdated,
+              type: 'roadmap'
+            }} 
+            link={`/roadmaps/${roadmap.id}`} 
           />
         ))}
       </div>
