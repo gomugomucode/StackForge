@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useParams, Link } from 'next/navigation'
+import { useParams } from 'next/navigation'
+import Link from 'next/link'
 import { Lock, ArrowLeft, Printer, Check, User } from 'lucide-react'
 import { getTechData } from '@/lib/data/db'
 import type { FullTechData } from '@/lib/data/db'
@@ -8,9 +9,10 @@ import { printStudyCertificate } from '@/lib/core/utils/printCertificate'
 import { SEOHead } from '@/components/ui/SEOHead'
 import { PageLoadingSpinner } from '@/components/ui/PageLoadingSpinner'
 
-export function CertificatePage() {
-  const { technology } = useParams<{ technology: string }>()
-  const techId = technology?.toLowerCase() || ''
+export default function CertificatePage() {
+  const params = useParams()
+  const technology = (params.technology as string) || ''
+  const techId = technology.toLowerCase()
   
   const [data, setData] = useState<FullTechData | null>(null)
   const [isLoading, setIsLoading] = useState(true) // true on init — avoids sync setState in effect

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { useSearchParams, Link } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { SEOHead } from '@/components/ui/SEOHead'
 import { certificateService } from '@/features/certificates/certificateService'
 import { CertificateCard } from '@/features/certificates/CertificateCard'
