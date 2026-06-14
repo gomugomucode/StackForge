@@ -20,8 +20,7 @@ const CheatsheetsPage = lazy(() => import('./pages/CheatsheetsPage').then(m => (
 const InterviewPrepPage = lazy(() => import('./pages/InterviewPrepPage'))
 const ProjectsPage = lazy(() => import('./pages/ProjectsPage'))
 const TutorialsPage = lazy(() => import('./pages/TutorialsPage'))
-const CertificationsPage = lazy(() => import('./pages/CertificationsPage'))
-const ToolsPage = lazy(() => import('./pages/ToolsPage').then(m => ({ default: m.ToolsPage })))
+
 const ProfilePage = lazy(() => import('./pages/ProfilePage'))
 const CommunityPage = lazy(() => import('./pages/CommunityPage'))
 const TechHubPage = lazy(() => import('./pages/TechHubPage').then(m => ({ default: m.TechHubPage })))

@@ -102,3 +102,50 @@ CREATE TABLE votes (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   UNIQUE(user_id, post_id)
 );
+
+-- SKILL TREE tables
+CREATE TABLE skill_nodes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  description TEXT,
+  xp_required INTEGER DEFAULT 0,
+  prerequisites JSONB DEFAULT '[]'::jsonb,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE user_skill_progress (
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+  node_id UUID REFERENCES skill_nodes(id) ON DELETE CASCADE NOT NULL,
+  unlocked BOOLEAN DEFAULT FALSE,
+  unlocked_at TIMESTAMP WITH TIME ZONE,
+  PRIMARY KEY (user_id, node_id)
+);
+
+-- PLAYGROUND tables
+CREATE TABLE playground_snippets (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+  title TEXT,
+  language TEXT NOT NULL,
+  code TEXT NOT NULL,
+  shared BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- AI MENTOR tables
+CREATE TABLE ai_mentor_sessions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  last_message_at TIMESTAMP WITH TIME ZONE
+);
+
+CREATE TABLE ai_mentor_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  session_id UUID REFERENCES ai_mentor_sessions(id) ON DELETE CASCADE NOT NULL,
+  role TEXT CHECK (role IN ('user','assistant')) NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
