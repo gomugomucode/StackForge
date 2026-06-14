@@ -11,8 +11,8 @@ import {
 } from 'lucide-react';
 import { useProgress } from '../context/ProgressContext';
 import { useAchievements } from '../context/AchievementContext';
-import { SEOHead } from '../components/ui/SEOHead';
-import { Button } from '../components/ui/Button';
+import { SEOHead } from '@/components/ui/SEOHead';
+import { Button } from '@/components/ui/Button';
 
 const StatCard = ({ icon: Icon, label, value, color, trend }: any) => (
   <motion.div 

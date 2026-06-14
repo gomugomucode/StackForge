@@ -1,7 +1,7 @@
-import { AboutContent } from '../components/about/FounderSection'
-import { FAQ } from '../components/home/FAQ'
-import { CTASection } from '../components/home/CTASection'
-import { SEOHead } from '../components/ui/SEOHead'
+import { AboutContent } from '@/components/about/FounderSection'
+import { FAQ } from '@/components/home/FAQ'
+import { CTASection } from '@/components/home/CTASection'
+import { SEOHead } from '@/components/ui/SEOHead'
 
 export function AboutPage() {
   return (

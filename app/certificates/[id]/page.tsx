@@ -5,8 +5,8 @@ import { getTechData } from '@/lib/data/db'
 import type { FullTechData } from '@/lib/data/db'
 import { getCompletedTopics, getUserName, setUserName } from '@/lib/core/hooks/useProgress'
 import { printStudyCertificate } from '@/lib/core/utils/printCertificate'
-import { SEOHead } from '../components/ui/SEOHead'
-import { PageLoadingSpinner } from '../components/ui/PageLoadingSpinner'
+import { SEOHead } from '@/components/ui/SEOHead'
+import { PageLoadingSpinner } from '@/components/ui/PageLoadingSpinner'
 
 export function CertificatePage() {
   const { technology } = useParams<{ technology: string }>()

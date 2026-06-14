@@ -1,6 +1,6 @@
-import { BlogContent } from '../components/blog/BlogContent'
-import { CTASection } from '../components/home/CTASection'
-import { SEOHead } from '../components/ui/SEOHead'
+import { BlogContent } from '@/components/blog/BlogContent'
+import { CTASection } from '@/components/home/CTASection'
+import { SEOHead } from '@/components/ui/SEOHead'
 
 export function BlogPage() {
   return (

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { SEOHead } from '../components/ui/SEOHead'
+import { SEOHead } from '@/components/ui/SEOHead'
 import { technologyMetadata } from '@/lib/data/db'
 import { getAllTechProgress, getUserName, setUserName } from '@/lib/core/hooks/useProgress'
 import { certificateService } from '../features/certificates/certificateService'

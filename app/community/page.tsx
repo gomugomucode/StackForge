@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { SEOHead } from '../components/ui/SEOHead'
+import { SEOHead } from '@/components/ui/SEOHead'
 import { usePosts } from '../features/community/usePosts'
 import { useLeaderboard } from '../features/community/useLeaderboard'
 import { PostCard } from '../features/community/PostCard'
