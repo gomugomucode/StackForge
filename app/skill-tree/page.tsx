@@ -1,13 +1,15 @@
 import { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { SEOHead } from '../components/ui/SEOHead'
-import { SkillTreeCanvas } from '../features/skill-tree/SkillTreeCanvas'
-import { getSkillTree, SUPPORTED_SKILL_TREES } from '../features/skill-tree/skillTreeData'
+import { useParams } from 'next/navigation'
+import Link from 'next/link'
+import { SEOHead } from '@/components/ui/SEOHead'
+import { SkillTreeCanvas } from '@/features/skill-tree/SkillTreeCanvas'
+import { getSkillTree, SUPPORTED_SKILL_TREES } from '@/features/skill-tree/skillTreeData'
 import { ArrowLeft, GitBranch, ChevronDown } from 'lucide-react'
 
-export function SkillTreePage() {
-  const { technology } = useParams<{ technology: string }>()
-  const techId = technology?.toLowerCase() ?? 'javascript'
+export default function SkillTreePage() {
+  const params = useParams()
+  const technology = (params.technology as string) || 'javascript'
+  const techId = technology.toLowerCase()
   const [selectedTech, setSelectedTech] = useState(techId)
   const [showSelector, setShowSelector] = useState(false)
 
@@ -23,7 +25,7 @@ export function SkillTreePage() {
       {/* Header */}
       <div className="flex items-center gap-4 px-4 py-3 bg-[#161b22] border-b border-white/[0.08] flex-none">
         <Link
-          to={`/learn/${selectedTech}`}
+          href={`/learn/${selectedTech}`}
           className="p-2 text-[#6e7681] hover:text-white rounded-lg hover:bg-white/[0.06] transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />

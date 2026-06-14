@@ -1,10 +1,10 @@
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { BookOpen, Download, ArrowRight } from 'lucide-react'
-import { SEOHead } from '../components/ui/SEOHead'
-import { SectionHeader, Card } from '../components/ui/SectionHeader'
-import { Button } from '../components/ui/Button'
-import { getTechData } from '../data/db'
-import { printTechRoadmapPdf } from '../core/utils/printPdf'
+import { SEOHead } from '@/components/ui/SEOHead'
+import { SectionHeader, Card } from '@/components/ui/SectionHeader'
+import { Button } from '@/components/ui/Button'
+import { getTechData } from '@/lib/data/db'
+import { printTechRoadmapPdf } from '@/lib/core/utils/printPdf'
 
 const notesList = [
   { slug: 'javascript', title: 'JavaScript Study Notes', desc: 'Variables scope, Array operations, functional loops, Event Loop, closures, and Promises.' },
@@ -17,7 +17,7 @@ const notesList = [
   { slug: 'aws', title: 'AWS Cloud Services Notes', desc: 'VPC network boundaries, IAM permissions roles, EC2 virtual instances, Lambda serverless, and S3 buckets.' }
 ]
 
-export function NotesPage() {
+export default function NotesPage() {
   const handlePdfDownload = async (slug: string) => {
     const data = await getTechData(slug)
     if (data) {
@@ -66,7 +66,7 @@ export function NotesPage() {
                     <Download className="w-3.5 h-3.5" /> PDF
                   </Button>
                   <Link
-                    to={`/learn/${item.slug}?tab=notes`}
+                    href={`/learn/${item.slug}?tab=notes`}
                     className="inline-flex items-center gap-1 text-sm font-semibold text-accent-purple hover:text-accent-violet transition-colors"
                   >
                     Read Guide <ArrowRight className="w-4 h-4" />

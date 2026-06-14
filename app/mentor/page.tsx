@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { SEOHead } from '../components/ui/SEOHead'
-import { ModeSelector } from '../features/ai-mentor/ModeSelector'
-import { ChatBubble } from '../features/ai-mentor/ChatBubble'
-import { useMentorChat } from '../features/ai-mentor/useMentorChat'
+import { useParams } from 'next/navigation'
+import Link from 'next/link'
+import { SEOHead } from '@/components/ui/SEOHead'
+import { ModeSelector } from '@/features/ai-mentor/ModeSelector'
+import { ChatBubble } from '@/features/ai-mentor/ChatBubble'
+import { useMentorChat } from '@/features/ai-mentor/useMentorChat'
 import { Send, ArrowLeft, Trash2, Cpu, Sparkles } from 'lucide-react'
 
 const SUPPORTED_TECHS: Record<string, string> = {
@@ -17,8 +18,9 @@ const SUPPORTED_TECHS: Record<string, string> = {
   git: 'Git',
 }
 
-export function AIMentorPage() {
-  const { technology = 'javascript' } = useParams<{ technology: string }>()
+export default function AIMentorPage() {
+  const params = useParams()
+  const technology = (params.technology as string) || 'javascript'
   const techName = SUPPORTED_TECHS[technology] ?? 'JavaScript'
 
   const {
@@ -83,7 +85,7 @@ export function AIMentorPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Link
-                to={`/learn/${technology}`}
+                href={`/learn/${technology}`}
                 className="p-2 hover:bg-white/[0.05] rounded-xl text-[#8b949e] hover:text-white transition-colors"
                 title={`Back to ${techName} Hub`}
               >

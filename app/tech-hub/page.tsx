@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useParams, useSearchParams, Link } from 'react-router-dom'
+import { useParams, useSearchParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { motion, AnimatePresence, type PanInfo } from 'framer-motion'
 import {
   TrendingUp,
@@ -11,44 +12,45 @@ import {
   Check,
   X
 } from 'lucide-react'
-import { getTechData } from '../data/db'
-import type { FullTechData } from '../data/db'
-import { printTechRoadmapPdf } from '../core/utils/printPdf'
-import { SEOHead } from '../components/ui/SEOHead'
-import { Card } from '../components/ui/SectionHeader'
-import { Button } from '../components/ui/Button'
-import { PageLoadingSpinner } from '../components/ui/PageLoadingSpinner'
+import { getTechData } from '@/lib/data/db'
+import type { FullTechData } from '@/lib/data/db'
+import { printTechRoadmapPdf } from '@/lib/core/utils/printPdf'
+import { SEOHead } from '@/components/ui/SEOHead'
+import { Card } from '@/components/ui/SectionHeader'
+import { Button } from '@/components/ui/Button'
+import { PageLoadingSpinner } from '@/components/ui/PageLoadingSpinner'
 
 // New V2 Sub-Components
-import { ResourcesTab } from '../components/tech/ResourcesTab'
-import { LearningPathTab } from '../components/tech/LearningPathTab'
-import { SkillTreeTab } from '../components/tech/SkillTreeTab'
-import { AIAssistant } from '../components/tech/AIAssistant'
-import { MobileTabBar } from '../components/tech/MobileTabBar'
-import { useAchievementToast } from '../components/ui/AchievementContext'
-import RoadmapVisualizer from '../features/learning-paths/RoadmapVisualizer';
-import CheatsheetViewer from '../features/cheatsheet-viewer/CheatsheetViewer';
+import { ResourcesTab } from '@/components/tech/ResourcesTab'
+import { LearningPathTab } from '@/components/tech/LearningPathTab'
+import { SkillTreeTab } from '@/components/tech/SkillTreeTab'
+import { AIAssistant } from '@/components/tech/AIAssistant'
+import { MobileTabBar } from '@/components/tech/MobileTabBar'
+import { useAchievementToast } from '@/components/ui/AchievementContext'
+import RoadmapVisualizer from '@/features/learning-paths/RoadmapVisualizer';
+import CheatsheetViewer from '@/features/cheatsheet-viewer/CheatsheetViewer';
 
 // New Extracted Tab Components
-import { OverviewTab } from '../components/tech/OverviewTab'
-import { NotesTab } from '../components/tech/NotesTab'
-import { ProjectsTab } from '../components/tech/ProjectsTab'
-import { InterviewsTab } from '../components/tech/InterviewsTab'
+import { OverviewTab } from '@/components/tech/OverviewTab'
+import { NotesTab } from '@/components/tech/NotesTab'
+import { ProjectsTab } from '@/components/tech/ProjectsTab'
+import { InterviewsTab } from '@/components/tech/InterviewsTab'
 
 // V2 Progress Hooks
 import { 
   recordVisit, 
   recordPdfDownload
-} from '../core/hooks/useProgress'
-import { checkAchievements } from '../data/achievements'
-import { getAllTechnologies } from '../data/db'
+} from '@/lib/core/hooks/useProgress'
+import { checkAchievements } from '@/lib/data/achievements'
+import { getAllTechnologies } from '@/lib/data/db'
 
 const MOBILE_TAB_ORDER = ['overview', 'roadmap', 'notes', 'resources', 'projects', 'interviews', 'cheatsheets']
 
-export function TechHubPage() {
-  const { technology } = useParams<{ technology: string }>()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const techKey = technology?.toLowerCase() || ''
+export default function TechHubPage() {
+  const params = useParams()
+  const technology = (params.technology as string) || ''
+  const searchParams = useSearchParams()
+  const techKey = technology.toLowerCase()
   
   const [data, setData] = useState<FullTechData | null>(null)
   const [isLoading, setIsLoading] = useState(true) // true on init — avoids sync setState in effect
@@ -145,16 +147,16 @@ export function TechHubPage() {
   }
 
   if (!data) {
-    return (
-      <div className="py-24 text-center">
-        <h2 className="text-2xl font-bold text-text-primary mb-2">Technology Not Found</h2>
-        <p className="text-text-secondary mb-6">We couldn't find a learning path for "{technology}".</p>
-        <Link to="/roadmaps" className="text-accent-purple font-semibold hover:underline">
-          Go back to Roadmaps
-        </Link>
-      </div>
-    )
-  }
+    ---
+    <div className="py-24 text-center">
+      <h2 className="text-2xl font-bold text-text-primary mb-2">Technology Not Found</h2>
+      <p className="text-text-secondary mb-6">We couldn't find a learning path for "{technology}".</p>
+      <Link href="/roadmaps" className="text-accent-purple font-semibold hover:underline">
+        Go back to Roadmaps
+      </Link>
+    </div>
+    ---
+      }
 
   const techTitle = data.roadmap.overview.title
   const { overview, phases } = data.roadmap
@@ -271,7 +273,7 @@ export function TechHubPage() {
         </div>
       </div>
 
-      {/* Sticky reading progress bar — Notes tab (mobile) */}
+      {/* Sticky reading progress bar - Notes tab (mobile) */}
       {activeTab === 'notes' && data.notes.length > 0 && (
         <>
           <div
@@ -288,7 +290,7 @@ export function TechHubPage() {
 
       {/* Tab Contents */}
       <div className={`container mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-24 md:pb-10 ${readingMode ? 'pt-4' : ''}`}>
-        
+
         {/* Certificate Banner */}
         {progressPercent === 100 && (
           <div className="mb-6 max-w-4xl mx-auto">
@@ -350,8 +352,8 @@ export function TechHubPage() {
               </Button>
             </div>
 
-            <RoadmapVisualizer 
-              nodes={phases.flatMap(phase => 
+            <RoadmapVisualizer
+              nodes={phases.flatMap(phase =>
                 phase.topics.map(topic => ({
                   id: topic.name.toLowerCase().replace(/\s+/g, '-'),
                   title: topic.name,
@@ -412,14 +414,14 @@ export function TechHubPage() {
 
         {/* CHEATSHEETS TAB */}
         {activeTab === 'cheatsheets' && (
-          <CheatsheetViewer 
+          <CheatsheetViewer
             cheatsheet={{
               id: techKey,
               title: `${techTitle} Cheat Sheet`,
               description: `Quick reference for ${techTitle} commands and syntax.`,
               category: 'Web Development',
               level: 'Intermediate',
-              thumbnail: '', 
+              thumbnail: '',
               tags: [],
               lastUpdated: '2023',
               duration: 'Quick Ref',
@@ -431,7 +433,7 @@ export function TechHubPage() {
                 description: item.description,
                 category: item.category
               }))
-            }} 
+            }}
           />
         )}
 

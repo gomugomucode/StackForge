@@ -1,9 +1,9 @@
-import { SEOHead } from '../components/ui/SEOHead'
-import HubHeader from '../features/learning-paths/HubHeader'
-import LearningPathGrid from '../features/learning-paths/LearningPathGrid'
-import { roadmaps } from '../data/roadmaps'
+import { SEOHead } from '@/components/ui/SEOHead'
+import HubHeader from '@/features/learning-paths/HubHeader'
+import LearningPathGrid from '@/features/learning-paths/LearningPathGrid'
+import { roadmaps } from '@/lib/data/roadmaps'
 
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { Book, Layout, Code2, Terminal, Layers, Cpu } from 'lucide-react'
 
 const QuickAccess = () => {
@@ -22,7 +22,7 @@ const QuickAccess = () => {
         {links.map((link) => (
           <Link 
             key={link.title} 
-            to={link.path} 
+            href={link.path} 
             className="group p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-indigo-500/50 hover:bg-white/10 transition-all text-center flex flex-col items-center gap-3"
           >
             <div className={`p-3 rounded-xl bg-white/5 group-hover:scale-110 transition-transform ${link.color}`}>
@@ -39,7 +39,7 @@ const QuickAccess = () => {
   )
 }
 
-export function HomePage() {
+export default function HomePage() {
   return (
     <div className="min-h-screen bg-slate-950">
       <SEOHead
