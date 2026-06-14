@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link } from 'next/navigation'
 import { Lock, ArrowLeft, Printer, Check, User } from 'lucide-react'
 import { getTechData } from '@/lib/data/db'
 import type { FullTechData } from '@/lib/data/db'

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'next/navigation'
 import { Search, X, Layers, BookOpen, Terminal, Briefcase, HelpCircle, Loader2, Filter, Link2 } from 'lucide-react'
 
 interface SearchResult {

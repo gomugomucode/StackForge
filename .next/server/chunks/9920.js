@@ -1,0 +1,4 @@
+"use strict";exports.id=9920,exports.ids=[9920],exports.modules={59920:(e,i,t)=>{t.r(i),t.d(i,{gitProjects:()=>a});let a=[{title:"Git Versioning Workflow Simulation",difficulty:"Beginner",description:"Establish a standard team workflow, simulating releases, hotfixes, feature branches, and merge collision resolutions.",skillsLearned:["Branch creation strategies","Rebase mechanics","Conflict resolution marking","Tag releases management"],technologies:["Git CLI","GitHub/GitLab accounts"],sourceCodeStructure:`git-simulation/
+├── README.md
+├── main.js
+└── package.json`,developmentRoadmap:["Initialize Git tracking and link your workspace to a remote repo repository.","Create standard branching model: dev, main, and feature branches.","Produce concurrent modifications on dev and feature branches to trigger merge conflicts.","Manually edit merge markers in code editor, add changes, and commit conflict resolution."]}]}};

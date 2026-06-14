@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet } from 'next/navigation'
 import { Navbar } from './Navbar'
 import { Footer } from './Footer'
 import { InstallPrompt } from '../ui/InstallPrompt'

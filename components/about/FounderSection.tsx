@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'next/navigation'
 import { ArrowRight, Award, CheckCircle } from 'lucide-react'
 import { founder, missionStatement } from '@/lib/data/founder'
 import { getIcon } from '@/lib/core/utils/icons'

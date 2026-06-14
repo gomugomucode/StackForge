@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import type { ContentMetadata } from '@/lib/core/types/content';
 import { ChevronRight, Clock, Gauge, Tag } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from 'next/navigation';
 
 interface ContentCardProps {
   item: ContentMetadata;

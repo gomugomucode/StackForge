@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { LeaderboardEntry, StudyGroup, Challenge } from './types'
 import { communityService } from './communityService'
-import { useProgress } from '../../context/ProgressContext'
+import { useProgress } from '../@/lib/core/context/ProgressContext'
 
 export function useLeaderboard() {
   const { addXP } = useProgress()

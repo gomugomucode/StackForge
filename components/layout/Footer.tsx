@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link } from 'next/navigation'
 import { Layers, GitFork, Share2, Mail, MessageCircle } from 'lucide-react'
 import { brandName, brandTagline, navLinks } from '@/lib/data/navigation'
 import { FadeIn } from '../ui/Motion'

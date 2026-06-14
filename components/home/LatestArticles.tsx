@@ -1,5 +1,5 @@
 import { Calendar, Clock, ArrowRight } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'next/navigation'
 import type { Article } from '@/lib/data/articles'
 import { articles } from '@/lib/data/articles'
 import { SectionHeader } from '../ui/SectionHeader'

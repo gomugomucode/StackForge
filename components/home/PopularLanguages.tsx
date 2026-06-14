@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'next/navigation'
 import { Users, ChevronRight } from 'lucide-react'
 import { popularLanguages } from '@/lib/data/languages'
 import { SectionHeader } from '../ui/SectionHeader'

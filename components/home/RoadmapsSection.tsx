@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'next/navigation'
 import { Clock, Layers, ArrowRight } from 'lucide-react'
 import { roadmaps } from '@/lib/data/roadmaps'
 import { SectionHeader } from '../ui/SectionHeader'
