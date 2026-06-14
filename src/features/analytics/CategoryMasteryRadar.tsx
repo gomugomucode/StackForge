@@ -106,7 +106,7 @@ export function CategoryMasteryRadar({ data }: CategoryMasteryRadarProps) {
             {/* Labels at vertices */}
             {data.map((d, idx) => {
               const labelP = getCoordinates(idx, r + 18)
-              let textAnchor = 'middle'
+              let textAnchor: 'start' | 'middle' | 'end' = 'middle'
               if (idx === 1) textAnchor = 'start'
               if (idx === 2) textAnchor = 'end'
 

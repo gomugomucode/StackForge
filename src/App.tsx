@@ -71,7 +71,7 @@ export default function App() {
                     <Route path="/verify" element={<VerifyPage />} />
                     <Route path="/analytics" element={<AnalyticsPage />} />
                     <Route path="/marketplace" element={<MarketplacePage />} />
-                    <Route path="/tools" element={<ToolsPage />} />
+
                     <Route path="/u/:username" element={<ProfilePage />} />
                     <Route path="/community" element={<CommunityPage />} />
                     
