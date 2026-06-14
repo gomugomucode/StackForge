@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthProvider';
 import { supabase } from '../lib/supabase';
 import { Bookmark, Trash2, BookOpen } from 'lucide-react';
 import { ContentCard } from '../components/ui/ContentCard';
-import type { ContentMetadata } from '../core/types/content';
+import type { ContentMetadata } from '@/lib/core/types/content';
 
 const BookmarksPage = () => {
   const { user } = useAuth();

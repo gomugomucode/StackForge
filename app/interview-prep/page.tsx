@@ -1,6 +1,6 @@
 
 import { ContentBrowser } from '../features/content-browser/ContentBrowser';
-import { contentService } from '../core/content/contentService';
+import { contentService } from '@/lib/core/content/contentService';
 
 const InterviewPrepPage = () => {
   const questions = contentService.getContentByType('interview');

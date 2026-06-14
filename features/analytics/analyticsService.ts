@@ -1,6 +1,6 @@
 import type { ChartDataPoint, CategoryMastery, WeeklyReport, HeatmapDay } from './types'
-import { technologyMetadata } from '../../data/db'
-import { getCompletedTopics } from '../../core/hooks/useProgress'
+import { technologyMetadata } from '@/lib/data/db'
+import { getCompletedTopics } from '@/lib/core/hooks/useProgress'
 
 const ACTIVITY_KEY = 'stackforge-activity'
 const XP_KEY = 'stackforge_academy_progress'

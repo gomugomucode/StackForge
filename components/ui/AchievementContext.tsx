@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
 import { AchievementToast } from './AchievementToast'
-import type { Achievement } from '../../data/achievements'
+import type { Achievement } from '@/lib/data/achievements'
 
 interface AchievementContextValue {
   showAchievement: (achievement: Achievement) => void

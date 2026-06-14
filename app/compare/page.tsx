@@ -7,8 +7,8 @@ import {
   BookOpen, 
   ChevronRight
 } from 'lucide-react'
-import { getAllTechnologies, getTechMetadata } from '../data/db'
-import { getCompletedTopics, getWeeksCompleted } from '../core/hooks/useProgress'
+import { getAllTechnologies, getTechMetadata } from '@/lib/data/db'
+import { getCompletedTopics, getWeeksCompleted } from '@/lib/core/hooks/useProgress'
 import { SEOHead } from '../components/ui/SEOHead'
 
 export function ComparePage() {

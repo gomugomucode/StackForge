@@ -58,7 +58,7 @@ export function SearchSystem() {
       const buildIndex = async () => {
         try {
           // Dynamic import of database index
-          const { getTechData, getAllTechnologies } = await import('../../data/db')
+          const { getTechData, getAllTechnologies } = await import('@/lib/data/db')
           const slugs = getAllTechnologies()
           const items: SearchResult[] = []
 

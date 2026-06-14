@@ -3,8 +3,8 @@ import { Search } from 'lucide-react'
 import { SEOHead } from '../components/ui/SEOHead'
 import { SectionHeader } from '../components/ui/SectionHeader'
 import { ContentCard } from '../components/ui/ContentCard'
-import { roadmaps } from '../data/roadmaps'
-import { useContentSearch } from '../core/hooks/useContentSearch'
+import { roadmaps } from '@/lib/data/roadmaps'
+import { useContentSearch } from '@/lib/core/hooks/useContentSearch'
 
 export function RoadmapsPage() {
   const { query, setQuery, filteredItems } = useContentSearch(roadmaps);

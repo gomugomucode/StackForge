@@ -1,4 +1,4 @@
-import { faqItems } from '../../data/faq'
+import { faqItems } from '@/lib/data/faq'
 import { SectionHeader } from '../ui/SectionHeader'
 import { Accordion } from '../ui/Accordion'
 import { FadeIn } from '../ui/Motion'

@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react'
-import type { SkillTreeData, SkillStatus, UserSkillState } from '../../core/types/phase5'
+import type { SkillTreeData, SkillStatus, UserSkillState } from '@/lib/core/types/phase5'
 
 const STORAGE_PREFIX = 'stackforge-skilltree-'
 

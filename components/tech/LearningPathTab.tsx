@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { CheckCircle, Circle, Clock, CheckSquare, Award, ChevronDown, ChevronUp } from 'lucide-react'
-import type { LearningPath, LearningWeek } from '../../data/resources/types'
-import { getWeeksCompleted, toggleWeekComplete } from '../../core/hooks/useProgress'
+import type { LearningPath, LearningWeek } from '@/lib/data/resources/types'
+import { getWeeksCompleted, toggleWeekComplete } from '@/lib/core/hooks/useProgress'
 
 interface LearningPathTabProps {
   techId: string

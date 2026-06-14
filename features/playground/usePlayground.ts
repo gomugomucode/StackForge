@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
-import type { PlaygroundLanguage, TestCase, RunResult, ConsoleEntry } from '../../core/types/phase5'
+import type { PlaygroundLanguage, TestCase, RunResult, ConsoleEntry } from '@/lib/core/types/phase5'
 import { DEFAULT_CODE } from './playgroundService'
 
 const EXECUTION_TIMEOUT = 5000 // 5 seconds

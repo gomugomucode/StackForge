@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Search, Command, X, FileText, Map } from 'lucide-react';
-import { contentService } from '../../core/content/contentService';
+import { contentService } from '@/lib/core/content/contentService';
 
 
 interface SearchResult {

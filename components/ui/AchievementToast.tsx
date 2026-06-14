@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Trophy } from 'lucide-react'
-import type { Achievement } from '../../data/achievements'
+import type { Achievement } from '@/lib/data/achievements'
 
 interface AchievementToastProps {
   achievement: Achievement | null

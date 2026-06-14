@@ -9,7 +9,7 @@ import {
   BackgroundVariant,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
-import type { SkillTreeData } from '../../core/types/phase5'
+import type { SkillTreeData } from '@/lib/core/types/phase5'
 import { useSkillTree } from './useSkillTree'
 import { SkillNode } from './SkillNode'
 import { SkillDetailPanel } from './SkillDetailPanel'

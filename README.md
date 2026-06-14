@@ -1,16 +1,16 @@
-# StackForge — Programming Education Platform
+# StackForge Academy — Programming Education Platform
 
-A production-quality, dark‑themed programming education UI built with **Next.js 15 (App Router)**, **TypeScript**, **Tailwind CSS v4**, **Prisma**, **PostgreSQL**, and **NextAuth**. The platform delivers interactive coding lessons, quizzes, and a community hub.
+A production‑grade, dark‑themed programming education platform built with **Next.js 15 (App Router)**, **TypeScript**, **Tailwind CSS v4**, **Prisma**, **PostgreSQL**, and **NextAuth**. The app delivers interactive coding lessons, quizzes, and a community hub.
 
 ## Features
 
-- **Modern UI** with glassmorphism, gradient accents, and smooth animations.
-- **Authentication** via NextAuth (OAuth, email/password).
-- **Content Engine** powered by MDX and Contentlayer for blog posts and lessons.
-- **Server‑Side Rendering** and **Server Actions** for fast, SEO‑friendly pages.
-- **Database** backed by PostgreSQL accessed through Prisma ORM.
-- **Responsive Design** across mobile, tablet, and desktop.
-- **Analytics** and **leaderboards** for student progress.
+- Modern UI with glassmorphism, gradient accents, and smooth animations.
+- Authentication via NextAuth (OAuth, credentials).
+- Content engine powered by MDX and Contentlayer for lessons and blog posts.
+- Server‑Side Rendering and Server Actions for fast, SEO‑friendly pages.
+- Database backed by PostgreSQL accessed through Prisma ORM.
+- Responsive design across mobile, tablet, and desktop.
+- Analytics and leaderboards for student progress.
 
 ## Tech Stack
 
@@ -38,18 +38,73 @@ npm run start       # start the production server
 
 ## Project Structure
 
-```text
-app/                     # Next.js App Router – pages, layouts, route handlers
-  ├── api/               # API routes (auth, etc.)
-  ├── layout.tsx        # Root layout with providers
-  └── page.tsx          # Home page
-prisma/                  # Prisma schema and migrations
-  └── schema.prisma
-content/                 # MDX content for lessons and blog posts
-public/                  # Static assets (images, fonts)
-src/                     # Shared React components and utilities
-  ├── components/       # UI components (cards, nav, etc.)
-  └── lib/              # Helper libraries (auth client, db client)
+```
+app/
+├───(api)
+│   └───auth
+│       └───[...nextauth]
+├───(auth)
+│   └───login
+├───(dashboard)
+│   ├───bookmarks
+│   └───profile
+├───about
+├───analytics
+├───blog
+├───certificates
+│   └───[id]
+├───certifications
+├───cheatsheets
+│   ├───[slug]
+│   │   └───
+│   └───[slug]
+├───community
+├───compare
+├───interview-prep
+├───learn
+├───marketplace
+├───mentor
+├───notes
+├───playground
+├───profile
+├───projects
+│   ├───[slug]
+│   │   └───
+│   └───[slug]
+├───resources
+├───roadmaps
+│   ├───[slug]
+│   │   └───
+│   └───[slug]
+├───settings
+├───skill-tree
+├───tech-hub
+├───tools
+├───tutorials
+│   ├───[slug]
+│   │   └───
+│   └───[slug]
+└───verify
+    ├───[certificateId]
+    │   └───
+    └───[certificateId]
+├─ api/
+├─ layout.tsx
+└─ page.tsx
+auth.ts
+middleware.ts
+components/
+lib/
+content/
+prisma/
+public/
+features/
+scripts/
+server/
+├─ db/
+└─ repositories/
+supabase/
+└─ migrations/e
 ```
 
 ## License

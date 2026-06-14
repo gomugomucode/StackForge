@@ -2,7 +2,7 @@ import { useState } from 'react'
 import type { MarketplacePath, PathReview } from './types'
 import { AuthorProfile } from './AuthorProfile'
 import { X, Calendar, Star, Check, Award, MessageSquare, Send, BookOpen, Clock, ShieldCheck } from 'lucide-react'
-import { getUserName } from '../../core/hooks/useProgress'
+import { getUserName } from '@/lib/core/hooks/useProgress'
 
 interface PathDetailModalProps {
   path: MarketplacePath

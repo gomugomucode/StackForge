@@ -1,4 +1,4 @@
-import type { FullTechData } from '../../data/db'
+import type { FullTechData } from '@/lib/data/db'
 
 export function printTechRoadmapPdf(tech: string, data: FullTechData) {
   const printWindow = window.open('', '_blank')

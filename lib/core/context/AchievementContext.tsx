@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { Achievement } from '../core/types/academy';
+import type { Achievement } from '@/lib/core/types/academy';
 import { useProgress } from './ProgressContext';
 
 interface AchievementContextType {

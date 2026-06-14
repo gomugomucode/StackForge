@@ -1,7 +1,7 @@
 import { Image, ArrowRight } from 'lucide-react'
-import { visualCollections } from '../../data/collections'
+import { visualCollections } from '@/lib/data/collections'
 import { SectionHeader } from '../ui/SectionHeader'
-import { useScrollAnimation } from '../../core/hooks/useScrollAnimation'
+import { useScrollAnimation } from '@/lib/core/hooks/useScrollAnimation'
 
 export function VisualCollections() {
   const { ref, isVisible } = useScrollAnimation()

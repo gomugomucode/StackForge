@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Layers, GitFork, Share2, Mail, MessageCircle } from 'lucide-react'
-import { brandName, brandTagline, navLinks } from '../../data/navigation'
+import { brandName, brandTagline, navLinks } from '@/lib/data/navigation'
 import { FadeIn } from '../ui/Motion'
 
 const footerLinks = [

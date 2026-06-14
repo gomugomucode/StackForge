@@ -2,8 +2,8 @@ import React from 'react'
 import { BookOpen, ChevronDown, ChevronRight, CheckCircle, Bookmark, Maximize2, Copy, Check } from 'lucide-react'
 import { Card } from '../ui/SectionHeader'
 import { ChapterQuiz } from './ChapterQuiz'
-import { isBookmarked, toggleBookmark, getQuizScore } from '../../core/hooks/useProgress'
-import type { FullTechData } from '../../data/db'
+import { isBookmarked, toggleBookmark, getQuizScore } from '@/lib/core/hooks/useProgress'
+import type { FullTechData } from '@/lib/data/db'
 
 interface NotesTabProps {
   techKey: string

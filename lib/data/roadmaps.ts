@@ -1,4 +1,4 @@
-import type { Roadmap } from '../core/types/content-extensions';
+import type { Roadmap } from '@/lib/core/types/content-extensions';
 
 export const roadmaps: Roadmap[] = [
   {

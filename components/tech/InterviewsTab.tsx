@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Bookmark, ChevronDown, ChevronUp } from 'lucide-react'
-import { isBookmarked, toggleBookmark } from '../../core/hooks/useProgress'
-import type { FullTechData } from '../../data/db'
+import { isBookmarked, toggleBookmark } from '@/lib/core/hooks/useProgress'
+import type { FullTechData } from '@/lib/data/db'
 
 interface InterviewsTabProps {
   techKey: string

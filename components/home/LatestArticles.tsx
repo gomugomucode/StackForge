@@ -1,9 +1,9 @@
 import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import type { Article } from '../../data/articles'
-import { articles } from '../../data/articles'
+import type { Article } from '@/lib/data/articles'
+import { articles } from '@/lib/data/articles'
 import { SectionHeader } from '../ui/SectionHeader'
-import { useScrollAnimation } from '../../core/hooks/useScrollAnimation'
+import { useScrollAnimation } from '@/lib/core/hooks/useScrollAnimation'
 
 interface HighlightTextProps {
   text: string

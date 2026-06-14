@@ -1,5 +1,5 @@
 import { X, ExternalLink, Star, CheckCircle, Zap, Lock, ArrowRight } from 'lucide-react'
-import type { SkillTreeNode, SkillStatus } from '../../core/types/phase5'
+import type { SkillTreeNode, SkillStatus } from '@/lib/core/types/phase5'
 
 interface SkillDetailPanelProps {
   node: SkillTreeNode

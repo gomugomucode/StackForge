@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { useMarketplace } from '../features/marketplace/useMarketplace'
-import { PathCard } from '../features/marketplace/PathCard'
-import { PathDetailModal } from '../features/marketplace/PathDetailModal'
-import { SEOHead } from '../components/ui/SEOHead'
+import { useMarketplace } from '@/features/marketplace/useMarketplace'
+import { PathCard } from '@/features/marketplace/PathCard'
+import { PathDetailModal } from '@/features/marketplace/PathDetailModal'
+import { SEOHead } from '@/components/ui/SEOHead'
 import { Search, SlidersHorizontal, BookOpen, Heart, Cpu, Loader2 } from 'lucide-react'
 
-export function MarketplacePage() {
+export default function MarketplacePage() {
   const {
     paths,
     allPathsCount,
@@ -153,7 +153,7 @@ export function MarketplacePage() {
           isEnrolled={enrolledPathIds.includes(selectedPath.id)}
           onClose={() => setSelectedPathId(null)}
           onEnroll={() => enrollInPath(selectedPath.id)}
-          onAddReview={(user, rating, body) => addPathReview(selectedPath.id, user, rating, body)}
+          onAddReview={(user: string, rating: number, body: string) => addPathReview(selectedPath.id, user, rating, body)}
         />
       )}
     </>

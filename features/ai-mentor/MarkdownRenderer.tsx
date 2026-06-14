@@ -1,5 +1,5 @@
 import React from 'react'
-import { CodeBlock } from '../../components/mdx/CodeBlock'
+import { CodeBlock } from '@/components/mdx/CodeBlock'
 
 interface MarkdownRendererProps {
   content: string
