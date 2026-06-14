@@ -1,5 +1,8 @@
+'use client'
+
 import { useState, useEffect, useCallback } from 'react'
-import { useParams, useSearchParams, Link } from 'react-router-dom'
+import { useParams, useSearchParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { motion, AnimatePresence, type PanInfo } from 'framer-motion'
 import {
   TrendingUp,
@@ -11,58 +14,53 @@ import {
   Check,
   X
 } from 'lucide-react'
-import { getTechData } from '../data/db'
-import type { FullTechData } from '../data/db'
-import { printTechRoadmapPdf } from '../core/utils/printPdf'
-import { SEOHead } from '../components/ui/SEOHead'
-import { Card } from '../components/ui/SectionHeader'
-import { Button } from '../components/ui/Button'
-import { PageLoadingSpinner } from '../components/ui/PageLoadingSpinner'
+import { getTechData } from '@/lib/data/db'
+import type { FullTechData } from '@/lib/data/db'
+import { printTechRoadmapPdf } from '@/lib/core/utils/printPdf'
+import { SEOHead } from '@/components/ui/SEOHead'
+import { Card } from '@/components/ui/SectionHeader'
+import { Button } from '@/components/ui/Button'
+import { PageLoadingSpinner } from '@/components/ui/PageLoadingSpinner'
 
 // New V2 Sub-Components
-import { ResourcesTab } from '../components/tech/ResourcesTab'
-import { LearningPathTab } from '../components/tech/LearningPathTab'
-import { SkillTreeTab } from '../components/tech/SkillTreeTab'
-import { AIAssistant } from '../components/tech/AIAssistant'
-import { MobileTabBar } from '../components/tech/MobileTabBar'
-import { useAchievementToast } from '../components/ui/AchievementContext'
-import RoadmapVisualizer from '../features/learning-paths/RoadmapVisualizer';
-import CheatsheetViewer from '../features/cheatsheet-viewer/CheatsheetViewer';
+import { ResourcesTab } from '@/components/tech/ResourcesTab'
+import { LearningPathTab } from '@/components/tech/LearningPathTab'
+import { SkillTreeTab } from '@/components/tech/SkillTreeTab'
+import { AIAssistant } from '@/components/tech/AIAssistant'
+import { MobileTabBar } from '@/components/tech/MobileTabBar'
+import { useAchievementToast } from '@/components/ui/AchievementContext'
+import RoadmapVisualizer from '@/features/learning-paths/RoadmapVisualizer';
+import CheatsheetViewer from '@/features/cheatsheet-viewer/CheatsheetViewer';
 
 // New Extracted Tab Components
-import { OverviewTab } from '../components/tech/OverviewTab'
-import { NotesTab } from '../components/tech/NotesTab'
-import { ProjectsTab } from '../components/tech/ProjectsTab'
-import { InterviewsTab } from '../components/tech/InterviewsTab'
+import { OverviewTab } from '@/components/tech/OverviewTab'
+import { NotesTab } from '@/components/tech/NotesTab'
+import { ProjectsTab } from '@/components/tech/ProjectsTab'
+import { InterviewsTab } from '@/components/tech/InterviewsTab'
 
 // V2 Progress Hooks
 import { 
   recordVisit, 
   recordPdfDownload
-} from '../core/hooks/useProgress'
-import { checkAchievements } from '../data/achievements'
-import { getAllTechnologies } from '../data/db'
+} from '@/lib/core/hooks/useProgress'
+import { checkAchievements } from '@/lib/data/achievements'
+import { getAllTechnologies } from '@/lib/data/db'
 
 const MOBILE_TAB_ORDER = ['overview', 'roadmap', 'notes', 'resources', 'projects', 'interviews', 'cheatsheets']
 
-export function TechHubPage() {
-  const { technology } = useParams<{ technology: string }>()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const techKey = technology?.toLowerCase() || ''
+export default function TechHubPage() {
+  const params = useParams()
+  const technology = (params.technology as string) || ''
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const techKey = technology.toLowerCase()
   
   const [data, setData] = useState<FullTechData | null>(null)
-  const [isLoading, setIsLoading] = useState(true) // true on init — avoids sync setState in effect
+  const [isLoading, setIsLoading] = useState(true)
 
-  // URL Tab handling
   const activeTab = searchParams.get('tab') || 'overview'
-
-  // Notes active chapter state
   const [activeChapterId, setActiveChapterId] = useState<string>('')
-
-  // Copy feedback state
   const [copiedText, setCopiedText] = useState<string | null>(null)
-
-  // New V3 Mobile UX states
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [readingMode, setReadingMode] = useState(false)
   const [fullscreenCode, setFullscreenCode] = useState<string | null>(null)
@@ -70,9 +68,6 @@ export function TechHubPage() {
   const [slideDirection, setSlideDirection] = useState(0)
   const { showAchievement } = useAchievementToast()
 
-  // Load technology data asynchronously on mount/change
-  // NOTE: isLoading is initialized to `true` above; we only call setIsLoading inside
-  // async promise callbacks (external-system responses) to satisfy react-hooks/set-state-in-effect.
   useEffect(() => {
     let cancelled = false
     getTechData(techKey)
@@ -97,15 +92,14 @@ export function TechHubPage() {
     return () => { cancelled = true }
   }, [techKey])
 
-  // Record visit
   useEffect(() => {
     if (data) {
       recordVisit(techKey, data.roadmap.overview.title, activeTab)
     }
   }, [techKey, data, activeTab])
 
-  // Roadmap Checklists state from LocalStorage
   const [completedTopics] = useState<Record<string, boolean>>(() => {
+    if (typeof window === 'undefined') return {}
     try {
       const stored = localStorage.getItem(`stackforge-completed-${techKey}`)
       return stored ? JSON.parse(stored) : {}
@@ -114,14 +108,15 @@ export function TechHubPage() {
     }
   })
 
-  // Save progress changes
   useEffect(() => {
-    localStorage.setItem(`stackforge-completed-${techKey}`, JSON.stringify(completedTopics))
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`stackforge-completed-${techKey}`, JSON.stringify(completedTopics))
+    }
   }, [completedTopics, techKey])
 
   const setTab = useCallback((tabName: string) => {
-    setSearchParams({ tab: tabName })
-  }, [setSearchParams])
+    router.push(`?tab=${tabName}`)
+  }, [router])
 
   const handleDragEnd = useCallback((_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     if (Math.abs(info.offset.x) < 80) return
@@ -149,7 +144,7 @@ export function TechHubPage() {
       <div className="py-24 text-center">
         <h2 className="text-2xl font-bold text-text-primary mb-2">Technology Not Found</h2>
         <p className="text-text-secondary mb-6">We couldn't find a learning path for "{technology}".</p>
-        <Link to="/roadmaps" className="text-accent-purple font-semibold hover:underline">
+        <Link href="/roadmaps" className="text-accent-purple font-semibold hover:underline">
           Go back to Roadmaps
         </Link>
       </div>
@@ -159,14 +154,11 @@ export function TechHubPage() {
   const techTitle = data.roadmap.overview.title
   const { overview, phases } = data.roadmap
 
-  // Calculate Roadmap Progress
   const totalTopics = phases.reduce((acc, phase) => acc + phase.topics.length, 0)
   const completedCount = Object.keys(completedTopics).filter(
     (key) => completedTopics[key] && phases.some(p => p.topics.some(t => t.name === key))
   ).length
   const progressPercent = totalTopics > 0 ? Math.round((completedCount / totalTopics) * 100) : 0
-
-  // toggleTopic was unused
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)
@@ -174,14 +166,11 @@ export function TechHubPage() {
     setTimeout(() => setCopiedText(null), 2000)
   }
 
-  // Get active chapter
   const activeChapter = data.notes.find((ch) => ch.id === activeChapterId) || data.notes[0]
   const activeChapterIndex = data.notes.findIndex((ch) => ch.id === activeChapter?.id)
   const notesProgressPct = data.notes.length > 0
     ? Math.round(((activeChapterIndex + 1) / data.notes.length) * 100)
     : 0
-
-  void quizScoreVersion
 
   return (
     <>
@@ -190,7 +179,6 @@ export function TechHubPage() {
         description={`Master ${techTitle} with StackForge structured learning path, study notes, interview preparations, cheat sheets, and downloadable roadmap PDFs.`}
       />
 
-      {/* Hero Header */}
       <div className={`relative py-12 md:py-16 overflow-hidden bg-surface-950/40 border-b border-black/[0.06] dark:border-white/[0.06] ${readingMode ? 'hidden' : ''}`}>
         <div className="absolute inset-0 bg-gradient-to-r from-accent-purple/5 to-accent-cyan/5 pointer-events-none" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -205,7 +193,6 @@ export function TechHubPage() {
               {overview.description}
             </p>
 
-            {/* Quick Metrics */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="p-4 rounded-2xl glass-card flex items-center gap-3">
                 <TrendingUp className="w-5 h-5 text-accent-cyan" />
@@ -240,7 +227,6 @@ export function TechHubPage() {
         </div>
       </div>
 
-      {/* Tabs Selector Navigation */}
       <div className={`sticky top-16 md:top-[4.5rem] z-40 bg-surface-900/90 backdrop-blur-md border-b border-black/[0.06] dark:border-white/[0.06] ${readingMode ? 'hidden' : 'hidden md:block'}`}>
         <div className="container mx-auto px-4">
           <div className="flex overflow-x-auto no-scrollbar py-3 gap-2">
@@ -271,7 +257,6 @@ export function TechHubPage() {
         </div>
       </div>
 
-      {/* Sticky reading progress bar — Notes tab (mobile) */}
       {activeTab === 'notes' && data.notes.length > 0 && (
         <>
           <div
@@ -286,10 +271,7 @@ export function TechHubPage() {
         </>
       )}
 
-      {/* Tab Contents */}
       <div className={`container mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-24 md:pb-10 ${readingMode ? 'pt-4' : ''}`}>
-        
-        {/* Certificate Banner */}
         {progressPercent === 100 && (
           <div className="mb-6 max-w-4xl mx-auto">
             <div className="glass p-5 rounded-2xl border border-accent-emerald/30 bg-accent-emerald/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
@@ -303,7 +285,7 @@ export function TechHubPage() {
                 </div>
               </div>
               <Link
-                to={`/certificate/${techKey}`}
+                href={`/certificate/${techKey}`}
                 className="px-5 py-2.5 bg-accent-emerald hover:bg-accent-emerald/90 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-accent-emerald/15 shrink-0"
               >
                 Claim Study Certificate
@@ -325,7 +307,6 @@ export function TechHubPage() {
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
             className="touch-pan-y"
           >
-        {/* OVERVIEW TAB */}
         {activeTab === 'overview' && (
           <OverviewTab
             techTitle={techTitle}
@@ -336,8 +317,6 @@ export function TechHubPage() {
             }}
           />
         )}
-
-        {/* ROADMAP TIMELINE TAB */}
         {activeTab === 'roadmap' && (
           <div className="max-w-4xl mx-auto">
             <div className="flex justify-between items-center mb-8">
@@ -349,7 +328,6 @@ export function TechHubPage() {
                 <Download className="w-4 h-4" /> Print PDF
               </Button>
             </div>
-
             <RoadmapVisualizer 
               nodes={phases.flatMap(phase => 
                 phase.topics.map(topic => ({
@@ -362,7 +340,6 @@ export function TechHubPage() {
                 }))
               )}
             />
-
             <Card className="bg-gradient-to-r from-accent-purple/5 to-accent-violet/5 border-dashed border-accent-purple/30 text-center py-8 mt-12">
               <h3 className="text-lg font-bold text-text-primary mb-2">Printable Reference File</h3>
               <p className="text-text-secondary text-sm mb-6 max-w-md mx-auto">
@@ -374,8 +351,6 @@ export function TechHubPage() {
             </Card>
           </div>
         )}
-
-        {/* STUDY NOTES TAB */}
         {activeTab === 'notes' && (
           <NotesTab
             techKey={techKey}
@@ -394,23 +369,15 @@ export function TechHubPage() {
             handleCopy={handleCopy}
           />
         )}
-
-        {/* RESOURCES TAB */}
         {activeTab === 'resources' && (
           <ResourcesTab techId={techKey} techTitle={techTitle} resourcesData={data.resources} />
         )}
-
-        {/* LEARNING PATH TAB */}
         {activeTab === 'learning-path' && (
           <LearningPathTab techId={techKey} learningPath={data.resources.learningPath} />
         )}
-
-        {/* SKILL TREE TAB */}
         {activeTab === 'skill-tree' && (
           <SkillTreeTab techId={techKey} skillTree={data.resources.skillTree} />
         )}
-
-        {/* CHEATSHEETS TAB */}
         {activeTab === 'cheatsheets' && (
           <CheatsheetViewer 
             cheatsheet={{
@@ -434,29 +401,19 @@ export function TechHubPage() {
             }} 
           />
         )}
-
-        {/* PROJECTS TAB */}
         {activeTab === 'projects' && (
           <ProjectsTab data={data} />
         )}
-
-        {/* INTERVIEWS TAB */}
         {activeTab === 'interviews' && (
           <InterviewsTab techKey={techKey} data={data} />
         )}
-
           </motion.div>
         </AnimatePresence>
-
       </div>
 
-      {/* Floating local AI Study Guide Assistant */}
       <AIAssistant techTitle={techTitle} qaPairs={data.resources.aiQA} />
-
-      {/* Mobile-friendly bottom tab bar */}
       <MobileTabBar activeTab={activeTab} onChangeTab={setTab} />
 
-      {/* Full-screen Code Block Overlay */}
       {fullscreenCode && (
         <div className="code-overlay animate-fadeIn">
           <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-3">

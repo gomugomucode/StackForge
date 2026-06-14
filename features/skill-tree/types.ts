@@ -1,1 +1,1 @@
-export * from '../../core/types/phase5'
+export * from '@/lib/core/types/phase5'

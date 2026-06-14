@@ -114,4 +114,4 @@ export const Quiz: React.FC<QuizProps> = ({ questions, onComplete }) => {
 
 // Added a missing import for Trophy and Button
 import { Trophy } from 'lucide-react';
-import { Button } from '../../components/ui/Button';
+import { Button } from '@/components/ui/Button';

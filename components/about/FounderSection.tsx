@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, Award, CheckCircle } from 'lucide-react'
-import { founder, missionStatement } from '../../data/founder'
-import { getIcon } from '../../core/utils/icons'
+import { founder, missionStatement } from '@/lib/data/founder'
+import { getIcon } from '@/lib/core/utils/icons'
 import { Button } from '../ui/Button'
 import { SectionHeader, Card } from '../ui/SectionHeader'
-import { useScrollAnimation } from '../../core/hooks/useScrollAnimation'
+import { useScrollAnimation } from '@/lib/core/hooks/useScrollAnimation'
 
 export function FounderPreview() {
   const { ref, isVisible } = useScrollAnimation()

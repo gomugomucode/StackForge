@@ -1,4 +1,4 @@
-import type { SkillTreeData } from '../../core/types/phase5'
+import type { SkillTreeData } from '@/lib/core/types/phase5'
 
 export const SKILL_TREES: Record<string, SkillTreeData> = {
   javascript: {

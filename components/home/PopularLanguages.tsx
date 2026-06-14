@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { Users, ChevronRight } from 'lucide-react'
-import { popularLanguages } from '../../data/languages'
+import { popularLanguages } from '@/lib/data/languages'
 import { SectionHeader } from '../ui/SectionHeader'
-import { useScrollAnimation } from '../../core/hooks/useScrollAnimation'
+import { useScrollAnimation } from '@/lib/core/hooks/useScrollAnimation'
 
 export function PopularLanguages() {
   const { ref, isVisible } = useScrollAnimation()

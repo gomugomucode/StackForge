@@ -1,4 +1,4 @@
-import type { RunResult } from '../../core/types/phase5'
+import type { RunResult } from '@/lib/core/types/phase5'
 import { Terminal, CheckCircle, XCircle, Clock, Trash2 } from 'lucide-react'
 
 interface OutputPanelProps {

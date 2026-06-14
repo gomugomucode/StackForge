@@ -1,4 +1,4 @@
-import type { ContentItem, ContentMetadata } from '../../core/types/content';
+import type { ContentItem, ContentMetadata } from '@/lib/core/types/content';
 
 export class ContentIndexer {
   private static contentMap = new Map<string, ContentItem>();

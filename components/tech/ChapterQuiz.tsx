@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { CheckCircle, RotateCcw, HelpCircle } from 'lucide-react'
-import type { QuizQuestion } from '../../data/types'
-import { saveQuizScore } from '../../core/hooks/useProgress'
-import { checkAchievements } from '../../data/achievements'
-import { getAllTechnologies } from '../../data/db'
+import type { QuizQuestion } from '@/lib/data/types'
+import { saveQuizScore } from '@/lib/core/hooks/useProgress'
+import { checkAchievements } from '@/lib/data/achievements'
+import { getAllTechnologies } from '@/lib/data/db'
 import { useAchievementToast } from '../ui/AchievementContext'
 
 interface ChapterQuizProps {

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Sparkles, X, Send, Bot, User, HelpCircle } from 'lucide-react'
-import type { AIQAPair } from '../../data/resources/types'
+import type { AIQAPair } from '@/lib/data/resources/types'
 
 interface AIAssistantProps {
   techTitle: string

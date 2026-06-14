@@ -1,5 +1,5 @@
 import { Star, Quote } from 'lucide-react'
-import { testimonials } from '../../data/testimonials'
+import { testimonials } from '@/lib/data/testimonials'
 import { SectionHeader } from '../ui/SectionHeader'
 import { Stagger, StaggerItem } from '../ui/Motion'
 

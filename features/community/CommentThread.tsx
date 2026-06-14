@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import type { PostComment } from './types'
 import { communityService } from './communityService'
-import { getUserName } from '../../core/hooks/useProgress'
+import { getUserName } from '@/lib/core/hooks/useProgress'
 import { Send, Loader2 } from 'lucide-react'
 
 interface CommentThreadProps {

@@ -1,82 +1,112 @@
-# StackForge — Programming Education Platform
+# StackForge Academy — Programming Education Platform
 
-A production-quality, dark-themed programming education UI built with **React**, **TypeScript**, **Tailwind CSS v4**, and **Framer Motion**.
-
-Inspired by modern developer-learning platform design patterns — with **100% original content**, placeholder data, and a generic brand identity.
+A production‑grade, dark‑themed programming education platform built with **Next.js 15 (App Router)**, **TypeScript**, **Tailwind CSS v4**, **Prisma**, **PostgreSQL**, and **NextAuth**. The app delivers interactive coding lessons, quizzes, and a community hub.
 
 ## Features
 
-### UI Patterns
-- Sticky glassmorphism navigation with animated active states
-- Large animated hero with code preview window
-- Feature cards grid with gradient borders and glow
-- Animated statistics counters
-- Categories showcase
-- Resource & activity cards
-- Blog card layout with filters and pagination
-- Testimonial cards with star ratings
-- FAQ accordion with smooth expand/collapse
-- Dual call-to-action sections
-- Modern responsive footer
-
-### Design System
-- Premium dark theme with purple/cyan accents
-- Glassmorphism (`glass`, `glass-card`, `glass-nav`)
-- Subtle glow effects and gradient typography
-- Framer Motion scroll & hover animations
-- Fully responsive (mobile → desktop)
-- Accessible semantic HTML and ARIA attributes
+- Modern UI with glassmorphism, gradient accents, and smooth animations.
+- Authentication via NextAuth (OAuth, credentials).
+- Content engine powered by MDX and Contentlayer for lessons and blog posts.
+- Server‑Side Rendering and Server Actions for fast, SEO‑friendly pages.
+- Database backed by PostgreSQL accessed through Prisma ORM.
+- Responsive design across mobile, tablet, and desktop.
+- Analytics and leaderboards for student progress.
 
 ## Tech Stack
 
-- React 19 + TypeScript
-- Vite 8
-- Tailwind CSS v4
-- React Router v7
-- Framer Motion
-- Lucide React icons
+- **Framework:** Next.js 15 (App Router) with TypeScript strict mode.
+- **Styling:** Tailwind CSS v4, custom dark theme with glassmorphism.
+- **ORM:** Prisma ORM connected to PostgreSQL.
+- **Auth:** NextAuth.js (OAuth providers, credentials).
+- **Content:** MDX + Contentlayer for static content.
+- **Animations:** Framer Motion.
+- **Icons:** Lucide React.
 
 ## Getting Started
 
 ```bash
-npm install
-npm run dev
+npm install        # install dependencies
+npm run dev        # start the development server (http://localhost:3000)
 ```
 
-Open [http://localhost:5173](http://localhost:5173)
-
-### Production Build
+## Production Build
 
 ```bash
-npm run build
-npm run preview
+npm run build       # compile the application
+npm run start       # start the production server
 ```
 
 ## Project Structure
 
 ```
-src/
-├── components/
-│   ├── about/       Founder profile sections
-│   ├── blog/        Blog listing with search/filters
-│   ├── home/        All homepage sections
-│   ├── layout/      Navbar, Footer, Layout, ScrollToTop
-│   ├── resources/   Resources page
-│   └── ui/          Button, Card, Motion, Accordion, SearchInput
-├── data/            Editable content arrays
-├── hooks/           useCounter, useScrollAnimation
-├── pages/           Route pages
-└── utils/           Icon helpers
+app/
+├───(api)
+│   └───auth
+│       └───[...nextauth]
+├───(auth)
+│   └───login
+├───(dashboard)
+│   ├───bookmarks
+│   └───profile
+├───about
+├───analytics
+├───blog
+├───certificates
+│   └───[id]
+├───certifications
+├───cheatsheets
+│   ├───[slug]
+│   │   └───
+│   └───[slug]
+├───community
+├───compare
+├───interview-prep
+├───learn
+├───marketplace
+├───mentor
+├───notes
+├───playground
+├───profile
+├───projects
+│   ├───[slug]
+│   │   └───
+│   └───[slug]
+├───resources
+├───roadmaps
+│   ├───[slug]
+│   │   └───
+│   └───[slug]
+├───settings
+├───skill-tree
+├───tech-hub
+├───tools
+├───tutorials
+│   ├───[slug]
+│   │   └───
+│   └───[slug]
+└───verify
+    ├───[certificateId]
+    │   └───
+    └───[certificateId]
+├─ api/
+├─ layout.tsx
+└─ page.tsx
+auth.ts
+middleware.ts
+components/
+lib/
+content/
+prisma/
+public/
+features/
+scripts/
+server/
+├─ db/
+└─ repositories/
+supabase/
+└─ migrations/e
 ```
-
-## Customization
-
-| What | Where |
-|------|-------|
-| Brand name & nav | `src/data/navigation.ts` |
-| Stats, articles, FAQ | `src/data/*.ts` |
-| Theme colors | `src/index.css` `@theme` block |
 
 ## License
 
-Original frontend code with fictional placeholder content. No backend or authentication required.
+MIT © 2024 StackForge Academy.

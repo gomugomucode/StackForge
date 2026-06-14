@@ -1,4 +1,4 @@
-import type { Cheatsheet } from '../core/types/content-extensions';
+import type { Cheatsheet } from '@/lib/core/types/content-extensions';
 
 export const cheatsheets: Cheatsheet[] = [
   {

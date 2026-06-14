@@ -1,4 +1,4 @@
-import type { PlaygroundLanguage, Snippet } from '../../core/types/phase5'
+import type { PlaygroundLanguage, Snippet } from '@/lib/core/types/phase5'
 
 // ─── Default code templates per language ─────────────────────────────────────
 

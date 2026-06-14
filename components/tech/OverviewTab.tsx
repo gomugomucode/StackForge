@@ -1,7 +1,7 @@
 import { BookOpen, Coins, Briefcase, Download } from 'lucide-react'
 import { Card } from '../ui/SectionHeader'
 import { Button } from '../ui/Button'
-import type { FullTechData } from '../../data/db'
+import type { FullTechData } from '@/lib/data/db'
 
 interface OverviewTabProps {
   techTitle: string

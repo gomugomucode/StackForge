@@ -1,5 +1,5 @@
 import { supabase } from '../../lib/supabase';
-import type { ContentMetadata } from '../../core/types/content';
+import type { ContentMetadata } from '@/lib/core/types/content';
 
 export const recommendationService = {
   async getRecommendedContent(userId: string): Promise<ContentMetadata[]> {

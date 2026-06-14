@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
-import { stats } from '../../data/stats'
-import { useCounter } from '../../core/hooks/useCounter'
-import { useScrollAnimation } from '../../core/hooks/useScrollAnimation'
+import { stats } from '@/lib/data/stats'
+import { useCounter } from '@/lib/core/hooks/useCounter'
+import { useScrollAnimation } from '@/lib/core/hooks/useScrollAnimation'
 import { Stagger, StaggerItem } from '../ui/Motion'
 
 function StatItem({

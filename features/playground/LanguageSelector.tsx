@@ -1,4 +1,4 @@
-import type { PlaygroundLanguage } from '../../core/types/phase5'
+import type { PlaygroundLanguage } from '@/lib/core/types/phase5'
 import { LANGUAGE_META } from './playgroundService'
 
 interface LanguageSelectorProps {

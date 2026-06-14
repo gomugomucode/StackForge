@@ -1,4 +1,4 @@
-import type { MentorMode, MentorMessage, QuizQuestion, RoadmapStep } from '../../core/types/phase5'
+import type { MentorMode, MentorMessage, QuizQuestion, RoadmapStep } from '@/lib/core/types/phase5'
 
 // ─── AI mentor response generator ────────────────────────────────────────────
 // This is a structured mock AI — production can swap in a real LLM API call here.

@@ -1,5 +1,5 @@
 import { Card } from '../ui/SectionHeader'
-import type { FullTechData } from '../../data/db'
+import type { FullTechData } from '@/lib/data/db'
 
 interface ProjectsTabProps {
   data: FullTechData

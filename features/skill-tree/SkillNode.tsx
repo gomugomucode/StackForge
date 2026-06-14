@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import { Handle, Position, type NodeProps } from '@xyflow/react'
 import { Lock, Star, Zap, CheckCircle } from 'lucide-react'
-import type { SkillStatus } from '../../core/types/phase5'
+import type { SkillStatus } from '@/lib/core/types/phase5'
 
 export interface SkillNodeData {
   label: string

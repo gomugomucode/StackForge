@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
-import { articles, articleCategories } from '../../data/articles'
+import { articles, articleCategories } from '@/lib/data/articles'
 import { SectionHeader } from '../ui/SectionHeader'
 import { SearchInput } from '../ui/SearchInput'
 import { ArticleCard } from '../home/LatestArticles'

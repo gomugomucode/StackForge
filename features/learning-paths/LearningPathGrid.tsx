@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { ContentCard } from '../../components/ui/ContentCard';
-import type { Roadmap } from '../../core/types/content-extensions';
+import { ContentCard } from '@/components/ui/ContentCard';
+import type { Roadmap } from '@/lib/core/types/content-extensions';
 
 interface LearningPathGridProps {
   roadmaps: Roadmap[];

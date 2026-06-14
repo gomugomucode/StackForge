@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { CommunityPost } from './types'
 import { communityService } from './communityService'
-import { getUserName } from '../../core/hooks/useProgress'
+import { getUserName } from '@/lib/core/hooks/useProgress'
 
 export function usePosts(initialCategory = 'all') {
   const [posts, setPosts] = useState<CommunityPost[]>([])

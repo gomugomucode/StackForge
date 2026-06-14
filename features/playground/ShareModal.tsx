@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Copy, Check, X, Share2, Globe } from 'lucide-react'
 import { saveSnippet, getShareUrl } from './playgroundService'
-import type { PlaygroundLanguage } from '../../core/types/phase5'
+import type { PlaygroundLanguage } from '@/lib/core/types/phase5'
 
 interface ShareModalProps {
   code: string

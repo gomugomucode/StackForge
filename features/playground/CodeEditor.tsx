@@ -1,5 +1,5 @@
 import { useRef, useCallback, useEffect } from 'react'
-import type { PlaygroundLanguage } from '../../core/types/phase5'
+import type { PlaygroundLanguage } from '@/lib/core/types/phase5'
 
 interface CodeEditorProps {
   code: string
