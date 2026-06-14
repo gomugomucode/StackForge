@@ -52,11 +52,21 @@ export default function CommandPalette() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-black/50 backdrop-blur-sm">
-      <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div 
+        role="dialog"
+        aria-modal="true"
+        aria-label="Command palette"
+        className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"
+      >
         <div className="flex items-center px-4 py-3 border-b border-slate-200 dark:border-slate-700">
           <Search className="w-5 h-5 text-slate-400 mr-3" />
           <input
             autoFocus
+            role="combobox"
+            aria-expanded={isOpen}
+            aria-autocomplete="list"
+            aria-controls="command-palette-results"
+            aria-label="Search command palette"
             className="flex-1 bg-transparent outline-none text-lg text-slate-900 dark:text-white"
             placeholder="Search for tutorials, roadmaps, projects..."
             value={query}
@@ -69,13 +79,18 @@ export default function CommandPalette() {
             <button 
               onClick={() => setIsOpen(false)}
               className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md text-slate-400"
+              aria-label="Close command palette"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
         </div>
 
-        <div className="max-h-[400px] overflow-y-auto p-2">
+        <div 
+          id="command-palette-results"
+          role="listbox"
+          className="max-h-[400px] overflow-y-auto p-2"
+        >
           {query === '' ? (
             <div className="py-4">
               <div className="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">Popular Topics</div>
@@ -83,6 +98,8 @@ export default function CommandPalette() {
                 {['React', 'TypeScript', 'Node.js', 'AWS', 'Docker', 'Next.js'].map(topic => (
                   <button 
                     key={topic}
+                    role="option"
+                    aria-selected="false"
                     onClick={() => setQuery(topic)}
                     className="flex items-center px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors"
                   >
@@ -97,6 +114,8 @@ export default function CommandPalette() {
                 results.map(result => (
                   <button 
                     key={result.slug}
+                    role="option"
+                    aria-selected="false"
                     onClick={() => {
                       window.location.href = `/docs/${result.slug}`;
                       setIsOpen(false);
@@ -113,7 +132,7 @@ export default function CommandPalette() {
                   </button>
                 ))
               ) : (
-                <div className="py-10 text-center text-slate-500">
+                <div className="py-10 text-center text-slate-500" role="status">
                   No results found for "{query}"
                 </div>
               )}

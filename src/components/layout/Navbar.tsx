@@ -75,6 +75,9 @@ export function Navbar() {
             >
               <button
                 type="button"
+                aria-haspopup="true"
+                aria-expanded={academyDropdownOpen}
+                aria-controls="desktop-academy-menu"
                 className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all text-text-secondary hover:text-text-primary flex items-center gap-1 cursor-pointer`}
               >
                 Academy <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${academyDropdownOpen ? 'rotate-185' : ''}`} />
@@ -83,6 +86,8 @@ export function Navbar() {
               <AnimatePresence>
                 {academyDropdownOpen && (
                   <motion.div
+                    id="desktop-academy-menu"
+                    role="menu"
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 8 }}
@@ -93,6 +98,7 @@ export function Navbar() {
                       <Link
                         key={sublink.href}
                         to={sublink.href}
+                        role="menuitem"
                         className="block px-3 py-2 rounded-lg text-sm text-text-secondary hover:text-text-primary hover:bg-black/[0.03] dark:hover:bg-white/[0.03] transition-all font-medium"
                       >
                         {sublink.label}
@@ -168,6 +174,8 @@ export function Navbar() {
                   <div>
                     <button
                       onClick={() => setMobileAcademyOpen(!mobileAcademyOpen)}
+                      aria-expanded={mobileAcademyOpen}
+                      aria-controls="mobile-academy-menu"
                       className="w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium text-text-secondary hover:text-text-primary flex items-center justify-between hover:bg-black/[0.02] dark:hover:bg-white/[0.02]"
                     >
                       <span>Academy Topics</span>
@@ -176,6 +184,8 @@ export function Navbar() {
                     <AnimatePresence>
                       {mobileAcademyOpen && (
                         <motion.div
+                          id="mobile-academy-menu"
+                          role="menu"
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: 'auto' }}
                           exit={{ opacity: 0, height: 0 }}
@@ -185,6 +195,7 @@ export function Navbar() {
                             <Link
                               key={sublink.href}
                               to={sublink.href}
+                              role="menuitem"
                               onClick={() => {
                                 setMobileOpen(false)
                                 setMobileAcademyOpen(false)

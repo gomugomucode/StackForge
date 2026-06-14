@@ -9,7 +9,7 @@ interface ContentCardProps {
   link: string;
 }
 
-export const ContentCard: React.FC<ContentCardProps> = ({ item, link }) => {
+export const ContentCard: React.FC<ContentCardProps> = React.memo(({ item, link }) => {
   const levelColor: Record<string, string> = {
     Beginner: 'text-green-400 bg-green-400/10 border-green-400/20',
     Intermediate: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20',
@@ -82,4 +82,4 @@ export const ContentCard: React.FC<ContentCardProps> = ({ item, link }) => {
       </div>
     </motion.div>
   );
-};
+});

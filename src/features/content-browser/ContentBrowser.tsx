@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, memo } from 'react';
 import { Search, Filter, ChevronDown } from 'lucide-react';
 import type { ContentMetadata } from '../../core/types/content';
 import { ContentCard } from '../../components/ui/ContentCard';
@@ -10,7 +10,7 @@ interface ContentBrowserProps {
   type: string;
 }
 
-export const ContentBrowser = ({ title, description, content, type }: ContentBrowserProps) => {
+export const ContentBrowser = memo(({ title, description, content, type }: ContentBrowserProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState('All');
   const [categoryFilter, setCategoryFilter] = useState('All');
@@ -102,4 +102,4 @@ export const ContentBrowser = ({ title, description, content, type }: ContentBro
       )}
     </div>
   );
-};
+});

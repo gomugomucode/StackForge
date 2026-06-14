@@ -2,21 +2,13 @@ import { useState, useEffect, useCallback } from 'react'
 import { useParams, useSearchParams, Link } from 'react-router-dom'
 import { motion, AnimatePresence, type PanInfo } from 'framer-motion'
 import {
-  Briefcase,
   TrendingUp,
   Coins,
   Download,
-  CheckCircle,
+  Sparkles,
+  Award,
   Copy,
   Check,
-  ChevronDown,
-  ChevronUp,
-  BookOpen,
-  ChevronRight,
-  Sparkles,
-  Bookmark,
-  Award,
-  Maximize2,
   X
 } from 'lucide-react'
 import { getTechData } from '../data/db'
@@ -33,19 +25,20 @@ import { LearningPathTab } from '../components/tech/LearningPathTab'
 import { SkillTreeTab } from '../components/tech/SkillTreeTab'
 import { AIAssistant } from '../components/tech/AIAssistant'
 import { MobileTabBar } from '../components/tech/MobileTabBar'
-import { ChapterQuiz } from '../components/tech/ChapterQuiz'
 import { useAchievementToast } from '../components/ui/AchievementContext'
 import RoadmapVisualizer from '../features/learning-paths/RoadmapVisualizer';
 import CheatsheetViewer from '../features/cheatsheet-viewer/CheatsheetViewer';
 
+// New Extracted Tab Components
+import { OverviewTab } from '../components/tech/OverviewTab'
+import { NotesTab } from '../components/tech/NotesTab'
+import { ProjectsTab } from '../components/tech/ProjectsTab'
+import { InterviewsTab } from '../components/tech/InterviewsTab'
 
 // V2 Progress Hooks
 import { 
   recordVisit, 
-  isBookmarked, 
-  toggleBookmark, 
-  recordPdfDownload,
-  getQuizScore,
+  recordPdfDownload
 } from '../core/hooks/useProgress'
 import { checkAchievements } from '../data/achievements'
 import { getAllTechnologies } from '../data/db'
@@ -66,9 +59,6 @@ export function TechHubPage() {
   // Notes active chapter state
   const [activeChapterId, setActiveChapterId] = useState<string>('')
 
-  // Interview collapsed states
-  const [openQuestionIndex, setOpenQuestionIndex] = useState<number | null>(null)
-
   // Copy feedback state
   const [copiedText, setCopiedText] = useState<string | null>(null)
 
@@ -85,9 +75,15 @@ export function TechHubPage() {
     setIsLoading(true)
     getTechData(techKey).then((res) => {
       setData(res || null)
+      if (res && res.notes.length > 0) {
+        setActiveChapterId(res.notes[0].id)
+      } else {
+        setActiveChapterId('')
+      }
       setIsLoading(false)
     }).catch(() => {
       setData(null)
+      setActiveChapterId('')
       setIsLoading(false)
     })
   }, [techKey])
@@ -108,13 +104,6 @@ export function TechHubPage() {
       return {}
     }
   })
-
-  // Set default chapter once data loads
-  useEffect(() => {
-    if (data && data.notes.length > 0) {
-      setActiveChapterId(data.notes[0].id)
-    }
-  }, [techKey, data])
 
   // Save progress changes
   useEffect(() => {
@@ -184,12 +173,6 @@ export function TechHubPage() {
     : 0
 
   void quizScoreVersion
-
-  const getChapterQuizPercent = (chapterId: string): number | null => {
-    const score = getQuizScore(techKey, chapterId)
-    if (!score || score.total === 0) return null
-    return Math.round((score.score / score.total) * 100)
-  }
 
   return (
     <>
@@ -335,61 +318,14 @@ export function TechHubPage() {
           >
         {/* OVERVIEW TAB */}
         {activeTab === 'overview' && (
-          <div className="max-w-4xl mx-auto space-y-8">
-            <Card>
-              <h2 className="text-xl font-bold text-text-primary mb-4 flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-accent-purple" /> What is {techTitle}?
-              </h2>
-              <p className="text-text-secondary leading-relaxed text-base">
-                {overview.whatIsIt}
-              </p>
-            </Card>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
-                <h3 className="text-lg font-bold text-text-primary mb-3">Why Learn It?</h3>
-                <p className="text-text-secondary text-sm leading-relaxed">{overview.whyLearnIt}</p>
-              </Card>
-
-              <Card>
-                <h3 className="text-lg font-bold text-text-primary mb-3">Career Path Opportunities</h3>
-                <p className="text-text-secondary text-sm leading-relaxed">{overview.careerOpportunities}</p>
-              </Card>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
-                <h3 className="text-lg font-bold text-text-primary mb-2 flex items-center gap-2">
-                  <Coins className="w-5 h-5 text-accent-emerald" /> Salary & Earnings
-                </h3>
-                <p className="text-text-secondary text-sm leading-relaxed mb-2">
-                  A career specializing in {techTitle} yields premium compensations globally:
-                </p>
-                <div className="text-2xl font-extrabold text-accent-emerald">{overview.salaryInfo}</div>
-              </Card>
-
-              <Card>
-                <h3 className="text-lg font-bold text-text-primary mb-2 flex items-center gap-2">
-                  <Briefcase className="w-5 h-5 text-accent-cyan" /> Market Demand
-                </h3>
-                <p className="text-text-secondary text-sm leading-relaxed mb-2">
-                  How sought after is this technology by startups and enterprise sectors?
-                </p>
-                <div className="text-lg font-bold text-text-primary">{overview.industryDemand}</div>
-              </Card>
-            </div>
-
-            {/* Bottom PDF Download Card */}
-            <Card className="bg-gradient-to-r from-accent-purple/5 to-accent-violet/5 border-dashed border-accent-purple/30 text-center py-8">
-              <h3 className="text-lg font-bold text-text-primary mb-2">Download Complete Reference Guide</h3>
-              <p className="text-text-secondary text-sm mb-6 max-w-md mx-auto">
-                Get a beautifully formatted PDF containing the roadmap timeline, interview questions, projects, and tips.
-              </p>
-              <Button onClick={() => { printTechRoadmapPdf(techKey, data); recordPdfDownload(techKey, data.roadmap.overview.title); }} variant="primary" size="md" className="gap-2">
-                <Download className="w-4 h-4" /> Download {techTitle} Roadmap PDF
-              </Button>
-            </Card>
-          </div>
+          <OverviewTab
+            techTitle={techTitle}
+            data={data}
+            onDownloadPdf={() => {
+              printTechRoadmapPdf(techKey, data)
+              recordPdfDownload(techKey, data.roadmap.overview.title)
+            }}
+          />
         )}
 
         {/* ROADMAP TIMELINE TAB */}
@@ -432,223 +368,22 @@ export function TechHubPage() {
 
         {/* STUDY NOTES TAB */}
         {activeTab === 'notes' && (
-          <div className="space-y-4">
-            
-            {/* Collapsible Sidebar selector for Mobile (visible only on mobile and when not in reading mode) */}
-            {!readingMode && (
-              <div className="lg:hidden mb-4">
-                <button
-                  onClick={() => setSidebarOpen(prev => !prev)}
-                  className="w-full flex items-center justify-between p-3.5 rounded-xl border border-black/[0.06] dark:border-white/[0.06] bg-surface-950/40 text-text-primary font-semibold text-sm"
-                >
-                  <span className="flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-accent-purple" />
-                    {activeChapter?.title || 'Select Chapter'}
-                  </span>
-                  <ChevronDown className={`w-4 h-4 transition-transform ${sidebarOpen ? 'rotate-180' : ''}`} />
-                </button>
-                
-                {sidebarOpen && (
-                  <div className="mt-2 p-2 rounded-2xl bg-surface-900 border border-black/[0.06] dark:border-white/[0.06] space-y-1 z-30 relative shadow-xl">
-                    {data.notes.map((ch) => (
-                      <button
-                        key={ch.id}
-                        onClick={() => {
-                          setActiveChapterId(ch.id)
-                          setSidebarOpen(false)
-                        }}
-                        className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-semibold ${
-                          activeChapterId === ch.id
-                            ? 'bg-accent-purple text-white'
-                            : 'text-text-secondary hover:bg-surface-850 hover:text-text-primary'
-                        }`}
-                      >
-                        <span className="flex items-center justify-between gap-2">
-                          <span className="truncate">{ch.title}</span>
-                          {getChapterQuizPercent(ch.id) === 100 && (
-                            <CheckCircle className="w-3.5 h-3.5 shrink-0" />
-                          )}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-              
-              {/* Chapters sidebar list (hidden on mobile and hidden in reading mode) */}
-              <div className={`lg:col-span-1 space-y-2 ${readingMode ? 'hidden' : 'hidden lg:block'}`}>
-                <h3 className="font-bold text-xs uppercase tracking-wider text-text-muted px-2 mb-3">Syllabus Chapters</h3>
-                {data.notes.map((ch) => (
-                  <button
-                    key={ch.id}
-                    onClick={() => setActiveChapterId(ch.id)}
-                    className={`w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center justify-between group ${
-                      activeChapterId === ch.id
-                        ? 'bg-accent-purple/10 text-accent-purple border border-accent-purple/20'
-                        : 'text-text-secondary hover:text-text-primary hover:bg-black/[0.02] dark:hover:bg-white/[0.02] border border-transparent'
-                    }`}
-                  >
-                    <span className="truncate flex-1">{ch.title.split(': ')[1] || ch.title}</span>
-                    <span className="flex items-center gap-1 shrink-0">
-                      {(() => {
-                        const pct = getChapterQuizPercent(ch.id)
-                        if (pct === 100) return <CheckCircle className="w-4 h-4 text-accent-emerald" />
-                        if (pct !== null) return <span className="text-[10px] font-bold text-text-muted">{pct}%</span>
-                        return null
-                      })()}
-                      <ChevronRight className={`w-4 h-4 transition-transform ${activeChapterId === ch.id ? 'translate-x-0.5' : 'opacity-0 group-hover:opacity-100'}`} />
-                    </span>
-                  </button>
-                ))}
-              </div>
-
-              {/* Active Chapter Details display */}
-              <div className={readingMode ? 'lg:col-span-4' : 'lg:col-span-3'}>
-                {activeChapter ? (
-                  <Card className="space-y-6">
-                    {/* Chapter reading progress indicator */}
-                    <div>
-                      {(() => {
-                        const activeIndex = data.notes.findIndex(ch => ch.id === activeChapter.id)
-                        const totalNotes = data.notes.length
-                        const pctRead = Math.round(((activeIndex + 1) / totalNotes) * 100)
-                        return (
-                          <div className="mb-4">
-                            <div className="flex justify-between items-center text-xs text-text-secondary mb-1.5 font-medium">
-                              <span className="bg-surface-850 px-2.5 py-1 rounded-lg border border-black/[0.04] dark:border-white/[0.04] text-[10px] font-bold text-text-muted uppercase tracking-wider">
-                                Notes Progress
-                              </span>
-                              <span className="font-bold text-accent-purple">
-                                Chapter {activeIndex + 1} of {totalNotes} ({pctRead}%)
-                              </span>
-                            </div>
-                            <div className="w-full h-1 bg-surface-800 rounded-full overflow-hidden">
-                              <div 
-                                className="h-full bg-gradient-to-r from-accent-purple to-accent-cyan transition-all duration-300"
-                                style={{ width: `${pctRead}%` }}
-                              />
-                            </div>
-                          </div>
-                        )
-                      })()}
-                    </div>
-
-                    <div className="flex justify-between items-start gap-4">
-                      <div>
-                        <h2 className="text-2xl font-bold text-text-primary">{activeChapter.title}</h2>
-                        <div className="h-0.5 w-12 bg-accent-purple mt-2" />
-                      </div>
-                      
-                      <div className="flex items-center gap-2 shrink-0">
-                        {/* Reading mode toggle */}
-                        <button
-                          onClick={() => setReadingMode(prev => !prev)}
-                          className={`p-2 rounded-xl border transition-all cursor-pointer ${
-                            readingMode
-                              ? 'bg-accent-purple/20 border-accent-purple/30 text-accent-purple'
-                              : 'bg-transparent border-border/30 text-text-secondary hover:text-text-primary'
-                          }`}
-                          title={readingMode ? "Exit Reading Mode" : "Enter Reading Mode"}
-                        >
-                          <BookOpen className="w-4 h-4" />
-                        </button>
-
-                        {/* Bookmark note toggle */}
-                        <button
-                          onClick={() => {
-                            toggleBookmark({
-                              id: `${techKey}-note-${activeChapter.id}`,
-                              type: 'note',
-                              techId: techKey,
-                              title: activeChapter.title,
-                              subtitle: `${techTitle} Study Notes`,
-                              savedAt: new Date().toISOString()
-                            })
-                            triggerAchievementCheck()
-                          }}
-                          className={`p-2 rounded-xl border transition-all cursor-pointer ${
-                            isBookmarked(`${techKey}-note-${activeChapter.id}`)
-                              ? 'bg-accent-purple/20 border-accent-purple/30 text-accent-purple'
-                              : 'bg-transparent border-border/30 text-text-secondary hover:text-text-primary'
-                          }`}
-                          title="Bookmark Notes"
-                        >
-                          <Bookmark className="w-4 h-4" fill={isBookmarked(`${techKey}-note-${activeChapter.id}`) ? "currentColor" : "none"} />
-                        </button>
-                      </div>
-                    </div>
-
-                    <p className="text-text-secondary leading-relaxed text-base whitespace-pre-line">
-                      {activeChapter.content}
-                    </p>
-
-                    {/* Summary Box */}
-                    {activeChapter.summary && (
-                      <div className="p-4 rounded-xl bg-accent-purple/5 border border-accent-purple/20">
-                        <div className="text-xs font-bold uppercase tracking-wider text-accent-purple mb-1">Key Takeaway</div>
-                        <p className="text-text-secondary text-sm leading-relaxed">{activeChapter.summary}</p>
-                      </div>
-                    )}
-
-                    {/* Code Editor Snippet Playground */}
-                    {activeChapter.codeSnippet && (
-                      <div className="rounded-2xl border border-black/[0.06] dark:border-white/[0.06] overflow-hidden">
-                        <div className="bg-surface-850 px-4 py-2 flex justify-between items-center border-b border-black/[0.06] dark:border-white/[0.06]">
-                          <span className="text-xs font-mono text-text-muted capitalize">
-                            {activeChapter.codeSnippet.language} Playground
-                          </span>
-                          
-                          <div className="flex items-center gap-2">
-                            {/* Full-screen toggle button */}
-                            <button
-                              onClick={() => setFullscreenCode(activeChapter.codeSnippet!.code)}
-                              className="p-1.5 rounded hover:bg-surface-800 text-text-muted hover:text-text-primary transition-all flex items-center gap-1.5 text-xs cursor-pointer"
-                              title="Full Screen Code Examples"
-                            >
-                              <Maximize2 className="w-3.5 h-3.5" /> Fullscreen
-                            </button>
-
-                            <button
-                              onClick={() => handleCopy(activeChapter.codeSnippet!.code)}
-                              className="p-1.5 rounded hover:bg-surface-800 text-text-muted hover:text-text-primary transition-all flex items-center gap-1 text-xs cursor-pointer"
-                            >
-                              {copiedText === activeChapter.codeSnippet.code ? (
-                                <>
-                                  <Check className="w-3.5 h-3.5 text-accent-emerald" /> Copied
-                                </>
-                              ) : (
-                                <>
-                                  <Copy className="w-3.5 h-3.5" /> Copy Code
-                                </>
-                              )}
-                            </button>
-                          </div>
-                        </div>
-                        <pre className="bg-surface-950 p-5 overflow-x-auto font-mono text-sm text-[#cbd5e1] leading-relaxed">
-                          <code>{activeChapter.codeSnippet.code}</code>
-                        </pre>
-                      </div>
-                    )}
-
-                    {activeChapter.quizQuestions && activeChapter.quizQuestions.length > 0 && (
-                      <ChapterQuiz
-                        techId={techKey}
-                        chapterId={activeChapter.id}
-                        chapterTitle={activeChapter.title}
-                        questions={activeChapter.quizQuestions}
-                        onScoreSaved={() => setQuizScoreVersion((v) => v + 1)}
-                      />
-                    )}
-                  </Card>
-                ) : (
-                  <div className="text-center py-12 text-text-secondary">Select a chapter on the sidebar to begin studying.</div>
-                )}
-              </div>
-            </div>
-          </div>
+          <NotesTab
+            techKey={techKey}
+            techTitle={techTitle}
+            data={data}
+            readingMode={readingMode}
+            setReadingMode={setReadingMode}
+            sidebarOpen={sidebarOpen}
+            setSidebarOpen={setSidebarOpen}
+            activeChapterId={activeChapterId}
+            setActiveChapterId={setActiveChapterId}
+            setFullscreenCode={setFullscreenCode}
+            copiedText={copiedText}
+            setQuizScoreVersion={setQuizScoreVersion}
+            triggerAchievementCheck={triggerAchievementCheck}
+            handleCopy={handleCopy}
+          />
         )}
 
         {/* RESOURCES TAB */}
@@ -693,179 +428,12 @@ export function TechHubPage() {
 
         {/* PROJECTS TAB */}
         {activeTab === 'projects' && (
-          <div className="space-y-8">
-            <div className="text-center max-w-2xl mx-auto mb-8">
-              <h2 className="text-2xl font-bold text-text-primary">Hands-on Learning Projects</h2>
-              <p className="text-text-secondary text-sm mt-1">
-                Nothing beats writing lines of code. Build these tasks incrementally to solidifying your expertise.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-8">
-              {data.projects.map((proj, idx) => {
-                const diffColors =
-                  proj.difficulty === 'Beginner'
-                    ? 'text-accent-emerald bg-accent-emerald/10 border-accent-emerald/20'
-                    : proj.difficulty === 'Intermediate'
-                    ? 'text-accent-cyan bg-accent-cyan/10 border-accent-cyan/20'
-                    : 'text-accent-rose bg-accent-rose/10 border-accent-rose/20'
-
-                return (
-                  <Card key={idx} className="relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-1.5 h-full bg-accent-purple" />
-                    
-                    <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-                      <div>
-                        <span className={`inline-block text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border ${diffColors} mb-2`}>
-                          {proj.difficulty}
-                        </span>
-                        <h3 className="text-xl font-bold text-text-primary">{proj.title}</h3>
-                      </div>
-                    </div>
-
-                    <p className="text-text-secondary text-sm leading-relaxed mb-6">
-                      {proj.description}
-                    </p>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
-                      <div>
-                        <h4 className="font-bold text-xs uppercase text-text-muted tracking-wider mb-2">Key Skills Acquired</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {proj.skillsLearned.map((skill, sIdx) => (
-                            <span
-                              key={sIdx}
-                              className="text-xs bg-surface-850 text-text-secondary px-2.5 py-1 rounded-lg border border-black/[0.05] dark:border-white/[0.05]"
-                            >
-                              {skill}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div>
-                        <h4 className="font-bold text-xs uppercase text-text-muted tracking-wider mb-2">Stack / Technologies</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {proj.technologies.map((tech, tIdx) => (
-                            <span
-                              key={tIdx}
-                              className="text-xs bg-accent-purple/10 text-accent-purple px-2.5 py-1 rounded-lg border border-accent-purple/20 font-semibold"
-                            >
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Source Code Folder Structure Tree */}
-                    <div className="mb-6">
-                      <h4 className="font-bold text-xs uppercase text-text-muted tracking-wider mb-2">Project Folder Blueprint</h4>
-                      <pre className="bg-surface-950 p-4 rounded-xl font-mono text-xs text-[#94a3b8] overflow-x-auto border border-black/[0.05] dark:border-white/[0.05]">
-                        {proj.sourceCodeStructure}
-                      </pre>
-                    </div>
-
-                    {/* Step-by-Step Roadmap */}
-                    <div>
-                      <h4 className="font-bold text-xs uppercase text-text-muted tracking-wider mb-3">Development Roadmap Steps</h4>
-                      <ol className="space-y-3">
-                        {proj.developmentRoadmap.map((step, sIdx) => (
-                          <li key={sIdx} className="flex gap-3 text-sm text-text-secondary">
-                            <span className="shrink-0 w-6 h-6 rounded-full bg-surface-800 text-accent-purple flex items-center justify-center font-mono font-bold text-xs">
-                              {sIdx + 1}
-                            </span>
-                            <span className="pt-0.5 leading-relaxed">{step}</span>
-                          </li>
-                        ))}
-                      </ol>
-                    </div>
-                  </Card>
-                )
-              })}
-            </div>
-          </div>
+          <ProjectsTab data={data} />
         )}
 
         {/* INTERVIEWS TAB */}
         {activeTab === 'interviews' && (
-          <div className="max-w-4xl mx-auto space-y-6">
-            <div className="text-center max-w-2xl mx-auto mb-8">
-              <h2 className="text-2xl font-bold text-text-primary">Standard Interview Questions</h2>
-              <p className="text-text-secondary text-sm mt-1">
-                Prepare for technical exams and coding interview rounds with step-by-step conceptual explanations.
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              {data.interviews.map((item, idx) => {
-                const isOpen = openQuestionIndex === idx
-                const levelColors =
-                  item.level === 'Beginner'
-                    ? 'text-accent-emerald bg-accent-emerald/10'
-                    : item.level === 'Intermediate'
-                    ? 'text-accent-cyan bg-accent-cyan/10'
-                    : 'text-accent-rose bg-accent-rose/10'
-
-                return (
-                  <div
-                    key={idx}
-                    className="glass-card rounded-2xl overflow-hidden transition-colors border border-black/[0.06] dark:border-white/[0.06]"
-                  >
-                    <button
-                      onClick={() => setOpenQuestionIndex(isOpen ? null : idx)}
-                      className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left focus:outline-none"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${levelColors}`}>
-                          {item.level}
-                        </span>
-                        
-                        <div
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            toggleBookmark({
-                              id: `${techKey}-interview-${idx}`,
-                              type: 'interview',
-                              techId: techKey,
-                              title: item.question,
-                              subtitle: item.answer,
-                              savedAt: new Date().toISOString()
-                            })
-                          }}
-                          className={`p-1 rounded bg-background border transition-all cursor-pointer ${
-                            isBookmarked(`${techKey}-interview-${idx}`)
-                              ? 'border-accent-purple text-accent-purple bg-accent-purple/10'
-                              : 'border-border/30 text-text-secondary hover:text-text-primary'
-                          }`}
-                          title="Bookmark Question"
-                        >
-                          <Bookmark className="w-3 h-3" fill={isBookmarked(`${techKey}-interview-${idx}`) ? "currentColor" : "none"} />
-                        </div>
-
-                        <span className="font-bold text-text-primary text-sm md:text-base">
-                          {item.question}
-                        </span>
-                      </div>
-                      <span className="shrink-0 w-8 h-8 rounded-lg bg-surface-800 flex items-center justify-center">
-                        {isOpen ? (
-                          <ChevronUp className="w-4 h-4 text-text-secondary" />
-                        ) : (
-                          <ChevronDown className="w-4 h-4 text-text-secondary" />
-                        )}
-                      </span>
-                    </button>
-
-                    {isOpen && (
-                      <div className="px-6 pb-5 text-text-secondary text-sm leading-relaxed border-t border-black/[0.04] dark:border-white/[0.04] pt-4 bg-surface-950/20">
-                        <div className="font-semibold text-text-primary mb-1">Model Answer:</div>
-                        <p>{item.answer}</p>
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-          </div>
+          <InterviewsTab techKey={techKey} data={data} />
         )}
 
           </motion.div>

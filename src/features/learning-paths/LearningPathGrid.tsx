@@ -7,7 +7,7 @@ interface LearningPathGridProps {
   roadmaps: Roadmap[];
 }
 
-const LearningPathGrid: React.FC<LearningPathGridProps> = ({ roadmaps }) => {
+const LearningPathGrid: React.FC<LearningPathGridProps> = React.memo(({ roadmaps }) => {
   return (
     <section className="py-16 px-4 max-w-7xl mx-auto">
       <div className="text-center mb-12">
@@ -41,6 +41,6 @@ const LearningPathGrid: React.FC<LearningPathGridProps> = ({ roadmaps }) => {
       </div>
     </section>
   );
-};
+});
 
 export default LearningPathGrid;

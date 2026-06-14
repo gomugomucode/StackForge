@@ -266,6 +266,8 @@ export function SearchSystem() {
         onClick={() => setIsOpen(true)}
         className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-black/[0.06] dark:border-white/[0.06] bg-surface-950/60 hover:bg-surface-850 hover:border-accent-purple/30 text-text-muted hover:text-text-secondary text-sm transition-all focus:outline-none w-44 md:w-56 text-left cursor-pointer"
         aria-label="Search learning resources"
+        aria-haspopup="dialog"
+        aria-expanded={isOpen}
       >
         <Search className="w-4 h-4 text-text-muted" />
         <span className="flex-1 text-xs">Search resources...</span>
@@ -279,6 +281,9 @@ export function SearchSystem() {
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-start justify-center pt-16 md:pt-20 px-4">
           <div
             ref={modalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Search learning resources"
             className="w-full max-w-2xl bg-surface-900 border border-black/[0.1] dark:border-white/[0.08] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[82vh]"
           >
             {/* Input Header bar */}
@@ -291,6 +296,11 @@ export function SearchSystem() {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search roadmaps, chapters, cheatsheets, projects, interviews, resources..."
                 className="flex-1 bg-transparent border-none focus:outline-none text-text-primary px-3 text-sm placeholder:text-text-muted h-9"
+                role="combobox"
+                aria-expanded={isOpen}
+                aria-autocomplete="list"
+                aria-controls="search-results-list"
+                aria-label="Search query"
               />
               {isIndexing ? (
                 <Loader2 className="w-4 h-4 text-accent-purple animate-spin shrink-0 mr-2" />
@@ -298,6 +308,7 @@ export function SearchSystem() {
               <button
                 onClick={() => setIsOpen(false)}
                 className="p-1 rounded-lg hover:bg-surface-800 text-text-muted hover:text-text-primary transition-all shrink-0"
+                aria-label="Close search"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -316,6 +327,7 @@ export function SearchSystem() {
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
                   className="bg-surface-850 hover:bg-surface-800 border border-black/[0.06] dark:border-white/[0.06] px-2 py-1 rounded-lg text-text-primary focus:outline-none cursor-pointer"
+                  aria-label="Filter by category"
                 >
                   <option value="All">All Categories</option>
                   <option value="Roadmaps">Roadmaps</option>
@@ -331,6 +343,7 @@ export function SearchSystem() {
                   value={selectedTech}
                   onChange={(e) => setSelectedTech(e.target.value)}
                   className="bg-surface-850 hover:bg-surface-800 border border-black/[0.06] dark:border-white/[0.06] px-2 py-1 rounded-lg text-text-primary focus:outline-none capitalize cursor-pointer"
+                  aria-label="Filter by technology"
                 >
                   <option value="All">All Technologies</option>
                   {availableTechs.map((tech) => (
@@ -348,7 +361,11 @@ export function SearchSystem() {
             )}
 
             {/* Results output list scroll */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-6 max-h-[50vh]">
+            <div 
+              id="search-results-list"
+              role="listbox"
+              className="flex-1 overflow-y-auto p-4 space-y-6 max-h-[50vh]"
+            >
               {isIndexing && searchIndex.length === 0 ? (
                 <div className="text-center py-16 text-text-muted">
                   <Loader2 className="w-8 h-8 text-accent-purple animate-spin mx-auto mb-3" />
@@ -376,6 +393,8 @@ export function SearchSystem() {
                       {items.map((res, itemIdx) => (
                         <button
                           key={itemIdx}
+                          role="option"
+                          aria-selected="false"
                           onClick={() => handleResultClick(res.link)}
                           className="w-full text-left p-3 rounded-xl hover:bg-surface-950/60 border border-transparent hover:border-black/[0.04] dark:hover:border-white/[0.04] transition-all flex items-start gap-3.5 group cursor-pointer"
                         >
