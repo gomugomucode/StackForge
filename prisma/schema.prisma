@@ -1,0 +1,231 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  profile       Profile?
+  progress      Progress[]
+  achievements  Achievement[]
+  bookmarks     Bookmark[]
+  certificates  Certificate[]
+  sessions      LearningSession[]
+  xpEvents      XPEvent[]
+  studyGroups   StudyGroupMember[]
+  challenges    ChallengeSubmission[]
+  enrollments   Enrollment[]
+  reviews       Review[]
+  snippets      Snippet[]
+  skillProgress SkillProgress[]
+}
+
+enum Role {
+  USER
+  MENTOR
+  ADMIN
+}
+
+model Profile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio         String?
+  avatarUrl   String?
+  website     String?
+  github      String?
+  twitter     String?
+  xp          Int      @default(0)
+  level        Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Progress {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  contentId   String
+  contentType ContentType
+  completed   Boolean  @default(false)
+  percent     Float    @default(0)
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, contentId])
+}
+
+enum ContentType {
+  TUTORIAL
+  PROJECT
+  ROADMAP
+  CHEATSHEET
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  name        String
+  description String
+  icon        String
+  unlockedAt  DateTime @default(now())
+}
+
+model Bookmark {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  contentId   String
+  contentType ContentType
+  createdAt   DateTime @default(now())
+}
+
+model Certificate {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  courseName  String
+  issueDate   DateTime @default(now())
+  expiryDate  DateTime?
+  certificateUrl String?
+  verificationCode String @unique
+}
+
+model LearningSession {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  duration  Int      // in minutes
+  startTime DateTime @default(now())
+  endTime   DateTime?
+}
+
+model XPEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  amount    Int
+  reason    String
+  createdAt DateTime @default(now())
+}
+
+model StudyGroup {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  members     StudyGroupMember[]
+  createdAt   DateTime @default(now())
+}
+
+model StudyGroupMember {
+  id        String @id @default(cuid())
+  userId    String
+  groupId   String
+  user      User   @relation(fields: [userId], references: [id])
+  group     StudyGroup @relation(fields: [groupId], references: [id])
+  role      String @default("MEMBER") // ADMIN, MEMBER
+}
+
+model Challenge {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  difficulty  String
+  points      Int
+  submissions ChallengeSubmission[]
+  createdAt   DateTime @default(now())
+}
+
+model ChallengeSubmission {
+  id          String   @id @default(cuid())
+  userId      String
+  challengeId String
+  user        User     @relation(fields: [userId], references: [id])
+  challenge   Challenge @relation(fields: [challengeId], references: [id])
+  solution    String
+  status      String   @default("PENDING") // PENDING, PASSED, FAILED
+  submittedAt DateTime @default(now())
+}
+
+model Leaderboard {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  xp        Int      @default(0)
+  rank      Int
+  updatedAt DateTime @updatedAt
+}
+
+model MarketplacePath {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  price       Float
+  creatorId   String
+  enrollments Enrollment[]
+  reviews     Review[]
+  createdAt   DateTime @default(now())
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  pathId    String
+  path      MarketplacePath @relation(fields: [pathId], references: [id])
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+}
+
+model Enrollment {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  pathId    String
+  path      MarketplacePath @relation(fields: [pathId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Snippet {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  code      String
+  language  String
+  isPublic  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model SkillNode {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  category    String
+  progress    SkillProgress[]
+}
+
+model SkillProgress {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  nodeId    String
+  node      SkillNode @relation(fields: [nodeId], references: [id])
+  level     Int      @default(0)
+  mastered  Boolean   @default(false)
+  updatedAt DateTime @updatedAt
+}
