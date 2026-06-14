@@ -1,4 +1,4 @@
-import type { AccordionItem } from '../components/ui/Accordion'
+import type { AccordionItem } from '@/components/ui/Accordion'
 
 export const faqItems: AccordionItem[] = [
   {

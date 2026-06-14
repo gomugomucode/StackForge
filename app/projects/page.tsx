@@ -1,5 +1,5 @@
 
-import { ContentBrowser } from '../features/content-browser/ContentBrowser';
+import { ContentBrowser } from '@/features/content-browser/ContentBrowser';
 import { contentService } from '@/lib/core/content/contentService';
 
 const ProjectsPage = () => {

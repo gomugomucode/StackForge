@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Braces, Search, Copy, Check, Info } from 'lucide-react'
-import { SEOHead } from '../components/ui/SEOHead'
-import { SectionHeader, Card } from '../components/ui/SectionHeader'
+import { SEOHead } from '@/components/ui/SEOHead'
+import { SectionHeader, Card } from '@/components/ui/SectionHeader'
 
 export function ToolsPage() {
   const [activeTool, setActiveTool] = useState<'json' | 'regex'>('json')

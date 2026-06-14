@@ -9,7 +9,7 @@ import {
 } from 'lucide-react'
 import { getAllTechnologies, getTechMetadata } from '@/lib/data/db'
 import { getCompletedTopics, getWeeksCompleted } from '@/lib/core/hooks/useProgress'
-import { SEOHead } from '../components/ui/SEOHead'
+import { SEOHead } from '@/components/ui/SEOHead'
 
 export function ComparePage() {
   const allTechs = getAllTechnologies()
