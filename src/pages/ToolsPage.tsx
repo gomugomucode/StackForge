@@ -179,7 +179,7 @@ export function ToolsPage() {
                         </div>
                       </div>
                     ) : jsonOutput ? (
-                      <pre className="p-4 rounded-xl font-mono text-sm bg-surface-950 text-accent-emerald overflow-auto h-[290px] border border-black/[0.06] dark:border-white/[0.06]">
+                      <pre className="p-4 rounded-xl font-mono text-sm bg-surface-950 text-accent-emerald overflow-x-auto overflow-y-auto h-[290px] border border-black/[0.06] dark:border-white/[0.06]">
                         {jsonOutput}
                       </pre>
                     ) : (

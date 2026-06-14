@@ -467,7 +467,7 @@ export function TechHubPage() {
               </button>
             </div>
           </div>
-          <pre className="flex-1 bg-black/40 rounded-xl p-5 overflow-auto font-mono text-sm leading-relaxed text-[#cbd5e1] border border-white/[0.05]">
+          <pre className="flex-1 bg-black/40 rounded-xl p-5 overflow-x-auto font-mono text-sm leading-relaxed text-[#cbd5e1] border border-white/[0.05]">
             <code>{fullscreenCode}</code>
           </pre>
         </div>

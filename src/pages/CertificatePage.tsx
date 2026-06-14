@@ -31,11 +31,7 @@ export function CertificatePage() {
     })
   }, [techId])
 
-  // Reload user name on mount
-  useEffect(() => {
-    setLocalUserName(getUserName())
-    setNameInput(getUserName())
-  }, [])
+
 
   // Calculate progress percent
   const progressPercent = useMemo(() => {
