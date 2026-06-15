@@ -159,4 +159,3 @@ export default function MarketplacePage() {
     </>
   )
 }
-export default MarketplacePage;

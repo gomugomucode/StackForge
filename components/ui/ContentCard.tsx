@@ -70,7 +70,7 @@ export const ContentCard: React.FC<ContentCardProps> = React.memo(({ item, link 
 
       <div className="mt-4 flex items-center justify-between">
         <Link 
-          to={link} 
+          href={link} 
           className="flex items-center gap-1 text-sm font-semibold text-white group-hover:text-indigo-400 transition-colors"
         >
           Explore <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />

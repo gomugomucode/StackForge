@@ -237,7 +237,7 @@ export function SearchSystem() {
 
   const handleResultClick = (link: string) => {
     setIsOpen(false)
-    navigate(link)
+    navigate.push(link)
   }
 
   const getTypeIcon = (type: string) => {

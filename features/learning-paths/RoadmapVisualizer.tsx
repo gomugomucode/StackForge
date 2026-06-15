@@ -51,7 +51,7 @@ const RoadmapVisualizer: React.FC<RoadmapVisualizerProps> = ({ nodes }) => {
                 {node.links.map((link: string, i: number) => (
                   <Link 
                     key={i} 
-                    to={link} 
+                    href={link} 
                     className="text-xs px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 transition-colors"
                   >
                     View Material

@@ -8,7 +8,7 @@ import type { CertificateRecord } from '@/features/certificates/types'
 import { ShieldCheck, Search, ShieldAlert, FileSearch, ArrowLeft, Loader2 } from 'lucide-react'
 
 export function VerifyPage() {
-  const [searchParams] = useSearchParams()
+  const searchParams = useSearchParams()
   const codeParam = searchParams.get('code') || ''
 
   const [inputCode, setInputCode] = useState(codeParam)

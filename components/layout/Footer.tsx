@@ -60,7 +60,7 @@ export function Footer() {
               {footerLinks.map((link) => (
                 <li key={link.label}>
                   <Link
-                    to={link.href}
+                    href={link.href}
                     className="text-text-secondary hover:text-accent-purple transition-colors text-sm"
                   >
                     {link.label}
@@ -76,7 +76,7 @@ export function Footer() {
               {platformLinks.map((link) => (
                 <li key={link.label}>
                   <Link
-                    to={link.href}
+                    href={link.href}
                     className="text-text-secondary hover:text-accent-purple transition-colors text-sm"
                   >
                     {link.label}
@@ -111,7 +111,7 @@ export function Footer() {
             {navLinks.map((link) => (
               <Link
                 key={link.href}
-                to={link.href}
+                href={link.href}
                 className="text-text-muted hover:text-text-secondary text-sm transition-colors"
               >
                 {link.label}

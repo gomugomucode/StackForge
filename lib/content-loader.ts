@@ -1,6 +1,5 @@
 import fs from 'fs/promises'
 import path from 'path'
-import { compileMDX } from 'next-mdx-remote/compile'
 
 export async function getMdxContent(slug: string, category: string) {
   const filePath = path.join(process.cwd(), 'content', category, `${slug}.mdx`)
@@ -8,7 +7,6 @@ export async function getMdxContent(slug: string, category: string) {
   
   return {
     source,
-    compiled: await compileMDX({ source }),
   }
 }
 

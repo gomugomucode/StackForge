@@ -8,7 +8,7 @@ import { QRCodeDisplay } from '@/features/certificates/QRCodeDisplay'
 import type { CertificateRecord } from '@/features/certificates/types'
 import { Award, Lock, ShieldCheck, ArrowRight, User, Check, X, QrCode, ExternalLink, Trophy } from 'lucide-react'
 
-export function CertificateCenterPage() {
+export default function CertificateCenterPage() {
   const [issuedCerts, setIssuedCerts] = useState<CertificateRecord[]>([])
   const [claimTech, setClaimTech] = useState<{ id: string; label: string; topics: number } | null>(null)
   const [recipientName, setRecipientName] = useState(getUserName() || '')
@@ -391,4 +391,3 @@ export function CertificateCenterPage() {
     </>
   )
 }
-export default CertificateCenterPage;
