@@ -6,14 +6,15 @@ import { prisma } from '@/server/db/client'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
+  session: { strategy: 'jwt' },
   providers: [
     GitHub,
     Google,
   ],
   callbacks: {
-    session: async ({ session, user }) => {
-      if (session.user) {
-        session.user.id = user.id
+    session: async ({ session, token }) => {
+      if (session.user && token?.sub) {
+        session.user.id = token.sub
       }
       return session
     },
