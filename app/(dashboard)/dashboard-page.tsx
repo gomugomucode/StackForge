@@ -36,7 +36,7 @@ const StatCard = ({ icon: Icon, label, value, color, trend }: any) => (
   </motion.div>
 );
 
-export function DashboardPage() {
+export default function DashboardPage() {
   const { progress } = useProgress();
   const { unlockedAchievements } = useAchievements();
 
