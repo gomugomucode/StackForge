@@ -1,3 +1,4 @@
+"use client";
 import { motion } from 'framer-motion'
 import { ArrowRight, Sparkles, Play, Zap } from 'lucide-react'
 import { Button } from '../ui/Button'

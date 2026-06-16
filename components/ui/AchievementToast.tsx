@@ -1,59 +1,32 @@
+"use client";
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Trophy } from 'lucide-react'
 import type { Achievement } from '@/lib/data/achievements'
 
-interface AchievementToastProps {
-  achievement: Achievement | null
-  onDismiss: () => void
-}
-
-export function AchievementToast({ achievement, onDismiss }: AchievementToastProps) {
-  useEffect(() => {
-    if (!achievement) return
-    const timer = setTimeout(onDismiss, 4000)
-    return () => clearTimeout(timer)
-  }, [achievement, onDismiss])
-
+export function AchievementToast({ achievement, onClose }: { achievement: Achievement, onClose: () => void }) {
   return (
-    <AnimatePresence>
-      {achievement && (
-        <motion.div
-          initial={{ opacity: 0, y: 60, x: 20 }}
-          animate={{ opacity: 1, y: 0, x: 0 }}
-          exit={{ opacity: 0, y: 40, x: 20 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-          className="fixed bottom-24 md:bottom-6 right-4 md:right-6 z-[70] max-w-xs w-full"
+    <div className="fixed top-6 right-6 z-[100] animate-in slide-in-from-right-full duration-500">
+      <motion.div
+        initial={{ opacity: 0, x: 50, scale: 0.9 }}
+        animate={{ opacity: 1, x: 0, scale: 1 }}
+        exit={{ opacity: 0, x: 50, scale: 0.9 }}
+        className="glass-card p-4 rounded-2xl border border-accent-emerald/30 bg-accent-emerald/10 backdrop-blur-xl shadow-2xl shadow-accent-emerald/20 flex items-center gap-4 min-w-[300px]"
+      >
+        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent-emerald to-accent-cyan flex items-center justify-center text-white shadow-lg shadow-accent-emerald/30 shrink-0">
+          <Trophy className="w-6 h-6" />
+        </div>
+        <div className="flex-1">
+          <h4 className="text-sm font-bold text-text-primary mb-0.5">Achievement Unlocked!</h4>
+          <p className="text-xs text-text-secondary leading-relaxed">{achievement.description}</p>
+        </div>
+        <button 
+          onClick={onClose}
+          className="p-1.5 rounded-lg hover:bg-white/10 text-text-muted hover:text-text-primary transition-all"
         >
-          <div className="glass-card p-4 rounded-2xl border border-accent-purple/30 shadow-2xl shadow-accent-purple/10 relative overflow-hidden">
-            <div className={`absolute inset-0 bg-gradient-to-br ${achievement.color} opacity-10 pointer-events-none`} />
-
-            <button
-              onClick={onDismiss}
-              className="absolute top-2.5 right-2.5 p-1 rounded-lg hover:bg-surface-800 text-text-muted hover:text-text-primary transition-colors"
-              aria-label="Dismiss"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-
-            <div className="flex items-start gap-3 relative">
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${achievement.color} flex items-center justify-center text-2xl shrink-0 shadow-lg`}>
-                {achievement.emoji}
-              </div>
-              <div className="flex-1 min-w-0 pr-4">
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <Trophy className="w-3.5 h-3.5 text-accent-purple" />
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-accent-purple">
-                    Achievement Unlocked
-                  </span>
-                </div>
-                <h4 className="font-bold text-sm text-text-primary">{achievement.title}</h4>
-                <p className="text-xs text-text-secondary mt-0.5 leading-relaxed">{achievement.description}</p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+          <X className="w-4 h-4" />
+        </button>
+      </motion.div>
+    </div>
   )
 }

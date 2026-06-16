@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CheckCircle2, XCircle, RotateCcw } from 'lucide-react';
+"use client";
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Question {

@@ -1,3 +1,4 @@
+"use client";
 import { motion } from 'framer-motion'
 import { stats } from '@/lib/data/stats'
 import { useCounter } from '@/lib/core/hooks/useCounter'

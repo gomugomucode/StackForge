@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import { supabase } from '@/lib/core/services/supabase';
 import { Trophy, Download, ShieldCheck, Award } from 'lucide-react';

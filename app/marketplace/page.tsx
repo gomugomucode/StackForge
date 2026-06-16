@@ -1,3 +1,4 @@
+"use client";
 import { useState } from 'react'
 import { useMarketplace } from '@/features/marketplace/useMarketplace'
 import { PathCard } from '@/features/marketplace/PathCard'

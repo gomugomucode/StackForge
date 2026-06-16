@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useState } from 'react'
 import { Play, Save, Share2, Code2, RotateCcw, BookOpen, Braces, ChevronDown } from 'lucide-react'

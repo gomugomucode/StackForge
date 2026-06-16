@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
@@ -205,7 +205,7 @@ export default function TechHubPage() {
                 <Coins className="w-5 h-5 text-accent-emerald" />
                 <div>
                   <div className="text-xs text-text-muted">Average Salary</div>
-                  <div className="text-sm font-bold text-text-primary">{overview.salaryInfo.split(',')[0]}</div>
+                  <div className="text-sm font-bold text-text-primary">{overview.salaryInfo.split(',')[0]}C</div>
                 </div>
               </div>
               <div className="p-4 rounded-2xl glass-card flex items-center gap-3 col-span-2">
@@ -227,7 +227,7 @@ export default function TechHubPage() {
         </div>
       </div>
 
-      <div className={`sticky top-16 md:top-[4.5rem] z-40 bg-surface-900/90 backdrop-blur-md border-b border-black/[0.06] dark:border-white/[0.06] ${readingMode ? 'hidden' : 'hidden md:block'}`}>
+      <div className={`sticky top-16 z-30 md:top-[4.5rem] bg-surface-900/90 backdrop-blur-md border-b border-black/[0.06] dark:border-white/[0.06] ${readingMode ? 'hidden' : 'hidden md:block'}`}>
         <div className="container mx-auto px-4">
           <div className="flex overflow-x-auto no-scrollbar py-3 gap-2">
             {[

@@ -1,3 +1,4 @@
+"use client";
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Layers, GitFork, Share2, Mail, MessageCircle } from 'lucide-react'

@@ -1,3 +1,4 @@
+"use client";
 import { useState, useMemo, useEffect } from 'react'
 import { Download, ExternalLink, Inbox } from 'lucide-react'
 import type { Resource } from '@/lib/data/resources'

@@ -1,3 +1,4 @@
+"use client";
 import { useState } from 'react';
 import { useAuth } from '@/lib/core/context/AuthProvider';
 import { supabase } from '@/lib/supabase';

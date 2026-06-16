@@ -1,3 +1,4 @@
+"use client";
 import { useState, useMemo, memo } from 'react';
 import { Search, Filter, ChevronDown } from 'lucide-react';
 import type { ContentMetadata } from '@/lib/core/types/content';

@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -7,7 +8,7 @@ import { CertificateCard } from '@/features/certificates/CertificateCard'
 import type { CertificateRecord } from '@/features/certificates/types'
 import { ShieldCheck, Search, ShieldAlert, FileSearch, ArrowLeft, Loader2 } from 'lucide-react'
 
-export function VerifyPage() {
+export default function VerifyPage() {
   const searchParams = useSearchParams()
   const codeParam = searchParams.get('code') || ''
 
@@ -196,4 +197,3 @@ export function VerifyPage() {
     </>
   )
 }
-export default VerifyPage;

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
+"use client";
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Layers, ChevronDown } from 'lucide-react'
 import { navLinks, academyLinks, brandName } from '@/lib/data/navigation'
