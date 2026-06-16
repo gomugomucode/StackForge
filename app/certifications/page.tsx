@@ -1,5 +1,6 @@
 "use client";
 import React from 'react';
+import Link from 'next/link';
 import { supabase } from '@/lib/core/services/supabase';
 import { Trophy, Download, ShieldCheck, Award } from 'lucide-react';
 
@@ -59,9 +60,9 @@ export default function CertificationEngine() {
           <Trophy className="w-16 h-16 text-slate-300 mx-auto mb-4" />
           <h3 className="text-xl font-bold text-slate-900 dark:text-white">No Certifications Yet</h3>
           <p className="text-slate-500 dark:text-slate-400 mt-2 mb-6">Complete courses and pass quizzes to earn your certificates.</p>
-          <a href="/roadmaps" className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors">
+          <Link href="/roadmaps" className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors">
             Start Learning
-          </a>
+          </Link>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

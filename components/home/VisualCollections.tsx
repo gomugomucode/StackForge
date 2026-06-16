@@ -1,4 +1,6 @@
-import { Image, ArrowRight } from 'lucide-react'
+import { Image as ImageIcon, ArrowRight } from 'lucide-react'
+import NextImage from 'next/image'
+
 import { visualCollections } from '@/lib/data/collections'
 import { SectionHeader } from '../ui/SectionHeader'
 import { useScrollAnimation } from '@/lib/core/hooks/useScrollAnimation'
@@ -28,11 +30,12 @@ export function VisualCollections() {
               className="group text-left rounded-2xl overflow-hidden bg-surface-950/80 border border-black/[0.06] dark:border-white/[0.06] hover:border-accent-purple/40 hover:bg-surface-850 hover:shadow-xl dark:hover:shadow-accent-purple/5 transition-all duration-300 hover:-translate-y-1"
             >
               <div className="aspect-[4/3] overflow-hidden relative">
-                <img
+                <NextImage
                   src={collection.image}
-                  alt=""
+                  alt={collection.title}
+                  fill
                   loading="lazy"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-surface-900/80 to-transparent" />
                 <span className="absolute bottom-3 left-3 text-xs font-semibold px-2 py-1 rounded-md bg-surface-950/85 text-text-secondary border border-black/[0.06] dark:border-white/[0.06]">
@@ -45,7 +48,7 @@ export function VisualCollections() {
                 </h3>
                 <div className="flex items-center justify-between">
                   <span className="inline-flex items-center gap-1 text-xs text-text-muted">
-                    <Image className="w-3.5 h-3.5" />
+                    <ImageIcon className="w-3.5 h-3.5" />
                     {collection.itemCount} items
                   </span>
                   <ArrowRight className="w-4 h-4 text-text-muted group-hover:text-accent-purple transition-colors" />

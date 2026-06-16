@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { CheckCircle2, ArrowRight, Zap, ExternalLink, Play, ChevronRight } from 'lucide-react';
 
 interface RoadmapStepProps {
@@ -82,7 +83,7 @@ export const ProjectCard = ({ title, description, techStack, level, estimatedTim
     <div className="group relative p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:shadow-xl transition-all hover:-translate-y-1">
       {image && (
         <div className="w-full h-40 rounded-lg mb-4 overflow-hidden">
-          <img src={image} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+          <Image src={image} alt={title} fill className="object-cover group-hover:scale-105 transition-transform" />
         </div>
       )}
       <div className="flex items-center gap-2 mb-3">

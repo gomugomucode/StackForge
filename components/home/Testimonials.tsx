@@ -1,5 +1,7 @@
+import Image from 'next/image'
 import { Star, Quote } from 'lucide-react'
 import { testimonials } from '@/lib/data/testimonials'
+
 import { SectionHeader } from '../ui/SectionHeader'
 import { Stagger, StaggerItem } from '../ui/Motion'
 
@@ -23,9 +25,11 @@ export function Testimonials() {
                 <Quote className="w-8 h-8 text-accent-purple/40 mb-4" aria-hidden="true" />
                 <p className="text-text-secondary leading-relaxed flex-1 mb-6">&ldquo;{item.quote}&rdquo;</p>
                 <div className="flex items-center gap-4 pt-4 border-t border-black/[0.06] dark:border-white/[0.06]">
-                  <img
+                  <Image
                     src={item.avatar}
-                    alt=""
+                    alt={item.name}
+                    width={48}
+                    height={48}
                     className="w-12 h-12 rounded-full object-cover ring-2 ring-accent-purple/20"
                     loading="lazy"
                   />

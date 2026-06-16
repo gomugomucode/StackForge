@@ -1,5 +1,6 @@
 "use client";
 import React from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import type { ContentMetadata } from '@/lib/core/types/content';
 import { ChevronRight, Clock, Gauge, Tag } from 'lucide-react';
@@ -26,10 +27,11 @@ export const ContentCard: React.FC<ContentCardProps> = React.memo(({ item, link 
     >
       <div className="relative aspect-video overflow-hidden rounded-xl mb-4 bg-slate-800">
         {item.thumbnail ? (
-          <img 
+          <Image 
             src={item.thumbnail} 
             alt={item.title} 
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" 
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-110" 
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-slate-600 font-bold text-xl">

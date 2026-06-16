@@ -1,6 +1,8 @@
 "use client";
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowRight, Award, CheckCircle } from 'lucide-react'
+
 import { founder, missionStatement } from '@/lib/data/founder'
 import { getIcon } from '@/lib/core/utils/icons'
 import { Button } from '../ui/Button'
@@ -23,10 +25,11 @@ export function FounderPreview() {
           <Card glow="purple" className="!p-0 overflow-hidden">
             <div className="grid grid-cols-1 md:grid-cols-5">
               <div className="md:col-span-2 relative">
-                <img
+                <Image
                   src={founder.avatar}
                   alt={founder.name}
-                  className="w-full h-64 md:h-full object-cover"
+                  fill
+                  className="object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-surface-950 via-transparent to-transparent" />
               </div>
@@ -80,10 +83,11 @@ export function AboutContent() {
           <Card glow="purple" className="!p-0 overflow-hidden mb-12">
             <div className="grid grid-cols-1 lg:grid-cols-5">
               <div className="lg:col-span-2 relative min-h-[280px]">
-                <img
+                <Image
                   src={founder.avatar}
                   alt={founder.name}
-                  className="absolute inset-0 w-full h-full object-cover"
+                  fill
+                  className="object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-surface-950 via-surface-950/20 to-transparent" />
               </div>
