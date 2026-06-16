@@ -1,6 +1,8 @@
 "use client";
+import Image from 'next/image'
 import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
+
 import type { Article } from '@/lib/data/articles'
 import { articles } from '@/lib/data/articles'
 import { SectionHeader } from '../ui/SectionHeader'
@@ -43,11 +45,12 @@ export function ArticleCard({ article, featured = false, searchQuery = '' }: Art
       }`}
     >
       <div className={`overflow-hidden ${featured ? 'h-full min-h-[200px]' : 'aspect-video'}`}>
-        <img
+        <Image
           src={article.image}
           alt=""
+          fill
           loading="lazy"
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
         />
       </div>
       <div className="p-5 md:p-6 flex flex-col">

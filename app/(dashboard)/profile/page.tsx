@@ -1,5 +1,6 @@
 "use client";
 import { useState } from 'react';
+import Image from 'next/image';
 import { useAuth } from '@/lib/core/context/AuthProvider';
 import { supabase } from '@/lib/supabase';
 import { User, GitBranch, Globe, Camera, Save } from 'lucide-react';
@@ -33,7 +34,7 @@ const ProfilePage = () => {
             <div className="relative">
               <div className="w-24 h-24 rounded-2xl bg-slate-200 dark:bg-slate-800 border-4 border-white dark:border-slate-900 overflow-hidden">
                 {profile?.avatar_url ? (
-                  <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                  <Image src={profile.avatar_url} alt="Avatar" width={96} height={96} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-slate-300 dark:bg-slate-700 text-slate-500 font-bold text-2xl">
                     {profile?.username?.[0].toUpperCase() || 'U'}

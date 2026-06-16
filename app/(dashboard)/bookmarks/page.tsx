@@ -1,5 +1,6 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import { useAuth } from '@/lib/core/context/AuthProvider';
 import { supabase } from '@/lib/supabase';
 import { Bookmark, Trash2, BookOpen } from 'lucide-react';
@@ -11,11 +12,7 @@ const BookmarksPage = () => {
   const [bookmarks, setBookmarks] = useState<ContentMetadata[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (user) fetchBookmarks();
-  }, [user]);
-
-  const fetchBookmarks = async () => {
+  const fetchBookmarks = useCallback(async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('bookmarks')
@@ -39,7 +36,12 @@ const BookmarksPage = () => {
 
     setBookmarks(resolved);
     setLoading(false);
-  };
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (user) fetchBookmarks();
+  }, [user, fetchBookmarks]);
+
 
   const toggleBookmark = async (slug: string) => {
     const { error } = await supabase
@@ -91,9 +93,9 @@ const BookmarksPage = () => {
           <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-slate-900 dark:text-white">No bookmarks yet</h3>
           <p className="text-slate-500 mb-6">Save tutorials, projects, and guides to access them later.</p>
-          <a href="/tutorials" className="px-6 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors">
+          <Link href="/tutorials" className="px-6 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors">
             Explore Tutorials
-          </a>
+          </Link>
         </div>
       )}
     </div>
