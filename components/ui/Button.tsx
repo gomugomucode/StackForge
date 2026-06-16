@@ -1,3 +1,4 @@
+"use client";
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
@@ -10,7 +11,6 @@ interface ButtonProps {
   variant?: ButtonVariant
   size?: ButtonSize
   href?: string
-  to?: string
   className?: string
   onClick?: () => void
   type?: 'button' | 'submit'
@@ -45,7 +45,6 @@ export function Button({
   variant = 'primary',
   size = 'md',
   href,
-  to,
   className = '',
   onClick,
   type = 'button',
@@ -54,21 +53,13 @@ export function Button({
 }: ButtonProps) {
   const classes = `inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple focus-visible:ring-offset-2 focus-visible:ring-offset-surface-900 ${variants[variant]} ${sizes[size]} ${className}`
 
-  if (to) {
+  if (href) {
     return (
       <motion.div {...motionProps} className="inline-flex">
-        <Link to={to} className={classes} aria-label={ariaLabel}>
+        <Link href={href} className={classes} aria-label={ariaLabel}>
           {children}
         </Link>
       </motion.div>
-    )
-  }
-
-  if (href) {
-    return (
-      <motion.a href={href} className={classes} aria-label={ariaLabel} {...motionProps}>
-        {children}
-      </motion.a>
     )
   }
 

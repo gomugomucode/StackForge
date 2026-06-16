@@ -1,3 +1,4 @@
+"use client";
 import { useState } from 'react'
 import { SEOHead } from '@/components/ui/SEOHead'
 import { usePosts } from '@/features/community/usePosts'
@@ -17,7 +18,7 @@ const TABS = [
   { id: 'tip', label: 'Tips' },
 ]
 
-export function CommunityPage() {
+export default function CommunityPage() {
   const {
     posts,
     isLoading: postsLoading,
@@ -196,4 +197,3 @@ export function CommunityPage() {
     </>
   )
 }
-export default CommunityPage;

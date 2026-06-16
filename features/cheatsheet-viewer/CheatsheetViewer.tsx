@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useMemo } from 'react';
 import { Search, Copy, Check, BookOpen } from 'lucide-react';
 import type { Cheatsheet, CheatsheetItem } from '@/lib/core/types/content-extensions';

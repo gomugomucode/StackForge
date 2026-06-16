@@ -1,3 +1,4 @@
+"use client";
 import { useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
@@ -81,4 +82,3 @@ export default function SkillTreePage() {
     </div>
   )
 }
-export default SkillTreePage;

@@ -3,7 +3,7 @@ import { FAQ } from '@/components/home/FAQ'
 import { CTASection } from '@/components/home/CTASection'
 import { SEOHead } from '@/components/ui/SEOHead'
 
-export function AboutPage() {
+export default function AboutPage() {
   return (
     <>
       <SEOHead

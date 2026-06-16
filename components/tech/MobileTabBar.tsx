@@ -1,3 +1,4 @@
+"use client";
 import { motion } from 'framer-motion'
 import { Info, Map, BookOpen, Library, Briefcase, FileText, HelpCircle } from 'lucide-react'
 

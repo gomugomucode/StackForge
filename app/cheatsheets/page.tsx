@@ -1,4 +1,5 @@
 
+"use client";
 import { Search } from 'lucide-react'
 import { SEOHead } from '@/components/ui/SEOHead'
 import { SectionHeader } from '@/components/ui/SectionHeader'
@@ -6,7 +7,7 @@ import { ContentCard } from '@/components/ui/ContentCard'
 import { cheatsheets } from '@/lib/data/cheatsheets'
 import { useContentSearch } from '@/lib/core/hooks/useContentSearch'
 
-export function CheatsheetsPage() {
+export default function CheatsheetsPage() {
   const { query, setQuery, filteredItems } = useContentSearch(cheatsheets);
 
   return (

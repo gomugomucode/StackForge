@@ -1,37 +1,20 @@
-import { Navbar } from './Navbar'
+"use client";
 import { Footer } from './Footer'
 import { InstallPrompt } from '../ui/InstallPrompt'
-import AIMentorPanel from '../tech/AIMentorPanel'
 import { useState } from 'react'
+import AIMentorPanel from '../tech/AIMentorPanel'
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [isAiOpen, setIsAiOpen] = useState(false);
-
+  
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-1 relative">
+    <div className="flex min-h-screen bg-background text-foreground">
+      <AIMentorPanel isOpen={isAiOpen} onClose={() => setIsAiOpen(false)} />
+      <main className="flex-1 flex flex-col">
         {children}
-        <div className={`fixed top-0 right-0 h-screen transition-all duration-300 z-40 ${isAiOpen ? 'translate-x-0 w-96' : 'translate-x-full w-0'}`}>
-          <AIMentorPanel />
-        </div>
+        <Footer />
       </main>
-      <Footer />
       <InstallPrompt />
-      <button 
-        onClick={() => setIsAiOpen(!isAiOpen)}
-        className="fixed bottom-6 right-6 p-4 bg-indigo-600 text-white rounded-full shadow-2xl hover:bg-indigo-700 transition-all z-50 group"
-      >
-        <div className="flex items-center gap-2">
-          <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap font-bold">
-            AI Mentor
-          </span>
-          <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
-            <span className="text-xs">AI</span>
-          </div>
-        </div>
-      </button>
     </div>
   )
 }
-

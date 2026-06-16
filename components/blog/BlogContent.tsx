@@ -1,3 +1,4 @@
+"use client";
 import { useState, useMemo, useEffect } from 'react'
 import { articles, articleCategories } from '@/lib/data/articles'
 import { SectionHeader } from '../ui/SectionHeader'

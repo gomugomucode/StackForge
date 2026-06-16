@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect } from 'react'
 import { Download, X, Layers } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'

@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect, useMemo } from 'react';
 import { Search, Command, X, FileText, Map } from 'lucide-react';
 import { contentService } from '@/lib/core/content/contentService';

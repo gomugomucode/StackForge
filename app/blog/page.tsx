@@ -2,7 +2,7 @@ import { BlogContent } from '@/components/blog/BlogContent'
 import { CTASection } from '@/components/home/CTASection'
 import { SEOHead } from '@/components/ui/SEOHead'
 
-export function BlogPage() {
+export default function BlogPage() {
   return (
     <>
       <SEOHead

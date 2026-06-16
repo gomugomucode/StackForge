@@ -1,3 +1,4 @@
+"use client";
 import { useState, useMemo } from 'react';
 
 export function useContentSearch<T extends { title: string; tags: string[]; category: string }>(items: T[]) {

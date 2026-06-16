@@ -1,3 +1,4 @@
+"use client";
 import Link from 'next/link'
 import { ArrowRight, Award, CheckCircle } from 'lucide-react'
 import { founder, missionStatement } from '@/lib/data/founder'

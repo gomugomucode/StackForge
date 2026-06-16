@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 export const certificateService = {
   async issueCertificate(userId: string, contentSlug: string, metadata: any) {

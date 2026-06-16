@@ -47,7 +47,11 @@ export default function HomePage() {
         description="Curated learning paths, expert-led tutorials, and professional cheatsheets for modern software engineers."
       />
       
-      <HubHeader />
+      <HubHeader 
+        title="Master the Modern Stack" 
+        description="Curated learning paths, expert-led tutorials, and professional cheatsheets for modern software engineers."
+        onSearch={() => {}} 
+      />
       
       <div className="max-w-7xl mx-auto">
         <LearningPathGrid roadmaps={roadmaps} />

@@ -5,7 +5,7 @@ import { BookOpen, Brain, FileText, UserCheck, Send, Sparkles } from 'lucide-rea
 
 type AIContextType = 'explain' | 'quiz' | 'coach' | 'resume' | 'interview';
 
-export default function AIMentorPanel() {
+export default function AIMentorPanel({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
   const { askAI } = useAI();
   const [input, setInput] = useState('');
   const [context, setContext] = useState<AIContextType>('explain');

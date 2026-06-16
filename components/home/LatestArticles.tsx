@@ -1,3 +1,4 @@
+"use client";
 import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import type { Article } from '@/lib/data/articles'

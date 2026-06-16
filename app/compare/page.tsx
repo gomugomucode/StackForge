@@ -1,3 +1,4 @@
+"use client";
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { 
@@ -11,7 +12,7 @@ import { getAllTechnologies, getTechMetadata } from '@/lib/data/db'
 import { getCompletedTopics, getWeeksCompleted } from '@/lib/core/hooks/useProgress'
 import { SEOHead } from '@/components/ui/SEOHead'
 
-export function ComparePage() {
+export default function ComparePage() {
   const allTechs = getAllTechnologies()
 
   const [tech1, setTech1] = useState(allTechs[0] || 'javascript')

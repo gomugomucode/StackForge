@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 export const syncService = {
   async syncProgress(userId: string, localProgress: any[]) {

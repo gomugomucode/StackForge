@@ -2,7 +2,7 @@ import { ResourcesContent } from '@/components/resources/ResourcesContent'
 import { CTASection } from '@/components/home/CTASection'
 import { SEOHead } from '@/components/ui/SEOHead'
 
-export function ResourcesPage() {
+export default function ResourcesPage() {
   return (
     <>
       <SEOHead
