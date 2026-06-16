@@ -143,7 +143,7 @@ export default function TechHubPage() {
     return (
       <div className="py-24 text-center">
         <h2 className="text-2xl font-bold text-text-primary mb-2">Technology Not Found</h2>
-        <p className="text-text-secondary mb-6">We couldn't find a learning path for "{technology}".</p>
+        <p className="text-text-secondary mb-6">We couldn&apos;t find a learning path for &quot;{technology}&quot;.</p>
         <Link href="/roadmaps" className="text-accent-purple font-semibold hover:underline">
           Go back to Roadmaps
         </Link>

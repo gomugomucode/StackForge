@@ -38,7 +38,7 @@ export function AchievementProvider({ children }: { children: ReactNode }) {
     <AchievementContext.Provider value={{ showAchievement }}>
       {children}
       {toastState.current && (
-        <AchievementToast achievement={toastState.current} onDismiss={handleDismiss} />
+        <AchievementToast achievement={toastState.current} onClose={handleDismiss} />
       )}
     </AchievementContext.Provider>
   )

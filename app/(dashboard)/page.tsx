@@ -54,7 +54,7 @@ export function DashboardPage() {
             <h1 className="text-4xl font-black text-white tracking-tight">
               Welcome back, <span className="text-indigo-500">Scholar</span> 👋
             </h1>
-            <p className="text-gray-400 mt-2">You've earned <span className="text-white font-bold">{progress.xp} XP</span>. Keep the streak alive!</p>
+            <p className="text-gray-400 mt-2">You&apos;ve earned <span className="text-white font-bold">{progress.xp} XP</span>. Keep the streak alive!</p>
           </div>
           <div className="flex gap-3">
             <Button variant="outline" className="gap-2">
