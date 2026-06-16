@@ -1,15 +1,15 @@
-export interface Link {
+export interface NavLink {
   label: string
   href: string
 }
 
-export const navLinks: Link[] = [
+export const navLinks: NavLink[] = [
   { label: 'Home', href: '/' },
   { label: 'About', href: '/about' },
   { label: 'Blog', href: '/blog' },
 ]
 
-export const academyLinks: Link[] = [
+export const academyLinks: NavLink[] = [
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'Roadmaps', href: '/roadmaps' },
   { label: 'Study Notes', href: '/notes' },
