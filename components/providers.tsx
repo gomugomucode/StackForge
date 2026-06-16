@@ -1,12 +1,13 @@
 'use client'
 
+import React from 'react'
 import { AuthProvider } from '@/lib/core/context/AuthProvider'
 import { AIProvider } from '@/lib/core/context/AIProvider'
 import { ProgressProvider } from '@/lib/core/context/ProgressContext'
 import { AchievementProvider } from '@/lib/core/context/AchievementContext'
 import { ThemeProvider } from '@/lib/core/context/ThemeProvider'
 
-export function Providers({ children }: { children: React.ReactNode }) {
+const Providers: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <ThemeProvider>
       <AuthProvider>
@@ -21,3 +22,5 @@ export function Providers({ children }: { children: React.ReactNode }) {
     </ThemeProvider>
   )
 }
+
+export default Providers

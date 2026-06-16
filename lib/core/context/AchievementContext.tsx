@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { Achievement } from '@/lib/core/types/academy';
 import { useProgress } from './ProgressContext';
 
@@ -31,28 +31,32 @@ export const AchievementProvider: React.FC<{ children: React.ReactNode }> = ({ c
     localStorage.setItem('stackforge_academy_achievements', JSON.stringify(unlockedIds));
   }, [unlockedIds]);
 
-  const unlockAchievement = (id: string) => {
+  const unlockAchievement = useCallback((id: string) => {
     setUnlockedIds(prev => prev.includes(id) ? prev : [...prev, id]);
-  };
+  }, []);
 
-  const checkAchievements = () => {
-    ALL_ACHIEVEMENTS.forEach(ach => {
-      if (unlockedIds.includes(ach.id)) return;
-
-      let isEligible = false;
-      if (ach.id === 'first_lesson' && Object.keys(progress.completedContent).length >= 1) isEligible = true;
-      if (ach.id === 'streak_7' && progress.streak.current >= 7) isEligible = true;
-      if (ach.id === 'cheatsheet_collector' && Object.keys(progress.bookmarks).length >= 10) isEligible = true;
-      if (ach.id === 'deep_dive' && progress.totalLearningHours >= 10) isEligible = true;
-
-      if (isEligible) unlockAchievement(ach.id);
+  const checkAchievements = useCallback(() => {
+    // Evaluate each achievement's criteria against current progress
+    ALL_ACHIEVEMENTS.forEach((achievement) => {
+      if (unlockedIds.includes(achievement.id)) return;
+      try {
+        // Create a dynamic function to evaluate the criteria expression safely
+        const evalFn = new Function('progress', `return ${achievement.criteria};`);
+        const result = evalFn(progress);
+        if (result) {
+          unlockAchievement(achievement.id);
+        }
+      } catch (e) {
+        console.error('Error evaluating achievement criteria', achievement.id, e);
+      }
     });
-  };
+  }, [progress, unlockedIds, unlockAchievement]);
+
 
   // Auto-check achievements when progress changes
   useEffect(() => {
     checkAchievements();
-  }, [progress]);
+  }, [progress, checkAchievements]);
 
   const unlockedAchievements = ALL_ACHIEVEMENTS.filter(ach => unlockedIds.includes(ach.id));
 
