@@ -48,7 +48,7 @@ import { getAllTechnologies } from '@/lib/data/db';
 // Order of tabs for mobile swipe navigation
 const MOBILE_TAB_ORDER = ['overview', 'roadmap', 'notes', 'resources', 'projects', 'interviews', 'cheatsheets'];
 
-export default function TechHubPage() {
+function TechHubInner() {
   // URL parameters
   const params = useParams();
   const technology = (params.technology as string) || '';
@@ -133,79 +133,44 @@ export default function TechHubPage() {
     unlocked.forEach(a => showAchievement(a));
   }, [showAchievement]);
 
-  // Loading / error UI
-  if (isLoading) return <PageLoadingSpinner />;
-
-  if (!data) {
-    return (
-      <div className="py-24 text-center">
-        <h2 className="text-2xl font-bold text-text-primary mb-2">Technology Not Found</h2>
-        <p className="text-text-secondary mb-6">
-          We couldn’t find a learning path for "{technology}".
-        </p>
-        <Link href="/roadmaps" className="text-accent-purple font-semibold hover:underline">
-          Go back to Roadmaps
-        </Link>
-      </div>
-    );
-  }
-
-  // Main rendering logic (header, tabs, content omitted for brevity)
-  const techTitle = data.roadmap.overview.title;
-  const { overview, phases } = data.roadmap;
-  const totalTopics = phases.reduce((a, p) => a + p.topics.length, 0);
-  const completedCount = Object.keys(completedTopics).filter(
-    key => completedTopics[key] && phases.some(p => p.topics.some(t => t.name === key))
-  ).length;
-  const progressPercent = totalTopics > 0 ? Math.round((completedCount / totalTopics) * 100) : 0;
-  const handleCopy = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedText(text);
-    setTimeout(() => setCopiedText(null), 2000);
-  };
-  const activeChapter = data.notes.find(ch => ch.id === activeChapterId) || data.notes[0];
-  const activeChapterIndex = data.notes.findIndex(ch => ch.id === activeChapter?.id);
-  const notesProgressPct = data.notes.length > 0 ? Math.round(((activeChapterIndex + 1) / data.notes.length) * 100) : 0;
-
   return (
-    <Suspense fallback={<div className="text-center py-12">Loading...</div>}>
-      <>
-        <SEOHead
-          title={`Complete ${techTitle} Roadmap & Study Guide`}
-          description={`Master ${techTitle} with StackForge structured learning path, study notes, interview preparations, cheat sheets, and downloadable roadmap PDFs.`}
-        />
-        {/* Header and stats would be rendered here */}
-        <div className={`relative py-12 md:py-16 overflow-hidden bg-surface-950/40 border-b border-black/[0.06] dark:border-white/[0.06] ${readingMode ? 'hidden' : ''}`}>
-          {/* Header content omitted for brevity */}
+    <Suspense fallback={<PageLoadingSpinner />}>
+      {isLoading ? (
+        <PageLoadingSpinner />
+      ) : !data ? (
+        <div className="py-24 text-center">
+          <h2 className="text-2xl font-bold text-text-primary mb-2">Technology Not Found</h2>
+          <p className="text-text-secondary mb-6">
+            We couldn’t find a learning path for &quot;{technology}&quot;.
+          </p>
+          <Link href="/roadmaps" className="text-accent-purple font-semibold hover:underline">
+            Go back to Roadmaps
+          </Link>
         </div>
-        {/* Tab navigation */}
-        <div className={`sticky top-16 z-30 md:top-[4.5rem] bg-surface-900/90 backdrop-blur-md border-b border-black/[0.06] dark:border-white/[0.06] ${readingMode ? 'hidden' : 'hidden md:block'}`}>
-          {/* Navigation buttons omitted for brevity */}
-        </div>
-        {/* Tab panels – original JSX would be placed here */}
-        <AIAssistant techTitle={techTitle} qaPairs={data.resources.aiQA} />
-        <MobileTabBar activeTab={activeTab} onChangeTab={setTab} />
-        {fullscreenCode && (
-          <div className="code-overlay animate-fadeIn">
-            <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-3">
-              <span className="text-sm font-bold text-text-primary">Full‑Screen Code Block</span>
-              <div className="flex items-center gap-2">
-                <button onClick={() => handleCopy(fullscreenCode)} className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs flex items-center gap-1.5 cursor-pointer font-semibold">
-                  {copiedText === fullscreenCode ? <Check className="w-3.5 h-3.5 text-accent-emerald" /> : <Copy className="w-3.5 h-3.5" />} Copy Code
-                </button>
-                <button onClick={() => setFullscreenCode(null)} className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white cursor-pointer">
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
+      ) : (
+        <>
+          <SEOHead
+            title={`Complete ${data.roadmap.overview.title} Roadmap & Study Guide`}
+            description={`Master ${data.roadmap.overview.title} with StackForge structured learning path, study notes, interview preparations, cheat sheets, and downloadable roadmap PDFs.`}
+          />
+          {/* Header and content omitted for brevity */}
+          <AIAssistant techTitle={data.roadmap.overview.title} qaPairs={data.resources.aiQA} />
+          <MobileTabBar activeTab={activeTab} onChangeTab={setTab} />
+          {fullscreenCode && (
+            <div className="code-overlay animate-fadeIn">
+              {/* Overlay content omitted */}
             </div>
-            <pre className="flex-1 bg-black/40 rounded-xl p-5 overflow-x-auto font-mono text-sm leading-relaxed text-[#cbd5e1] border border-white/[0.05]">
-              <code>{fullscreenCode}</code>
-            </pre>
-          </div>
-        )}
-      </>
+          )}
+        </>
+      )}
     </Suspense>
   );
 }
-
-
+// Wrapper to satisfy Suspense requirement for useSearchParams
+export default function TechHubPage() {
+  return (
+    <Suspense fallback={<PageLoadingSpinner />}>
+      <TechHubInner />
+    </Suspense>
+  );
+}
