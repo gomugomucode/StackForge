@@ -104,31 +104,43 @@ export default function HubHeader() {
                 </div>
                 <pre className="p-6 md:p-8 text-left text-sm font-mono overflow-x-auto leading-relaxed">
                   <code className="text-text-primary">
-                    <span className="text-accent-purple">async function</span> <span className="text-accent-cyan">launchCareer</span><span className="text-text-primary">()</span>
-                    <span className="text-text-muted"> {'{'}</span>
-                    <br />
+                    <span className="text-accent-purple">async function</span>{' '}
+                    <span className="text-accent-cyan">launchCareer</span>
+                    <span className="text-text-primary">()</span>
+                    <span className="text-text-muted"> {'{'</span>
+                    {'\n'}
                     <span className="text-text-muted">  </span>
-                    <span className="text-accent-purple">const</span> <span className="text-text-primary"> stack </span>
-                    <span className="text-text-muted">= ['React', 'Node', 'TypeScript'];</span>
-                    <br />
-                    <br />
+                    <span className="text-accent-purple">const</span>
+                    <span className="text-text-primary"> stack </span>
+                    <span className="text-text-muted">= [</span>
+                    <span className="text-accent-emerald">&apos;React&apos;</span>
+                    <span className="text-text-muted">, </span>
+                    <span className="text-accent-emerald">&apos;Node&apos;</span>
+                    <span className="text-text-muted">, </span>
+                    <span className="text-accent-emerald">&apos;TypeScript&apos;</span>
+                    <span className="text-text-muted">];</span>
+                    {'\n\n'}
                     <span className="text-text-muted">  </span>
-                    <span className="text-accent-purple">for</span><span className="text-text-primary"> (</span>
-                    <span className="text-accent-purple">const</span> <span className="text-text-primary"> skill </span>
-                    <span className="text-accent-purple">of</span> <span className="text-text-primary"> stack</span>
-                    <span className="text-text-muted">) {'{'}</span>
-                    <br />
+                    <span className="text-accent-purple">for</span>
+                    <span className="text-text-primary"> (</span>
+                    <span className="text-accent-purple">const</span>
+                    <span className="text-text-primary"> skill </span>
+                    <span className="text-accent-purple">of</span>
+                    <span className="text-text-primary"> stack</span>
+                    <span className="text-text-muted">) {'{'</span>
+                    {'\n'}
                     <span className="text-text-muted">    </span>
-                    <span className="text-accent-purple">await</span> <span className="text-accent-cyan"> practice</span>
+                    <span className="text-accent-purple">await</span>
+                    <span className="text-accent-cyan"> practice</span>
                     <span className="text-text-muted">(skill);</span>
-                    <br />
+                    {'\n'}
                     <span className="text-text-muted">  {'}'}</span>
-                    <br />
-                    <br />
+                    {'\n\n'}
                     <span className="text-text-muted">  </span>
-                    <span className="text-accent-purple">return</span> <span className="text-accent-amber">'Ship it! 🚀'</span>
+                    <span className="text-accent-purple">return</span>
+                    <span className="text-accent-amber"> &apos;Ship it! 🚀&apos;</span>
                     <span className="text-text-muted">;</span>
-                    <br />
+                    {'\n'}
                     <span className="text-text-muted">{'}'}</span>
                   </code>
                 </pre>
