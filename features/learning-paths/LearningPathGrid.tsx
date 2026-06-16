@@ -4,11 +4,17 @@ import React from 'react';
 import Link from 'next/link';
 import { Clock, Layers, ArrowRight } from 'lucide-react';
 import { SectionHeader } from '@/components/ui/SectionHeader';
-import { roadmaps } from '@/lib/data/roadmaps';
+import { roadmaps as defaultRoadmaps } from '@/lib/data/roadmaps';
 import { useScrollAnimation } from '@/lib/core/hooks/useScrollAnimation';
+import type { Roadmap } from '@/lib/core/types/content-extensions';
 
-export default function LearningPathGrid() {
+interface LearningPathGridProps {
+  roadmaps?: Roadmap[];
+}
+
+export default function LearningPathGrid({ roadmaps: roadmapsProp }: LearningPathGridProps) {
   const { ref, isVisible } = useScrollAnimation();
+  const roadmaps = roadmapsProp || defaultRoadmaps;
 
   return (
     <section id="roadmaps" ref={ref} className="py-20 md:py-28 scroll-mt-20">
