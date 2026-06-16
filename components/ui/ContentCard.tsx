@@ -20,10 +20,8 @@ export const ContentCard: React.FC<ContentCardProps> = React.memo(({ item, link 
   };
 
   return (
-    <motion.div
-      whileHover={{ y: -5, scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4 transition-all hover:border-indigo-500/50 hover:bg-white/10 backdrop-blur-md"
+    <div
+      className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4 transition-all duration-300 hover:border-indigo-500/50 hover:bg-white/10 hover:-translate-y-1 shadow-lg backdrop-blur-md"
     >
       <div className="relative aspect-video overflow-hidden rounded-xl mb-4 bg-slate-800">
         {item.thumbnail ? (
@@ -83,7 +81,7 @@ export const ContentCard: React.FC<ContentCardProps> = React.memo(({ item, link 
           <span className="text-gray-600">{item.lastUpdated.split('T')[0]}</span>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 });
 

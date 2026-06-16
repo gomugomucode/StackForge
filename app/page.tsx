@@ -20,7 +20,7 @@ const QuickAccess = () => {
   ]
 
   return (
-    <section className="py-16 px-4 max-w-7xl mx-auto">
+    <section className="py-20 px-4 max-w-7xl mx-auto">
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {links.map((link) => (
           <Link 

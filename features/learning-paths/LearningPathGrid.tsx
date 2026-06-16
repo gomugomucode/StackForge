@@ -9,9 +9,9 @@ interface LearningPathGridProps {
 
 const LearningPathGrid: React.FC<LearningPathGridProps> = React.memo(({ roadmaps }) => {
   return (
-    <section className="py-16 px-4 max-w-7xl mx-auto">
+    <section className="py-20 px-4 max-w-7xl mx-auto">
       <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-white mb-4">
+        <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
           Your <span className="text-indigo-500">Learning Path</span> Starts Here
         </h2>
         <p className="text-gray-400 max-w-2xl mx-auto">
