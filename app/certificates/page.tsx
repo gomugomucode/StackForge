@@ -272,7 +272,7 @@ export default function CertificateCenterPage() {
               </div>
               <h3 className="text-lg font-bold text-white">Claim {claimTech.label} Certificate</h3>
               <p className="text-xs text-[#8b949e] leading-relaxed">
-                Congratulations on completing the entire syllabus! Please enter your full name exactly as you'd like it to appear on your verified credential.
+                Congratulations on completing the entire syllabus! Please enter your full name exactly as you&apos;d like it to appear on your verified credential.
               </p>
             </div>
 

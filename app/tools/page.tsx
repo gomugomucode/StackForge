@@ -259,7 +259,7 @@ export default function ToolsPage() {
                             key={idx}
                             className="p-3 bg-surface-950 border border-black/[0.04] dark:border-white/[0.04] rounded-lg font-mono text-xs flex justify-between"
                           >
-                            <span className="text-[#cbd5e1] font-bold">"{m.match}"</span>
+                            <span className="text-[#cbd5e1] font-bold">&quot;{m.match}&quot;</span>
                             <span className="text-text-muted">Index {m.index}</span>
                           </div>
                         ))}

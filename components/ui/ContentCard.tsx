@@ -84,3 +84,5 @@ export const ContentCard: React.FC<ContentCardProps> = React.memo(({ item, link 
     </motion.div>
   );
 });
+
+ContentCard.displayName = 'ContentCard';

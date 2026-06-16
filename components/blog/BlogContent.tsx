@@ -116,7 +116,7 @@ export function BlogContent() {
             <Inbox className="w-12 h-12 text-text-muted mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-text-primary mb-1">No articles found</h3>
             <p className="text-text-secondary text-sm">
-              We couldn't find any articles matching your search query. Try checking for typos or searching a different term.
+              We couldn&apos;t find any articles matching your search query. Try checking for typos or searching a different term.
             </p>
           </div>
         ) : (

@@ -1,4 +1,7 @@
+"use client";
+
 import { SEOHead } from '@/components/ui/SEOHead'
+
 import HubHeader from '@/features/learning-paths/HubHeader'
 import LearningPathGrid from '@/features/learning-paths/LearningPathGrid'
 import { roadmaps } from '@/lib/data/roadmaps'

@@ -1,4 +1,7 @@
+"use client";
+
 import Link from 'next/link'
+
 import { BookOpen, Download, ArrowRight } from 'lucide-react'
 import { SEOHead } from '@/components/ui/SEOHead'
 import { SectionHeader, Card } from '@/components/ui/SectionHeader'

@@ -178,7 +178,7 @@ export function ResourcesContent() {
             <Inbox className="w-12 h-12 text-text-muted mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-text-primary mb-1">No resources found</h3>
             <p className="text-text-secondary text-sm">
-              We couldn't find any resources matching your filters. Try checking a different search term or filter.
+              We couldn&apos;t find any resources matching your filters. Try checking a different search term or filter.
             </p>
           </div>
         ) : (

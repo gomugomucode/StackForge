@@ -1,9 +1,10 @@
 "use client";
+export const dynamic = 'force-dynamic';
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { SEOHead } from '@/components/ui/SEOHead'
-import { certificateService } from '@/features/certificates/certificateService'
+
 import { CertificateCard } from '@/features/certificates/CertificateCard'
 import type { CertificateRecord } from '@/features/certificates/types'
 import { ShieldCheck, Search, ShieldAlert, FileSearch, ArrowLeft, Loader2 } from 'lucide-react'
@@ -28,6 +29,8 @@ export default function VerifyPage() {
   const handleVerify = async (code: string) => {
     const targetCode = code.trim()
     if (!targetCode) return
+    // Dynamically import the service to avoid server-side execution during build
+    const { certificateService } = await import('@/features/certificates/certificateService')
 
     setIsValidating(true)
     setHasChecked(true)

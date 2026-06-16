@@ -134,7 +134,7 @@ export default function CommandPalette() {
                 ))
               ) : (
                 <div className="py-10 text-center text-slate-500" role="status">
-                  No results found for "{query}"
+                  No results found for &quot;{query}&quot;
                 </div>
               )}
             </div>
