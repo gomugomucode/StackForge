@@ -1,4 +1,5 @@
 "use client";
+
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Layers, GitFork, Share2, Mail, MessageCircle } from 'lucide-react'
@@ -104,7 +105,7 @@ export function Footer() {
           </FadeIn>
         </div>
 
-        <div className="mt-14 pt-8 border-t border-black/[0.06] dark:border-white/[0.06] flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="mt-14 pt-8 border-t border-black/[0.06] dark:border-white/[0.0 la-root] flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-text-muted text-sm">
             &copy; {new Date().getFullYear()} {brandName}. All rights reserved.
           </p>
