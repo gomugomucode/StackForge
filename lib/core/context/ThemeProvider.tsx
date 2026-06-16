@@ -11,17 +11,15 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined)
 
 const STORAGE_KEY = 'stackforge-theme'
 
-function getInitialTheme(): Theme {
-  if (typeof window === 'undefined') return 'light'
-
-  const stored = localStorage.getItem(STORAGE_KEY)
-  if (stored === 'dark' || stored === 'light') return stored
-
-  return 'light'
-}
-
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme)
+  const [theme, setTheme] = useState<Theme>('dark')
+
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored === 'dark' || stored === 'light') {
+      setTheme(stored)
+    }
+  }, [])
 
   useEffect(() => {
     const root = document.documentElement
