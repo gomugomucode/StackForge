@@ -107,7 +107,7 @@ export default function HubHeader() {
                     <span className="text-accent-purple">async function</span>{' '}
                     <span className="text-accent-cyan">launchCareer</span>
                     <span className="text-text-primary">()</span>
-                    <span className="text-text-muted"> {'{'</span>
+                    <span className="text-text-muted"> </span>
                     {'\n'}
                     <span className="text-text-muted">  </span>
                     <span className="text-accent-purple">const</span>
@@ -127,7 +127,7 @@ export default function HubHeader() {
                     <span className="text-text-primary"> skill </span>
                     <span className="text-accent-purple">of</span>
                     <span className="text-text-primary"> stack</span>
-                    <span className="text-text-muted">) {'{'</span>
+                    <span className="text-text-muted">) </span>
                     {'\n'}
                     <span className="text-text-muted">    </span>
                     <span className="text-accent-purple">await</span>
