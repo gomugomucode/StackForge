@@ -16,6 +16,7 @@ export default NextAuth(authConfig).auth((req) => {
   return NextResponse.next()
 })
 
+
 export const config = {
   matcher: ['/((?!api|_next|favicon.ico|sw.js|manifest.json|robots.txt|sitemap.xml).*)'],
 }
