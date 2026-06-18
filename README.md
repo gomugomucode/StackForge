@@ -1,149 +1,122 @@
-# StackForge Academy — Programming Education Platform
+# ⚒️ StackForge
 
-A production‑grade, dark‑themed programming education platform built with **Next.js 15 (App Router)**, **TypeScript**, **Tailwind CSS v4**, **Prisma**, **PostgreSQL**, and **NextAuth**. The app delivers interactive coding lessons, quizzes, and a community hub.
+**The Ultimate Forge for Modern Developers.**
 
-## Features
+StackForge is a high-performance developer resource platform designed to transition coders into elite engineers. By providing architectural blueprints, distilled cheat sheets, and production-grade projects, we bridge the gap between tutorial hell and real-world engineering.
 
-- Modern UI with glassmorphism, gradient accents, and smooth animations.
-- Authentication via NextAuth (OAuth, credentials).
-- Content engine powered by MDX and Contentlayer for lessons and blog posts.
-- Server‑Side Rendering and Server Actions for fast, SEO‑friendly pages.
-- Database backed by PostgreSQL accessed through Prisma ORM.
-- Responsive design across mobile, tablet, and desktop.
-- Analytics and leaderboards for student progress.
+## 🚀 Tech Stack
 
-## Tech Stack
+- **Framework**: [Next.js 15+](https://nextjs.org/) (App Router)
+- **Styling**: [Tailwind CSS 4.0](https://tailwindcss.com/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Language**: TypeScript
+- **Database**: PostgreSQL with [Prisma ORM](https://www.prisma.io/)
+- **Authentication**: [NextAuth.js](https://next-auth.js.org/)
 
-- **Framework:** Next.js 15 (App Router) with TypeScript strict mode.
-- **Styling:** Tailwind CSS v4, custom dark theme with glassmorphism.
-- **ORM:** Prisma ORM connected to PostgreSQL.
-- **Auth:** NextAuth.js (OAuth providers, credentials).
-- **Content:** MDX + Contentlayer for static content.
-- **Animations:** Framer Motion.
-- **Icons:** Lucide React.
+## 🏗️ Detailed Folder Structure
 
-## Getting Started
+```text
+src/
+├── app/                        # Next.js App Router (File-system Routing)
+│   ├── api/                    # Backend API Endpoints
+│   │   ├── ai/                 # AI-powered interview & mentor routes
+│   │   ├── bookmarks/          # User bookmark management
+│   │   ├── certifications/     # Certification issuance and tracking
+│   │   ├── circles/            # Community circles and networking
+│   │   ├── projects/           # Project submission and review logic
+│   │   ├── progress/            # Learning progress tracking
+│   │   └── user/               # User profile and stats management
+│   ├── interview/              # Interview Prep Module
+│   │   ├── [slug]/             # Dynamic category pages for interview questions
+│   │   └── mock/               # AI Mock Interview simulation interface
+│   ├── projects/               # Project Learning System
+│   │   ├── sandbox/[id]/       # Project execution environment
+│   │   └── page.tsx            # Projects discovery gallery
+│   ├── tools/                  # Developer Utility Suite
+│   │   ├── base64-tool/        # Base64 Encoder/Decoder
+│   │   ├── color-picker/       # Advanced Color Palette tool
+│   │   ├── json-formatter/     # JSON beautifier and validator
+│   │   └── regex-tester/       # Regular Expression tester
+│   └── globals.css             # Global Tailwind styles and design tokens
+├── components/                 # Modular Component Architecture
+│   ├── ui/                     # Atomic UI (Buttons, Inputs, Dialogs - shadcn)
+│   ├── layout/                 # Core Layout (Navbar, Sidebar, CommandMenu)
+│   ├── home/                    # Landing page specific sections
+│   ├── projects/               # Project-specific views (SubmitModal, LearningView)
+│   ├── roadmaps/               # Learning path views (QuizView, FinalExamView)
+│   └── cheatsheets/            # Documentation and cheat sheet renderers
+├── context/                    # Global State Management (React Context)
+│   ├── BookmarkContext.tsx     # Manages saved questions/resources
+│   ├── ProgressContext.tsx     # Tracks user progress through roadmaps
+│   └── UserStatsContext.tsx    # Synchronizes XP and streak data
+├── data/                       # Single Source of Truth (SSOT)
+│   ├── interviews.ts           # Curated interview questions and categories
+│   └── projects.ts             # Master project requirements and metadata
+├── lib/                        # Shared Utilities
+│   ├── prisma.ts               # Singleton Prisma Client instance
+│   └── utils.ts                # Helper functions (cn for Tailwind, formatting)
+└── types/                      # TypeScript Definitions
+    └── next-auth.d.ts          # Session and User interface extensions
+prisma/                         # Database Layer
+└── schema.prisma               # Data models for Users, Projects, and Progress
+public/                          # Static Assets (Images, SVG, Robots.txt)
+```
 
+## ⚙️ Codebase Architecture
+
+StackForge implements a **Layered Architecture** to ensure scalability and maintainability:
+
+1.  **Data Layer (`/data`, `/prisma`)**: Defines the static content and the database schema. This ensures a consistent source of truth for all educational content.
+2.  **State Layer (`/context`)**: Provides global accessibility to user-specific data (like XP and Bookmarks) without prop-drilling.
+3.  **Business Logic Layer (`/app/api`)**: Handles server-side operations, AI integrations, and database mutations.
+4.  **Presentation Layer (`/components`, `/app`)**: A strictly typed UI layer that consumes state and API data to render a high-performance, responsive interface.
+
+## 🛠️ Getting Started
+
+### 1. Clone and Install
 ```bash
-npm install        # install dependencies
-npm run dev        # start the development server (http://localhost:3000)
+git clone <your-repo-url>
+cd stackforge
+npm install
 ```
 
-## Production Build
+### 2. Environment Configuration
+Create a `.env` file in the root directory:
+```env
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/stackforge"
 
+# NextAuth
+NEXTAUTH_SECRET="your-secret-key"
+NEXTAUTH_URL="http://localhost:3000"
+
+# Providers (Optional)
+GITHUB_ID="your-github-client-id"
+GITHUB_SECRET="your-github-client-secret"
+```
+
+### 3. Database Setup
+Generate the Prisma client and sync the schema:
 ```bash
-npm run build       # compile the application
-npm run start       # start the production server
+npx prisma generate
+npx prisma db push
 ```
 
-## Project Structure
+### 4. Launch
+```bash
+# Development mode
+npm run dev
 
-```
-app/
-├───(api)
-│   └───auth
-│       └───[...nextauth]
-│           └───route.ts
-├───(auth)
-│   └───login
-│       └───page.tsx
-├───(dashboard)
-│   ├───bookmarks
-│   │   └───page.tsx
-│   └───profile
-│       └───page.tsx
-├───about
-│   └───page.tsx
-├───analytics
-│   └───page.tsx
-├───blog
-│   └───page.tsx
-├───certificates
-│   ├───page.tsx
-│   └───[id]
-│       └───page.tsx
-├───certifications
-│   └───page.tsx
-├───cheatsheets
-│   ├───page.tsx
-│   ├───[slug]
-│   │   └───page.tsx
-│   └───[slug]
-│       └───page.tsx
-├───community
-│   └───page.tsx
-├───compare
-│   └───page.tsx
-├───interview-prep
-│   └───page.tsx
-├───learn
-│   (no files)
-├───marketplace
-│   └───page.tsx
-├───mentor
-│   └───page.tsx
-├───notes
-│   └───page.tsx
-├───playground
-│   └───page.tsx
-├───profile
-│   (no files)
-├───projects
-│   ├───page.tsx
-│   ├───[slug]
-│   │   └───page.tsx
-│   └───[slug]
-│       └───page.tsx
-├───resources
-│   └───page.tsx
-├───roadmaps
-│   ├───page.tsx
-│   ├───[slug]
-│   │   └───page.tsx
-│   └───[slug]
-│       └───page.tsx
-├───settings
-│   (no files)
-├───skill-tree
-│   └───page.tsx
-├───tech-hub
-│   └───page.tsx
-├───tools
-│   └───page.tsx
-├───tutorials
-│   ├───page.tsx
-│   ├───[slug]
-│   │   └───page.tsx
-│   └───[slug]
-│       └───page.tsx
-└───verify
-    ├───[certificateId]
-    │   └───page.tsx
-    └───[certificateId]
-        └───page.tsx
-
-globals.css
-layout.tsx
-page.tsx
-api/
-    auth/
-        route.ts
-auth.ts
-middleware.ts
-components/
-lib/
-content/
-prisma/
-public/
-features/
-scripts/
-server/
-    db/
-    repositories/
-supabase/
-    migrations/
+# Production build
+npm run build
+npm start
 ```
 
-## License
+## 📐 Design Principles
 
-MIT © 2024 StackForge Academy.
+- **Depth-Based UI**: Utilizing a specific grayscale palette (Pure Black $\rightarrow$ Charcoal $\rightarrow$ Zinc) to create visual hierarchy.
+- **Bento Grid System**: Information is organized in high-density grids for rapid scannability.
+- **Performance-First**: Utilizing Next.js 15 Server Components to minimize client-side JavaScript.
+- **Fluid Motion**: Coordinated animations using `framer-motion` for an "app-like" feel.
