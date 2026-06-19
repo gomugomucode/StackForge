@@ -5,7 +5,7 @@ import { roadmaps } from "@/data/roadmaps";
 import { Button } from "@/components/ui/Button";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import NextLink from "next/link";
-import { ChevronLeft, ChevronRight, BookOpen, AlertCircle, Code, ExternalLink, CheckCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, BookOpen, AlertCircle, Code, ExternalLink, CheckCircle, Target } from "lucide-react";
 
 export default function LessonPage() {
   const params = useParams();
@@ -152,12 +152,4 @@ export default function LessonPage() {
   );
 }
 
-function Target({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <circle cx="12" cy="12" r="10" />
-      <circle cx="12" cy="12" r="6" />
-      <circle cx="12" cy="12" r="2" />
-    </svg>
-  );
-}
+// Remove the custom Target component at the end of the file.

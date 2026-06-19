@@ -107,8 +107,9 @@ export default function RoadmapPage() {
                 <BookOpen className="w-4 h-4 text-green-500" />
                 <span className="text-sm font-medium">Knowledge Quiz</span>
               </NextLink>
-            </div_
+            </div>
             <Button variant="outline" className="w-full gap-2" asChild>
+
               <NextLink href={`/roadmaps/${roadmap.slug}/download`}>
                 <Download className="w-4 h-4" /> Export as PDF
               </NextLink>
