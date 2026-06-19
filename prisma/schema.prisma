@@ -13,22 +13,31 @@ model User {
   name          String?
   email         String?   @unique
   emailVerified DateTime?
-  image         String?
+  avatar        String?
   accounts      Account[]
   sessions      Session[]
-  progress      UserProgress[]
+  progress      Progress[]
   bookmarks     Bookmark[]
   certifications Certification[]
   submissions     ProjectSubmission[]
   reviews        Review[]
   memberships    CircleMembership[]
-  xp            Int       @default(0)
-  level         Int       @default(1)
-  streak        Int       @default(0)
   plan          String    @default("FREE") // FREE, PRO, ENTERPRISE
   stripeCustomerId String?
+  profile       Profile?
+  achievements  Achievement[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+}
+
+model Profile {
+  id         String @id @default(cuid())
+  userId     String @unique
+  xp         Int    @default(0)
+  streak     Int    @default(0)
+  level      Int    @default(1)
+  totalHours Int    @default(0)
+  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Account {
@@ -57,7 +66,7 @@ model Session {
   user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model UserProgress {
+model Progress {
   id        String   @id @default(cuid())
   userId    String
   nodeId    String
@@ -132,4 +141,23 @@ model Review {
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   submission ProjectSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  icon        String?
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model QuizAttempt {
+  id          String   @id @default(cuid())
+  userId      String
+  quizId      String
+  score       Int
+  completedAt DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

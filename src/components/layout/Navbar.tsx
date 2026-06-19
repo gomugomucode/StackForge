@@ -9,7 +9,8 @@ import { Button } from '../ui/Button'
 import { ThemeToggle } from '../ui/theme-toggle'
 import { CommandMenu } from './CommandMenu'
 import { useUserStats } from '@/context/UserStatsContext'
-import { Trophy, User, Users } from 'lucide-react'
+import { UserMenu } from '@/features/auth/components/UserMenu'
+
 
 function UserStatsBadge() {
   const { xp, level, streak, isLoading } = useUserStats();
@@ -76,6 +77,7 @@ export function Navbar() {
             <div className="hidden md:flex items-center gap-3">
               {/* User Stats Badge */}
               <UserStatsBadge />
+              <UserMenu />
               
               <Link 
                 href="/community" 
