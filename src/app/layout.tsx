@@ -6,6 +6,8 @@ import { ProgressProvider } from '@/context/ProgressContext'
 import { BookmarkProvider } from '@/context/BookmarkContext'
 import { UserStatsProvider } from '@/context/UserStatsContext'
 import { ThemeProvider } from '@/components/theme-provider'
+import { AuthProvider } from '@/components/AuthProvider'
+
 
 export const metadata = {
   title: 'StackForge | Master the Modern Tech Stack',
@@ -21,21 +23,24 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="light">
-          <ProgressProvider>
-            <BookmarkProvider>
-              <UserStatsProvider>
-                <ScrollToTop />
-                <div className="min-h-screen flex flex-col">
-                  <Navbar />
-                  <main className="flex-1">
-                    {children}
-                  </main>
-                  <Footer />
-                </div>
-              </UserStatsProvider>
-            </BookmarkProvider>
-          </ProgressProvider>
+          <AuthProvider>
+            <ProgressProvider>
+              <BookmarkProvider>
+                <UserStatsProvider>
+                  <ScrollToTop />
+                  <div className="min-h-screen flex flex-col">
+                    <Navbar />
+                    <main className="flex-1">
+                      {children}
+                    </main>
+                    <Footer />
+                  </div>
+                </UserStatsProvider>
+              </BookmarkProvider>
+            </ProgressProvider>
+          </AuthProvider>
         </ThemeProvider>
+
       </body>
     </html>
   )
