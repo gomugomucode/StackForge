@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { Menu, X, Code2 } from 'lucide-react'
+import { Menu, X, Code2, Trophy, Users } from 'lucide-react'
 import { navLinks, brandName } from '../../data/navigation'
 import { Button } from '../ui/Button'
 import { ThemeToggle } from '../ui/theme-toggle'

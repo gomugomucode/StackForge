@@ -26,6 +26,7 @@ model User {
   stripeCustomerId String?
   profile       Profile?
   achievements  Achievement[]
+  quizAttempts   QuizAttempt[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
