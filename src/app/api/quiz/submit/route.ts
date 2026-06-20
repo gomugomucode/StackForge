@@ -4,6 +4,12 @@ import { addXP } from '@/features/gamification/services/xpService';
 import { updateStreak } from '@/features/gamification/services/streakService';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/auth';
+import * as z from 'zod';
+
+const submitSchema = z.object({
+  quizId: z.string().min(1),
+  answers: z.array(z.string()),
+});
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,12 +18,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { quizId, answers } = await req.json();
+    const body = await req.json();
+    const validated = submitSchema.parse(body);
+    const { quizId, answers } = validated;
 
     const quiz = await prisma.quiz.findUnique({
       where: { id: quizId },
       include: { questions: true },
     });
+...
 
     if (!quiz) {
       return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });
