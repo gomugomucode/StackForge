@@ -31,3 +31,4 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+client_secret_*.json
