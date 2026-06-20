@@ -26,7 +26,6 @@ export async function POST(req: NextRequest) {
       where: { id: quizId },
       include: { questions: true },
     });
-...
 
     if (!quiz) {
       return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });
@@ -64,6 +63,9 @@ export async function POST(req: NextRequest) {
       passed: score >= 70,
     });
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
+    }
     console.error('Quiz submission error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
