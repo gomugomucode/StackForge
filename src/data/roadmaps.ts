@@ -10,6 +10,9 @@ export interface Lesson {
   commonMistakes: string;
   practiceTask: string;
   resources: string[];
+  quizId?: string;
+  cheatsheetSlug?: string;
+  interviewSlug?: string;
 }
 
 export interface Module {

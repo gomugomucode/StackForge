@@ -1,9 +1,13 @@
 export interface CheatSheetSection {
   title: string;
-  items: {
-    name: string;
-    code: string;
-    description: string;
+  content: {
+    whatIsIt: string;
+    syntax: string;
+    declaration: string;
+    examples: string[];
+    commonMistakes: string[];
+    bestPractices: string[];
+    interviewNotes: string;
   }[];
 }
 
@@ -15,6 +19,7 @@ export interface CheatSheet {
   category: string;
   language: string;
   sections: CheatSheetSection[];
+  quickReference: string[];
 }
 
 export const cheatsheets: CheatSheet[] = [
