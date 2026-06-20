@@ -9,6 +9,7 @@ import { Button } from '../ui/Button'
 import { ThemeToggle } from '../ui/theme-toggle'
 import { CommandMenu } from './CommandMenu'
 import { useUserStats } from '@/context/UserStatsContext'
+import { useAuth } from '@/features/auth/hooks/useAuth'
 import { UserMenu } from '@/features/auth/components/UserMenu'
 
 
@@ -41,6 +42,14 @@ function UserStatsBadge() {
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const pathname = usePathname()
+  const { isAuthenticated } = useAuth()
+
+  const isLearningPage = pathname !== '/' && 
+                        pathname !== '/about' && 
+                        pathname !== '/blog' && 
+                        pathname !== '/resources' && 
+                        pathname !== '/login' && 
+                        pathname !== '/signup';
 
   return (
     <>
@@ -76,7 +85,7 @@ export function Navbar() {
 
             <div className="hidden md:flex items-center gap-3">
               {/* User Stats Badge */}
-              <UserStatsBadge />
+              {isAuthenticated && <UserStatsBadge />}
               <UserMenu />
               
               <Link 
@@ -108,7 +117,7 @@ export function Navbar() {
               <Button to="/blog" variant="ghost" size="sm">
                 Articles
               </Button>
-              <Button to="/#weekly-challenge" variant="primary" size="sm">
+              <Button to={isAuthenticated ? "/#weekly-challenge" : "/login"} variant="primary" size="sm">
                 Start Learning
               </Button>
             </div>
@@ -147,7 +156,7 @@ export function Navbar() {
                     <span className="text-sm text-muted-foreground">Theme</span>
                     <ThemeToggle />
                   </div>
-                  <Button to="/#weekly-challenge" variant="primary" size="md" className="w-full">
+                  <Button to={isAuthenticated ? "/#weekly-challenge" : "/login"} variant="primary" size="md" className="w-full">
                     Start Learning
                   </Button>
                 </div>
@@ -155,6 +164,11 @@ export function Navbar() {
             </div>
           )}
         </nav>
+        {!isAuthenticated && isLearningPage && (
+          <div className="bg-primary text-white text-center py-2 text-xs font-medium animate-in slide-in-from-top duration-300">
+            Log in to save your progress and earn XP! <Link href="/login" className="underline ml-1">Sign in now</Link>
+          </div>
+        )}
       </header>
     </>
   )

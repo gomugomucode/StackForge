@@ -2,7 +2,7 @@
 
 import { authService } from "../services/authService";
 import { Button } from "@/components/ui/Button";
-import { Github, Mail } from "lucide-react";
+import { GitBranch, Mail } from "lucide-react";
 
 export function OAuthButtons() {
   return (
@@ -26,7 +26,7 @@ export function OAuthButtons() {
         onClick={() => authService.loginWithGithub()}
         className="flex items-center justify-center gap-2"
       >
-        <Github className="w-5 h-5" />
+        <GitBranch className="w-5 h-5" />
         Continue with GitHub
       </Button>
     </div>

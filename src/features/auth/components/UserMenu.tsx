@@ -15,12 +15,7 @@ export function UserMenu() {
   const { user, isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
-    return (
-      <div className="flex gap-2">
-        <Button variant="outline" onClick={() => window.location.href = "/login"}>Log In</Button>
-        <Button onClick={() => window.location.href = "/signup"}>Sign Up</Button>
-      </div>
-    );
+    return null;
   }
 
   return (
