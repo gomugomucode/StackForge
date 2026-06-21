@@ -161,8 +161,8 @@ export function LoginForm() {
           <Link
             href={
               fromParam
-                ? `/signup?from=${encodeURIComponent(fromParam)}`
-                : "/signup"
+                ? `/auth/signup?from=${encodeURIComponent(fromParam)}`
+                : "/auth/signup"
             }
             className="text-blue-400 hover:underline"
           >

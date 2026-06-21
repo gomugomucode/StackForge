@@ -48,8 +48,8 @@ export function Navbar() {
     pathname !== '/about' &&
     pathname !== '/blog' &&
     pathname !== '/resources' &&
-    pathname !== '/login' &&
-    pathname !== '/signup';
+    pathname !== '/auth/login' &&
+    pathname !== '/auth/signup';
 
   return (
     <>
@@ -130,8 +130,8 @@ export function Navbar() {
                 <Button
                   to={
                     isLearningPage
-                      ? `/login?from=${encodeURIComponent(pathname)}`
-                      : '/login'
+                      ? `/auth/login?from=${encodeURIComponent(pathname)}`
+                      : '/auth/login'
                   }
                   variant="primary"
                   size="sm"
@@ -181,8 +181,8 @@ export function Navbar() {
                     <Button
                       to={
                         isLearningPage
-                          ? `/login?from=${encodeURIComponent(pathname)}`
-                          : '/login'
+                          ? `/auth/login?from=${encodeURIComponent(pathname)}`
+                          : '/auth/login'
                       }
                       variant="primary"
                       size="md"
@@ -200,7 +200,7 @@ export function Navbar() {
           <div className="bg-primary text-white text-center py-2 text-xs font-medium animate-in slide-in-from-top duration-300">
             Log in to save your progress and earn XP!{' '}
             <Link
-              href={`/login?from=${encodeURIComponent(pathname)}`}
+              href={`/auth/login?from=${encodeURIComponent(pathname)}`}
               className="underline ml-1"
             >
               Sign in now

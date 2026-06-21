@@ -256,8 +256,8 @@ export function RegisterForm() {
           <Link
             href={
               fromParam
-                ? `/login?from=${encodeURIComponent(fromParam)}`
-                : "/login"
+                ? `/auth/login?from=${encodeURIComponent(fromParam)}`
+                : "/auth/login"
             }
             className="text-blue-400 hover:underline"
           >
