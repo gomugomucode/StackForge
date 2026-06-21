@@ -1,8 +1,8 @@
+@import "tailwindcss";
+
 html {
   outline: 5px solid lime !important;
 }
-
-@import "tailwindcss";
 
 @theme {
   --color-background: hsl(var(--background));
