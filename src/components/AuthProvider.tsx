@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 
@@ -120,36 +120,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const signIn: AuthContextType["signIn"] = async (email, password) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     return await supabase.auth.signInWithPassword({ email, password });
-  };
+  }, []);
 
-  const signUp: AuthContextType["signUp"] = async (email, password, metadata) => {
+  const signUp = useCallback(async (email: string, password: string, metadata: Record<string, any>) => {
     return await supabase.auth.signUp({
       email,
       password,
       options: { data: metadata },
     });
-  };
+  }, []);
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     await supabase.auth.signOut();
     setSession(null);
     setUser(null);
     setProfile(null);
-  };
+  }, []);
 
-  const refreshSession = async () => {
+  const refreshSession = useCallback(async () => {
     const {
       data: { session },
     } = await supabase.auth.getSession();
     setSession(session);
     setUser(session?.user ?? null);
-  };
+  }, []);
 
-  const refreshProfile = async () => {
+  const refreshProfile = useCallback(async () => {
     if (user) await fetchProfile(user.id);
-  };
+  }, [user]);
 
   return (
     <AuthContext.Provider

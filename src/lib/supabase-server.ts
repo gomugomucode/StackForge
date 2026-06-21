@@ -26,11 +26,14 @@ export async function getSupabaseServerClient() {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     throw new Error("Supabase URL / anon key not configured");
   }
+  
   const cookieStore = await cookies();
+  const allCookies = cookieStore.getAll();
+  
   return createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     cookies: {
       getAll() {
-        return cookieStore.getAll();
+        return allCookies;
       },
       setAll(cookiesToSet) {
         try {
@@ -38,8 +41,7 @@ export async function getSupabaseServerClient() {
             cookieStore.set(name, value, options);
           });
         } catch {
-          // Called from a Server Component (read-only). Safe to ignore —
-          // middleware will refresh the session.
+          // Read-only
         }
       },
     },

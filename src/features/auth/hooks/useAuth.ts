@@ -13,6 +13,8 @@ export type AuthStatus = "loading" | "authenticated" | "unauthenticated";
  * refreshProfile) are exposed so forms can wire up directly.
  */
 export function useAuth() {
+  const auth = useSupabaseAuth();
+
   const {
     session,
     user,
@@ -23,7 +25,7 @@ export function useAuth() {
     signOut,
     refreshSession,
     refreshProfile,
-  } = useSupabaseAuth();
+  } = auth;
 
   const isAuthenticated = !!session && !!user;
   const status: AuthStatus = isLoading
