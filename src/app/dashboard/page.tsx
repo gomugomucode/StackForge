@@ -10,15 +10,22 @@ import { Trophy, Flame, BookOpen, Layout, ArrowRight } from "lucide-react";
 import NextLink from "next/link";
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { xp, level, streak } = useUserStats();
+
+  const displayName =
+    profile?.user?.name ||
+    (user?.user_metadata?.name as string | undefined) ||
+    (user?.user_metadata?.username as string | undefined) ||
+    user?.email?.split("@")[0] ||
+    "Learner";
 
   return (
     <ProtectedRoute>
       <div className="container mx-auto px-4 py-12 space-y-12">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="space-y-2">
-            <h1 className="text-4xl font-black tracking-tight">Welcome back, {user?.name || "Learner"}! 👋</h1>
+            <h1 className="text-4xl font-black tracking-tight">Welcome back, {displayName}! 👋</h1>
             <p className="text-muted-foreground text-lg">You've made incredible progress this week.</p>
           </div>
           <Button variant="primary" className="gap-2" asChild>

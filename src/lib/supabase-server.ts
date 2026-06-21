@@ -22,11 +22,11 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-export function getSupabaseServerClient() {
+export async function getSupabaseServerClient() {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     throw new Error("Supabase URL / anon key not configured");
   }
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   return createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     cookies: {
       getAll() {
@@ -77,7 +77,7 @@ export type AuthedUser = {
  *   const profile = await prisma.profile.findUnique({ where: { userId: user.id } });
  */
 export async function getSupabaseServerUser(): Promise<AuthedUser | null> {
-  const supabase = getSupabaseServerClient();
+  const supabase = await getSupabaseServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

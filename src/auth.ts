@@ -1,35 +1,29 @@
-import NextAuth, { NextAuthOptions, getServerSession } from "next-auth"
-import { PrismaAdapter } from "@auth/prisma-adapter"
-import { prisma } from "@/lib/prisma"
-import GitHubProvider from "next-auth/providers/github"
-import GoogleProvider from "next-auth/providers/google"
+/**
+ * Legacy auth shim. NextAuth has been removed as the authentication
+ * backend — Supabase Auth is now the single source of truth.
+ *
+ * Existing imports of `auth` or `authOptions` still resolve for
+ * backwards compatibility, but `auth()` now returns the Supabase
+ * session shape (or null) instead of a NextAuth session. Callers should
+ * migrate to `getSupabaseServerUser()` from `@/lib/supabase-server`
+ * for the canonical API.
+ */
+import { getSupabaseServerUser } from "@/lib/supabase-server";
 
+export const authOptions = {} as const;
 
-export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
-  providers: [
-    GitHubProvider({ clientId: process.env.GITHUB_ID, clientSecret: process.env.GITHUB_SECRET }),
-    GoogleProvider({ clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: process.env.GOOGLE_CLIENT_SECRET }),
-  ],
-  callbacks: {
-    session: async ({ session, user }) => {
-      if (session.user) {
-        session.user.id = user.id
-      }
-      return session
+export async function auth() {
+  const user = await getSupabaseServerUser();
+  if (!user) return null;
+  return {
+    user: {
+      id: user.id,
+      email: user.email ?? undefined,
+      name:
+        (user.user_metadata?.name as string | undefined) ??
+        (user.user_metadata?.username as string | undefined) ??
+        user.email?.split("@")[0],
+      image: (user.user_metadata?.avatar_url as string | undefined) ?? null,
     },
-  },
-  events: {
-    async createUser({ user }) {
-      await prisma.profile.create({
-        data: {
-          userId: user.id,
-        },
-      });
-    },
-  },
+  };
 }
-
-export const auth = async () => {
-  return await getServerSession(authOptions);
-};

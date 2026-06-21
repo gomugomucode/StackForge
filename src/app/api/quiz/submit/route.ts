@@ -1,10 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { addXP } from '@/features/gamification/services/xpService';
-import { updateStreak } from '@/features/gamification/services/streakService';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/auth';
-import * as z from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { addXP } from "@/features/gamification/services/xpService";
+import { updateStreak } from "@/features/gamification/services/streakService";
+import { getSupabaseServerUser } from "@/lib/supabase-server";
+import * as z from "zod";
 
 const submitSchema = z.object({
   quizId: z.string().min(1),
@@ -12,12 +11,12 @@ const submitSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+  const user = await getSupabaseServerUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
+  try {
     const body = await req.json();
     const validated = submitSchema.parse(body);
     const { quizId, answers } = validated;
@@ -26,34 +25,33 @@ export async function POST(req: NextRequest) {
       where: { id: quizId },
       include: { questions: true },
     });
-
     if (!quiz) {
-      return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });
+      return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
     }
 
     let correctCount = 0;
     quiz.questions.forEach((q, idx) => {
-      if (answers[idx] === q.answer) {
-        correctCount++;
-      }
+      if (answers[idx] === q.answer) correctCount++;
     });
 
     const score = (correctCount / quiz.questions.length) * 100;
 
-    // Record attempt
     await prisma.quizAttempt.create({
       data: {
-        userId: session.user.id,
-        quizId: quizId,
+        userId: user.id,
+        quizId,
         score: Math.round(score),
         correctAnswers: correctCount,
       },
     });
 
-    // Award XP if they passed (e.g., > 70%)
     if (score >= 70) {
-      await addXP(session.user.id, 'COMPLETE_QUIZ');
-      await updateStreak(session.user.id);
+      try {
+        await addXP(user.id, "COMPLETE_QUIZ");
+        await updateStreak(user.id);
+      } catch (e) {
+        console.warn("[quiz/submit] reward skipped:", e);
+      }
     }
 
     return NextResponse.json({
@@ -64,9 +62,15 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
+      return NextResponse.json(
+        { error: error.errors[0].message },
+        { status: 400 }
+      );
     }
-    console.error('Quiz submission error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Quiz submission error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

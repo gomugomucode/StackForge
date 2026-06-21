@@ -33,7 +33,18 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(profile);
+    if (!profile) return NextResponse.json(profile);
+
+    // Flatten user fields onto the top level for convenient consumption
+    // by the AuthProvider / dashboard / profile header. We do NOT touch
+    // the (non-existent) `email`/`username`/`avatar` columns on the
+    // Profile table — identity fields live on `User`.
+    return NextResponse.json({
+      ...profile,
+      name: profile.user?.name ?? null,
+      avatar: profile.user?.avatar ?? null,
+      username: profile.user?.name ?? null,
+    });
   } catch (error) {
     console.error("[api/user/profile] error:", error);
     return NextResponse.json(

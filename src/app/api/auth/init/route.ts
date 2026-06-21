@@ -13,14 +13,13 @@ import {
  * user.
  *
  * Provisions:
- *   - Profile (xp=0, streak=0, level=1, totalHours=0)
- *   - Mirror User row for NextAuth legacy compatibility (id keyed by
- *     Supabase user id)
+ *   - User row (NextAuth legacy compat; keyed by Supabase user id)
+ *   - Profile row (xp=0, streak=0, level=1, totalHours=0)
  *
- * The mapping is:
- *   supabase.auth.users.id      → prisma.User.id
- *   supabase.auth.users.email   → prisma.User.email
- *   metadata.username           → prisma.User.name
+ * Mapping from the spec:
+ *   spec.profiles        → prisma.User (id, email, name, avatar, plan)
+ *   spec.user_stats      → prisma.Profile (xp, level, streak, totalHours,
+ *                          lastActive, joinedAt)
  */
 export async function POST(req: NextRequest) {
   try {
@@ -35,10 +34,7 @@ export async function POST(req: NextRequest) {
     // 1. Verify the caller via the request's Supabase session cookie.
     const sessionUser = await getSupabaseServerUser();
     if (!sessionUser) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // 2. Refuse to provision a row for any user other than the caller.
@@ -59,7 +55,8 @@ export async function POST(req: NextRequest) {
       finalEmail?.split("@")[0] ||
       "Learner";
 
-    // 3. Upsert the User row (legacy NextAuth compat).
+    // 3. Upsert the User row (spec's profiles table). Carries identity
+    //    fields (email, name, avatar) and the billing plan.
     const user = await prisma.user.upsert({
       where: { id: userId },
       update: {
@@ -75,9 +72,8 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // 4. Upsert the Profile row (XP / streak / level). The schema uses
-    //    `Profile` for these columns — that table is the spec's
-    //    `user_stats`. Defaults match the spec (xp=0, level=1, streak=0).
+    // 4. Upsert the Profile row (spec's user_stats table). Defaults
+    //    match the spec (xp=0, level=1, streak=0).
     const profile = await prisma.profile.upsert({
       where: { userId },
       update: {},
@@ -90,11 +86,11 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // 5. Best-effort: keep Supabase's user record aligned with our
-    //    metadata so subsequent reads are consistent. We never block
-    //    sign-in on this.
+    // 5. Best-effort: keep Supabase's user_metadata in sync so future
+    //    reads from the client are consistent. We never block sign-in on
+    //    this — the Prisma rows are the source of truth.
     try {
-      if (SUPABASE_ADMIN_ENABLED) {
+      if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
         const admin = getSupabaseAdminClient();
         await admin.auth.admin.updateUserById(userId, {
           user_metadata: {
@@ -107,12 +103,14 @@ export async function POST(req: NextRequest) {
         });
       }
     } catch (e) {
-      // Logging only — provisioning is already done.
       console.warn("[auth/init] supabase user_metadata update skipped:", e);
     }
 
     return NextResponse.json(
-      { user: { id: user.id }, profile },
+      {
+        user: { id: user.id, email: user.email, name: user.name, avatar: user.avatar },
+        profile,
+      },
       { status: 200 }
     );
   } catch (error) {
@@ -123,7 +121,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-
-const SUPABASE_ADMIN_ENABLED = Boolean(
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
