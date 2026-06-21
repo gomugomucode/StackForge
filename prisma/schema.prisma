@@ -28,6 +28,10 @@ model User {
   profile       Profile?
   achievements  Achievement[]
   quizAttempts   QuizAttempt[]
+  xpTransactions XpTransaction[]
+  dailyActivities DailyActivity[]
+  streakTrackings StreakTracking[]
+  roadmapCompletions RoadmapCompletion[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -242,6 +246,7 @@ model CheatSheet {
 model InterviewQuestion {
   id               String @id @default(cuid())
   lessonId         String?
+  topicId          String?
   question         String
   answer           String
   difficulty       String // beginner, intermediate, advanced
@@ -249,6 +254,7 @@ model InterviewQuestion {
   companyFrequency Int    @default(0)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+  topic            Topic?   @relation(fields: [topicId], references: [id], onDelete: Cascade)
 }
 
 model Project {
@@ -278,7 +284,9 @@ model Quiz {
   difficulty  String   // 'beginner', 'intermediate', 'advanced'
   lessonId    String?  // Linked to a roadmap lesson
   roadmapId   String?
+  topicId     String?
   questions   Question[]
+  topic       Topic?   @relation(fields: [topicId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -295,4 +303,104 @@ model Question {
   quiz        Quiz?    @relation(fields: [quizId], references: [id], onDelete: Cascade)
   exam        FinalExam? @relation(fields: [examId], references: [id], onDelete: Cascade)
 }
+
+model Topic {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  technology    String   // 'javascript', 'react', 'python', 'html-css', etc.
+  title         String
+  description   String
+  difficulty    String   // 'beginner', 'intermediate', 'advanced'
+  estimatedTime Int      @default(60) // in minutes
+  prerequisites String[]
+  nextTopics    String[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  content       TopicContent?
+  examples      TopicExample[]
+  challenges    Challenge[]
+  quizzes       Quiz[]
+  interviews    InterviewQuestion[]
+}
+
+model TopicContent {
+  id             String   @id @default(cuid())
+  topicId        String   @unique
+  overview       String
+  syntax         String
+  explanation    String
+  bestPractices  String[]
+  commonMistakes String[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  topic          Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+}
+
+model TopicExample {
+  id          String   @id @default(cuid())
+  topicId     String
+  title       String
+  code        String
+  output      String
+  explanation String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  topic       Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+}
+
+model Challenge {
+  id             String   @id @default(cuid())
+  topicId        String
+  title          String
+  description    String
+  difficulty     String   // 'beginner', 'intermediate', 'advanced'
+  solution       String
+  hints          String[]
+  expectedOutput String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  topic          Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+}
+
+model XpTransaction {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int
+  reason    String   // 'READ_TOPIC', 'COMPLETE_QUIZ', 'COMPLETE_CHALLENGE', 'FINISH_ROADMAP', 'EARN_ACHIEVEMENT'
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model DailyActivity {
+  id        String   @id @default(cuid())
+  userId    String
+  date      DateTime @default(now())
+  xpEarned  Int      @default(0)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model StreakTracking {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  currentStreak Int      @default(0)
+  longestStreak Int      @default(0)
+  lastActive    DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model RoadmapCompletion {
+  id                   String   @id @default(cuid())
+  userId               String
+  roadmapId            String
+  completionPercentage Int      @default(0)
+  finalQuizScore       Int?
+  challengeCompletion  Int      @default(0)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roadmapId])
+}
+
 
