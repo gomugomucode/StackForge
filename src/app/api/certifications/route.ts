@@ -1,89 +1,108 @@
-import { auth } from "@/auth"
-import { prisma } from "@/lib/prisma"
-import { NextResponse } from "next/server"
-import { hasAccess } from "@/lib/access-control"
+import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
+import { hasAccess } from "@/lib/access-control";
+import { getSupabaseServerUser } from "@/lib/supabase-server";
 
 export async function GET() {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const user = await getSupabaseServerUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const certs = await prisma.certification.findMany({
-    where: { userId: session.user.id },
-    orderBy: { issuedAt: 'desc' }
-  })
+    where: { userId: user.id },
+    orderBy: { issuedAt: "desc" },
+  });
 
-  return NextResponse.json(certs)
+  return NextResponse.json(certs);
 }
 
 export async function POST(req: Request) {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const user = await getSupabaseServerUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { roadmapId, score } = await req.json()
-
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id }
-    })
-    if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 })
-
-    // Check Certification limit
-    const certCount = await prisma.certification.count({
-      where: { userId: session.user.id }
-    })
-    if (!hasAccess(user.plan as any, 'certificationsLimit', certCount)) {
-      return NextResponse.json({ 
-        error: "Certification limit reached", 
-        upgradeUrl: "/pricing",
-        plan: user.plan 
-      }, { status: 403 })
-    }
-
+    const { roadmapId, score } = await req.json();
     if (!roadmapId) {
-      return NextResponse.json({ error: "Roadmap ID is required" }, { status: 400 })
+      return NextResponse.json(
+        { error: "Roadmap ID is required" },
+        { status: 400 }
+      );
     }
 
-    // Double check if all nodes are actually completed before issuing
-    // This is a server-side safety check to prevent API abuse
-    const progress = await prisma.userProgress.findMany({
-      where: {
-        userId: session.user.id,
-        nodeId: {
-          in: (await import('@/data/roadmaps')).roadmaps
-            .find(r => r.id === roadmapId)?.nodes.map(n => n.id) || []
+    // Look up the caller's User row for plan-limit checks. The schema
+    // stores the plan on `User`.
+    const userRow = await prisma.user.findUnique({
+      where: { id: user.id },
+    });
+    if (!userRow) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const certCount = await prisma.certification.count({
+      where: { userId: user.id },
+    });
+    if (!hasAccess(userRow.plan as any, "certificationsLimit", certCount)) {
+      return NextResponse.json(
+        {
+          error: "Certification limit reached",
+          upgradeUrl: "/pricing",
+          plan: userRow.plan,
         },
-        completed: true
-      }
-    })
+        { status: 403 }
+      );
+    }
 
-    const roadmap = (await import('@/data/roadmaps')).roadmaps.find(r => r.id === roadmapId)
-    if (!roadmap) return NextResponse.json({ error: "Roadmap not found" }, { status: 404 })
+    // Server-side safety check: every lesson in the roadmap must be
+    // marked complete before a certificate is issued.
+    const roadmap = await prisma.roadmap.findUnique({
+      where: { id: roadmapId },
+      include: {
+        modules: { include: { lessons: true } },
+      },
+    });
+    if (!roadmap) {
+      return NextResponse.json({ error: "Roadmap not found" }, { status: 404 });
+    }
 
-    if (progress.length < roadmap.nodes.length) {
-      return NextResponse.json({ error: "All nodes must be completed first" }, { status: 400 })
+    const allLessonIds = roadmap.modules.flatMap((m) =>
+      m.lessons.map((l) => l.id)
+    );
+    if (allLessonIds.length === 0) {
+      return NextResponse.json(
+        { error: "Roadmap has no lessons" },
+        { status: 400 }
+      );
+    }
+
+    const completed = await prisma.progress.findMany({
+      where: {
+        userId: user.id,
+        lessonId: { in: allLessonIds },
+        completed: true,
+      },
+      select: { lessonId: true },
+    });
+
+    if (completed.length < allLessonIds.length) {
+      return NextResponse.json(
+        { error: "All lessons must be completed first" },
+        { status: 400 }
+      );
     }
 
     const cert = await prisma.certification.upsert({
       where: {
-        userId_roadmapId: {
-          userId: session.user.id,
-          roadmapId: roadmapId
-        }
+        userId_roadmapId: { userId: user.id, roadmapId },
       },
-      update: {
-        score: score,
-        issuedAt: new Date()
-      },
-      create: {
-        userId: session.user.id,
-        roadmapId: roadmapId,
-        score: score
-      }
-    })
+      update: { score, issuedAt: new Date() },
+      create: { userId: user.id, roadmapId, score },
+    });
 
-    return NextResponse.json(cert)
+    return NextResponse.json(cert);
   } catch (error) {
-    console.error("Certification API Error:", error)
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
+    console.error("Certification API Error:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

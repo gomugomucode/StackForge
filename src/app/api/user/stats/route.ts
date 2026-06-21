@@ -1,58 +1,52 @@
-import { auth } from "@/auth"
-import { NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getSupabaseServerUser } from "@/lib/supabase-server";
 
+/**
+ * GET /api/user/stats
+ *
+ * Returns the authenticated user's XP, level, streak, totalHours, and
+ * lastActive from the Profile table. Always scoped to the caller — no
+ * cross-user reads possible.
+ */
 export async function GET() {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id }
-  })
-
-  if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 })
-
-  return NextResponse.json({
-    xp: user.xp,
-    level: user.level,
-    streak: user.streak
-  })
-}
-
-export async function POST(req: Request) {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id }
-  })
-
-  if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 })
-
-  const lastLogin = user.updatedAt // Simple approximation
-  const today = new Date().toISOString().split('T')[0]
-  const lastLoginDate = lastLogin.toISOString().split('T')[0]
-
-  let newStreak = user.streak
-  if (lastLoginDate !== today) {
-    const yesterday = new Date()
-    yesterday.setDate(yesterday.getDate() - 1)
-    const yesterdayStr = yesterday.toISOString().split('T')[0]
-
-    if (lastLoginDate === yesterdayStr) {
-      newStreak += 1
-    } else {
-      newStreak = 1
-    }
+  const user = await getSupabaseServerUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const updatedUser = await prisma.user.update({
-    where: { id: session.user.id },
-    data: {
-      streak: newStreak,
-      updatedAt: new Date()
-    }
-  })
+  try {
+    const profile = await prisma.profile.findUnique({
+      where: { userId: user.id },
+    });
 
-  return NextResponse.json(updatedUser)
+    if (!profile) {
+      // Lazy-provision a default row so the dashboard renders instead
+      // of returning a partial state.
+      const created = await prisma.profile.create({
+        data: { userId: user.id },
+      });
+      return NextResponse.json({
+        xp: created.xp,
+        level: created.level,
+        streak: created.streak,
+        totalHours: created.totalHours,
+        lastActive: created.lastActive,
+      });
+    }
+
+    return NextResponse.json({
+      xp: profile.xp,
+      level: profile.level,
+      streak: profile.streak,
+      totalHours: profile.totalHours,
+      lastActive: profile.lastActive,
+    });
+  } catch (error) {
+    console.error("[api/user/stats] error:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
 }

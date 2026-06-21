@@ -1,56 +1,71 @@
-import { auth } from "@/auth"
-import { NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getSupabaseServerUser } from "@/lib/supabase-server";
 
 export async function GET() {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const user = await getSupabaseServerUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const bookmarks = await prisma.bookmark.findMany({
-    where: { userId: session.user.id }
-  })
+    where: { userId: user.id },
+  });
 
-  return NextResponse.json(bookmarks)
+  return NextResponse.json(bookmarks);
 }
 
 export async function POST(req: Request) {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const user = await getSupabaseServerUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { resourceId, type } = await req.json()
+  const { resourceId, type } = await req.json();
+  if (!resourceId || !type) {
+    return NextResponse.json(
+      { error: "resourceId and type are required" },
+      { status: 400 }
+    );
+  }
 
   const bookmark = await prisma.bookmark.upsert({
     where: {
       userId_resourceId: {
-        userId: session.user.id,
-        resourceId
-      }
+        userId: user.id,
+        resourceId,
+      },
     },
-    update: {}, // Do nothing on update, we handle delete via a separate route or logic
+    update: {},
     create: {
-      userId: session.user.id,
+      userId: user.id,
       resourceId,
-      type
-    }
-  })
+      type,
+    },
+  });
 
-  return NextResponse.json(bookmark)
+  return NextResponse.json(bookmark);
 }
 
 export async function DELETE(req: Request) {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const user = await getSupabaseServerUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { resourceId } = await req.json()
+  const { resourceId } = await req.json();
+  if (!resourceId) {
+    return NextResponse.json(
+      { error: "resourceId is required" },
+      { status: 400 }
+    );
+  }
+
+  // Make sure the bookmark belongs to the caller before deleting it.
+  const existing = await prisma.bookmark.findUnique({
+    where: { userId_resourceId: { userId: user.id, resourceId } },
+  });
+  if (!existing) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
 
   const deleted = await prisma.bookmark.delete({
-    where: {
-      userId_resourceId: {
-        userId: session.user.id,
-        resourceId
-      }
-    }
-  })
+    where: { userId_resourceId: { userId: user.id, resourceId } },
+  });
 
-  return NextResponse.json({ deleted })
+  return NextResponse.json({ deleted });
 }

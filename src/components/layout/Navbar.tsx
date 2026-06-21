@@ -15,12 +15,12 @@ import { UserMenu } from '@/features/auth/components/UserMenu'
 
 function UserStatsBadge() {
   const { xp, level, streak, isLoading } = useUserStats();
-  
+
   if (isLoading) return <div className="w-20 h-8 rounded-full bg-secondary animate-pulse" />;
-  
+
   return (
-    <Link 
-      href="/profile" 
+    <Link
+      href="/profile"
       className="flex items-center gap-3 px-3 py-1.5 rounded-full bg-secondary/50 border border-border hover:bg-secondary transition-all group"
     >
       <div className="flex items-center gap-1.5">
@@ -42,14 +42,14 @@ function UserStatsBadge() {
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const pathname = usePathname()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, isLoading } = useAuth()
 
-  const isLearningPage = pathname !== '/' && 
-                        pathname !== '/about' && 
-                        pathname !== '/blog' && 
-                        pathname !== '/resources' && 
-                        pathname !== '/login' && 
-                        pathname !== '/signup';
+  const isLearningPage = pathname !== '/' &&
+    pathname !== '/about' &&
+    pathname !== '/blog' &&
+    pathname !== '/resources' &&
+    pathname !== '/login' &&
+    pathname !== '/signup';
 
   return (
     <>
@@ -71,12 +71,10 @@ export function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    pathname === link.href
-                        ? 'text-primary bg-primary/10'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
-                    }`
-                }
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${pathname === link.href
+                      ? 'text-primary bg-primary/10'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+                    }`}
                 >
                   {link.label}
                 </Link>
@@ -84,28 +82,30 @@ export function Navbar() {
             </div>
 
             <div className="hidden md:flex items-center gap-3">
-              {/* User Stats Badge */}
-              {isAuthenticated && <UserStatsBadge />}
+              {/* XP / Level / Streak are ONLY rendered for authenticated users.
+                  Anonymous visitors never see them — no fake stats, no leaked
+                  dashboard affordances. */}
+              {isAuthenticated && !isLoading && <UserStatsBadge />}
               <UserMenu />
-              
-              <Link 
-                href="/community" 
+
+              <Link
+                href="/community"
                 className="px-3 py-1.5 rounded-full bg-secondary/50 border border-border hover:bg-secondary transition-all flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <Users className="w-3.5 h-3.5" />
                 <span className="text-xs font-medium">Circles</span>
               </Link>
 
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 className="gap-2 text-muted-foreground hover:text-foreground"
                 onClick={() => {
-                  const event = new KeyboardEvent('keydown', { 
-                    key: 'k', 
-                    ctrlKey: true, 
-                    metaKey: true, 
-                    bubbles: true 
+                  const event = new KeyboardEvent('keydown', {
+                    key: 'k',
+                    ctrlKey: true,
+                    metaKey: true,
+                    bubbles: true
                   });
                   document.dispatchEvent(event);
                 }}
@@ -117,9 +117,28 @@ export function Navbar() {
               <Button to="/blog" variant="ghost" size="sm">
                 Articles
               </Button>
-              <Button to={isAuthenticated ? "/#weekly-challenge" : "/login"} variant="primary" size="sm">
-                Start Learning
-              </Button>
+
+              {/* Auth-aware primary CTA.
+                  - Anonymous: "Start Learning" → /login (preserving the current page)
+                  - Authenticated: "Start Learning" → #weekly-challenge on the homepage
+              */}
+              {isAuthenticated ? (
+                <Button to="/#weekly-challenge" variant="primary" size="sm">
+                  Start Learning
+                </Button>
+              ) : (
+                <Button
+                  to={
+                    isLearningPage
+                      ? `/login?from=${encodeURIComponent(pathname)}`
+                      : '/login'
+                  }
+                  variant="primary"
+                  size="sm"
+                >
+                  Start Learning
+                </Button>
+              )}
             </div>
 
             <button
@@ -141,12 +160,10 @@ export function Navbar() {
                     key={link.href}
                     href={link.href}
                     onClick={() => setMobileOpen(false)}
-                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                      pathname === link.href
-                          ? 'text-primary bg-primary/10'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
-                      }`
-                  }
+                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${pathname === link.href
+                        ? 'text-primary bg-primary/10'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+                      }`}
                   >
                     {link.label}
                   </Link>
@@ -156,17 +173,38 @@ export function Navbar() {
                     <span className="text-sm text-muted-foreground">Theme</span>
                     <ThemeToggle />
                   </div>
-                  <Button to={isAuthenticated ? "/#weekly-challenge" : "/login"} variant="primary" size="md" className="w-full">
-                    Start Learning
-                  </Button>
+                  {isAuthenticated ? (
+                    <Button to="/dashboard" variant="primary" size="md" className="w-full">
+                      Go to Dashboard
+                    </Button>
+                  ) : (
+                    <Button
+                      to={
+                        isLearningPage
+                          ? `/login?from=${encodeURIComponent(pathname)}`
+                          : '/login'
+                      }
+                      variant="primary"
+                      size="md"
+                      className="w-full"
+                    >
+                      Start Learning
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
           )}
         </nav>
-        {!isAuthenticated && isLearningPage && (
+        {!isAuthenticated && !isLoading && isLearningPage && (
           <div className="bg-primary text-white text-center py-2 text-xs font-medium animate-in slide-in-from-top duration-300">
-            Log in to save your progress and earn XP! <Link href="/login" className="underline ml-1">Sign in now</Link>
+            Log in to save your progress and earn XP!{' '}
+            <Link
+              href={`/login?from=${encodeURIComponent(pathname)}`}
+              className="underline ml-1"
+            >
+              Sign in now
+            </Link>
           </div>
         )}
       </header>
