@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { TopicService } from '../services/topicService';
+import { useUserStats } from '@/context/UserStatsContext';
 
 export function useTopicProgress(topicId: string) {
+  const { refreshStats } = useUserStats();
   const [progress, setProgress] = useState({
     completed: false,
     quizScore: 0,
@@ -32,6 +34,7 @@ export function useTopicProgress(topicId: string) {
     try {
       await TopicService.toggleTopicCompletion(topicId, completed);
       setProgress(prev => ({ ...prev, completed }));
+      await refreshStats();
     } catch (e) {
       setError("Failed to update topic completion status");
       throw e;
@@ -49,6 +52,7 @@ export function useTopicProgress(topicId: string) {
       
       const data = await res.json();
       setProgress(prev => ({ ...prev, quizScore: data.percentage }));
+      await refreshStats();
       return data;
     } catch (e) {
       console.error("Error updating quiz score:", e);
@@ -67,6 +71,7 @@ export function useTopicProgress(topicId: string) {
       
       const data = await res.json();
       setProgress(prev => ({ ...prev, challengesCompleted: prev.challengesCompleted + 1 }));
+      await refreshStats();
       return data;
     } catch (e) {
       console.error("Error completing challenge:", e);

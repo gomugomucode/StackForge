@@ -1,37 +1,30 @@
-# XP ENGINE REPORT
+# XP_ENGINE_REPORT.md
 
-## Overview
-The XP Engine has been upgraded from a simple counter to a transaction-based reward system that prevents duplicate awards and maintains a consistent level progression.
+## XP Engine Implementation
 
-## Reward Configuration
-The following reward values are now strictly implemented in `XP_REWARDS`:
-- **Topic Completion**: +25 XP
-- **Quiz Pass**: +50 XP
-- **Challenge Completion**: +100 XP
-- **Roadmap Completion**: +500 XP
-- **Read Lesson**: +10 XP (Legacy)
+The XP engine is designed as a centralized service that handles reward distribution, level calculation, and transaction logging.
 
-## Technical Implementation
-### 1. Transaction-Based Awards
-Instead of directly updating the user's total XP, the system now uses `prisma.$transaction` to atomically:
-1. Verify if the reward has already been granted for the specific action (using a unique `reason` string like `TOPIC_COMPLETION:topic_123`).
-2. Create an `XpTransaction` record for auditing.
-3. Update the `Profile` table with the new total XP and calculated level.
+### 1. Service Architecture
+The core logic resides in `src/features/gamification/services/xpService.ts`. It uses a transaction-based approach to ensure that user profile updates and XP transaction logs are atomic.
 
-### 2. Duplicate Prevention
-Duplicate rewards are prevented by checking for the existence of an `XpTransaction` with the same `userId` and `reason` before applying the reward.
+### 2. Reward Matrix
+| Event | Reward | Reference Key |
+|---|---|---|
+| Topic Completion | +25 XP | `TOPIC_COMPLETION:{topicId}` |
+| Quiz Pass | +50 XP | `QUIZ_PASS:{quizId}` |
+| Challenge Completion | +100 XP | `CHALLENGE_COMPLETION:{challengeId}` |
+| Roadmap Completion | +500 XP | `ROADMAP_COMPLETION:{roadmapId}` |
 
-### 3. Leveling Algorithm
-Implemented a quadratic growth formula for leveling to ensure that higher levels require progressively more effort.
-- **Formula**: Based on an arithmetic progression of XP requirements.
-- **Progression**: $XP_{req} = 100 + 50(L-1)$.
+### 3. Key Features
+- **Duplicate Prevention**: Before awarding XP, the service checks the `XpTransaction` table for an existing record with the same `userId` and `reason`.
+- **Atomic Updates**: Uses `prisma.$transaction` to update the `Profile` table and create an `XpTransaction` record simultaneously.
+- **Level System**: Implements a non-linear level progression based on a quadratic formula: $n = \frac{-75 + \sqrt{5625 + 100xp}}{50} + 1$.
+- **Daily Activity Integration**: Every XP award triggers a call to `trackDailyActivity` to maintain streaks.
 
-## Integration Points
-- **Topic Completion**: Integrated into `/api/learning/topic/complete`.
-- **Roadmap Progress**: Now automatically triggers roadmap completion percentage updates.
+### 4. Integration Points
+- `/api/learning/topic/complete`: Awards `TOPIC_COMPLETION` and checks for `ROADMAP_COMPLETION`.
+- `/api/quiz/submit`: Awards `QUIZ_PASS` if the percentage is $\ge 80\%$.
+- `/api/learning/challenge/submit`: Awards `CHALLENGE_COMPLETION` upon first successful submission.
 
-## Success Verification
-- [x] XP awarded for first-time topic completion.
-- [x] No duplicate XP awarded on subsequent completions.
-- [x] XP transactions recorded in database.
-- [x] Profile level updated based on total XP.
+## Conclusion
+The XP engine is fully implemented and connected to the database, providing a robust gamification layer for the LMS.

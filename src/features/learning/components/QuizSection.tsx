@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HelpCircle, CheckCircle2, AlertCircle, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
@@ -7,7 +7,15 @@ interface QuizQuestion {
   question: string;
   options: string[];
   answer: string;
-  explanation: string;
+  explanation?: string | null;
+}
+
+interface QuizAttempt {
+  id: string;
+  score: number;
+  percentage: number;
+  passed: boolean;
+  completedAt: string;
 }
 
 interface QuizSectionProps {
@@ -24,6 +32,25 @@ export function QuizSection({ title, questions, onComplete, quizId }: QuizSectio
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
+  const [isLoadingAttempts, setIsLoadingAttempts] = useState(true);
+
+  useEffect(() => {
+    async function fetchAttempts() {
+      try {
+        const res = await fetch(`/api/quiz/attempts?quizId=${quizId}`);
+        if (res.ok) {
+          const data = await res.json();
+          setAttempts(data);
+        }
+      } catch (e) {
+        console.error("Error fetching quiz attempts:", e);
+      } finally {
+        setIsLoadingAttempts(false);
+      }
+    }
+    fetchAttempts();
+  }, [quizId]);
 
   const handleNext = () => {
     const selectedAnswer = questions[currentQuestion].options[selectedOption!];
@@ -47,14 +74,40 @@ export function QuizSection({ title, questions, onComplete, quizId }: QuizSectio
   };
 
   if (isFinished) {
+    const bestScore = attempts.length > 0 
+      ? Math.max(...attempts.map(a => a.percentage)) 
+      : score;
+    const currentPercentage = Math.round((score / questions.length) * 100);
+    const passed = currentPercentage >= 80;
+
     return (
       <div className="mb-8 p-8 rounded-2xl border border-primary/20 bg-primary/5 text-center">
         <Trophy className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
         <h3 className="text-2xl font-bold text-foreground mb-2">Quiz Completed!</h3>
-        <p className="text-muted-foreground mb-6">Your score: <span className="font-bold text-foreground">{score} / {questions.length}</span></p>
-        <Button variant="primary" onClick={() => { setIsFinished(false); setCurrentQuestion(0); setScore(0); }}>
-          Retry Quiz
-        </Button>
+        <p className="text-muted-foreground mb-6">
+          Your score: <span className="font-bold text-foreground">{score} / {questions.length} ({currentPercentage}%)</span>
+          {passed ? <span className="ml-2 text-green-500 font-bold">✓ Passed</span> : <span className="ml-2 text-red-500 font-bold">✗ Failed</span>}
+        </p>
+        
+        <div className="grid grid-cols-2 gap-4 mb-8 max-w-xs mx-auto">
+          <div className="p-4 rounded-xl bg-card border border-border">
+            <span className="text-xs text-muted-foreground uppercase block mb-1">Best Score</span>
+            <span className="text-xl font-bold text-primary">{bestScore}%</span>
+          </div>
+          <div className="p-4 rounded-xl bg-card border border-border">
+            <span className="text-xs text-muted-foreground uppercase block mb-1">Attempts</span>
+            <span className="text-xl font-bold text-foreground">{attempts.length}</span>
+          </div>
+        </div>
+
+        <div className="flex justify-center gap-3">
+          <Button variant="primary" onClick={() => { setIsFinished(false); setCurrentQuestion(0); setScore(0); setUserAnswers([]); setSelectedOption(null); setShowExplanation(false); }}>
+            Retry Quiz
+          </Button>
+          <Button variant="outline" onClick={() => { /* Close or go back */ }}>
+            Done
+          </Button>
+        </div>
       </div>
     );
   }

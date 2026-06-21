@@ -1,24 +1,29 @@
-# CHALLENGE SYSTEM REPORT
+# CHALLENGE_SYSTEM_REPORT.md
 
-## Overview
-The Practice Challenge system has been transitioned from a UI-only mockup to a persisted system that tracks user achievements and awards XP.
+## Practice Challenge System Implementation
 
-## Implementation Details
-### 1. Database Integration
-- **Model Addition**: Created the `ChallengeProgress` model to uniquely track the completion status of each challenge per user.
-- **Fields**: `userId`, `challengeId`, `completed`, `completedAt`.
+The challenge system tracks user progress through practical exercises and rewards completion.
 
-### 2. Submission Flow
-- **API Endpoint**: Implemented `/api/learning/challenge/submit` to handle challenge submissions.
-- **Persistence**: On submission, the system upserts a record in `ChallengeProgress`, marking the challenge as completed.
-- **XP Award**: Integrated with the XP Engine to award +100 XP for the first time a specific challenge is completed.
+### 1. Persistence Layer
+- **Model**: `ChallengeProgress`
+- **Fields tracked**: `userId`, `challengeId`, `completed` (boolean), `completedAt` (timestamp).
+- **Uniqueness**: A composite unique key on `[userId, challengeId]` ensures one record per challenge per user.
 
-### 3. Component Integration
-- **PracticeSection**: Now triggers the `onComplete` callback which calls the `completeChallenge` hook method.
-- **useTopicProgress Hook**: Updated to perform a real network request to the challenge submission API, ensuring progress is persisted in the database.
+### 2. Completion Flow
+- **Endpoint**: `POST /api/learning/challenge/submit`
+- **Process**:
+    1. Verifies authentication.
+    2. Validates input (`challengeId`, `solution`).
+    3. Upserts the `ChallengeProgress` record to `completed: true`.
+    4. Triggers XP award.
 
-## Success Criteria
-- [x] Challenge completions persisted in `ChallengeProgress` table.
-- [x] `completedAt` timestamp recorded.
-- [x] XP awarded exactly once per challenge.
-- [x] User interface reflects completion status based on real database state.
+### 3. Reward Integration
+- **Reward**: `CHALLENGE_COMPLETION` (+100 XP).
+- **Constraint**: The `xpService` ensures that XP is only awarded once per challenge by checking for existing records in the `XpTransaction` table with the reference key `CHALLENGE_COMPLETION:{challengeId}`.
+
+### 4. UI Integration
+- `PracticeSection.tsx` triggers the submission.
+- `useTopicProgress` hook updates the local count of completed challenges and refreshes global user stats.
+
+## Conclusion
+The challenge system is fully integrated with the database and gamification engine, ensuring permanent tracking of user achievements.

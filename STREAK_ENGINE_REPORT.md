@@ -1,33 +1,30 @@
-# STREAK ENGINE REPORT
+# STREAK_ENGINE_REPORT.md
 
-## Overview
-The Streak Engine tracks user consistency by monitoring daily learning activities. It incentivizes daily engagement by calculating current and longest streaks based on validated learning events.
+## Streak Engine Implementation
 
-## Implementation Details
+The streak system tracks daily user activity and maintains a continuous count of consecutive active days.
+
 ### 1. Activity Tracking
-Activity is tracked via the `DailyActivity` model. A user is considered "active" for the day if they perform any of the following:
-- Complete a Topic
-- Pass a Quiz
-- Complete a Challenge
+Activity is tracked via the `trackDailyActivity` function in `src/features/gamification/services/streakService.ts`. 
+An activity is registered when:
+- A topic is marked as complete.
+- A quiz is submitted.
+- A challenge is completed.
 
-The system uses a composite unique key `[userId, date]` (where date is `YYYY-MM-DD`) to ensure that only one activity record is created per user per day, while accumulating total XP earned that day.
+Every activity increments the `xpEarned` for the current date in the `DailyActivity` table.
 
 ### 2. Streak Logic
-The `streakService.ts` handles the streak calculation:
-- **Increment**: If the user was active yesterday, the `currentStreak` is incremented.
-- **Reset**: If the user missed one or more days, the `currentStreak` is reset to 1.
-- **Maintenance**: If the user is already active today, the streak remains unchanged.
-- **Record Breaking**: If the `currentStreak` exceeds the `longestStreak`, the latter is updated.
+The `updateStreak` function manages the `StreakTracking` record:
+- **New User**: Initializes a streak of 1.
+- **Same Day**: If the user is already active today, the streak remains unchanged.
+- **Consecutive Day**: If the last activity was yesterday, `currentStreak` is incremented by 1.
+- **Broken Streak**: If the last activity was before yesterday, `currentStreak` is reset to 1.
+- **Longest Streak**: `longestStreak` is updated whenever `currentStreak` exceeds the previous record.
 
-### 3. Integration
-The streak system is integrated directly into the `addXP` service. Every time XP is awarded for a significant learning event, `trackDailyActivity` is called, which in turn updates the user's streak.
+### 3. UI Integration
+- **Global State**: `UserStatsContext` provides the current streak value.
+- **Instant Feedback**: The `useTopicProgress` hook calls `refreshStats()` after any XP-earning action, forcing the `Navbar` to update the streak display immediately without a page reload.
+- **Navbar Display**: The `UserStatsBadge` component renders the streak with a fire icon (🔥).
 
-## Data Flow
-$\text{User Action} \rightarrow \text{addXP}() \rightarrow \text{trackDailyActivity}() \rightarrow \text{updateStreak}() \rightarrow \text{Profile/StreakTracking Table}$
-
-## Success Criteria
-- [x] Daily activity recorded in `DailyActivity`.
-- [x] Current streak increments on consecutive days.
-- [x] Streak resets after a gap of one day.
-- [x] Longest streak is persisted and updated.
-- [x] Integration with XP engine ensures all learning events count towards the streak.
+## Conclusion
+The streak system is fully operational, persisting data in PostgreSQL and providing real-time feedback to the user.

@@ -1,43 +1,49 @@
-# PROGRESS FLOW REPORT
+# PROGRESS_FLOW_REPORT.md
 
-## Architecture Overview
-The progress system has been transitioned from a simple lesson-completion tracker to a comprehensive learning state engine that handles both Roadmap-based lessons and standalone Topics.
+## Progress System Architecture
 
-## Data Models
-### 1. Progress (Lesson Progress)
-Tracks completion of individual lessons within roadmaps.
-- **Added Fields**: `lastAccessed` (DateTime), `completedAt` (DateTime?).
-- **Flow**: Lesson Completion $\rightarrow$ Update `Progress` $\rightarrow$ Update `RoadmapCompletion` (completion percentage).
+The progress system is built on a set of specialized Prisma models to ensure high granularity and real-time updates.
 
-### 2. TopicProgress (Topic Progress)
-A new dedicated model to track the learning journey through standalone Topics.
-- **Fields**: `userId`, `topicId`, `completed`, `lastAccessed`, `completedAt`.
-- **Flow**: 
-    - `GET /api/progress?topicId=...` $\rightarrow$ Fetch current state.
-    - `POST /api/learning/topic/access` $\rightarrow$ Update `lastAccessed`.
-    - `POST /api/learning/topic/complete` $\rightarrow$ Update `completed` and `completedAt`.
+### 1. Data Models
+- `TopicProgress`: Tracks individual topic completion, last access time, and completion date.
+- `RoadmapCompletion`: Stores the aggregate completion percentage for a roadmap.
+- `QuizAttempt`: Records every quiz attempt with scores and pass status.
+- `ChallengeProgress`: Tracks the completion of specific practical challenges.
 
-### 3. RoadmapCompletion
-Aggregates progress across all modules and lessons (or topics) in a roadmap.
-- **Fields**: `userId`, `roadmapId`, `completionPercentage`.
-- **Trigger**: Automatically updated whenever a linked lesson or topic is marked as completed.
+### 2. Event Flows
 
-## Integration Logic
-### Topic Page Flow
-1. **Mount**: `TopicPage` $\rightarrow$ `useEffect` $\rightarrow$ `/api/learning/topic/access` (Updates `lastAccessed`).
-2. **Fetch**: `useTopicProgress` $\rightarrow$ `/api/progress?topicId=...` $\rightarrow$ Load completion state.
-3. **Completion**: User clicks "Mark Topic as Completed" $\rightarrow$ `/api/learning/topic/complete` $\rightarrow$ 
-    - Sets `completed: true`.
-    - Updates `completedAt`.
-    - Recalculates `completionPercentage` for the associated roadmap.
-    - Awards XP via `XpTransaction`.
+#### Topic Access
+- **Trigger**: User opens a `TopicPage`.
+- **Action**: `POST /api/learning/topic/access`
+- **Effect**: `TopicProgress` is upserted with the current timestamp in `lastAccessed`.
 
-### Lesson Flow
-1. **Completion**: API `/api/progress` (POST) $\rightarrow$ 
-    - Sets `completed: true` in `Progress`.
-    - Recalculates `completionPercentage` for the associated roadmap.
-    - Awards XP.
+#### Topic Completion
+- **Trigger**: User clicks "Mark Topic as Completed".
+- **Action**: `POST /api/learning/topic/complete`
+- **Effect**: 
+    1. `TopicProgress.completed` set to `true`.
+    2. `TopicProgress.completedAt` set to current timestamp.
+    3. Roadmap completion percentage recalculated by counting completed topics in the roadmap.
+    4. `RoadmapCompletion` record updated.
+    5. XP awarded via `xpService`.
 
-## Real-time Updates
-- `useTopicProgress` hook provides the current state of completion to the UI.
-- API responses return the updated progress state, allowing the UI to reflect changes (e.g., disabling the "Complete" button) instantly without a full page reload.
+#### Quiz Completion
+- **Trigger**: User submits quiz answers.
+- **Action**: `POST /api/quiz/submit`
+- **Effect**:
+    1. `QuizAttempt` record created.
+    2. If `passed === true`, XP is awarded.
+
+#### Challenge Completion
+- **Trigger**: User submits challenge solution.
+- **Action**: `POST /api/learning/challenge/submit`
+- **Effect**:
+    1. `ChallengeProgress` record upserted to `completed: true`.
+    2. XP is awarded.
+
+### 3. Real-time Updates
+- `useTopicProgress` hook fetches the current state from `/api/progress?topicId=...` on mount.
+- Local state is updated optimistically or after successful API calls to ensure the UI reflects progress instantly.
+
+## Conclusion
+The progress system is fully database-driven, user-specific, and integrates roadmap-level aggregation with topic-level tracking.

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 import { addXP } from "@/features/gamification/services/xpService";
+import { generateCertificate } from "@/features/certifications/services/certificateService";
 
 export async function POST(req: NextRequest) {
   try {
@@ -94,6 +95,15 @@ export async function POST(req: NextRequest) {
           completionPercentage,
         },
       });
+
+      if (completionPercentage === 100) {
+        try {
+          await addXP(user.id, "ROADMAP_COMPLETION", roadmapId);
+          await generateCertificate(user.id, roadmapId);
+        } catch (e) {
+          console.error("Error awarding roadmap completion rewards:", e);
+        }
+      }
     }
 
     // Award XP for first completion
