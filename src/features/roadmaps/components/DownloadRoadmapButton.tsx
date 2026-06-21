@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { FileDown } from 'lucide-react';
 import { Roadmap } from '@/data/roadmaps';
 import { exportRoadmapToPDF } from '../services/pdfExport';
