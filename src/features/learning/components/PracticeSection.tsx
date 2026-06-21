@@ -63,7 +63,7 @@ export function PracticeSection({ title, description, hints, expectedOutput, sol
                 <Send className="w-3.5 h-3.5" />
                 Submit Solution
               </button>
-            </div}
+            </div>
           </div>
           {error && <div className="p-3 rounded-lg bg-red-500/10 text-red-500 text-xs">{error}</div>}
           {isSubmitted && <div className="p-3 rounded-lg bg-green-500/10 text-green-500 text-xs font-bold">Challenge Completed! XP awarded.</div>}
