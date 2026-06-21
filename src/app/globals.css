@@ -1,3 +1,7 @@
+html {
+  outline: 5px solid lime !important;
+}
+
 @import "tailwindcss";
 
 @theme {
