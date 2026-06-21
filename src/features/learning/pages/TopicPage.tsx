@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { TopicHero } from "../components/TopicHero";
+
 import { LearningSection } from "../components/LearningSection";
 import { SyntaxSection } from "../components/SyntaxSection";
 import { ExampleSection } from "../components/ExampleSection";
@@ -38,7 +39,22 @@ export function TopicPage({
   quizzes, 
   interviews 
 }: TopicPageProps) {
-  const { progress, markAsCompleted } = useTopicProgress(topic.id);
+  const { progress, markTopicComplete, updateQuizScore, completeChallenge } = useTopicProgress(topic.id);
+
+  useEffect(() => {
+    async function logAccess() {
+      try {
+        await fetch('/api/learning/topic/access', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ topicId: topic.id })
+        });
+      } catch (e) {
+        console.error("Error logging topic access:", e);
+      }
+    }
+    logAccess();
+  }, [topic.id]);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-12">
@@ -51,6 +67,7 @@ export function TopicPage({
         />
 
         <SyntaxSection 
+          title={`${topic.title} Syntax`}
           syntax={content.syntax} 
         />
 
@@ -60,19 +77,43 @@ export function TopicPage({
             {examples.map((example) => (
               <ExampleSection 
                 key={example.id} 
-                example={example} 
+                title={example.title}
+                code={example.code}
+                output={example.output}
+                explanation={example.explanation}
               />
             ))}
           </div>
         </div>
 
-        <PracticeSection 
-          challenges={challenges} 
-        />
+        <div className="space-y-8">
+          <h4 className="text-xl font-semibold text-foreground">Practice Challenges</h4>
+          {challenges.map((challenge) => (
+            <PracticeSection 
+              key={challenge.id}
+              challengeId={challenge.id}
+              title={challenge.title}
+              description={challenge.description}
+              hints={challenge.hints}
+              expectedOutput={challenge.expectedOutput}
+              solution={challenge.solution}
+              onComplete={completeChallenge}
+            />
+          ))}
+        </div>
 
-        <QuizSection 
-          quizzes={quizzes} 
-        />
+        <div className="space-y-8">
+          <h4 className="text-xl font-semibold text-foreground">Knowledge Check</h4>
+          {quizzes.map((quiz) => (
+            <QuizSection 
+              key={quiz.id}
+              quizId={quiz.id}
+              title={quiz.title}
+              questions={quiz.questions || []}
+              onComplete={updateQuizScore}
+            />
+          ))}
+        </div>
 
         <InterviewSection 
           questions={interviews} 
@@ -87,7 +128,7 @@ export function TopicPage({
 
       <div className="flex justify-center pt-12">
         <Button 
-          onClick={() => markAsCompleted(topic.id)}
+          onClick={() => markTopicComplete(!progress.completed)}
           disabled={progress.completed}
           className={cn(
             "px-8 py-6 rounded-full text-lg font-bold transition-all",

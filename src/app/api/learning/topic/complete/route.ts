@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
+import { addXP } from "@/features/gamification/services/xpService";
 
 export async function POST(req: NextRequest) {
   try {
@@ -31,45 +32,76 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Use the Progress model to track topic completion
-    const progress = await prisma.progress.upsert({
+    // Use the TopicProgress model to track topic completion
+    const progress = await prisma.topicProgress.upsert({
       where: {
-        userId_lessonId: {
+        userId_topicId: {
           userId: user.id,
-          lessonId: topicId, // We reuse lessonId field as a generic content ID
+          topicId: topicId,
         },
       },
-      update: { completed },
+      update: { 
+        completed, 
+        lastAccessed: new Date(),
+        completedAt: completed ? new Date() : null 
+      },
       create: {
         userId: user.id,
-        lessonId: topicId,
+        topicId: topicId,
         completed,
+        lastAccessed: new Date(),
+        completedAt: completed ? new Date() : null,
       },
     });
 
-    // Award XP for first completion
-    if (completed) {
-      const existingXp = await prisma.xpTransaction.findFirst({
-        where: {
-          userId: user.id,
-          reason: `READ_TOPIC:${topicId}`,
-        },
+    const topic = await prisma.topic.findUnique({
+      where: { id: topicId }
+    });
+
+    if (completed && topic?.roadmapId) {
+      const roadmapId = topic.roadmapId;
+      
+      // Calculate total topics for this roadmap
+      const totalTopics = await prisma.topic.count({
+        where: { roadmapId }
       });
 
-      if (!existingXp) {
-        await prisma.xpTransaction.create({
-          data: {
-            userId: user.id,
-            amount: 10,
-            reason: `READ_TOPIC:${topicId}`,
-          },
-        });
+      // Calculate completed topics for this user in this roadmap
+      const completedTopicsCount = await prisma.topicProgress.count({
+        where: {
+          userId: user.id,
+          topic: { roadmapId },
+          completed: true
+        }
+      });
 
-        await prisma.profile.upsert({
-          where: { userId: user.id },
-          update: { xp: { increment: 10 } },
-          create: { userId: user.id, xp: 10 },
-        });
+      const completionPercentage = Math.round((completedTopicsCount / totalTopics) * 100);
+
+      await prisma.roadmapCompletion.upsert({
+        where: {
+          userId_roadmapId: {
+            userId: user.id,
+            roadmapId: roadmapId,
+          },
+        },
+        update: {
+          completionPercentage,
+          updatedAt: new Date(),
+        },
+        create: {
+          userId: user.id,
+          roadmapId: roadmapId,
+          completionPercentage,
+        },
+      });
+    }
+
+    // Award XP for first completion
+    if (completed) {
+      try {
+        await addXP(user.id, "TOPIC_COMPLETION", topicId);
+      } catch (e) {
+        console.error("Error awarding XP for topic completion:", e);
       }
     }
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { HelpCircle, CheckCircle2, AlertCircle } from 'lucide-react';
+import { HelpCircle, CheckCircle2, AlertCircle, Trophy } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
 interface QuizQuestion {
   id: string;
@@ -12,32 +13,36 @@ interface QuizQuestion {
 interface QuizSectionProps {
   title: string;
   questions: QuizQuestion[];
-  onComplete: (score: number) => Promise<void>;
+  onComplete: (quizId: string, answers: string[]) => Promise<any>;
   quizId: string;
 }
 
 export function QuizSection({ title, questions, onComplete, quizId }: QuizSectionProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [userAnswers, setUserAnswers] = useState<string[]>([]);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
 
   const handleNext = () => {
-    const isCorrect = questions[currentQuestion].options[selectedOption!] === questions[currentQuestion].answer;
+    const selectedAnswer = questions[currentQuestion].options[selectedOption!];
+    setUserAnswers(prev => [...prev, selectedAnswer]);
+
+    const isCorrect = selectedAnswer === questions[currentQuestion].answer;
     if (isCorrect) setScore(s => s + 1);
     
     setShowExplanation(true);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(q => q + 1);
       setSelectedOption(null);
       setShowExplanation(false);
     } else {
       setIsFinished(true);
-      onComplete(Math.round((score / questions.length) * 100));
+      await onComplete(quizId, userAnswers);
     }
   };
 

@@ -6,10 +6,10 @@ interface TopicHeroProps {
   description: string;
   difficulty: string;
   estimatedTime: number;
-  xpReward: number;
+  xpReward?: number;
 }
 
-export function TopicHero({ title, description, difficulty, estimatedTime, xpReward }: TopicHeroProps) {
+export function TopicHero({ title, description, difficulty, estimatedTime, xpReward = 25 }: TopicHeroProps) {
   const difficultyColor = {
     beginner: 'text-green-500 bg-green-500/10',
     intermediate: 'text-blue-500 bg-blue-500/10',

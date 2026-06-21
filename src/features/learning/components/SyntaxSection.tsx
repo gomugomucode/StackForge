@@ -4,7 +4,7 @@ import { Code2, Terminal } from 'lucide-react';
 interface SyntaxSectionProps {
   title: string;
   syntax: string;
-  declaration: string;
+  declaration?: string;
 }
 
 export function SyntaxSection({ title, syntax, declaration }: SyntaxSectionProps) {

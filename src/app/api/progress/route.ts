@@ -10,9 +10,29 @@ import { calculateLevel } from "@/lib/gamification";
  * fixed here.
  */
 
-export async function GET() {
+export async function GET(req: Request) {
   const user = await getSupabaseServerUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { searchParams } = new URL(req.url);
+  const topicId = searchParams.get("topicId");
+
+  if (topicId) {
+    const topicProgress = await prisma.topicProgress.findUnique({
+      where: {
+        userId_topicId: { userId: user.id, topicId },
+      },
+    });
+
+    return NextResponse.json({
+      completed: topicProgress?.completed || false,
+      quizScore: 0, // Will be fetched from QuizAttempt in Phase 5
+      challengesCompleted: 0, // Will be calculated in Phase 6
+      totalChallenges: 0,
+      lastAccessed: topicProgress?.lastAccessed,
+      completedAt: topicProgress?.completedAt,
+    });
+  }
 
   const progress = await prisma.progress.findMany({
     where: { userId: user.id },
@@ -43,6 +63,52 @@ export async function POST(req: Request) {
       completed: true,
     },
   });
+
+  // Update Roadmap Progress
+  try {
+    const lesson = await prisma.lesson.findUnique({
+      where: { id: lessonId },
+      include: { module: { include: { roadmap: true } } }
+    });
+
+    if (lesson?.module?.roadmapId) {
+      const roadmapId = lesson.module.roadmapId;
+      
+      const totalLessons = await prisma.lesson.count({
+        where: { module: { roadmapId } }
+      });
+
+      const completedLessonsCount = await prisma.progress.count({
+        where: {
+          userId: user.id,
+          lesson: { module: { roadmapId } },
+          completed: true
+        }
+      });
+
+      const completionPercentage = Math.round((completedLessonsCount / totalLessons) * 100);
+
+      await prisma.roadmapCompletion.upsert({
+        where: {
+          userId_roadmapId: {
+            userId: user.id,
+            roadmapId: roadmapId,
+          },
+        },
+        update: {
+          completionPercentage,
+          updatedAt: new Date(),
+        },
+        create: {
+          userId: user.id,
+          roadmapId: roadmapId,
+          completionPercentage,
+        },
+      });
+    }
+  } catch (e) {
+    console.error("Error updating roadmap progress for lesson:", e);
+  }
 
   // Award XP for lesson completion. addXP writes to the Profile table
   // (which is the spec's user_stats).

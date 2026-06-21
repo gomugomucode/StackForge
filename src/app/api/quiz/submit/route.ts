@@ -1,76 +1,74 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
 import { addXP } from "@/features/gamification/services/xpService";
-import { updateStreak } from "@/features/gamification/services/streakService";
-import { getSupabaseServerUser } from "@/lib/supabase-server";
-import * as z from "zod";
-
-const submitSchema = z.object({
-  quizId: z.string().min(1),
-  answers: z.array(z.string()),
-});
 
 export async function POST(req: NextRequest) {
-  const user = await getSupabaseServerUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await req.json();
-    const validated = submitSchema.parse(body);
-    const { quizId, answers } = validated;
+    const { quizId, answers } = body;
+
+    if (!quizId || !answers) {
+      return NextResponse.json({ error: "quizId and answers are required" }, { status: 400 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+
+    if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
     const quiz = await prisma.quiz.findUnique({
       where: { id: quizId },
       include: { questions: true },
     });
-    if (!quiz) {
-      return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
-    }
 
+    if (!quiz) return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
+
+    // Calculate score
     let correctCount = 0;
-    quiz.questions.forEach((q, idx) => {
-      if (answers[idx] === q.answer) correctCount++;
+    quiz.questions.forEach((q, index) => {
+      if (q.answer === answers[index]) {
+        correctCount++;
+      }
     });
 
-    const score = (correctCount / quiz.questions.length) * 100;
+    const score = correctCount;
+    const totalQuestions = quiz.questions.length;
+    const percentage = Math.round((correctCount / totalQuestions) * 100);
+    const passed = percentage >= 80; // Assume 80% pass rate
 
-    await prisma.quizAttempt.create({
+    // Save attempt
+    const attempt = await prisma.quizAttempt.create({
       data: {
         userId: user.id,
         quizId,
-        score: Math.round(score),
+        score,
+        percentage,
+        passed,
         correctAnswers: correctCount,
       },
     });
 
-    if (score >= 70) {
-      try {
-        await addXP(user.id, "COMPLETE_QUIZ");
-        await updateStreak(user.id);
-      } catch (e) {
-        console.warn("[quiz/submit] reward skipped:", e);
-      }
+    // Award XP on first pass only
+    if (passed) {
+      await addXP(user.id, "QUIZ_PASS", quizId);
     }
 
     return NextResponse.json({
-      score: Math.round(score),
-      correctCount,
-      totalQuestions: quiz.questions.length,
-      passed: score >= 70,
+      success: true,
+      attempt,
+      passed,
+      percentage,
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.errors[0].message },
-        { status: 400 }
-      );
-    }
-    console.error("Quiz submission error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    console.error("[API /quiz/submit] Error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -34,15 +34,44 @@ export function useTopicProgress(topicId: string) {
       setProgress(prev => ({ ...prev, completed }));
     } catch (e) {
       setError("Failed to update topic completion status");
+      throw e;
     }
   };
 
-  const updateQuizScore = (score: number) => {
-    setProgress(prev => ({ ...prev, quizScore: score }));
+  const updateQuizScore = async (quizId: string, answers: string[]) => {
+    try {
+      const res = await fetch('/api/quiz/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quizId, answers }),
+      });
+      if (!res.ok) throw new Error('Quiz submission failed');
+      
+      const data = await res.json();
+      setProgress(prev => ({ ...prev, quizScore: data.percentage }));
+      return data;
+    } catch (e) {
+      console.error("Error updating quiz score:", e);
+      throw e;
+    }
   };
 
-  const completeChallenge = (count: number) => {
-    setProgress(prev => ({ ...prev, challengesCompleted: count }));
+  const completeChallenge = async (challengeId: string) => {
+    try {
+      const res = await fetch('/api/learning/challenge/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ challengeId, solution: 'Completed via UI' }),
+      });
+      if (!res.ok) throw new Error('Challenge submission failed');
+      
+      const data = await res.json();
+      setProgress(prev => ({ ...prev, challengesCompleted: prev.challengesCompleted + 1 }));
+      return data;
+    } catch (e) {
+      console.error("Error completing challenge:", e);
+      throw e;
+    }
   };
 
   return {

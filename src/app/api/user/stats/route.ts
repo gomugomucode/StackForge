@@ -16,9 +16,14 @@ export async function GET() {
   }
 
   try {
-    const profile = await prisma.profile.findUnique({
-      where: { userId: user.id },
-    });
+    const [profile, streakData] = await Promise.all([
+      prisma.profile.findUnique({
+        where: { userId: user.id },
+      }),
+      prisma.streakTracking.findUnique({
+        where: { userId: user.id },
+      }),
+    ]);
 
     if (!profile) {
       // Lazy-provision a default row so the dashboard renders instead
@@ -29,7 +34,7 @@ export async function GET() {
       return NextResponse.json({
         xp: created.xp,
         level: created.level,
-        streak: created.streak,
+        streak: streakData?.currentStreak ?? 0,
         totalHours: created.totalHours,
         lastActive: created.lastActive,
       });
@@ -38,7 +43,7 @@ export async function GET() {
     return NextResponse.json({
       xp: profile.xp,
       level: profile.level,
-      streak: profile.streak,
+      streak: streakData?.currentStreak ?? profile.streak,
       totalHours: profile.totalHours,
       lastActive: profile.lastActive,
     });
