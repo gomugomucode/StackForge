@@ -6,8 +6,10 @@ import { ProtectedRoute } from "@/features/auth/components/ProtectedRoute";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Button } from "@/components/ui/Button";
 import { roadmaps } from "@/data/roadmaps";
-import { Trophy, Flame, BookOpen, Layout, ArrowRight } from "lucide-react";
+import { Trophy, Flame, BookOpen, Layout, ArrowRight, Award } from "lucide-react";
 import NextLink from "next/link";
+import { ActivityFeed } from "@/features/profile/ActivityFeed";
+import { ProgressOverview } from "@/features/profile/ProgressOverview";
 
 export default function DashboardPage() {
   const { user, profile } = useAuth();
@@ -55,7 +57,7 @@ export default function DashboardPage() {
             <div className="text-4xl font-black">{streak} Days</div>
             <p className="text-sm text-muted-foreground">Keep it up! You're on fire.</p>
           </div>
-          <div className="p-6 rounded- la-2xl border border-border bg-card space-y-4">
+          <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600">
                 <BookOpen className="w-5 h-5" />
@@ -68,53 +70,78 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Continue Learning */}
-          <div className="lg:col-span-2 space-y-6">
-            <SectionHeader title="Continue Learning" description="Pick up exactly where you left off." />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {roadmaps.slice(0, 2).map((roadmap) => (
-                <div key={roadmap.slug} className="p-6 rounded-2xl border border-border bg-card hover:border-primary/50 transition-all group space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${roadmap.color} flex items-center justify-center`}>
-                        <Layout className="w-5 h-5 text-white" />
+          {/* Learning Progress & Activity */}
+          <div className="lg:col-span-2 space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <ProgressOverview />
+              <ActivityFeed />
+            </div>
+
+            <div className="space-y-6">
+              <SectionHeader title="Continue Learning" description="Pick up exactly where you left off." />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {roadmaps.slice(0, 2).map((roadmap) => (
+                  <div key={roadmap.slug} className="p-6 rounded-2xl border border-border bg-card hover:border-primary/50 transition-all group space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${roadmap.color} flex items-center justify-center`}>
+                          <Layout className="w-5 h-5 text-white" />
+                        </div>
+                        <h3 className="font-bold">{roadmap.title}</h3>
                       </div>
-                      <h3 className="font-bold">{roadmap.title}</h3>
+                      <Button variant="ghost" size="sm" asChild>
+                        <NextLink href={`/roadmaps/${roadmap.slug}`}>Resume</NextLink>
+                      </Button>
                     </div>
-                    <Button variant="ghost" size="sm" asChild>
-                      <NextLink href={`/roadmaps/${roadmap.slug}`}>Resume</NextLink>
-                    </Button>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-xs font-medium">
+                        <span>Progress</span>
+                        <span>45%</span>
+                      </div>
+                      <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
+                        <div className="h-full bg-primary w-[45%]" />
+                      </div>
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs font-medium">
-                      <span>Progress</span>
-                      <span>45%</span>
-                    </div>
-                    <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                      <div className="h-full bg-primary w-[45%]" />
-                    </div>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Recommendations */}
-          <div className="space-y-6">
-            <SectionHeader title="Recommended" />
-            <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
-              <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 space-y-3">
-                <p className="text-sm font-bold">New Roadmap: AI Engineer</p>
-                <p className="text-xs text-muted-foreground">Learn LLMs, PyTorch and Prompt Engineering.</p>
-                <Button variant="outline" size="sm" className="w-full" asChild>
-                  <NextLink href="/roadmaps/ai">Explore</NextLink>
-                </Button>
+          {/* Right Sidebar: Recommendations & Achievements */}
+          <div className="space-y-8">
+            <div className="space-y-6">
+              <SectionHeader title="Recommended" />
+              <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
+                <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 space-y-3">
+                  <p className="text-sm font-bold">New Roadmap: AI Engineer</p>
+                  <p className="text-xs text-muted-foreground">Learn LLMs, PyTorch and Prompt Engineering.</p>
+                  <Button variant="outline" size="sm" className="w-full" asChild>
+                    <NextLink href="/roadmaps/ai">Explore</NextLink>
+                  </Button>
+                </div>
+                <div className="p-4 rounded-xl bg-purple-500/5 border border-purple-500/10 space-y-3">
+                  <p className="text-sm font-bold">Daily Challenge</p>
+                  <p className="text-xs text-muted-foreground">Solve a React performance puzzle today.</p>
+                  <Button variant="outline" size="sm" className="w-full" asChild>
+                    <NextLink href="/interview">Start Quiz</NextLink>
+                  </Button>
+                </div>
               </div>
-              <div className="p-4 rounded-xl bg-purple-500/5 border border-purple-500/10 space-y-3">
-                <p className="text-sm font-bold">Daily Challenge</p>
-                <p className="text-xs text-muted-foreground">Solve a React performance puzzle today.</p>
-                <Button variant="outline" size="sm" className="w-full" asChild>
-                  <NextLink href="/interview">Start Quiz</NextLink>
+            </div>
+
+            <div className="space-y-6">
+              <SectionHeader title="Certificates" />
+              <div className="p-6 rounded-2xl border border-border bg-card flex flex-col items-center justify-center text-center space-y-4 min-h-[200px]">
+                <div className="p-3 rounded-full bg-yellow-500/10 text-yellow-500">
+                  <Award className="w-8 h-8" />
+                </div>
+                <div className="space-y-1">
+                  <p className="font-bold">No certificates yet</p>
+                  <p className="text-xs text-muted-foreground">Complete a roadmap to earn your first professional certification.</p>
+                </div>
+                <Button variant="outline" size="sm" asChild>
+                  <NextLink href="/roadmaps">View Roadmaps</NextLink>
                 </Button>
               </div>
             </div>
