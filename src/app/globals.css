@@ -1,9 +1,5 @@
 @import "tailwindcss";
 
-html {
-  outline: 5px solid lime !important;
-}
-
 @theme {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -50,29 +46,29 @@ html {
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 262.1 83.6% 57.8%;
-    --radius: 0.5rem;
+    --radius: 1rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 222 47% 4%;
     --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
+    --card: 222 47% 11%;
     --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
+    --popover: 222 47% 7%;
     --popover-foreground: 210 40% 98%;
-    --primary: 262.1 83.6% 57.8%;
+    --primary: 263 70% 60%;
     --primary-foreground: 210 40% 98%;
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 222 47% 15%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 262.1 83.6% 57.8%;
+    --muted: 222 47% 7%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 263 70% 60%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 262.1 83.6% 57.8%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 263 70% 60%;
   }
 }
 
@@ -82,6 +78,7 @@ html {
   }
   body {
     @apply bg-background text-foreground transition-colors duration-300;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
 
@@ -109,4 +106,8 @@ html {
 
 .gradient-text {
   @apply bg-gradient-to-b from-foreground to-foreground/50 bg-clip-text text-transparent;
+}
+
+.glass-panel {
+  @apply bg-background/60 backdrop-blur-md border border-border/50;
 }

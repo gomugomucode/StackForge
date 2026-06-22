@@ -19,17 +19,17 @@ interface ButtonProps {
 
 const variants: Record<ButtonVariant, string> = {
   primary:
-    'bg-gradient-to-r from-accent-purple to-accent-violet text-white hover:opacity-90 shadow-lg shadow-accent-purple/25',
+    'bg-primary text-primary-foreground hover:brightness-110 shadow-lg shadow-primary/25 active:scale-95',
   secondary:
-    'bg-surface-750 text-text-primary border border-surface-600 hover:border-accent-purple/50 hover:bg-surface-700',
-  ghost: 'text-text-secondary hover:text-text-primary hover:bg-surface-750',
+    'bg-secondary text-secondary-foreground border border-border hover:bg-secondary/80 transition-colors',
+  ghost: 'text-foreground hover:bg-secondary/50 hover:text-foreground transition-colors',
   outline:
-    'border border-accent-purple/40 text-accent-purple hover:bg-accent-purple/10 hover:border-accent-purple',
+    'border border-border text-foreground hover:bg-secondary/50 transition-colors',
 }
 
 const sizes: Record<ButtonSize, string> = {
-  sm: 'px-4 py-2 text-sm',
-  md: 'px-6 py-2.5 text-sm',
+  sm: 'px-3 py-1.5 text-xs',
+  md: 'px-5 py-2 text-sm',
   lg: 'px-8 py-3 text-base',
 }
 
@@ -45,7 +45,7 @@ export function Button({
   ariaLabel,
   disabled,
 }: ButtonProps) {
-  const classes = `inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple focus-visible:ring-offset-2 focus-visible:ring-offset-surface-900 ${variants[variant]} ${sizes[size]} ${className} ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`
+  const classes = `inline-flex items-center justify-center gap-2 rounded-full font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${variants[variant]} ${sizes[size]} ${className} ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`
 
   if (to) {
     return (
