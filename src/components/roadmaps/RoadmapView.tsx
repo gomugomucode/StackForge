@@ -123,24 +123,38 @@ export function RoadmapView({ roadmap }: RoadmapViewProps) {
                     Claim Certification <Trophy className="w-4 h-4" />
                   </Button>
                 ) : (
-                  <Button 
-                    variant="primary" 
-                    onClick={() => {
-                      const node = nodes.find(n => n.id === activeNodeId);
-                      if (node && node.quiz && !completedNodes.has(node.id)) {
-                        setActiveQuizNode(node);
-                      } else {
-                        toggleNode(activeNodeId);
-                      }
-                    }}
-                    className="gap-2"
-                  >
-                    {completedNodes.has(activeNodeId) ? (
-                      <>Undo <CheckCircle2 className="w-4 h-4" /></>
-                    ) : (
-                      <>Mark Completed <ArrowRight className="w-4 h-4" /></>
-                    )}
-                  </Button>
+                  <div className="flex flex-col gap-3">
+                    <Button 
+                      variant="primary" 
+                      className="gap-2 w-full"
+                      onClick={() => {
+                        const node = nodes.find(n => n.id === activeNodeId);
+                        if (node) {
+                          // We need technology for the route. If node doesn't have it, we can try to infer it from the roadmap category or a default\n                          window.location.href = `/learn/${roadmap.category.toLowerCase()}/${node.slug}`;
+                        }
+                      }}
+                    >
+                      Start Learning <ArrowRight className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="gap-2 w-full"
+                      onClick={() => {
+                        const node = nodes.find(n => n.id === activeNodeId);
+                        if (node && node.quiz && !completedNodes.has(node.id)) {
+                          setActiveQuizNode(node);
+                        } else {
+                          toggleNode(activeNodeId);
+                        }
+                      }}
+                    >
+                      {completedNodes.has(activeNodeId) ? (
+                        <>Undo <CheckCircle2 className="w-4 h-4" /></>
+                      ) : (
+                        <>Quick Mark Complete <CheckCircle2 className="w-4 h-4" /></>
+                      )}
+                    </Button>
+                  </div>
                 )}
             </motion.div>
           ) : (

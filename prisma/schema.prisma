@@ -336,6 +336,8 @@ model Topic {
 model TopicContent {
   id             String   @id @default(cuid())
   topicId        String   @unique
+  whatIsIt       String?
+  whyItMatters   String?
   overview       String
   syntax         String
   explanation    String

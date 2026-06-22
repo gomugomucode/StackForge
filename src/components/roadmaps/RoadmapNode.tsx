@@ -68,7 +68,7 @@ export function RoadmapNode({ node, index, isLocked = false }: RoadmapNodeProps)
                 </div>
               </div>
               <Link 
-                href={`/roadmaps/frontend/lesson/${node.slug}`} // This should be dynamic in a real app
+                href={`/learn/${node.technology || 'javascript'}/${node.slug}`} 
                 className={`text-sm font-medium transition-colors ${isLocked ? 'text-zinc-600 pointer-events-none' : 'text-violet-400 hover:text-violet-300'}`}
               >
                 {isLocked ? 'Locked - Complete previous lesson' : 'Start Learning →'}

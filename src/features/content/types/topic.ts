@@ -24,6 +24,7 @@ export interface TopicContent {
   topicId: string;
   whatIsIt: string;
   whyItMatters: string;
+  overview: string;
   syntax: string;
   explanation: string;
   bestPractices: string[];
