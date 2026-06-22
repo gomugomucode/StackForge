@@ -289,6 +289,7 @@ model Quiz {
   title       String
   description String?
   difficulty  String   // 'beginner', 'intermediate', 'advanced'
+  type        String   @default("full") // 'quick', 'full'
   lessonId    String?  // Linked to a roadmap lesson
   roadmapId   String?
   topicId     String?

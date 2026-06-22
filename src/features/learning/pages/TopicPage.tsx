@@ -143,16 +143,27 @@ export function TopicPage({
         </div>
 
         <div className="space-y-8">
-          <SectionHeader title="Knowledge Check" description="Verify your understanding with a quick quiz." />
-          {quizzes.map((quiz) => (
-            <QuizSection 
-              key={quiz.id}
-              quizId={quiz.id}
-              title={quiz.title}
-              questions={quiz.questions || []}
-              onComplete={updateQuizScore}
-            />
-          ))}
+          <SectionHeader title="Knowledge Check" description="Verify your understanding. Start with a Quick Quiz to warm up, then attempt the Mastery Quiz." />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {quizzes.filter(q => q.type === 'quick').map((quiz) => (
+              <QuizSection 
+                key={quiz.id}
+                quizId={quiz.id}
+                title={`Quick Quiz: ${quiz.title}`}
+                questions={quiz.questions || []}
+                onComplete={updateQuizScore}
+              />
+            ))}
+            {quizzes.filter(q => q.type === 'full').map((quiz) => (
+              <QuizSection 
+                key={quiz.id}
+                quizId={quiz.id}
+                title={`Mastery Quiz: ${quiz.title}`}
+                questions={quiz.questions || []}
+                onComplete={updateQuizScore}
+              />
+            ))}
+          </div>
         </div>
 
         <div className="space-y-8">

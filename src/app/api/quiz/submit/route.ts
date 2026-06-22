@@ -56,9 +56,10 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Award XP on first pass only
+    // Award XP on first pass only based on quiz type
     if (passed) {
-      await addXP(user.id, "QUIZ_PASS", quizId);
+      const xpReward = quiz.type === 'quick' ? 10 : 50;
+      await addXP(user.id, `QUIZ_PASS_${quiz.type.toUpperCase()}`, quizId, xpReward);
     }
 
     return NextResponse.json({

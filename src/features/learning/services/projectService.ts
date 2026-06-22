@@ -9,22 +9,40 @@ export interface TopicProject {
 }
 
 export const topicProjectMap: Record<string, TopicProject[]> = {
-  'javascript-basics': [
+  'variables-and-data-types': [
     {
       id: 'tp-js-1',
-      topicId: 'javascript-basics',
-      projectId: 'p2', // Collaborative Markdown Editor (simplified version)
-      learningObjectives: ['DOM Manipulation', 'Event Listeners', 'State Management'],
+      topicId: 'variables-and-data-types',
+      projectId: 'p1', // We will use p1 as a reference or add a new project
+      learningObjectives: ['Variable scoping', 'Primitive vs Reference types', 'Constant management'],
       suggestedDifficulty: 'beginner'
     }
   ],
-  'react-core': [
+  'functions': [
     {
-      id: 'tp-react-1',
-      topicId: 'react-core',
-      projectId: 'p1', // AI Code Reviewer
-      learningObjectives: ['Hook usage', 'API Integration', 'Component Lifecycle'],
+      id: 'tp-js-2',
+      topicId: 'functions',
+      projectId: 'p2',
+      learningObjectives: ['Closures', 'Higher-order functions', 'Arrow functions'],
       suggestedDifficulty: 'intermediate'
+    }
+  ],
+  'arrays-and-methods': [
+    {
+      id: 'tp-js-3',
+      topicId: 'arrays-and-methods',
+      projectId: 'p2',
+      learningObjectives: ['Array transformation', 'Filtering data', 'Reducing complex state'],
+      suggestedDifficulty: 'intermediate'
+    }
+  ],
+  'objects-and-prototypes': [
+    {
+      id: 'tp-js-4',
+      topicId: 'objects-and-prototypes',
+      projectId: 'p1',
+      learningObjectives: ['Prototypal inheritance', 'Class patterns', 'Object composition'],
+      suggestedDifficulty: 'advanced'
     }
   ]
 };
