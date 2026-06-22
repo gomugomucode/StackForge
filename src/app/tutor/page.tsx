@@ -41,6 +41,7 @@ console.log(factorial(3));`);
     try {
       const res = await fetch('/api/ai/tutor', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code }),
       });
       const data = await res.json();
