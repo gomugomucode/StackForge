@@ -12,9 +12,14 @@ import { InterviewSection } from "../components/InterviewSection";
 import { CheatsheetSection } from "../components/CheatsheetSection";
 import { ResourcesSection } from "../components/ResourcesSection";
 import { ListSection } from "../components/ListSection";
+import { ProjectGuide } from "../components/ProjectGuide";
 import { useTopicProgress } from "../hooks/useTopicProgress";
-import { Button } from "@/components/ui/Button";
-import { cn } from "@/lib/utils";
+import { projectService } from "../services/projectService";
+import { Project } from "@/data/projects";
+import { SectionHeader } from "@/components/ui/SectionHeader";
+import { CheckCircle2 } from "lucide-react";
+import NextLink from "next/link";
+import { ArrowRight } from "lucide-react";
 import { 
   Topic, 
   TopicContent, 
@@ -62,19 +67,25 @@ export function TopicPage({
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-12">
       <TopicHero topic={topic} />
 
-      <div className="grid gap-12">
+      <div className="grid gap-16">
         <LearningSection 
           whatIsIt={content.whatIsIt} 
           whyItMatters={content.whyItMatters}
         />
 
-        <SyntaxSection 
-          title={`${topic.title} Syntax`}
-          syntax={content.syntax} 
-        />
+        <div className="space-y-8">
+          <SectionHeader title="Core Concepts & Syntax" description="The essential building blocks of this topic." />
+          <SyntaxSection 
+            title={`${topic.title} Syntax`}
+            syntax={content.syntax} 
+          />
+          <div className="prose prose-slate dark:prose-invert max-w-none text-muted-foreground leading-relaxed p-6 rounded-2xl bg-card border border-border">
+            {content.explanation}
+          </div>
+        </div>
 
         <div className="space-y-8">
-          <h4 className="text-xl font-semibold text-foreground">Practical Examples</h4>
+          <h4 className="text-xl font-semibold text-foreground">Practical Implementations</h4>
           <div className="grid gap-6">
             {examples.map((example) => (
               <ExampleSection 
@@ -102,19 +113,21 @@ export function TopicPage({
         </div>
 
         <div className="space-y-8">
-          <h4 className="text-xl font-semibold text-foreground">Practice Challenges</h4>
-          {challenges.map((challenge) => (
-            <PracticeSection 
-              key={challenge.id}
-              challengeId={challenge.id}
-              title={challenge.title}
-              description={challenge.description}
-              hints={challenge.hints}
-              expectedOutput={challenge.expectedOutput}
-              solution={challenge.solution}
-              onComplete={completeChallenge}
-            />
-          ))}
+          <SectionHeader title="Apply Your Knowledge" description="Move from theory to practice with these challenges." />
+          <div className="grid gap-6">
+            {challenges.map((challenge) => (
+              <PracticeSection 
+                key={challenge.id}
+                challengeId={challenge.id}
+                title={challenge.title}
+                description={challenge.description}
+                hints={challenge.hints}
+                expectedOutput={challenge.expectedOutput}
+                solution={challenge.solution}
+                onComplete={completeChallenge}
+              />
+            ))}
+          </div>
         </div>
 
         <div className="space-y-8">
@@ -134,11 +147,37 @@ export function TopicPage({
           questions={interviews} 
         />
 
+        <div className="space-y-8">
+          <SectionHeader title="Mini Project" description="Build a real-world application implementing these concepts." />
+          {(projectService.getProjectsForTopic(topic.id) as any[]).map(project => (
+             <ProjectGuide 
+                key={project.id}
+                title={project.title}
+                requirements={project.requirements || []}
+                techStack={project.techStack || []}
+                features={project.features || []}
+                folderStructure={project.folderStructure || "No structure provided."}
+                implementationGuide={project.implementationGuide || "Follow the requirements to build this project."}
+                expectedOutput={project.expectedOutput || "A fully functional application meeting all requirements."}
+             />
+          ))}
+        </div>
+
         <CheatsheetSection 
           title={`${topic.title} Cheatsheet`} 
           cheatsheet={content.cheatsheet} 
           topicSlug={topic.slug} 
         />
+
+        <div className="p-8 rounded-3xl bg-card border border-border space-y-4">
+          <h3 className="text-2xl font-bold">Topic Summary</h3>
+          <p className="text-muted-foreground leading-relaxed">
+            By completing this topic, you have mastered {topic.title}. You can now implement these patterns in real-world projects and handle common edge cases encountered in production.
+          </p>
+          <div className="flex items-center gap-2 text-primary font-bold text-sm">
+            <CheckCircle2 className="w-4 h-4" /> Ready for the next topic?
+          </div>
+        </div>
 
         <ResourcesSection 
           resources={topic.resources || []} 

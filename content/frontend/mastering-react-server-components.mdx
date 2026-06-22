@@ -1,0 +1,72 @@
+---
+title: "Mastering React Server Components (RSC)"
+slug: "mastering-react-server-components"
+description: "A deep dive into the new paradigm of React rendering: moving logic from the client to the server for better performance and DX."
+readingTime: "12 min"
+difficulty: "advanced"
+author: "Principal Engineer"
+updatedAt: "2026-06-22"
+---
+
+# Mastering React Server Components (RSC)
+
+React Server Components (RSC) represent one of the most significant shifts in the React ecosystem since the introduction of Hooks. By allowing components to be rendered exclusively on the server, RSC solves the "waterfall" problem of client-side data fetching and drastically reduces the JavaScript bundle size.
+
+## What are Server Components?
+
+Unlike traditional Client Components, which are hydrated on the client and run in the browser, Server Components stay on the server. They can be `async` functions, allowing you to fetch data directly from your database or API using `await`.
+
+### Key Benefits
+1. **Zero Bundle Size**: The code for server components is never sent to the client.
+2. **Direct DB Access**: You can write SQL queries directly inside your component.
+3. **Automatic Code Splitting**: Everything that is a Client Component is automatically split.
+
+## The Component Hierarchy
+
+Understanding the boundary between Server and Client components is crucial.
+
+- **Server Components**: Default in Next.js App Router. Used for data fetching and static content.
+- **Client Components**: Marked with `'use client'`. Used for interactivity (onClick, useState, useEffect).
+
+### The "Gold Rule" of RSC
+Always push your state and interactivity to the leaves of your component tree. This ensures the maximum amount of your app remains as Server Components.
+
+## Practical Implementation
+
+Here is how a modern data-fetching component looks:
+
+```tsx
+// src/app/products/page.tsx (Server Component)
+import { db } from '@/lib/db';
+
+export default async function ProductsPage() {
+  const products = await db.product.findMany(); // Direct DB access!
+
+  return (
+    <div>
+      <h1>Our Products</h1>
+      {products.map(product => (
+        <ProductCard key={product.id} product={product} />
+      ))}
+    </div>
+  );
+}
+```
+
+## Performance Comparison
+
+| Metric | Client-Side Fetching | Server Components |
+| :--- | :--- | :--- |
+| Bundle Size | Larger (includes fetch libs) | Smaller |
+| Initial Load | Slow (Waterfall) | Fast (HTML ready) |
+| SEO | Complex | Excellent |
+| Interactivity | High | Via Client Components |
+
+## Common Pitfalls
+
+- **Trying to use hooks in Server Components**: `useState` and `useEffect` only work in Client Components.
+- **Passing non-serializable props**: You cannot pass functions or complex classes from a Server Component to a Client Component. Only "plain" data (JSON-like) can cross the boundary.
+
+## Conclusion
+
+RSCs are not just a performance optimization; they are a fundamental rethink of how we build web applications. By bridging the gap between the server and the UI, React has created a more efficient way to deliver content to users.

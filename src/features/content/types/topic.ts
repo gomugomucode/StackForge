@@ -32,11 +32,18 @@ export interface TopicContent {
 }
 
 export interface TopicCheatsheet {
+  title: string;
   summary: string;
   syntax: string[];
-  examples: string[];
-  commonMistakes: string[];
-  interviewTips: string[];
+  methods?: {
+    name: string;
+    description: string;
+    example: string;
+  }[];
+  commonErrors: string[];
+  bestPractices: string[];
+  interviewNotes: string[];
+  quickRevision: string[];
 }
 
 export interface TopicResource {
@@ -95,7 +102,8 @@ export interface InterviewQuestion {
   topicId?: string | null;
   question: string;
   answer: string;
-  difficulty: string;
+  hint: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced' | 'faang';
   tags: string[];
   companyFrequency: number;
 }
