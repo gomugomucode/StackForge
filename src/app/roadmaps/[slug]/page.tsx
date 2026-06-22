@@ -16,7 +16,7 @@ import {
   Zap, 
   Clock, 
   Trophy, 
-  GradCap, 
+  GraduationCap, 
   ArrowRight, 
   CheckCircle2 
 } from "lucide-react";
@@ -27,7 +27,7 @@ import { projects } from "@/data/projects";
 import { interviewCategories } from "@/data/interviews";
 import { useEffect, useState } from "react";
 import { Resource } from "@/features/resources/types/resource";
-import { exportRoadmapToPDF } from "@/features/roadmaps/export/roadmapExport";
+import { exportRoadmapPDF } from "@/features/roadmaps/export/roadmapExport";
 
 export default function RoadmapPage() {
   const params = useParams();
@@ -75,7 +75,7 @@ export default function RoadmapPage() {
             </div>
             <div className="p-4 rounded-2xl bg-card border border-border space-y-1">
               <div className="flex items-center gap-2 text-primary text-xs font-bold uppercase">
-                <GradCap className="w-3 h-3" /> Career Outcome
+                <GraduationCap className="w-3 h-3" /> Career Outcome
               </div>
               <p className="text-lg font-bold">SDE-1 / Frontend</p>
             </div>
@@ -205,7 +205,14 @@ export default function RoadmapPage() {
                 variant="outline" 
                 size="lg" 
                 className="gap-2" 
-                onClick={() => exportRoadmapToPDF(roadmap)}
+                onClick={() => exportRoadmapPDF({ 
+                  title: roadmap.title, 
+                  nodes: roadmap.modules.flatMap(m => m.lessons).map(l => ({ 
+                    title: l.title, 
+                    status: 'in-progress' as any, 
+                    description: l.description 
+                  })) 
+                })}
               >
                 <Download className="w-4 h-4" /> Download Roadmap PDF
               </Button>
