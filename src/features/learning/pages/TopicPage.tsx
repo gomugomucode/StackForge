@@ -10,6 +10,8 @@ import { PracticeSection } from "../components/PracticeSection";
 import { QuizSection } from "../components/QuizSection";
 import { InterviewSection } from "../components/InterviewSection";
 import { CheatsheetSection } from "../components/CheatsheetSection";
+import { ResourcesSection } from "../components/ResourcesSection";
+import { ListSection } from "../components/ListSection";
 import { useTopicProgress } from "../hooks/useTopicProgress";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -62,8 +64,8 @@ export function TopicPage({
 
       <div className="grid gap-12">
         <LearningSection 
-          overview={content.overview} 
-          explanation={content.explanation}
+          whatIsIt={content.whatIsIt} 
+          whyItMatters={content.whyItMatters}
         />
 
         <SyntaxSection 
@@ -84,6 +86,19 @@ export function TopicPage({
               />
             ))}
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <ListSection 
+            title="Best Practices"
+            items={content.bestPractices}
+            type="best-practice"
+          />
+          <ListSection 
+            title="Common Mistakes"
+            items={content.commonMistakes}
+            type="common-mistake"
+          />
         </div>
 
         <div className="space-y-8">
@@ -121,8 +136,12 @@ export function TopicPage({
 
         <CheatsheetSection 
           title={`${topic.title} Cheatsheet`} 
-          content={content.overview + "\n\n" + content.explanation} 
+          cheatsheet={content.cheatsheet} 
           topicSlug={topic.slug} 
+        />
+
+        <ResourcesSection 
+          resources={topic.resources || []} 
         />
       </div>
 

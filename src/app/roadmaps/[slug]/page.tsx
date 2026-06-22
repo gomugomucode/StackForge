@@ -7,7 +7,10 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Link } from "lucide-react"; // Not quite right, using next/link
 import NextLink from "next/link";
 import { motion } from "framer-motion";
-import { ChevronRight, BookOpen, Target, Download, FileText } from "lucide-react";
+import { RoadmapCanvas } from "@/components/roadmaps/RoadmapCanvas";
+
+export default function RoadmapPage() {
+// ...
 
 export default function RoadmapPage() {
   const params = useParams();
@@ -48,35 +51,7 @@ export default function RoadmapPage() {
             description="Master these modules in order to become an expert." 
           />
           
-          <div className="space-y-6">
-            {roadmap.modules.map((module, mIdx) => (
-              <div key={module.slug} className="space-y-4">
-                <div className="flex items-center gap-3 p-4 rounded-2xl bg-white dark:bg-gray-900 border border-border shadow-sm">
-                  <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
-                    {mIdx + 1}
-                  </div>
-                  <h3 className="text-lg font-bold">{module.title}</h3>
-                  <p className="text-sm text-muted-foreground flex-1">{module.description}</p>
-                </div>
-                
-                <div className="grid grid-cols-1 gap-3 pl-11">
-                  {module.lessons.map((lesson) => (
-                    <NextLink 
-                      key={lesson.slug} 
-                      href={`/roadmaps/${roadmap.slug}/lesson/${lesson.slug}`}
-                      className="group p-4 rounded-xl border border-border bg-card hover:border-primary/50 hover:bg-primary/5 transition-all flex items-center justify-between"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-700 group-hover:bg-primary transition-colors" />
-                        <span className="font-medium group-hover:text-primary transition-colors">{lesson.title}</span>
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-                    </NextLink>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+          <RoadmapCanvas roadmap={roadmap} />
         </div>
 
         {/* Sidebar: Resources & Tools */}

@@ -16,19 +16,38 @@ export interface Topic {
   challenges?: Challenge[];
   quizzes?: Quiz[];
   interviews?: InterviewQuestion[];
+  resources?: TopicResource[];
 }
 
 export interface TopicContent {
   id: string;
   topicId: string;
-  overview: string;
+  whatIsIt: string;
+  whyItMatters: string;
   syntax: string;
   explanation: string;
   bestPractices: string[];
   commonMistakes: string[];
+  cheatsheet?: TopicCheatsheet;
+}
+
+export interface TopicCheatsheet {
+  summary: string;
+  syntax: string[];
+  examples: string[];
+  commonMistakes: string[];
+  interviewTips: string[];
+}
+
+export interface TopicResource {
+  id: string;
+  title: string;
+  url: string;
+  type: 'docs' | 'video' | 'article' | 'other';
 }
 
 export interface TopicExample {
+// ... (keep existing)
   id: string;
   topicId: string;
   title: string;

@@ -1,14 +1,18 @@
 'use client';
-import { roadmaps } from '@/data/roadmaps';
+import { roadmaps, Roadmap } from '@/data/roadmaps';
 import { useProgress } from '@/context/ProgressContext';
 import { RoadmapNode as NodeComponent } from './RoadmapNode';
 import { Button } from '@/components/ui/Button';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 
-export function RoadmapCanvas({ roadmap }: { roadmap: typeof roadmaps[0] }) {
-  const { getProgress } = useProgress();
-  const progress = getProgress(roadmap.id, roadmap.nodes.map(n => n.id));
+export function RoadmapCanvas({ roadmap }: { roadmap: Roadmap }) {
+  const { getProgress, completedNodes } = useProgress();
+  
+  // Flatten lessons from all modules for progress calculation
+  const allLessons = roadmap.modules.flatMap(m => m.lessons);
+  const lessonIds = allLessons.map(l => l.slug);
+  const progress = getProgress(roadmap.slug, lessonIds);
 
   return (
     <div className="py-12">
@@ -45,8 +49,41 @@ export function RoadmapCanvas({ roadmap }: { roadmap: typeof roadmaps[0] }) {
         </div>
 
         <div className="relative">
-          {roadmap.nodes.map((node, index) => (
-            <NodeComponent key={node.id} node={node} index={index} />
+          {roadmap.modules.map((module, mIdx) => (
+            <div key={module.slug} className="mb-12">
+              <h3 className="text-lg font-bold text-white mb-6 ml-16 opacity-50 uppercase tracking-widest text-xs">
+                Module {mIdx + 1}: {module.title}
+              </h3>
+              <div className="relative">
+                {module.lessons.map((lesson, lIdx) => {
+                  const globalIndex = roadmap.modules.slice(0, mIdx).reduce((acc, m) => acc + m.lessons.length, 0) + lIdx;
+                  
+                  // A lesson is locked if the previous lesson is not completed
+                  const prevLessonId = globalIndex > 0 
+                    ? (mIdx === 0 
+                        ? roadmap.modules[0].lessons[lIdx - 1]?.slug 
+                        : roadmap.modules[mIdx - 1].lessons[roadmap.modules[mIdx - 1].lessons.length - 1]?.slug)
+                    : null;
+                  
+                  const isLocked = prevLessonId && !completedNodes.includes(prevLessonId);
+
+                  return (
+                    <NodeComponent 
+                      key={lesson.slug} 
+                      node={{
+                        id: lesson.slug,
+                        title: lesson.title,
+                        description: lesson.description,
+                        content: lesson.whatIsIt,
+                        slug: lesson.slug
+                      } as any} 
+                      index={globalIndex} 
+                      isLocked={isLocked}
+                    />
+                  );
+                })}
+              </div>
+            </div>
           ))}
         </div>
       </div>
