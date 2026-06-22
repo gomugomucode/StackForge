@@ -34,10 +34,23 @@ export default function CommunityPage() {
           fetch("/api/circles"),
           fetch("/api/circles/me"),
         ]);
-        setCircles(await res.json());
-        setMyCircles(await resMe.json());
+
+        if (!res.ok) throw new Error(`Failed to fetch circles: ${res.statusText}`);
+        const circlesData = await res.json();
+        setCircles(Array.isArray(circlesData) ? circlesData : []);
+
+        if (!resMe.ok) {
+          if (resMe.status === 401) {
+            setMyCircles([]);
+          } else {
+            throw new Error(`Failed to fetch my circles: ${resMe.statusText}`);
+          }
+        } else {
+          const myCirclesData = await resMe.json();
+          setMyCircles(Array.isArray(myCirclesData) ? myCirclesData : []);
+        }
       } catch (err) {
-        console.error("Failed to load community data");
+        console.error("Failed to load community data:", err);
       } finally {
         setIsLoading(false);
       }
@@ -55,11 +68,17 @@ export default function CommunityPage() {
       if (res.ok) {
         const created = await res.json();
         setCircles([created, ...circles]);
-        setMyCircles([...myCircles, { circle: created }]);
+        // Since the user is the creator, they are the ADMIN
+        setMyCircles([...myCircles, { circle: created, role: "ADMIN" }]);
         setIsCreateOpen(false);
+        setNewCircle({ name: "", description: "", roadmapId: "" });
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        alert(errorData.error || "Failed to create circle");
       }
     } catch (err) {
-      alert("Failed to create circle");
+      console.error("Create circle error:", err);
+      alert("An unexpected error occurred");
     }
   };
 
@@ -72,9 +91,13 @@ export default function CommunityPage() {
       if (res.ok) {
         const membership = await res.json();
         setMyCircles([...myCircles, membership]);
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        alert(errorData.error || "Failed to join circle");
       }
     } catch (err) {
-      alert("Failed to join circle");
+      console.error("Join circle error:", err);
+      alert("An unexpected error occurred");
     }
   };
 
