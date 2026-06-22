@@ -65,7 +65,7 @@ export function RoadmapCanvas({ roadmap }: { roadmap: Roadmap }) {
                         : roadmap.modules[mIdx - 1].lessons[roadmap.modules[mIdx - 1].lessons.length - 1]?.slug)
                     : null;
                   
-                  const isLocked = prevLessonId && !completedNodes.includes(prevLessonId);
+                  const isLocked = prevLessonId && !completedNodes.has(prevLessonId);
 
                   return (
                     <NodeComponent 
