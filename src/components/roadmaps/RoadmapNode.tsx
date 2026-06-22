@@ -14,7 +14,7 @@ interface RoadmapNodeProps {
 
 export function RoadmapNode({ node, index, isLocked = false }: RoadmapNodeProps) {
   const { completedNodes, toggleNode } = useProgress();
-  const isCompleted = completedNodes.includes(node.id);
+  const isCompleted = completedNodes.has(node.id);
 
   return (
     <div className="relative flex gap-6 mb-12 group">
