@@ -8,7 +8,9 @@ import { cn } from "@/lib/utils";
 interface InterviewQuestion {
   question: string;
   answer: string;
-  difficulty: "beginner" | "intermediate" | "advanced";
+  hint?: string;
+  followUp?: string;
+  difficulty: "beginner" | "intermediate" | "advanced" | "faang";
   companyFrequency: number;
   tags: string[];
 }
@@ -49,6 +51,7 @@ export function InterviewSection({ questions }: InterviewSectionProps) {
                     "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded",
                     q.difficulty === "beginner" ? "bg-green-500/10 text-green-500" : 
                     q.difficulty === "intermediate" ? "bg-yellow-500/10 text-yellow-500" : 
+                    q.difficulty === "faang" ? "bg-blue-500/10 text-blue-500" : 
                     "bg-red-500/10 text-red-500"
                   )}>
                     {q.difficulty}
@@ -67,11 +70,24 @@ export function InterviewSection({ questions }: InterviewSectionProps) {
             </button>
             
             {openIndex === index && (
-              <div className="px-6 pb-6 pt-2 border-t border-border bg-secondary/20">
+              <div className="px-6 pb-6 pt-2 border-t border-border bg-secondary/20 space-y-4">
                 <div className="prose prose-invert max-w-none text-sm text-muted-foreground leading-relaxed">
                   {q.answer}
                 </div>
-                <div className="flex flex-wrap gap-2 mt-4">
+                
+                {q.hint && (
+                  <div className="p-3 rounded-lg bg-blue-500/5 border border-blue-500/20 text-blue-400 text-xs">
+                    <strong>💡 Hint:</strong> {q.hint}
+                  </div>
+                )}
+                
+                {q.followUp && (
+                  <div className="p-3 rounded-lg bg-purple-500/5 border border-purple-500/20 text-purple-400 text-xs">
+                    <strong>🔄 Follow-up:</strong> {q.followUp}
+                  </div>
+                )}
+
+                <div className="flex flex-wrap gap-2 pt-2">
                   {q.tags.map(tag => (
                     <span key={tag} className="px-2 py-1 rounded-md bg-zinc-800 text-zinc-400 text-[10px] font-medium border border-zinc-700">
                       #{tag}

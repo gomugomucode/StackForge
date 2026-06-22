@@ -13,6 +13,9 @@ export interface Lesson {
   quizId?: string;
   cheatsheetSlug?: string;
   interviewSlug?: string;
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  estimatedTime: string;
+  xpReward: number;
 }
 
 export interface Module {
@@ -69,11 +72,14 @@ export const roadmaps: Roadmap[] = [
             example: '<div class="container">Hello World</div>', 
             commonMistakes: 'Using too many <div> tags instead of semantic elements like <main> or <section>.', 
             practiceTask: 'Build a responsive 3-column layout using CSS Grid.', 
-            resources: ['MDN Web Docs', 'CSS-Tricks'] 
+            resources: ['MDN Web Docs', 'CSS-Tricks'],
+            difficulty: 'Beginner',
+            estimatedTime: '10h',
+            xpReward: 200
           },
           { 
-            slug: 'js-basics', 
-            title: 'JavaScript Essentials', 
+            slug: 'variables-and-data-types', 
+            title: 'JS: Variables & Data Types', 
             description: 'Core language mechanics.', 
             whatIsIt: 'JavaScript is a high-level, interpreted programming language that enables interactive web pages.', 
             whyItMatters: 'It allows you to create dynamic content, handle user events, and communicate with servers.', 
@@ -82,7 +88,42 @@ export const roadmaps: Roadmap[] = [
             example: 'document.querySelector(".btn").addEventListener("click", () => alert("Hi!"));', 
             commonMistakes: 'Confusing == and ===, or forgetting to handle async operations with await.', 
             practiceTask: 'Create a simple calculator that can add, subtract, multiply and divide.', 
-            resources: ['JavaScript.info', 'Eloquent JavaScript'] 
+            resources: ['JavaScript.info', 'Eloquent JavaScript'],
+            difficulty: 'Beginner',
+            estimatedTime: '20h',
+            xpReward: 300
+          },
+          { 
+            slug: 'functions', 
+            title: 'JS: Functions', 
+            description: 'Reusable blocks of logic.', 
+            whatIsIt: 'Functions are the core of JS, allowing code reuse and encapsulation.', 
+            whyItMatters: 'They enable modularity and complex logic patterns like closures.', 
+            syntax: 'Function declarations and arrow functions.', 
+            declaration: 'const add = (a, b) => a + b;', 
+            example: 'function greet(name) { return `Hello ${name}`; }', 
+            commonMistakes: 'Wrong this context in arrow functions.', 
+            practiceTask: 'Create a counter using closures.', 
+            resources: ['JavaScript.info'],
+            difficulty: 'Beginner',
+            estimatedTime: '20h',
+            xpReward: 300
+          },
+          { 
+            slug: 'arrays-and-methods', 
+            title: 'JS: Arrays & Methods', 
+            description: 'Handling collections of data.', 
+            whatIsIt: 'Arrays are ordered lists of values with powerful built-in methods.', 
+            whyItMatters: 'Efficient data manipulation using map, filter and reduce.', 
+            syntax: 'Array literals and methods.', 
+            declaration: 'const arr = [1, 2, 3];', 
+            example: 'arr.map(x => x * 2);', 
+            commonMistakes: 'Mutating arrays with sort() or splice() unintentionally.', 
+            practiceTask: 'Implement a data pipeline for a user list.', 
+            resources: ['MDN'],
+            difficulty: 'Beginner',
+            estimatedTime: '20h',
+            xpReward: 300
           },
         ]
       },
@@ -102,7 +143,10 @@ export const roadmaps: Roadmap[] = [
             example: 'const [count, setCount] = useState(0);', 
             commonMistakes: 'Updating state directly instead of using the setter function.', 
             practiceTask: 'Build a To-Do list application with add/delete functionality.', 
-            resources: ['React Dev Docs'] 
+            resources: ['React Dev Docs'],
+            difficulty: 'Intermediate',
+            estimatedTime: '30h',
+            xpReward: 500
           },
           { 
             slug: 'nextjs-app', 
@@ -115,7 +159,10 @@ export const roadmaps: Roadmap[] = [
             example: 'await prisma.user.findMany() inside a server component.', 
             commonMistakes: 'Trying to use hooks like useState in a Server Component.', 
             practiceTask: 'Create a blog with dynamic routes using the Next.js App Router.', 
-            resources: ['Next.js Documentation'] 
+            resources: ['Next.js Documentation'],
+            difficulty: 'Advanced',
+            estimatedTime: '40h',
+            xpReward: 800
           },
         ]
       }
@@ -156,7 +203,10 @@ export const roadmaps: Roadmap[] = [
             example: 'http.createServer((req, res) => { res.end("Hello"); }).listen(3000);', 
             commonMistakes: 'Blocking the event loop with heavy synchronous operations.', 
             practiceTask: 'Create a simple file server that reads and serves HTML files.', 
-            resources: ['Node.js Docs'] 
+            resources: ['Node.js Docs'],
+            difficulty: 'Beginner',
+            estimatedTime: '20h',
+            xpReward: 300
           },
           { 
             slug: 'database-sql', 
@@ -169,7 +219,10 @@ export const roadmaps: Roadmap[] = [
             example: 'CREATE TABLE posts (id INT PRIMARY KEY, title TEXT);', 
             commonMistakes: 'Ignoring indexes, leading to slow query performance.', 
             practiceTask: 'Design a database schema for an e-commerce store.', 
-            resources: ['PostgreSQL Docs'] 
+            resources: ['PostgreSQL Docs'],
+            difficulty: 'Intermediate',
+            estimatedTime: '25h',
+            xpReward: 400
           },
         ]
       }
@@ -200,7 +253,10 @@ export const roadmaps: Roadmap[] = [
             example: 'function wrap<T>(val: T): T[] { return [val]; }', 
             commonMistakes: 'Overusing the "any" type, defeating the purpose of TS.', 
             practiceTask: 'Implement a generic ApiResponse type that handles both success and error states.', 
-            resources: ['TS Handbook'] 
+            resources: ['TS Handbook'],
+            difficulty: 'Advanced',
+            estimatedTime: '30h',
+            xpReward: 600
           },
         ]
       }

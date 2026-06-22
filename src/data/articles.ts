@@ -1,5 +1,6 @@
 export interface Article {
   id: string
+  slug: string
   title: string
   excerpt: string
   category: string
@@ -8,11 +9,13 @@ export interface Article {
   readTime: string
   image: string
   featured?: boolean
+  contentPath: string
 }
 
 export const articles: Article[] = [
   {
     id: '1',
+    slug: 'understanding-closures',
     title: 'Understanding Closures in JavaScript: A Deep Dive',
     excerpt:
       'Closures are one of the most powerful concepts in JavaScript. Learn how they work under the hood with practical examples.',
@@ -22,9 +25,11 @@ export const articles: Article[] = [
     readTime: '8 min',
     image: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=600&h=340&fit=crop',
     featured: true,
+    contentPath: 'content/frontend/closures.mdx',
   },
   {
     id: '2',
+    slug: 'python-list-comprehensions',
     title: 'Python List Comprehensions: Write Cleaner Code',
     excerpt:
       'Master list comprehensions and transform the way you write Python. From basics to advanced patterns.',
@@ -34,9 +39,11 @@ export const articles: Article[] = [
     readTime: '6 min',
     image: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=600&h=340&fit=crop',
     featured: true,
+    contentPath: 'content/python/list-comprehensions.mdx',
   },
   {
     id: '3',
+    slug: 'rest-apis-node-express',
     title: 'Building REST APIs with Node.js and Express',
     excerpt:
       'A step-by-step guide to designing, building, and deploying production-ready REST APIs.',
@@ -45,9 +52,11 @@ export const articles: Article[] = [
     date: '2026-06-01',
     readTime: '12 min',
     image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=340&fit=crop',
+    contentPath: 'content/backend/rest-apis.mdx',
   },
   {
     id: '4',
+    slug: 'big-o-notation',
     title: 'Big O Notation Explained for Beginners',
     excerpt:
       'Demystify time and space complexity with visual examples and real interview questions.',
@@ -56,9 +65,11 @@ export const articles: Article[] = [
     date: '2026-05-28',
     readTime: '10 min',
     image: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=600&h=340&fit=crop',
+    contentPath: 'content/career/big-o.mdx',
   },
   {
     id: '5',
+    slug: 'css-grid-vs-flexbox',
     title: 'CSS Grid vs Flexbox: When to Use Which',
     excerpt:
       'Stop guessing — learn the exact scenarios where Grid and Flexbox shine in modern layouts.',
@@ -67,9 +78,11 @@ export const articles: Article[] = [
     date: '2026-05-24',
     readTime: '7 min',
     image: 'https://images.unsplash.com/photo-1507726425701-9760a0295a82?w=600&h=340&fit=crop',
+    contentPath: 'content/frontend/grid-vs-flexbox.mdx',
   },
   {
     id: '6',
+    slug: 'git-essential-commands',
     title: 'Getting Started with Git: Essential Commands',
     excerpt:
       'Version control fundamentals every developer needs — branches, merges, and best practices.',
@@ -78,9 +91,11 @@ export const articles: Article[] = [
     date: '2026-05-20',
     readTime: '9 min',
     image: 'https://images.unsplash.com/photo-1556075794-3d410dfed317?w=600&h=340&fit=crop',
+    contentPath: 'content/devops/git-basics.mdx',
   },
   {
     id: '7',
+    slug: 'intro-ml-python',
     title: 'Introduction to Machine Learning with Python',
     excerpt:
       'Your first steps into ML — datasets, models, and scikit-learn in under 15 minutes.',
@@ -89,9 +104,11 @@ export const articles: Article[] = [
     date: '2026-05-15',
     readTime: '11 min',
     image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=340&fit=crop',
+    contentPath: 'content/ai/ml-intro.mdx',
   },
   {
     id: '8',
+    slug: 'react-hooks-patterns',
     title: 'React Hooks: useState and useEffect Patterns',
     excerpt:
       'Common hook patterns that will make your React components cleaner and more maintainable.',
@@ -100,6 +117,7 @@ export const articles: Article[] = [
     date: '2026-05-10',
     readTime: '8 min',
     image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&h=340&fit=crop',
+    contentPath: 'content/frontend/react-hooks.mdx',
   },
 ]
 

@@ -75,7 +75,10 @@ export function RoadmapCanvas({ roadmap }: { roadmap: Roadmap }) {
                         title: lesson.title,
                         description: lesson.description,
                         content: lesson.whatIsIt,
-                        slug: lesson.slug
+                        slug: lesson.slug,
+                        difficulty: lesson.difficulty,
+                        estimatedTime: lesson.estimatedTime,
+                        xpReward: lesson.xpReward
                       } as any} 
                       index={globalIndex} 
                       isLocked={isLocked}

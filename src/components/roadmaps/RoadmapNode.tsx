@@ -1,6 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Circle, Lock } from 'lucide-react';
+import { CheckCircle2, Circle, Lock, Clock, Trophy } from 'lucide-react';
 import { useProgress } from '@/context/ProgressContext';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/SectionHeader';
@@ -48,14 +48,27 @@ export function RoadmapNode({ node, index, isLocked = false }: RoadmapNodeProps)
           ${isCompleted ? 'bg-violet-500/5' : isLocked ? 'opacity-50 grayscale' : ''}`}>
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
-              <h3 className={`text-xl font-bold mb-2 transition-colors ${isCompleted ? 'text-violet-400' : 'text-white'}`}>
-                {node.title}
-              </h3>
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className={`text-xl font-bold transition-colors ${isCompleted ? 'text-violet-400' : 'text-white'}`}>
+                  {node.title}
+                </h3>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700 font-medium uppercase">
+                  {node.difficulty}
+                </span>
+              </div>
               <p className="text-zinc-400 text-sm mb-4 leading-relaxed">
                 {node.description}
               </p>
+              <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center gap-1.5 text-zinc-500 text-xs">
+                  <Clock className="w-3 h-3" /> {node.estimatedTime}
+                </div>
+                <div className="flex items-center gap-1.5 text-yellow-500 text-xs font-bold">
+                  <Trophy className="w-3 h-3" /> {node.xpReward} XP
+                </div>
+              </div>
               <Link 
-                href={`/roadmaps/frontend/lesson/${node.slug}`} // This should be dynamic
+                href={`/roadmaps/frontend/lesson/${node.slug}`} // This should be dynamic in a real app
                 className={`text-sm font-medium transition-colors ${isLocked ? 'text-zinc-600 pointer-events-none' : 'text-violet-400 hover:text-violet-300'}`}
               >
                 {isLocked ? 'Locked - Complete previous lesson' : 'Start Learning →'}

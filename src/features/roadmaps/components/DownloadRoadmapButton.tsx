@@ -2,20 +2,25 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/Button';
-import { FileDown } from 'lucide-react';
+import { FileDown, Lock } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { Roadmap } from '@/data/roadmaps';
 import { exportRoadmapToPDF } from '../services/pdfExport';
 
-export function DownloadRoadmapButton({ roadmap }: { roadmap: Roadmap }) {
+export function DownloadRoadmapButton({ roadmap, isCompleted }: { roadmap: Roadmap, isCompleted: boolean }) {
   return (
     <Button 
       variant="outline" 
       size="sm" 
+      disabled={!isCompleted}
       onClick={() => exportRoadmapToPDF(roadmap)}
-      className="gap-2 hover:bg-zinc-800 transition-colors"
+      className={cn(
+        "gap-2 transition-colors",
+        isCompleted ? "hover:bg-zinc-800" : "opacity-50 cursor-not-allowed"
+      )}
     >
-      <FileDown className="w-4 h-4" />
-      Export PDF
+      {isCompleted ? <FileDown className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+      {isCompleted ? "Export PDF" : "Complete Roadmap to Unlock PDF"}
     </Button>
   );
 }
