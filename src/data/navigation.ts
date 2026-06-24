@@ -14,7 +14,7 @@ export const navLinks: NavLink[] = [
     children: [
       { label: 'Learning Paths', href: '/learn' },
       { label: 'Cheatsheets', href: '/cheatsheets' },
-      { label: 'Quizzes', href: '/roadmaps/quiz' }, // This might need to be a general quiz page
+      { label: 'Quizzes', href: '/roadmaps/quiz' },
       { label: 'Interview Prep', href: '/interview' },
       { label: 'Projects', href: '/projects' },
       { label: 'AI Tutor', href: '/tutor' },

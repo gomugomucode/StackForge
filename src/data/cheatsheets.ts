@@ -1,14 +1,18 @@
+export interface CheatSheetItem {
+  name: string;
+  code: string;
+  description: string;
+  whatIsIt?: string;
+  syntax?: string;
+  examples?: string[];
+  commonMistakes?: string[];
+  bestPractices?: string[];
+  interviewNotes?: string;
+}
+
 export interface CheatSheetSection {
   title: string;
-  content: {
-    whatIsIt: string;
-    syntax: string;
-    declaration: string;
-    examples: string[];
-    commonMistakes: string[];
-    bestPractices: string[];
-    interviewNotes: string;
-  }[];
+  items: CheatSheetItem[];
 }
 
 export interface CheatSheet {
