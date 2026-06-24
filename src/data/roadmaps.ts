@@ -9,10 +9,14 @@ export interface Lesson {
   example: string;
   commonMistakes: string;
   practiceTask: string;
-  resources: string[];
+  internalResources: string[];
   quizId?: string;
+  masteryQuizId?: string;
   cheatsheetSlug?: string;
   interviewSlug?: string;
+  projectSlug?: string;
+  tutorExampleSlug?: string;
+  practiceProblems?: string[];
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
   estimatedTime: string;
   xpReward: number;
@@ -72,7 +76,7 @@ export const roadmaps: Roadmap[] = [
             example: '<div class="container">Hello World</div>', 
             commonMistakes: 'Using too many <div> tags instead of semantic elements like <main> or <section>.', 
             practiceTask: 'Build a responsive 3-column layout using CSS Grid.', 
-            resources: ['MDN Web Docs', 'CSS-Tricks'],
+            internalResources: ['/cheatsheets/html-css'],
             difficulty: 'Beginner',
             estimatedTime: '10h',
             xpReward: 200
@@ -88,7 +92,7 @@ export const roadmaps: Roadmap[] = [
             example: 'document.querySelector(".btn").addEventListener("click", () => alert("Hi!"));', 
             commonMistakes: 'Confusing == and ===, or forgetting to handle async operations with await.', 
             practiceTask: 'Create a simple calculator that can add, subtract, multiply and divide.', 
-            resources: ['JavaScript.info', 'Eloquent JavaScript'],
+            internalResources: ['/cheatsheets/js-basics'],
             difficulty: 'Beginner',
             estimatedTime: '20h',
             xpReward: 300
@@ -104,7 +108,7 @@ export const roadmaps: Roadmap[] = [
             example: 'function greet(name) { return `Hello ${name}`; }', 
             commonMistakes: 'Wrong this context in arrow functions.', 
             practiceTask: 'Create a counter using closures.', 
-            resources: ['JavaScript.info'],
+            internalResources: ['/cheatsheets/js-functions'],
             difficulty: 'Beginner',
             estimatedTime: '20h',
             xpReward: 300
@@ -120,7 +124,7 @@ export const roadmaps: Roadmap[] = [
             example: 'arr.map(x => x * 2);', 
             commonMistakes: 'Mutating arrays with sort() or splice() unintentionally.', 
             practiceTask: 'Implement a data pipeline for a user list.', 
-            resources: ['MDN'],
+            internalResources: ['/cheatsheets/js-arrays'],
             difficulty: 'Beginner',
             estimatedTime: '20h',
             xpReward: 300
@@ -143,7 +147,7 @@ export const roadmaps: Roadmap[] = [
             example: 'const [count, setCount] = useState(0);', 
             commonMistakes: 'Updating state directly instead of using the setter function.', 
             practiceTask: 'Build a To-Do list application with add/delete functionality.', 
-            resources: ['React Dev Docs'],
+            internalResources: ['/cheatsheets/react-core'],
             difficulty: 'Intermediate',
             estimatedTime: '30h',
             xpReward: 500
@@ -159,7 +163,7 @@ export const roadmaps: Roadmap[] = [
             example: 'await prisma.user.findMany() inside a server component.', 
             commonMistakes: 'Trying to use hooks like useState in a Server Component.', 
             practiceTask: 'Create a blog with dynamic routes using the Next.js App Router.', 
-            resources: ['Next.js Documentation'],
+            internalResources: ['/cheatsheets/nextjs-app'],
             difficulty: 'Advanced',
             estimatedTime: '40h',
             xpReward: 800
@@ -203,7 +207,7 @@ export const roadmaps: Roadmap[] = [
             example: 'http.createServer((req, res) => { res.end("Hello"); }).listen(3000);', 
             commonMistakes: 'Blocking the event loop with heavy synchronous operations.', 
             practiceTask: 'Create a simple file server that reads and serves HTML files.', 
-            resources: ['Node.js Docs'],
+            internalResources: ['/cheatsheets/node-runtime'],
             difficulty: 'Beginner',
             estimatedTime: '20h',
             xpReward: 300
@@ -219,7 +223,7 @@ export const roadmaps: Roadmap[] = [
             example: 'CREATE TABLE posts (id INT PRIMARY KEY, title TEXT);', 
             commonMistakes: 'Ignoring indexes, leading to slow query performance.', 
             practiceTask: 'Design a database schema for an e-commerce store.', 
-            resources: ['PostgreSQL Docs'],
+            internalResources: ['/cheatsheets/sql-basics'],
             difficulty: 'Intermediate',
             estimatedTime: '25h',
             xpReward: 400
@@ -253,7 +257,7 @@ export const roadmaps: Roadmap[] = [
             example: 'function wrap<T>(val: T): T[] { return [val]; }', 
             commonMistakes: 'Overusing the "any" type, defeating the purpose of TS.', 
             practiceTask: 'Implement a generic ApiResponse type that handles both success and error states.', 
-            resources: ['TS Handbook'],
+            internalResources: ['/cheatsheets/ts-advanced'],
             difficulty: 'Advanced',
             estimatedTime: '30h',
             xpReward: 600

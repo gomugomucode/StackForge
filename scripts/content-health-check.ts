@@ -1,82 +1,93 @@
-import { PrismaClient } from '@prisma/client';
-import fs from 'fs';
-import dotenv from 'dotenv';
 
-dotenv.config();
+import { roadmaps } from '../src/data/roadmaps.ts';
+import * as fs from 'fs';
+import * as path from 'path';
 
-const prisma = new PrismaClient();
+async function runHealthCheck() {
+  console.log('🚀 Starting StackForge Content Health Check...');
+  
+  const totalLessons = roadmaps.reduce((acc, roadmap) => 
+    acc + roadmap.modules.reduce((mAcc, module) => mAcc + module.lessons.length, 0), 0
+  );
 
-async function contentHealthCheck() {
-  console.log('🛠️  Running Content Completeness Engine...');
+  let totalRequiredAssets = totalLessons * 7; // Lesson, Cheatsheet, Quick Quiz, Mastery Quiz, Interview, Project, Tutor Example
+  let foundAssets = 0;
+  const missingAssets: Record<string, string[]> = {};
+  const missingTopics: string[] = [];
+  const priorityFixes: string[] = [];
 
-  try {
-    console.log('Prisma Client Instance:', prisma);
-    const topics = await prisma.topic.findMany({
-      include: {
-        content: true,
-        examples: true,
-        quizzes: true,
-        interviews: true,
-      }
+  roadmaps.forEach(roadmap => {
+    roadmap.modules.forEach(module => {
+      module.lessons.forEach(lesson => {
+        const assetRequirements = [
+          { name: 'Lesson', check: () => !!lesson.whatIsIt },
+          { name: 'Cheatsheet', check: () => !!lesson.cheatsheetSlug },
+          { name: 'Quick Quiz', check: () => !!lesson.quizId },
+          { name: 'Mastery Quiz', check: () => !!lesson.masteryQuizId },
+          { name: 'Interview Questions', check: () => !!lesson.interviewSlug },
+          { name: 'Project', check: () => !!lesson.projectSlug },
+          { name: 'Tutor Example', check: () => !!lesson.tutorExampleSlug },
+        ];
+
+        const missingForThisLesson: string[] = [];
+        assetRequirements.forEach(req => {
+          if (req.check()) {
+            foundAssets++;
+          } else {
+            missingForThisLesson.push(req.name);
+          }
+        });
+
+        if (missingForThisLesson.length > 0) {
+          missingAssets[lesson.slug] = missingForThisLesson;
+          if (missingForThisLesson.length === assetRequirements.length) {
+            missingTopics.push(`${roadmap.title} -> ${module.title} -> ${lesson.title}`);
+          }
+        }
+      });
     });
+  });
 
-    const projects = await prisma.project.findMany();
-    const cheatsheets = await prisma.cheatSheet.findMany();
-
-    const totalTopics = topics.length;
-    let totalAssetsMissing = 0;
-    let completeTopicsCount = 0;
-
-    let report = '# STACKFORGE CONTENT COMPLETENESS REPORT\n\n';
-    report += `**Date:** ${new Date().toDateString()}\n`;
-    report += `**Total Topics:** ${totalTopics}\n`;
-    
-    let topicTable = '| Topic | Lesson | Cheatsheet | Quick Quiz | Mastery Quiz | Interviews | Project | Tutor Ex | Status |\n';
-    topicTable += '| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |\n';
-
-    for (const topic of topics) {
-      const hasLesson = !!topic.content;
-      const hasCheatsheet = cheatsheets.some(c => c.topicId === topic.id);
-      const hasQuickQuiz = topic.quizzes.some(q => q.type === 'quick');
-      const hasMasteryQuiz = topic.quizzes.some(q => q.type === 'full');
-      const hasInterviews = topic.interviews.length > 0;
-      const hasProject = projects.some(p => p.topicId === topic.id);
-      const hasTutorEx = topic.examples.length > 0;
-
-      const assets = [hasLesson, hasCheatsheet, hasQuickQuiz, hasMasteryQuiz, hasInterviews, hasProject, hasTutorEx];
-      const missingInTopic = assets.filter(a => !a).length;
-      totalAssetsMissing += missingInTopic;
-
-      const isComplete = assets.every(a => a === true);
-      if (isComplete) completeTopicsCount++;
-
-      topicTable += `| ${topic.title} | ${hasLesson ? '✅' : '❌'} | ${hasCheatsheet ? '✅' : '❌'} | ${hasQuickQuiz ? '✅' : '❌'} | ${hasMasteryQuiz ? '✅' : '❌'} | ${hasInterviews ? '✅' : '❌'} | ${hasProject ? '✅' : '❌'} | ${hasTutorEx ? '✅' : '❌'} | ${isComplete ? 'COMPLETE' : 'INCOMPLETE'} |\n`;
+  const coverage = (foundAssets / totalRequiredAssets) * 100;
+  
+  // Priority fixes: Topics with 0% coverage or core topics
+  Object.entries(missingAssets).forEach(([slug, missing]) => {
+    if (missing.length > 5) {
+      priorityFixes.push(`Topic ${slug}: Missing ${missing.length} essential assets`);
     }
+  });
 
-    const coveragePercentage = totalTopics > 0 ? Math.round((completeTopicsCount / totalTopics) * 100) : 0;
+  const reportMarkdown = `
+# STACKFORGE CONTENT COMPLETENESS REPORT
+Date: ${new Date().toLocaleDateString()}
 
-    report += `\n## Coverage Metrics\n`;
-    report += `- **Overall Completion Rate:** ${coveragePercentage}%\n`;
-    report += `- **Fully Complete Topics:** ${completeTopicsCount} / ${totalTopics}\n`;
-    report += `- **Total Missing Asset-Topic Pairs:** ${totalAssetsMissing}\n\n`;
+## 📊 Coverage Metrics
+- **Overall Coverage:** ${coverage.toFixed(2)}%
+- **Total Lessons:** ${totalLessons}
+- **Required Assets per Lesson:** 7
+- **Total Required Assets:** ${totalRequiredAssets}
+- **Found Assets:** ${foundAssets}
 
-    report += `## Detailed Breakdown\n\n${topicTable}\n\n`;
+## ⚠️ Missing Topics (0% Coverage)
+${missingTopics.length > 0 ? missingTopics.map(t => `- ${t}`).join('\n') : 'No topics with 0% coverage! 🎉'}
 
-    report += `## Priority Fixes\n`;
-    report += `1. **High Priority**: Topics with 0 assets.\n`;
-    report += `2. **Medium Priority**: Topics missing Mastery Quizzes or Projects.\n`;
-    report += `3. **Low Priority**: Topics missing Tutor Examples.\n`;
+## 🛠 Priority Fixes
+${priorityFixes.length > 0 ? priorityFixes.map(f => `- ${f}`).join('\n') : 'No immediate priority fixes.'}
 
-    if (!fs.existsSync('reports')) {
-      fs.mkdirSync('reports');
-    }
-    fs.writeFileSync('reports/CONTENT_COMPLETENESS.md', report);
-    console.log('✅ Completeness report generated: reports/CONTENT_COMPLETENESS.md');
-  } catch (error) {
-    console.error('❌ Error running content health check:', error);
-  } finally {
-    await prisma.$disconnect();
+## 📋 Detailed Missing Assets
+${Object.entries(missingAssets).map(([slug, missing]) => `- **${slug}**: ${missing.join(', ')}`).join('\n')}
+
+---
+*Generated by StackForge Content Health Check Engine*
+`;
+
+  const reportsDir = path.join(process.cwd(), 'reports');
+  if (!fs.existsSync(reportsDir)) {
+    fs.mkdirSync(reportsDir);
   }
+  
+  fs.writeFileSync(path.join(reportsDir, 'CONTENT_COMPLETENESS.md'), reportMarkdown);
+  console.log('✅ Health check complete. Report generated at reports/CONTENT_COMPLETENESS.md');
 }
 
-contentHealthCheck().catch(console.error);
+runHealthCheck().catch(console.error);

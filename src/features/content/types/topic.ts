@@ -6,6 +6,8 @@ export interface Topic {
   description: string;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   estimatedTime: number; // in minutes
+  xpReward: number;
+  learningOutcomes: string[];
   prerequisites: string[];
   nextTopics: string[];
   createdAt: string;

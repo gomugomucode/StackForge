@@ -16,7 +16,7 @@ import { TopicSummary } from "../components/TopicSummary";
 import { useTopicProgress } from "../hooks/useTopicProgress";
 import { projectService } from "../services/projectService";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { CheckCircle2, ArrowRight, ArrowLeft } from "lucide-react";
+import { CheckCircle2, ArrowRight, ArrowLeft, BookOpen, BarChart } from "lucide-react";
 import NextLink from "next/link";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -65,7 +65,42 @@ export function TopicPage({
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-12">
-      <TopicHero topic={topic} />
+      <TopicHero 
+        title={topic.title} 
+        description={topic.description} 
+        difficulty={topic.difficulty} 
+        estimatedTime={topic.estimatedTime} 
+        xpReward={topic.xpReward} 
+      />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="p-6 rounded-2xl border border-border bg-card">
+          <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
+            <BarChart className="w-4 h-4" /> Learning Outcomes
+          </h3>
+          <ul className="space-y-2">
+            {topic.learningOutcomes?.map((outcome, i) => (
+              <li key={i} className="text-sm text-foreground flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                {outcome}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="p-6 rounded-2xl border border-border bg-card">
+          <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
+            <BookOpen className="w-4 h-4" /> Prerequisites
+          </h3>
+          <ul className="space-y-2">
+            {topic.prerequisites?.map((pre, i) => (
+              <li key={i} className="text-sm text-foreground flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+                {pre}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
 
       <div className="grid gap-16">
         <LearningSection 

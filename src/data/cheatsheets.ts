@@ -36,22 +36,50 @@ export const cheatsheets: CheatSheet[] = [
     language: 'javascript',
     sections: [
       {
-        title: 'Array Methods',
+        title: 'Variables & Scope',
         items: [
-          { name: 'Map', code: 'const double = arr.map(x => x * 2)', description: 'Creates a new array with results of calling a provided function on every element.', whatIsIt: 'A transformation method that creates a new array of the same length.', syntax: 'array.map((element, index, array) => { ... })', examples: ['const squares = [1,2,3].map(x => x * x); // [1,4,9]'], commonMistakes: ['Using map when you don\'t return a value (use forEach instead)'], bestPractices: ['Always return a value from the map callback'], interviewNotes: 'Complexity: O(n) time, O(n) space.' },
-          { name: 'Filter', code: 'const filtered = arr.filter(x => x > 10)', description: 'Creates a shallow copy of a portion of a given array.', whatIsIt: 'A selection method that creates a new array with all elements that pass the test.', syntax: 'array.filter((element, index, array) => { ... })', examples: ['const evens = [1,2,3,4].filter(x => x % 2 === 0); // [2,4]'], commonMistakes: ['Mutating the original array inside the filter callback'], bestPractices: ['Keep filter callbacks pure'], interviewNotes: 'Complexity: O(n) time, O(n) space.' },
-          { name: 'Reduce', code: 'const sum = arr.reduce((a, b) => a + b, 0)', description: 'Execute a reducer function on each element of the array.', whatIsIt: 'A powerful method to accumulate a single value from an array.', syntax: 'array.reduce((accumulator, currentValue, currentIndex, array) => { ... }, initialValue)', examples: ['const sum = [1,2,3].reduce((acc, curr) => acc + curr, 0); // 6'], commonMistakes: ['Forgetting the initial value, which leads to errors on empty arrays'], bestPractices: ['Always provide an initial value for clarity and safety'], interviewNotes: 'The most versatile array method, can implement map and filter.' },
+          { name: 'var', code: 'var x = 10;', description: 'Function-scoped variable.', whatIsIt: 'The original way to declare variables in JS.', syntax: 'var variableName = value;', examples: ['var name = "John";'], commonMistakes: ['Using var in loops causing hoisting issues'], bestPractices: ['Avoid using var in modern JS'], interviewNotes: 'Hoisted to the top of their function scope.' },
+          { name: 'let', code: 'let x = 10;', description: 'Block-scoped variable.', whatIsIt: 'Modern way to declare variables that can be reassigned.', syntax: 'let variableName = value;', examples: ['let count = 0; count++;'], commonMistakes: ['Accessing let before declaration (Temporal Dead Zone)'], bestPractices: ['Use let for variables that need to change'], interviewNotes: 'Block-scoped, not hoisted in the same way as var.' },
+          { name: 'const', code: 'const x = 10;', description: 'Block-scoped constant.', whatIsIt: 'Way to declare variables that cannot be reassigned.', syntax: 'const variableName = value;', examples: ['const PI = 3.14;'], commonMistakes: ['Thinking const makes an object immutable'], bestPractices: ['Use const by default unless you know the value will change'], interviewNotes: 'Immutable binding, but the object/array it points to can still be mutated.' },
         ]
       },
       {
-        title: 'Async Patterns',
+        title: 'Functions & Logic',
         items: [
-          { name: 'Async/Await', code: 'async function fetch() {\n  const res = await fetch(url);\n  const data = await res.json();\n}', description: 'Syntactic sugar for Promises.', whatIsIt: 'A way to write asynchronous code that looks synchronous.', syntax: 'async function name() { await promise; }', examples: ['async function getData() {\n  try {\n    const response = await fetch("api/data");\n    return await response.json();\n  } catch (e) { console.error(e); }\n}'], commonMistakes: ['Forgetting to wrap await in a try-catch block'], bestPractices: ['Use async/await over .then() for better readability'], interviewNotes: 'Executed on the event loop, non-blocking.' },
-          { name: 'Promise.all', code: 'await Promise.all([p1, p2, p3])', description: 'Wait for all promises to resolve.', whatIsIt: 'A method that takes an array of promises and resolves when all of them resolve.', syntax: 'Promise.all([promise1, promise2, ...])', examples: ['const [user, posts] = await Promise.all([fetchUser(), fetchPosts()]);'], commonMistakes: ['Assuming it waits for all if one fails (it rejects immediately if any one fails)'], bestPractices: ['Use Promise.allSettled if you need results even if some fail'], interviewNotes: 'Parallel execution of promises.' },
+          { name: 'Arrow Functions', code: 'const add = (a, b) => a + b;', description: 'Compact function syntax.', whatIsIt: 'A shorter way to write functions, introduced in ES6.', syntax: '(args) => { body }', examples: ['const square = x => x * x;'], commonMistakes: ['Trying to use "this" inside an arrow function'], bestPractices: ['Use for short callbacks and methods'], interviewNotes: 'Do not have their own "this" context.' },
+          { name: 'IIFE', code: '(function() { console.log("Hi"); })();', description: 'Immediately Invoked Function Expression.', whatIsIt: 'A function that runs as soon as it is defined.', syntax: '(function() { ... })();', examples: ['(function() { var private = 1; })();'], commonMistakes: ['Overcomplicating code with too many IIFEs'], bestPractices: ['Use to avoid polluting the global namespace'], interviewNotes: 'Useful for creating private scopes in older JS.' },
         ]
-      }
+      },
+      {
+        title: 'Arrays & Objects',
+        items: [
+          { name: 'Destructuring', code: 'const { name, age } = user;', description: 'Extract values into variables.', whatIsIt: 'A way to unpack values from arrays or properties from objects.', syntax: 'const { prop } = object;', examples: ['const [first, second] = [1, 2];'], commonMistakes: ['Destructuring null or undefined values'], bestPractices: ['Use for clean function parameters: function({ name }) { ... }'], interviewNotes: 'Syntactic sugar for multiple assignments.' },
+          { name: 'Spread Operator', code: 'const newArr = [...oldArr, 4];', description: 'Expand elements of an array or object.', whatIsIt: 'Allows an iterable to be expanded in places where zero or more arguments are expected.', syntax: '...iterable', examples: ['const cloned = {...original};'], commonMistakes: ['Deep cloning objects (spread only does shallow copy)'], bestPractices: ['Use for immutable state updates in React'], interviewNotes: 'Creates a shallow copy.' },
+        ]
+      },
+      {
+        title: 'ES6+ Features',
+        items: [
+          { name: 'Template Literals', code: '`Hello ${name}`', description: 'String interpolation.', whatIsIt: 'Strings that allow embedded expressions.', syntax: '`string ${expression}`', examples: ['console.log(`Total: ${price * qty}`);'], commonMistakes: ['Using quotes instead of backticks'], bestPractices: ['Use for any string containing variables'], interviewNotes: 'Supports multi-line strings without \\n.' },
+          { name: 'Optional Chaining', code: 'user?.address?.city', description: 'Safe property access.', whatIsIt: 'Allows reading the value of a property deep within a chain of connected objects without worrying if a reference is null.', syntax: 'object?.property', examples: ['const city = user?.profile?.address?.city || "Unknown";'], commonMistakes: ['Using it on the left side of an assignment'], bestPractices: ['Use for optional API responses'], interviewNotes: 'Short-circuits and returns undefined if any link is null/undefined.' },
+        ]
+      },
+      {
+        title: 'DOM Manipulation',
+        items: [
+          { name: 'querySelector', code: 'document.querySelector(".btn")', description: 'Select first matching element.', whatIsIt: 'Method to find the first element that matches a CSS selector.', syntax: 'document.querySelector(selector)', examples: ['const btn = document.querySelector("#submit-btn");'], commonMistakes: ['Assuming it returns an array (use querySelectorAll)'], bestPractices: ['Use specific IDs for critical elements'], interviewNotes: 'Returns the first match or null.' },
+          { name: 'addEventListener', code: 'el.addEventListener("click", callback)', description: 'Attach event handlers.', whatIsIt: 'Method to register a function to be called when a specific event occurs.', syntax: 'target.addEventListener(type, listener)', examples: ['btn.addEventListener("click", () => alert("Clicked!"));'], commonMistakes: ['Adding multiple listeners to the same element without removing them'], bestPractices: ['Use event delegation by attaching to a parent element'], interviewNotes: 'Supports capturing and bubbling phases.' },
+        ]
+      },
+      {
+        title: 'Async & APIs',
+        items: [
+          { name: 'Fetch API', code: 'fetch(url).then(r => r.json())', description: 'Make network requests.', whatIsIt: 'Modern interface for fetching resources over the network.', syntax: 'fetch(resource, options)', examples: ['fetch("api/data").then(res => res.json()).then(data => console.log(data));'], commonMistakes: ['Not checking res.ok before parsing json()'], bestPractices: ['Always wrap in try-catch when using async/await'], interviewNotes: 'Returns a Promise.' },
+          { name: 'Async/Await', code: 'const data = await fetch(url);', description: 'Handle promises synchronously.', whatIsIt: 'Syntactic sugar for promises.', syntax: 'async function() { await promise; }', examples: ['async function main() { const res = await fetch(url); }'], commonMistakes: ['Forgetting "async" in the function signature'], bestPractices: ['Use for cleaner asynchronous control flow'], interviewNotes: 'Non-blocking event loop execution.' },
+        ]
+      },
     ],
-    quickReference: ['map()', 'filter()', 'reduce()', 'async/await', 'Promise.all()']
+    quickReference: ['let/const', 'Arrow Functions', 'Destructuring', 'Spread', 'Template Literals', 'Optional Chaining', 'querySelector', 'Fetch', 'Async/Await']
   },
   {
     id: 'react-1',
@@ -151,5 +179,37 @@ export const cheatsheets: CheatSheet[] = [
       }
     ],
     quickReference: ['docker build', 'docker run', 'docker ps', 'docker compose up', 'docker exec']
+  },
+  {
+    id: 'node-1',
+    slug: 'nodejs',
+    title: 'Node.js Backend Mastery',
+    description: 'Essential server-side patterns for high-performance Node.js applications.',
+    category: 'Runtime',
+    language: 'javascript',
+    sections: [
+      {
+        title: 'Express Framework',
+        items: [
+          { name: 'Routing', code: 'app.get("/api/users", (req, res) => { ... })', description: 'Handling HTTP requests.', whatIsIt: 'Express routing maps URL paths to specific handler functions.', syntax: 'app.METHOD(PATH, HANDLER)', examples: ['app.post("/login", (req, res) => { const {user} = req.body; })'], commonMistakes: ['Not using the correct HTTP method (e.g., GET for updating data)'], bestPractices: ['Organize routes into separate files using express.Router()'], interviewNotes: 'Middleware is executed in the order it is defined.' },
+          { name: 'Middleware', code: 'app.use((req, res, next) => { next(); })', description: 'Interacting with request/response cycle.', whatIsIt: 'Functions that have access to request and response objects.', syntax: 'app.use([middleware], callback)', examples: ['app.use(express.json()); // Parse JSON bodies'], commonMistakes: ['Forgetting to call next() in middleware, hanging the request'], bestPractices: ['Use a global error handling middleware at the end of the stack'], interviewNotes: 'The "next()" function is crucial for passing control to the next handler.' },
+        ]
+      },
+      {
+        title: 'Core Modules',
+        items: [
+          { name: 'File System (fs)', code: 'fs.promises.readFile("file.txt", "utf8")', description: 'Interact with the local disk.', whatIsIt: 'Module for reading and writing files and directories.', syntax: 'fs.readFile(path, options, callback)', examples: ['const content = await fs.promises.readFile("config.json");'], commonMistakes: ['Using synchronous methods (readFileSync) in the main event loop'], bestPractices: ['Always use the promises API for non-blocking I/O'], interviewNotes: 'I/O operations are delegated to the libuv thread pool.' },
+          { name: 'Path Module', code: 'path.join(__dirname, "public")', description: 'Handle and transform file paths.', whatIsIt: 'Utility for working with file and directory paths.', syntax: 'path.join(...paths)', examples: ['const fullPath = path.resolve("src", "index.js");'], commonMistakes: ['Using string concatenation instead of path.join()'], bestPractices: ['Use path.join to ensure cross-platform compatibility (Windows vs Linux)'], interviewNotes: 'Prevents issues with different path separators (\\ vs /).' },
+        ]
+      },
+      {
+        title: 'Advanced Concepts',
+        items: [
+          { name: 'Streams', code: 'fs.createReadStream("bigfile.txt").pipe(res)', description: 'Process data in chunks.', whatIsIt: 'A way to handle reading/writing files, network communications, or any large data set.', syntax: 'stream.pipe(dest)', examples: ['const readStream = fs.createReadStream("video.mp4");\nreadStream.pipe(res);'], commonMistakes: ['Loading large files entirely into memory using readFile'], bestPractices: ['Use streams for any file larger than 10MB'], interviewNotes: 'Prevents memory overflow by processing data incrementally.' },
+          { name: 'Events (EventEmitter)', code: 'emitter.on("event", () => { ... })', description: 'Implement event-driven architecture.', whatIsIt: 'A class that allows objects to emit and listen for custom events.', syntax: 'emitter.emit("name"); emitter.on("name", callback);', examples: ['const logger = new EventEmitter();\nlogger.on("log", (msg) => console.log(msg));\nlogger.emit("log", "User logged in");'], commonMistakes: ['Adding too many listeners without removing them (memory leak)'], bestPractices: ['Use once() for events that should only fire once'], interviewNotes: 'The core of Node.js non-blocking architecture.' },
+        ]
+      },
+    ],
+    quickReference: ['express.Router()', 'app.use()', 'fs.promises', 'path.join()', 'stream.pipe()', 'EventEmitter']
   },
 ]
