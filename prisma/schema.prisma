@@ -338,6 +338,8 @@ model Topic {
   quizzes       Quiz[]
   interviews    InterviewQuestion[]
   progress      TopicProgress[]
+  cheatSheets   CheatSheet[]
+  projects      Project[]
 }
 
 model TopicContent {
