@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { roadmaps } from '../src/data/roadmaps';
-import { ContentGenerator } from '../src/features/curriculum/services/contentGenerator';
+import { roadmaps } from '../src/data/roadmaps.ts';
+import { ContentGenerator } from '../src/features/curriculum/services/contentGenerator.ts';
 
 const prisma = new PrismaClient();
 const generator = new ContentGenerator();
@@ -30,24 +30,15 @@ async function seedCurriculum() {
     for (const module of roadmap.modules) {
       console.log(`  📦 Module: ${module.title}`);
       
-      const dbModule = await prisma.module.upsert({
+      // Use a unique key for module to avoid duplicates
+      const existingModule = await prisma.module.findFirst({
         where: { 
-          // Note: Module doesn't have a unique constraint on slug in the current schema
-          // In a real app, we'd use a combined key or a unique slug
-          id: 'temp-id', // Simplified for this script
-        },
-        update: {},
-        create: {
           roadmapId: dbRoadmap.id,
-          slug: module.slug,
-          title: module.title,
-          description: module.description,
+          slug: module.slug 
         }
       });
-      
-      // Correcting the logic since Module doesn't have unique slug in schema
-      // For the sake of this script, I'll use a simple approach:
-      const actualModule = await prisma.module.create({
+
+      const dbModule = existingModule || await prisma.module.create({
         data: {
           roadmapId: dbRoadmap.id,
           slug: module.slug,
@@ -146,7 +137,7 @@ async function seedCurriculum() {
             }
           });
 
-          // Generate Quiz
+          // Generate Quizzes (Quick and Mastery)
           const quizData = await generator.generateQuiz({
             id: topic.id,
             slug: topic.slug,
@@ -159,11 +150,31 @@ async function seedCurriculum() {
             tags: topic.tags,
           });
 
-          const quiz = await prisma.quiz.create({
+          // Quick Quiz
+          await prisma.quiz.create({
+            data: {
+              title: `${topic.title} Quick Check`,
+              difficulty: quizData.difficulty,
+              type: 'quick',
+              topicId: topic.id,
+              questions: {
+                create: quizData.questions.slice(0, 3).map(q => ({
+                  question: q.question,
+                  options: q.options,
+                  answer: q.answer,
+                  explanation: q.explanation,
+                  difficulty: q.difficulty,
+                }))
+              }
+            }
+          });
+
+          // Mastery Quiz
+          await prisma.quiz.create({
             data: {
               title: `${topic.title} Mastery Quiz`,
               difficulty: quizData.difficulty,
-              type: quizData.type,
+              type: 'full',
               topicId: topic.id,
               questions: {
                 create: quizData.questions.map(q => ({

@@ -9,7 +9,6 @@ import { PracticeSection } from "../components/PracticeSection";
 import { QuizSection } from "../components/QuizSection";
 import { InterviewSection } from "../components/InterviewSection";
 import { CheatsheetSection } from "../components/CheatsheetSection";
-import { ResourcesSection } from "../components/ResourcesSection";
 import { ListSection } from "../components/ListSection";
 import { ProjectGuide } from "../components/ProjectGuide";
 import { VisualExplanation } from "../components/ConceptCards";
@@ -236,10 +235,27 @@ export function TopicPage({
         />
 
         <div className="space-y-8">
-          <SectionHeader title="Further Reading" description="Optional external resources for deep diving." />
-          <ResourcesSection 
-            resources={topic.resources || []} 
-          />
+          <SectionHeader title="Related Topics" description="Continue your learning journey with these connected concepts." />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {topic.nextTopics && topic.nextTopics.length > 0 ? (
+              topic.nextTopics.map(nextSlug => (
+                <NextLink 
+                  key={nextSlug} 
+                  href={`/learn/${topic.technology}/${nextSlug}`}
+                  className="p-4 rounded-xl border border-border bg-card hover:border-primary/50 transition-all group flex items-center justify-between"
+                >
+                  <span className="font-medium text-foreground group-hover:text-primary transition-colors capitalize">
+                    {nextSlug.replace(/-/g, ' ')}
+                  </span>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </NextLink>
+              ))
+            ) : (
+              <div className="col-span-2 p-8 text-center border-2 border-dashed border-border rounded-2xl bg-muted/30">
+                <p className="text-muted-foreground">No related topics found for this module.</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

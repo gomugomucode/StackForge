@@ -1,8 +1,9 @@
 import React from 'react';
-import { ExternalLink, BookOpen, Video, Code, Award } from 'lucide-react';
+import { BookOpen, Video, Code, Award } from 'lucide-react';
 import { Resource } from '../types/resource';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
+import NextLink from 'next/link';
 
 interface ResourceCardProps {
   resource: Resource;
@@ -20,7 +21,7 @@ export function ResourceCard({ resource }: ResourceCardProps) {
     <div className="p-5 rounded-2xl border border-border bg-card hover:border-primary/50 transition-all group space-y-4">
       <div className="flex justify-between items-start">
         <div className="p-2 rounded-lg bg-primary/10 text-primary">
-          {IconMap[resource.type] || <ExternalLink className="w-5 h-5" />}
+          {IconMap[resource.type] || <Code className="w-5 h-5" />}
         </div>
         {resource.isPremium && (
           <div className="px-2 py-1 rounded-full bg-yellow-500/10 text-yellow-500 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
@@ -53,9 +54,9 @@ export function ResourceCard({ resource }: ResourceCardProps) {
         </div>
         
         <Button variant="ghost" size="sm" className="gap-1 text-xs p-1" asChild>
-          <a href={resource.url} target="_blank" rel="noopener noreferrer">
-            Visit <ExternalLink className="w-3 h-3" />
-          </a>
+          <NextLink href={resource.url}>
+            Access <Code className="w-3 h-3" />
+          </NextLink>
         </Button>
       </div>
     </div>

@@ -6,7 +6,7 @@ import {
   CurriculumProject, 
   CurriculumCheatsheet, 
   CurriculumTutorExample 
-} from '../types/curriculum';
+} from '../types/curriculum.ts';
 
 export class ContentGenerator {
   /**
@@ -144,7 +144,7 @@ export class ContentGenerator {
    * Mock AI caller. In a production environment, this would call OpenAI/Anthropic/etc.
    */
   private async callAI<T>(prompt: string): Promise<T> {
-    console.log(\`[AI Generator] Calling AI with prompt: \${prompt.substring(0, 100)}...\`);
+    console.log(`[AI Generator] Calling AI with prompt: ${prompt.substring(0, 100)}...`);
     
     if (process.env.MOCK_AI === 'true') {
       return this.generateMockResponse<T>();
