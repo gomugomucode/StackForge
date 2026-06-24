@@ -127,66 +127,96 @@ export function TopicPage({
         <div className="space-y-8">
           <SectionHeader title="Apply Your Knowledge" description="Move from theory to practice with these challenges." />
           <div className="grid gap-6">
-            {challenges.map((challenge) => (
-              <PracticeSection 
-                key={challenge.id}
-                challengeId={challenge.id}
-                title={challenge.title}
-                description={challenge.description}
-                hints={challenge.hints}
-                expectedOutput={challenge.expectedOutput}
-                solution={challenge.solution}
-                onComplete={completeChallenge}
-              />
-            ))}
+            {challenges.length > 0 ? (
+              challenges.map((challenge) => (
+                <PracticeSection 
+                  key={challenge.id}
+                  challengeId={challenge.id}
+                  title={challenge.title}
+                  description={challenge.description}
+                  hints={challenge.hints}
+                  expectedOutput={challenge.expectedOutput}
+                  solution={challenge.solution}
+                  onComplete={completeChallenge}
+                />
+              ))
+            ) : (
+              <div className="p-12 text-center border-2 border-dashed border-border rounded-2xl bg-muted/30">
+                <p className="text-muted-foreground font-medium">Content Coming Soon</p>
+                <p className="text-sm text-muted-foreground/60">We are crafting a unique challenge for this topic.</p>
+              </div>
+            )}
           </div>
         </div>
 
         <div className="space-y-8">
           <SectionHeader title="Knowledge Check" description="Verify your understanding. Start with a Quick Quiz to warm up, then attempt the Mastery Quiz." />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {quizzes.filter(q => q.type === 'quick').map((quiz) => (
-              <QuizSection 
-                key={quiz.id}
-                quizId={quiz.id}
-                title={`Quick Quiz: ${quiz.title}`}
-                questions={quiz.questions || []}
-                onComplete={updateQuizScore}
-              />
-            ))}
-            {quizzes.filter(q => q.type === 'full').map((quiz) => (
-              <QuizSection 
-                key={quiz.id}
-                quizId={quiz.id}
-                title={`Mastery Quiz: ${quiz.title}`}
-                questions={quiz.questions || []}
-                onComplete={updateQuizScore}
-              />
-            ))}
+            {quizzes.length > 0 ? (
+              <>
+                {quizzes.filter(q => q.type === 'quick').map((quiz) => (
+                  <QuizSection 
+                    key={quiz.id}
+                    quizId={quiz.id}
+                    title={`Quick Quiz: ${quiz.title}`}
+                    questions={quiz.questions || []}
+                    onComplete={updateQuizScore}
+                  />
+                ))}
+                {quizzes.filter(q => q.type === 'full').map((quiz) => (
+                  <QuizSection 
+                    key={quiz.id}
+                    quizId={quiz.id}
+                    title={`Mastery Quiz: ${quiz.title}`}
+                    questions={quiz.questions || []}
+                    onComplete={updateQuizScore}
+                  />
+                ))}
+              </>
+            ) : (
+              <div className="col-span-2 p-12 text-center border-2 border-dashed border-border rounded-2xl bg-muted/30">
+                <p className="text-muted-foreground font-medium">Quiz Coming Soon</p>
+                <p className="text-sm text-muted-foreground/60">We are designing an assessment to test your knowledge.</p>
+              </div>
+            )}
           </div>
         </div>
 
         <div className="space-y-8">
           <SectionHeader title="Interview Preparation" description="Prepare for FAANG and technical screenings." />
-          <InterviewSection 
-            questions={interviews} 
-          />
+          {interviews.length > 0 ? (
+            <InterviewSection 
+              questions={interviews} 
+            />
+          ) : (
+            <div className="p-12 text-center border-2 border-dashed border-border rounded-2xl bg-muted/30">
+              <p className="text-muted-foreground font-medium">Interview Prep Coming Soon</p>
+              <p className="text-sm text-muted-foreground/60">We are curating high-frequency interview questions for this topic.</p>
+            </div>
+          )}
         </div>
 
         <div className="space-y-8">
           <SectionHeader title="Mini Project" description="Build a real-world application implementing these concepts." />
-          {(projectService.getProjectsForTopic(topic.id) as any[]).map(project => (
-             <ProjectGuide 
-                key={project.id}
-                title={project.title}
-                requirements={project.requirements || []}
-                techStack={project.techStack || []}
-                features={project.features || []}
-                folderStructure={project.folderStructure || "No structure provided."}
-                implementationGuide={project.implementationGuide || "Follow the requirements to build this project."}
-                expectedOutput={project.expectedOutput || "A fully functional application meeting all requirements."}
-             />
-          ))}
+          {(projectService.getProjectsForTopic(topic.id) as any[]).length > 0 ? (
+            (projectService.getProjectsForTopic(topic.id) as any[]).map(project => (
+               <ProjectGuide 
+                  key={project.id}
+                  title={project.title}
+                  requirements={project.requirements || []}
+                  techStack={project.techStack || []}
+                  features={project.features || []}
+                  folderStructure={project.folderStructure || "No structure provided."}
+                  implementationGuide={project.implementationGuide || "Follow the requirements to build this project."}
+                  expectedOutput={project.expectedOutput || "A fully functional application meeting all requirements."}
+               />
+            ))
+          ) : (
+            <div className="p-12 text-center border-2 border-dashed border-border rounded-2xl bg-muted/30">
+              <p className="text-muted-foreground font-medium">Project Coming Soon</p>
+              <p className="text-sm text-muted-foreground/60">A hands-on project is being designed for this topic.</p>
+            </div>
+          )}
         </div>
 
         <div className="space-y-8">
