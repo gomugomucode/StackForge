@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { Menu, X, Code2, Trophy, Users } from 'lucide-react'
+import { Menu, X, Code2, Trophy, Users, ChevronDown } from 'lucide-react'
 import { navLinks, brandName } from '../../data/navigation'
 import { Button } from '../ui/Button'
 import { ThemeToggle } from '../ui/theme-toggle'
@@ -11,6 +11,12 @@ import { CommandMenu } from './CommandMenu'
 import { useUserStats } from '@/context/UserStatsContext'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { UserMenu } from '@/features/auth/components/UserMenu'
+import { 
+  DropdownMenu, 
+  DropdownMenuTrigger, 
+  DropdownMenuContent, 
+  DropdownMenuItem 
+} from '../ui/dropdown-menu'
 
 
 function UserStatsBadge() {
@@ -68,16 +74,44 @@ export function Navbar() {
 
             <div className="hidden md:flex items-center gap-1">
               {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${pathname === link.href
-                      ? 'text-primary bg-primary/10'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
-                    }`}
-                >
-                  {link.label}
-                </Link>
+                link.children ? (
+                  <DropdownMenu key={link.href}>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className={`px-4 py-2 rounded-full text-sm font-semibold transition-all flex items-center gap-1 ${pathname === link.href
+                            ? 'text-primary bg-primary/10'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+                          }`}
+                      >
+                        {link.label}
+                        <ChevronDown className="w-3.5 h-3.5" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="bg-background border-border">
+                      {link.children.map((child) => (
+                        <DropdownMenuItem key={child.href} asChild>
+                          <Link 
+                            href={child.href}
+                            className="w-full text-muted-foreground hover:text-foreground transition-colors"
+                          >
+                            {child.label}
+                          </Link>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${pathname === link.href
+                        ? 'text-primary bg-primary/10'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+                      }`}
+                  >
+                    {link.label}
+                  </Link>
+                )
               ))}
             </div>
 
