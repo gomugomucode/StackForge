@@ -1,0 +1,66 @@
+[
+  {
+    "command": "Generics (<T>)",
+    "purpose": "Creates reusable components or functions that work with a variety of types rather than a single one.",
+    "syntax": "function identity<T>(arg: T): T { return arg; }",
+    "example": "const output = identity<string>(\"myString\");",
+    "proTip": "Use 'Generic Constraints' (`<T extends K>`) to ensure the passed type has specific properties (e.g., an 'id' property).",
+    "commonMistake": "Using 'any' instead of a generic, which removes all type safety and defeats the purpose of TypeScript."
+  },
+  {
+    "command": "Union & Intersection Types",
+    "purpose": "Union (|) allows a value to be one of several types; Intersection (&) combines multiple types into one.",
+    "syntax": "type Status = 'success' | 'error'; type UserWithRole = User & AdminRole;",
+    "example": "function printId(id: number | string) { console.log(id); }",
+    "proTip": "Use Union types for 'state' variables (e.g., 'loading' | 'success' | 'error') to prevent invalid states like { loading: true, error: 'Something went wrong' }.",
+    "commonMistake": "Over-using Intersection types, which can create complex, hard-to-debug type requirements."
+  },
+  {
+    "command": "Type Guards & Type Narrowing",
+    "purpose": "Functions or checks that tell TypeScript exactly what type a variable is within a specific block of code.",
+    "syntax": "if (typeof val === 'string') { ... } or if (val instanceof User) { ... }",
+    "example": "function isString(val: any): val is string { return typeof val === 'string'; }",
+    "proTip": "Create a custom Type Guard function (using the `val is Type` return signature) to keep your business logic clean and separated from type checks.",
+    "commonMistake": "Using type assertions (`as string`) instead of narrowing. Assertions 'lie' to the compiler and can cause runtime crashes."
+  },
+  {
+    "command": "Mapped Types",
+    "purpose": "Creates a new type by transforming properties of an existing type.",
+    "syntax": "type Readonly<T> = { readonly [P in keyof T]: T[P]; };",
+    "example": "type UserPreview = { [K in keyof User]: string }; // Turns all User props into strings",
+    "proTip": "Use Mapped Types to build powerful utility types that automate repetitive type definitions across a large project.",
+    "commonMistake": "Trying to use Mapped Types for logic that should actually be handled by simple Interfaces."
+  },
+  {
+    "command": "Conditional Types",
+    "purpose": "Types that change their result based on a condition (Ternary for types).",
+    "syntax": "type IsString<T> = T extends string ? 'Yes' : 'No';",
+    "example": "type Flatten<T> = T extends any[] ? T[number] : T;",
+    "proTip": "Conditional types are the foundation of advanced TypeScript libraries (like Zod or Prisma) for creating highly dynamic type systems.",
+    "commonMistake": "Creating overly complex nested conditionals that make the type error messages impossible to read."
+  },
+  {
+    "command": "Utility Types (Partial, Pick, Omit, Record)",
+    "purpose": "Built-in helpers to transform types quickly without writing custom mapped types.",
+    "syntax": "Partial<T>, Pick<T, K>, Omit<T, K>, Record<K, T>",
+    "example": "const updateUserInfo: Partial<User> = { name: 'Bob' }; // Only name is required",
+    "proTip": "Use `Pick` and `Omit` to create 'View-specific' types (e.g., a UserProfile type that omits the password field).",
+    "commonMistake": "Using `any` when a `Partial<T>` or `Record<string, any>` would have provided better type safety."
+  },
+  {
+    "command": "Template Literal Types",
+    "purpose": "Allows creating types based on string patterns.",
+    "syntax": "type Event = `on${Capitalize<string>}`",
+    "example": "type Route = `/user/${string}` | `/blog/${string}`;",
+    "proTip": "Use these for creating strictly typed CSS classes or API route paths to catch typos during development.",
+    "commonMistake": "Over-complicating string types to the point where they are more confusing than a simple string."
+  },
+  {
+    "command": "Abstract Classes vs Interfaces",
+    "purpose": "Defines a contract for what a class should look like, with different levels of implementation.",
+    "syntax": "abstract class Base { abstract move(): void; }",
+    "example": "class Dog extends Animal { move() { console.log('Walk'); } }",
+    "proTip": "Use an Interface for simple data shapes; use an Abstract Class when you want to provide some shared logic while forcing children to implement specific methods.",
+    "commonMistake": "Using an Abstract Class when a simple Interface would suffice, adding unnecessary overhead to the compiled JS."
+  }
+]
