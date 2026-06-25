@@ -1,0 +1,56 @@
+{
+  "topic": "variables-and-data-types",
+  "concept": "Shallow Copy vs Deep Copy (The Reference Trap)",
+  "code": "const original = { \n  name: 'Alice', \n  details: { age: 25, city: 'NY' } \n};\n\nconst shallowCopy = { ...original };\nconst deepCopy = JSON.parse(JSON.stringify(original));\n\nshallowCopy.name = 'Bob';\nshallowCopy.details.age = 30;\n\nconsole.log('Original Name:', original.name);\nconsole.log('Original Age:', original.details.age);",
+  "executionTimeline": [
+    {
+      "step": 1,
+      "event": "Initialization",
+      "description": "The 'original' object is created on the heap. The variable 'original' holds a reference (address) to this memory.",
+      "variableState": { "original": "Ref@101 (name: Alice, details: Ref@202)" },
+      "callStack": ["global"],
+      "outputTrace": ""
+    },
+    {
+      "step": 2,
+      "event": "Shallow Copy Creation",
+      "description": "The spread operator creates a new object. It copies 'name' (primitive) by value, but it copies 'details' (object) by REFERENCE.",
+      "variableState": { "shallowCopy": "Ref@303 (name: Bob, details: Ref@202)" },
+      "callStack": ["global"],
+      "outputTrace": ""
+    },
+    {
+      "step": 3,
+      "event": "Deep Copy Creation",
+      "description": "JSON stringify/parse creates a completely new set of objects on the heap for all levels.",
+      "variableState": { "deepCopy": "Ref@404 (name: Alice, details: Ref@505)" },
+      "callStack": ["global"],
+      "outputTrace": ""
+    },
+    {
+      "step": 4,
+      "event": "Updating Shallow Copy (Primitive)",
+      "description": "Changing 'name' on shallowCopy only affects Ref@303. Ref@101 (original) remains 'Alice'.",
+      "variableState": { "original.name": "Alice", "shallowCopy.name": "Bob" },
+      "callStack": ["global"],
+      "outputTrace": ""
+    },
+    {
+      "step": 5,
+      "event": "Updating Shallow Copy (Nested)",
+      "description": "Changing 'details.age' on shallowCopy modifies Ref@202. Since original also points to Ref@202, BOTH are changed!",
+      "variableState": { "original.details.age": 30, "shallowCopy.details.age": 30 },
+      "callStack": ["global"],
+      "outputTrace": ""
+    },
+    {
+      "step": 6,
+      "event": "Final Log",
+      "description": "Printing the results. The name is preserved, but the age is mutated.",
+      "variableState": { "name": "Alice", "age": 30 },
+      "callStack": ["console.log"],
+      "outputTrace": "Original Name: Alice\nOriginal Age: 30"
+    }
+  ],
+  "theFix": "To avoid mutating the original state, use structuredClone(original) for a true deep copy, ensuring that nested objects are also duplicated in memory rather than shared."
+}

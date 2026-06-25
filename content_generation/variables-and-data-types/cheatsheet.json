@@ -1,0 +1,66 @@
+[
+  {
+    "command": "let / const",
+    "purpose": "Declares variables with block-level scope.",
+    "syntax": "const [name] = [value]; // Immutable\nlet [name] = [value]; // Mutable",
+    "example": "const pi = 3.14;\nlet score = 0; score += 10;",
+    "proTip": "Always use 'const' by default. Only use 'let' if the value MUST change. This prevents accidental re-assignments and makes code easier to reason about.",
+    "commonMistake": "Using 'var', which has function-scope and hoisting issues, leading to unpredictable bugs in loops and conditionals."
+  },
+  {
+    "command": "Template Literals",
+    "purpose": "Allows embedded expressions and multi-line strings.",
+    "syntax": "`Text ${expression} more text`",
+    "example": "const greeting = `Hello, ${userName}! Welcome back.`;",
+    "proTip": "Use them for HTML generation in JS to avoid messy string concatenation with '+'.",
+    "commonMistake": "Using single/double quotes when you actually need a dynamic expression."
+  },
+  {
+    "command": "Destructuring (Arrays)",
+    "purpose": "Unpacks values from arrays into distinct variables.",
+    "syntax": "const [a, b] = array;",
+    "example": "const [first, second] = ['Apple', 'Banana'];",
+    "proTip": "Use the 'comma skip' pattern: `const [first, , third] = arr;` to ignore values you don't need.",
+    "commonMistake": "Trying to destructure an undefined or null value without a default fallback (e.g., `const [a] = arr || []`)."
+  },
+  {
+    "command": "Destructuring (Objects)",
+    "purpose": "Extracts properties from objects into distinct variables.",
+    "syntax": "const { prop1, prop2 } = object;",
+    "example": "const { name, age } = userProfile;",
+    "proTip": "Use aliasing to rename properties: `const { name: fullName } = user;`.",
+    "commonMistake": "Destructuring a property that doesn't exist, resulting in `undefined`."
+  },
+  {
+    "command": "Spread Operator (...)",
+    "purpose": "Expands an iterable (like an array or object) into individual elements.",
+    "syntax": "const newArray = [...oldArray, newItem];",
+    "example": "const updatedUser = { ...user, status: 'Active' };",
+    "proTip": "The spread operator creates a SHALLOW copy. Nested objects are still references. Use a deep clone library for nested data.",
+    "commonMistake": "Thinking that spreading a nested object clones the inner objects too."
+  },
+  {
+    "command": "Nullish Coalescing (??)",
+    "purpose": "Returns the right-hand operand when the left-hand is null or undefined.",
+    "syntax": "const value = left ?? right;",
+    "example": "const settings = userSettings ?? defaultSettings;",
+    "proTip": "Prefer `??` over `||` when 0 or empty strings are valid values and shouldn't be treated as 'false'.",
+    "commonMistake": "Using `||` for defaults, which accidentally overwrites 0 or \"\" with the default value."
+  },
+  {
+    "command": "Optional Chaining (?.)",
+    "purpose": "Safely accesses deeply nested object properties without throwing errors if a link is null/undefined.",
+    "syntax": "const val = obj?.prop?.subprop;",
+    "example": "const city = user?.address?.city;",
+    "proTip": "Combine with Nullish Coalescing for a perfect default pattern: `const city = user?.address?.city ?? 'Unknown';`.",
+    "commonMistake": "Overusing it on properties that MUST exist, which hides bugs that should have been caught by a check."
+  },
+  {
+    "command": "Truthiness/Falsiness",
+    "purpose": "Determines if a value is considered true or false in a boolean context.",
+    "syntax": "if (value) { ... }",
+    "example": "const isAlive = !!user.status; // Coerces to boolean",
+    "proTip": "Remember the 6 falsy values in JS: false, 0, '', null, undefined, and NaN.",
+    "commonMistake": "Checking `if (count)` when `count` could be 0, leading to the block not executing even though the value is valid."
+  }
+]

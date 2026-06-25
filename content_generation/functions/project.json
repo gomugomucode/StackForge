@@ -1,0 +1,47 @@
+{
+  "title": "LogicFlow: The Custom Validation Engine",
+  "description": "Build a flexible, higher-order validation engine that allows users to create complex rules for data validation. Instead of writing 100 if-statements, you will create a system where validation functions are composed together to validate user profiles.",
+  "difficulty": "intermediate",
+  "requirements": [
+    "A 'createValidator' HOF that takes a rule function and returns a validator that can be applied to a value.",
+    "Implement 5 basic rules: isEmail, isMinLength(n), isRequired, isNumber, isUppercase.",
+    "A 'combineValidators' function that takes an array of validators and returns a single function that returns TRUE only if all rules pass.",
+    "A system to return detailed error messages (e.g., 'Email is invalid' instead of just 'false').",
+    "Integration: Apply the final combined validator to a User Registration form object."
+  ],
+  "architecture": {
+    "folderStructure": {
+      "src/validators": "core.js, rules.js, combined.js",
+      "src/tests": "validation.test.js",
+      "main.js": "entry point"
+    },
+    "techStack": "Vanilla JavaScript (ES6+)"
+  },
+  "milestones": [
+    {
+      "step": 1,
+      "title": "Rule Definition",
+      "tasks": ["Create the 5 basic rule functions", "Ensure rules return a boolean for simplicity in the first pass"]
+    },
+    {
+      "step": 2,
+      "title": "HOF Wrapper",
+      "tasks": ["Implement the createValidator HOF", "Modify rules to return objects { valid: bool, message: string }"]
+    },
+    {
+      "step": 3,
+      "title": "Composition Engine",
+      "tasks": ["Build the combineValidators function using .every() or .reduce()", "Create a test suite that validates a complex User object with 5 different fields"]
+    }
+  ],
+  "stretchGoals": [
+    "Implement 'async' validators (e.g., checking if a username is taken via a mock API).",
+    "Add a 'priority' system where only the first failing rule's error is shown.",
+    "Create a UI that highlights the specific field in red based on the validator's output."
+  ],
+  "evaluationRubric": {
+    "functionalProgramming": "Are the rules pure functions? Is the composition logic clean?",
+    "extensibility": "How easy is it to add a new rule (e.g., isPasswordStrong)?",
+    "errorHandling": "Does the system provide useful, human-readable error messages?"
+  }
+}

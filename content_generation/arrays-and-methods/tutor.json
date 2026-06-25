@@ -1,0 +1,56 @@
+{
+  "topic": "arrays-and-methods",
+  "concept": "The .reduce() Accumulator Flow",
+  "code": "const nums = [10, 20, 30];\nconst sum = nums.reduce((acc, curr) => {\n  return acc + curr;\n}, 0);",
+  "executionTimeline": [
+    {
+      "step": 1,
+      "event": "Initialization",
+      "description": "The reduce method is called. The accumulator 'acc' is initialized to the second argument: 0.",
+      "variableState": { "acc": 0, "curr": "N/A" },
+      "callStack": ["reduce()"],
+      "outputTrace": ""
+    },
+    {
+      "step": 2,
+      "event": "First Iteration",
+      "description": "The engine picks the first element of the array (10). The reducer function is called with acc=0 and curr=10.",
+      "variableState": { "acc": 0, "curr": 10 },
+      "callStack": ["reduce()", "reducerCallback()"],
+      "outputTrace": "Calculation: 0 + 10 = 10"
+    },
+    {
+      "step": 3,
+      "event": "Accumulator Update",
+      "description": "The result of the first iteration (10) becomes the 'acc' for the next iteration.",
+      "variableState": { "acc": 10 },
+      "callStack": ["reduce()"],
+      "outputTrace": ""
+    },
+    {
+      "step": 4,
+      "event": "Second Iteration",
+      "description": "The engine picks the second element (20). The reducer function is called with acc=10 and curr=20.",
+      "variableState": { "acc": 10, "curr": 20 },
+      "callStack": ["reduce()", "reducerCallback()"],
+      "outputTrace": "Calculation: 10 + 20 = 30"
+    },
+    {
+      "step": 5,
+      "event": "Third Iteration",
+      "description": "The engine picks the final element (30). The reducer function is called with acc=30 and curr=30.",
+      "variableState": { "acc": 30, "curr": 30 },
+      "callStack": ["reduce()", "reducerCallback()"],
+      "outputTrace": "Calculation: 30 + 30 = 60"
+    },
+    {
+      "step": 6,
+      "event": "Completion",
+      "description": "No more elements left. The final value of the accumulator (60) is returned as the result of the reduce call.",
+      "variableState": { "result": 60 },
+      "callStack": ["global"],
+      "outputTrace": "Final Result: 60"
+    }
+  ],
+  "theFix": "If you omit the initial value, the first element of the array is used as the accumulator and the loop starts from the second element. Always provide an initial value (like 0 for sums or {} for objects) to prevent errors on empty arrays."
+}

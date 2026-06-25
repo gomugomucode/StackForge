@@ -1,0 +1,80 @@
+{
+  "topic": "arrays-and-methods",
+  "quickQuiz": [
+    {
+      "id": "qq1",
+      "question": "Which array method should you use to create a new array containing only elements that meet a certain condition?",
+      "options": ["map()", "filter()", "reduce()", "forEach()"],
+      "correctAnswer": 1,
+      "explanation": "filter() creates a shallow copy of a portion of a given array, filtered down to just the elements that pass the test.",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "qq2",
+      "question": "What is the primary difference between .map() and .forEach()?",
+      "options": [
+        "map() returns a new array, while forEach() returns undefined.",
+        "forEach() is faster than map().",
+        "map() mutates the original array, forEach() does not.",
+        "forEach() can only be used with arrow functions."
+      ],
+      "correctAnswer": 0,
+      "explanation": "map() transforms data and returns a new array. forEach() simply iterates over the array and is used for side effects.",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "qq3",
+      "question": "What will the following code return? `[1, 2, 3].reduce((acc, curr) => acc + curr, 10);`",
+      "options": ["6", "16", "10", "NaN"],
+      "correctAnswer": 1,
+      "explanation": "The initial value is 10. The accumulator then adds 1, 2, and 3 sequentially: 10+1=11, 11+2=13, 13+3=16.",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "qq4",
+      "question": "Which of the following methods mutates the original array?",
+      "options": ["slice()", "filter()", "sort()", "map()"],
+      "correctAnswer": 2,
+      "explanation": "sort() and splice() are some of the few array methods that mutate the original array in place.",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "qq5",
+      "question": "What is the result of `['1', '2', '10'].sort()`?",
+      "options": [
+        "['1', '2', '10']",
+        "['1', '10', '2']",
+        "['10', '2', '1']",
+        "Error"
+      ],
+      "correctAnswer": 1,
+      "explanation": "By default, sort() converts elements to strings. Since '10' starts with '1', it comes before '2' lexicographically.",
+      "difficulty": "intermediate"
+    }
+  ],
+  "masteryQuiz": [
+    {
+      "id": "mq1",
+      "type": "code-analysis",
+      "question": "Analyze the following pipeline:\n\n```javascript\nconst data = [1, 2, 3, 4, 5];\nconst result = data\n  .filter(n => n % 2 !== 0)\n  .map(n => n * 10)\n  .reduce((acc, n) => acc + n, 0);\n```\nWhat is the value of 'result'?",
+      "options": ["90", "120", "150", "60"],
+      "correctAnswer": 0,
+      "explanation": "1. filter: [1, 3, 5]\n2. map: [10, 30, 50]\n3. reduce: 10 + 30 + 50 = 90.",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "mq2",
+      "type": "scenario",
+      "question": "You have an array of 10,000 users. You need to find the first user whose 'id' is 'usr_99'. Which method is most performant and why?",
+      "options": [
+        "filter().[0] because it gets all matches first.",
+        "forEach() with a manual break variable.",
+        "find() because it stops iterating immediately upon finding the first match.",
+        "map() combined with a truthy check."
+      ],
+      "correctAnswer": 2,
+      "explanation": "find() is an optimized short-circuiting operation. Once it finds the match, it ceases all further iterations, whereas filter() always visits every element.",
+      "difficulty": "intermediate"
+    }
+  ]
+}

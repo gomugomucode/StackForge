@@ -1,0 +1,44 @@
+[
+  {
+    "difficulty": "beginner",
+    "question": "What is a Closure and how can it be used to create private variables in JavaScript?",
+    "idealAnswer": "A closure is the combination of a function and the lexical environment within which that function was declared. This allows the function to access variables from its outer scope even after the outer function has finished executing. To create private variables, you can wrap a variable inside a function and return an inner function that modifies it. Since the outer function's scope is not accessible from the outside, the variable becomes 'private' and can only be changed via the returned function (the 'getter' or 'setter').",
+    "followUpQuestions": [
+      "What are the memory implications of creating many closures?",
+      "How does the 'this' keyword behave inside a closure?"
+    ],
+    "commonMistakes": [
+      "Thinking that closures create a copy of the variable (they create a reference to the scope).",
+      "Misunderstanding that closures can lead to memory leaks if not managed correctly."
+    ],
+    "companyTags": ["Meta", "Amazon", "Google"]
+  },
+  {
+    "difficulty": "intermediate",
+    "question": "Explain the Event Loop and how it interacts with the Call Stack and Task Queue.",
+    "idealAnswer": "The Call Stack tracks the current function being executed. When an asynchronous operation (like a Promise or setTimeout) is called, it is moved to the Web API environment. Once the async task completes, the callback is placed in the Task Queue (or Microtask Queue for Promises). The Event Loop constantly monitors the Call Stack; as soon as the stack is empty, it pushes the first task from the queue onto the stack for execution. This allows JS to be non-blocking despite being single-threaded.",
+    "followUpQuestions": [
+      "What is the difference between a Microtask and a Macrotask?",
+      "Why does `setTimeout(fn, 0)` not execute immediately?"
+    ],
+    "commonMistakes": [
+      "Thinking that the Event Loop is a separate thread (it is a mechanism within the main thread).",
+      "Confusing the Call Stack with the Heap."
+    ],
+    "companyTags": ["Netflix", "Microsoft", "Uber"]
+  },
+  {
+    "difficulty": "advanced",
+    "question": "Compare and contrast the 'this' context in arrow functions versus traditional functions.",
+    "idealAnswer": "Traditional functions define their own 'this' context based on how they are called (the calling object, the global object, or explicitly via call/apply/bind). Arrow functions, however, do not have their own 'this'; they use 'lexical this', meaning they inherit 'this' from the scope where they were defined. This makes arrow functions ideal for callbacks inside methods but unusable for object methods where the object itself needs to be referenced via 'this'.",
+    "followUpQuestions": [
+      "How do you force a specific 'this' context onto an arrow function?",
+      "Why is `bind` necessary for event handlers in class-based components?"
+    ],
+    "commonMistakes": [
+      "Trying to use `.bind()` or `.call()` on an arrow function (it has no effect).",
+      "Using arrow functions for object methods and wondering why 'this' is undefined."
+    ],
+    "companyTags": ["Apple", "Shopify", "Airbnb"]
+  }
+]

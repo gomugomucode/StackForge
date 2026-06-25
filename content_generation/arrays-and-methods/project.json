@@ -1,0 +1,48 @@
+{
+  "title": "DataStream: The Real-Time Analytics Dashboard",
+  "description": "Build a data processing engine that takes a raw stream of events (logs, clicks, transactions) and transforms them into a structured analytics dashboard. You will use advanced array methods to group, filter, and aggregate data in real-time.",
+  "difficulty": "intermediate",
+  "requirements": [
+    "A data generator that produces a random array of 1,000 'event' objects (type, timestamp, value).",
+    "A filtering system to isolate events by 'type' (e.g., only 'Purchase' events).",
+    "An aggregation engine using .reduce() to calculate total revenue, average order value, and total event count.",
+    "A transformation pipeline using .map() to format raw timestamps into human-readable dates.",
+    "A sorting mechanism to display the 'Top 5' highest-value events.",
+    "A function to detect 'anomalies' (events with values 3x the average) using .filter()."
+  ],
+  "architecture": {
+    "folderStructure": {
+      "src/engine": "aggregator.js, transformer.js, filters.js",
+      "src/data": "mockEvents.js",
+      "main.js": "orchestration logic"
+    },
+    "techStack": "Vanilla JavaScript (ES6+)"
+  },
+  "milestones": [
+    {
+      "step": 1,
+      "title": "Data Pipeline Basics",
+      "tasks": ["Implement the mock data generator", "Create the basic filter and map functions to clean the data"]
+    },
+    {
+      "step": 2,
+      "title": "The Reduction Engine",
+      "tasks": ["Build a complex .reduce() function that calculates multiple metrics (sum, count, avg) in a single pass", "Validate the math against a small known dataset"]
+    },
+    {
+      "step": 3,
+      "title": "Advanced Analytics",
+      "tasks": ["Implement the anomaly detection logic", "Create a 'Top N' sorting system", "Format the final result into a clean report object"]
+    }
+  ],
+  "stretchGoals": [
+    "Implement 'Windowing' (calculating metrics for the last 5 minutes only).",
+    "Add a 'Grouping' function that turns the array into an object keyed by event type { 'Purchase': [...], 'Click': [...] } using reduce.",
+    "Visualize the final data using a simple HTML table with color-coded anomaly rows."
+  ],
+  "evaluationRubric": {
+    "efficiency": "Does the processing pipeline avoid unnecessary iterations (e.g., chaining filter and map efficiently)?",
+    "accuracy": "Are the aggregation metrics mathematically correct?",
+    "codeHygiene": "Is the logic split into small, testable pure functions?"
+  }
+}

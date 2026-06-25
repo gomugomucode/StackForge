@@ -1,0 +1,56 @@
+{
+  "topic": "functions",
+  "concept": "The Event Loop and the Call Stack",
+  "code": "console.log('Start');\n\nsetTimeout(() => {\n  console.log('Timeout');\n}, 0);\n\nPromise.resolve().then(() => {\n  console.log('Promise');\n});\n\nconsole.log('End');",
+  "executionTimeline": [
+    {
+      "step": 1,
+      "event": "Synchronous Execution",
+      "description": "The engine starts executing the script. 'Start' is logged immediately.",
+      "variableState": { "stack": ["global"] },
+      "callStack": ["global"],
+      "outputTrace": "Start"
+    },
+    {
+      "step": 2,
+      "event": "setTimeout Registration",
+      "description": "setTimeout is called. The browser's Web API starts a timer. The callback is NOT added to the stack, it's scheduled for the Task Queue.",
+      "variableState": { "taskQueue": ["timeoutCallback"] },
+      "callStack": ["global", "setTimeout"],
+      "outputTrace": ""
+    },
+    {
+      "step": 3,
+      "event": "Promise Registration",
+      "description": "Promise.resolve() creates a resolved promise. The .then() callback is placed in the Microtask Queue (which has higher priority than the Task Queue).",
+      "variableState": { "microtaskQueue": ["promiseCallback"] },
+      "callStack": ["global", "Promise.resolve"],
+      "outputTrace": ""
+    },
+    {
+      "step": 4,
+      "event": "Final Sync Line",
+      "description": "'End' is logged immediately as the script continues executing synchronously.",
+      "variableState": { "stack": ["global"] },
+      "callStack": ["global"],
+      "outputTrace": "End"
+    },
+    {
+      "step": 5,
+      "event": "Microtask Execution",
+      "description": "The Call Stack is now empty. The Event Loop checks the Microtask Queue first. The Promise callback is pushed to the stack and executed.",
+      "variableState": { "microtaskQueue": [] },
+      "callStack": ["promiseCallback"],
+      "outputTrace": "Promise"
+    },
+    {
+      "step": 6,
+      "event": "Macrotask Execution",
+      "description": "The Microtask Queue is empty. The Event Loop now checks the Task Queue. The setTimeout callback is pushed to the stack and executed.",
+      "variableState": { "taskQueue": [] },
+      "callStack": ["timeoutCallback"],
+      "outputTrace": "Timeout"
+    }
+  ],
+  "theFix": "To ensure a specific order of execution, understand that Microtasks (Promises, queueMicrotask) always run before Macrotasks (setTimeout, setInterval) after the current synchronous block completes."
+}

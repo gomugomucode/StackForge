@@ -1,0 +1,44 @@
+[
+  {
+    "difficulty": "beginner",
+    "question": "What is the difference between 'let', 'const', and 'var' in terms of scoping and hoisting?",
+    "idealAnswer": "var is function-scoped and hoisted to the top of its function, which can lead to bugs where variables are used before declaration. let and const are block-scoped (meaning they only exist within the nearest { } block) and are not hoisted in a way that allows usage before declaration (they enter the 'Temporal Dead Zone'). const is further restricted by requiring an initial value and preventing reassignment, making it the preferred choice for stability.",
+    "followUpQuestions": [
+      "What happens if you declare a 'let' variable twice in the same scope?",
+      "Can you change the properties of an object declared with 'const'?"
+    ],
+    "commonMistakes": [
+      "Thinking 'const' makes an object immutable (it only makes the reference immutable).",
+      "Using 'var' in modern React/Next.js projects."
+    ],
+    "companyTags": ["TCS", "Infosys", "Wipro"]
+  },
+  {
+    "difficulty": "intermediate",
+    "question": "Explain the concept of 'Shallow Copy' vs 'Deep Copy' when dealing with Objects and Arrays.",
+    "idealAnswer": "A shallow copy (created via spread operator or Object.assign) copies the top-level properties by value. However, if a property is another object or array, only the reference to that object is copied. A deep copy creates a completely independent duplicate of the original structure, including all nested levels. In JS, this can be achieved via JSON.parse(JSON.stringify(obj)) for simple data or structuredClone() for complex data.",
+    "followUpQuestions": [
+      "Why is JSON.stringify not suitable for objects with methods or Date objects?",
+      "How does structuredClone handle circular references?"
+    ],
+    "commonMistakes": [
+      "Using `[...arr]` and assuming that objects inside the array are now independent clones.",
+      "Forgetting that the spread operator does not copy prototype chains."
+    ],
+    "companyTags": ["Amazon", "Microsoft", "Uber"]
+  },
+  {
+    "difficulty": "advanced",
+    "question": "What are 'Primitive' and 'Reference' types in JavaScript? How does this affect memory allocation?",
+    "idealAnswer": "Primitives (string, number, boolean, null, undefined, symbol, bigint) are stored directly on the stack; they are immutable and passed by value. Reference types (Objects, Arrays, Functions) are stored on the heap, and the variable on the stack only holds a pointer to that memory address. This is why changing a property of a passed-in object affects the original object outside the function, whereas changing a passed-in number does not.",
+    "followUpQuestions": [
+      "What is a 'Symbol' and why is it useful for unique property keys?",
+      "How does JavaScript's garbage collection handle objects that are no longer referenced?"
+    ],
+    "commonMistakes": [
+      "Comparing two identical-looking objects with `===` and expecting 'true' (they have different memory references).",
+      "Trying to change a primitive value inside a function and expecting it to persist globally."
+    ],
+    "companyTags": ["Google", "Meta", "Netflix"]
+  }
+]

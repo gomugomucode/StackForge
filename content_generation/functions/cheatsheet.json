@@ -1,0 +1,66 @@
+[
+  {
+    "command": "Arrow Functions",
+    "purpose": "Provides a concise syntax for writing functions and lexically binds the 'this' value.",
+    "syntax": "const name = (params) => expression;",
+    "example": "const add = (a, b) => a + b;",
+    "proTip": "Use arrow functions for callbacks (like map/filter) and when you want to preserve the context of 'this' from the surrounding scope.",
+    "commonMistake": "Using arrow functions as methods in a class or object where you actually need the dynamic 'this' context."
+  },
+  {
+    "command": "Higher-Order Functions (HOF)",
+    "purpose": "Functions that take other functions as arguments or return a function.",
+    "syntax": "function hOf(fn) { return () => fn(); }",
+    "example": "const multiplyByTwo = (num) => num * 2; const result = [1,2].map(multiplyByTwo);",
+    "proTip": "HOFs are the key to 'functional programming' in JS. Use them to create reusable logic wrappers (like decorators or validators).",
+    "commonMistake": "Over-complicating simple logic by nesting too many HOFs, making the code unreadable ('Callback Hell' precursor)."
+  },
+  {
+    "command": "Closures",
+    "purpose": "A function's ability to remember and access its lexical scope even when that function is executed outside that scope.",
+    "syntax": "function outer() { let count = 0; return () => { count++; return count; }; }",
+    "example": "const counter = outer(); counter(); // 1, counter(); // 2",
+    "proTip": "Use closures for 'Private Variables' in JS since the language didn't have private class fields for a long time.",
+    "commonMistake": "Creating closures inside loops (especially with 'var'), leading to all functions referencing the final value of the loop variable."
+  },
+  {
+    "command": "Currying",
+    "purpose": "Transforming a function that takes multiple arguments into a sequence of functions that each take a single argument.",
+    "syntax": "const curry = (a) => (b) => a + b;",
+    "example": "const addFive = curry(5); console.log(addFive(10)); // 15",
+    "proTip": "Currying is excellent for creating specialized versions of a general function (e.g., a logger that always prefixes with [ERROR]).",
+    "commonMistake": "Applying currying everywhere without a clear need, which increases the number of function calls and complexity."
+  },
+  {
+    "command": "Rest Parameters",
+    "purpose": "Allows a function to accept an indefinite number of arguments as an array.",
+    "syntax": "function sum(...args) { ... }",
+    "example": "function sum(...nums) { return nums.reduce((a, b) => a + b, 0); }",
+    "proTip": "Combine rest parameters with destructuring: `function greet({ name, ...others })` to separate a primary ID from a bag of attributes.",
+    "commonMistake": "Putting the rest parameter anywhere other than the LAST position in the argument list."
+  },
+  {
+    "command": "Immediately Invoked Function Expressions (IIFE)",
+    "purpose": "Functions that run as soon as they are defined, often used to avoid polluting the global scope.",
+    "syntax": "(function() { ... })();",
+    "example": "( () => { console.log('Init'); } )();",
+    "proTip": "Useful in legacy scripts or complex build bundles to wrap logic in a private scope.",
+    "commonMistake": "Using IIFEs in modern ES6 modules, where modules themselves already provide a private scope."
+  },
+  {
+    "command": "Async/Await",
+    "purpose": "Syntactic sugar over Promises that makes asynchronous code look and behave like synchronous code.",
+    "syntax": "async function fetch() { const res = await promise; }",
+    "example": "async function getData() { try { const data = await fetch('/api'); return data; } catch(e) { console.error(e); } }",
+    "proTip": "Always wrap 'await' calls in a try-catch block to prevent 'Unhandled Promise Rejection' crashes.",
+    "commonMistake": "Forgetting the 'async' keyword in the function declaration while using 'await' inside."
+  },
+  {
+    "command": "Call, Apply, Bind",
+    "purpose": "Methods used to explicitly set the 'this' context of a function.",
+    "syntax": "fn.call(thisArg, arg1...); fn.apply(thisArg, [args]); fn.bind(thisArg);",
+    "example": "const user = { name: 'JD' }; function greet() { console.log(this.name); } greet.call(user);",
+    "proTip": "Use .bind() to create a new function with a locked 'this' context, which is essential for event handlers in older React class components.",
+    "commonMistake": "Confusing call (comma-separated args) with apply (array of args)."
+  }
+]

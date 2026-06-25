@@ -1,0 +1,75 @@
+{
+  "topic": "variables-and-data-types",
+  "quickQuiz": [
+    {
+      "id": "qq1",
+      "question": "Which keyword should be used to declare a variable that will be reassigned later?",
+      "options": ["const", "let", "var", "static"],
+      "correctAnswer": 1,
+      "explanation": "let is used for block-scoped variables that need to be updated. const is for constants.",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "qq2",
+      "question": "What is the output of: console.log(typeof null)?",
+      "options": ["'null'", "'undefined'", "'object'", "'boolean'"],
+      "correctAnswer": 2,
+      "explanation": "This is a well-known bug/legacy feature in JavaScript where null is reported as an object.",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "qq3",
+      "question": "Which operator would you use to provide a default value ONLY if the left side is null or undefined?",
+      "options": ["||", "&&", "??", "!"],
+      "correctAnswer": 2,
+      "explanation": "The Nullish Coalescing operator (??) ignores 0 and empty strings, unlike the Logical OR (||) operator.",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "qq4",
+      "question": "How does the spread operator behave with nested objects?",
+      "options": [
+        "It performs a deep clone of all levels.",
+        "It creates a shallow copy; nested objects remain as references.",
+        "It merges the nested objects automatically.",
+        "It throws a runtime error if nested objects are found."
+      ],
+      "correctAnswer": 1,
+      "explanation": "The spread operator only copies the top-level properties. Nested objects are copied by reference, meaning changing a nested property in the clone affects the original.",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "qq5",
+      "question": "What is the result of `const a = { name: 'John' }; const b = { ...a }; b.name = 'Jane'; console.log(a.name);`?",
+      "options": ["'John'", "'Jane'", "undefined", "Error"],
+      "correctAnswer": 0,
+      "explanation": "Because a shallow copy was made, the top-level property 'name' was copied by value. Changing it on 'b' does not affect 'a'.",
+      "difficulty": "intermediate"
+    }
+  ],
+  "masteryQuiz": [
+    {
+      "id": "mq1",
+      "type": "output-prediction",
+      "question": "Predict the output of this code:\n\n```javascript\nlet x = 10;\n{ let x = 20; }\nconsole.log(x);\n```",
+      "options": ["10", "20", "undefined", "ReferenceError"],
+      "correctAnswer": 0,
+      "explanation": "The 'x' inside the curly braces is block-scoped to that block. The outer 'x' remains 10.",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "mq2",
+      "type": "debugging",
+      "question": "A developer wants to check if a user has a score of 0. They use: `if (!user.score) { console.log('No score found'); }`. Why is this a bug?",
+      "options": [
+        "The '!' operator doesn't work with numbers.",
+        "The score is always a string, not a number.",
+        "If the score is 0, it's falsy, so the block executes even though a score exists.",
+        "You cannot use a negative sign in a conditional."
+      ],
+      "correctAnswer": 2,
+      "explanation": "0 is a falsy value in JS. To properly check for null/undefined while allowing 0, use `user.score === null || user.score === undefined` or the nullish coalescing operator.",
+      "difficulty": "advanced"
+    }
+  ]
+}

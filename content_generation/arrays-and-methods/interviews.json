@@ -1,0 +1,44 @@
+[
+  {
+    "difficulty": "beginner",
+    "question": "What is the difference between .map() and .forEach()? When should you use one over the other?",
+    "idealAnswer": "map() returns a new array containing the results of the callback function, making it ideal for data transformation. forEach() simply executes a callback for each element and returns undefined, making it ideal for side effects (like logging or updating a database). Using map() when you don't need a new array is inefficient, and using forEach() when you want a transformed array requires manually pushing to a new array, which is more verbose and error-prone.",
+    "followUpQuestions": [
+      "Can you use async/await inside a forEach loop? Why or why not?",
+      "Which one is generally more 'functional' in style?"
+    ],
+    "commonMistakes": [
+      "Using map() but not returning a value from the callback, resulting in an array of 'undefined'.",
+      "Assuming forEach() will wait for asynchronous operations inside its loop."
+    ],
+    "companyTags": ["Accenture", "Wipro", "TCS"]
+  },
+  {
+    "difficulty": "intermediate",
+    "question": "Explain how .reduce() works and provide a real-world example where it is superior to a for-loop.",
+    "idealAnswer": "reduce() takes an accumulator and the current value, applying a function to them to 'boil down' an array into a single value. It's superior when transforming an array into a completely different data structure. For example, turning an array of user objects into a 'user map' (where keys are IDs and values are user objects) can be done in one clean line with reduce, whereas a for-loop would require external state management and multiple lines of boilerplate.",
+    "followUpQuestions": [
+      "What happens if you don't provide an initial value to reduce()?",
+      "How can you use reduce() to implement a pipe of functions?"
+    ],
+    "commonMistakes": [
+      "Forgetting to return the accumulator in the reducer function, which results in the next iteration receiving 'undefined'.",
+      "Using reduce for simple operations that could be handled by map or filter."
+    ],
+    "companyTags": ["Amazon", "Microsoft", "Uber"]
+  },
+  {
+    "difficulty": "advanced",
+    "question": "Discuss the time and space complexity of common array operations in JavaScript (e.g., push, pop, shift, unshift, splice).",
+    "idealAnswer": "push() and pop() operate at the end of the array and are O(1) time complexity. However, shift() and unshift() operate at the beginning, requiring every other element in the array to be re-indexed, resulting in O(n) time complexity. splice() is also O(n) as it may need to shift elements to fill a gap or make room for new ones. In terms of space, most of these are in-place mutations, but methods like map, filter, and slice create new arrays, leading to O(n) space complexity.",
+    "followUpQuestions": [
+      "How would you implement a Queue in JS to avoid O(n) shift operations?",
+      "What is the performance impact of using the spread operator for large arrays?"
+    ],
+    "commonMistakes": [
+      "Using shift() inside a loop on a large array, which can lead to accidental O(n^2) complexity.",
+      "Thinking that array methods are always O(1) just because they are built-in."
+    ],
+    "companyTags": ["Google", "Meta", "Netflix"]
+  }
+]

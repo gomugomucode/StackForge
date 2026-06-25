@@ -1,0 +1,90 @@
+{
+  "topic": "functions",
+  "quickQuiz": [
+    {
+      "id": "qq1",
+      "question": "Which function syntax does NOT have its own 'this' context and instead inherits it from the surrounding scope?",
+      "options": ["Function Declaration", "Function Expression", "Arrow Function", "IIFE"],
+      "correctAnswer": 2,
+      "explanation": "Arrow functions do not have their own 'this'; they capture the 'this' value of the enclosing lexical context.",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "qq2",
+      "question": "What is a Higher-Order Function?",
+      "options": [
+        "A function that performs a heavy computation.",
+        "A function that takes a function as an argument or returns one.",
+        "A function defined at the top level of a module.",
+        "A function that is optimized by the V8 engine."
+      ],
+      "correctAnswer": 1,
+      "explanation": "By definition, an HOF is a function that treats other functions as data (either as input or output).",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "qq3",
+      "question": "What will the following code print? `const a = 1; function outer() { const b = 2; return () => console.log(a + b); } const inner = outer(); inner();`",
+      "options": ["3", "NaN", "undefined", "ReferenceError"],
+      "correctAnswer": 0,
+      "explanation": "The closure created by 'inner' remembers both the global 'a' and the local 'b' from outer's scope.",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "qq4",
+      "question": "What is the difference between .call() and .apply()?",
+      "options": [
+        "Call is for functions, Apply is for objects.",
+        "Call takes arguments individually, Apply takes them as an array.",
+        "Call returns a new function, Apply executes immediately.",
+        "There is no functional difference."
+      ],
+      "correctAnswer": 1,
+      "explanation": "Both execute the function immediately, but call uses comma-separated arguments, while apply takes an array.",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "qq5",
+      "question": "What is the 'Temporal Dead Zone' (TDZ)?",
+      "options": [
+        "The time between a function call and its return.",
+        "The area of memory where garbage collection happens.",
+        "The period between the start of a block and the declaration of a let/const variable.",
+        "The time it takes for an async function to resolve."
+      ],
+      "correctAnswer": 2,
+      "explanation": "TDZ occurs when a variable is hoisted but not yet initialized, meaning accessing it before its declaration throws a ReferenceError.",
+      "difficulty": "advanced"
+    }
+  ],
+  "masteryQuiz": [
+    {
+      "id": "mq1",
+      "type": "code-analysis",
+      "question": "Predict the output:\n\n```javascript\nfor (var i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i), 1);\n}\n```",
+      "options": [
+        "0, 1, 2",
+        "3, 3, 3",
+        "0, 0, 0",
+        "undefined, undefined, undefined"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Because 'var' is function-scoped, the closure in setTimeout captures the reference to the SAME 'i'. By the time the timers fire, the loop has finished and 'i' is 3.",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "mq2",
+      "type": "scenario",
+      "question": "You need to create a function that generates other functions for different mathematical operations (e.g., a 'multiplier' function). Which pattern is best?",
+      "options": [
+        "IIFE",
+        "Currying / HOF",
+        "Method Binding",
+        "Recursion"
+      ],
+      "correctAnswer": 1,
+      "explanation": "A Higher-Order Function can take a factor and return a la-function that multiplies any input by that factor.",
+      "difficulty": "intermediate"
+    }
+  ]
+}

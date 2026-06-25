@@ -1,0 +1,66 @@
+[
+  {
+    "command": "map()",
+    "purpose": "Creates a new array by applying a function to every element of the original array.",
+    "syntax": "const newArr = arr.map((item) => { ... });",
+    "example": "const doubled = [1, 2, 3].map(n => n * 2); // [2, 4, 6]",
+    "proTip": "Use map when you need to transform data (e.g., converting a list of API objects into a list of React components).",
+    "commonMistake": "Using map when you don't intend to return a new array (use forEach instead)."
+  },
+  {
+    "command": "filter()",
+    "purpose": "Creates a new array with all elements that pass a specified test.",
+    "syntax": "const filtered = arr.filter((item) => condition);",
+    "example": "const adults = users.filter(u => u.age >= 18);",
+    "proTip": "Combine filter with map to create a powerful data processing pipeline: `.filter().map().reduce()`.",
+    "commonMistake": "Trying to modify the original array inside the filter callback (filter should be a pure function)."
+  },
+  {
+    "command": "reduce()",
+    "purpose": "Executes a reducer function on each element, resulting in a single output value.",
+    "syntax": "const result = arr.reduce((acc, curr) => acc + curr, initialValue);",
+    "example": "const total = [10, 20, 30].reduce((sum, n) => sum + n, 0); // 60",
+    "proTip": "Reduce is the most versatile array method. You can use it to turn an array into an object, a string, or even another array.",
+    "commonMistake": "Forgetting the initialValue, which causes the first element of the array to be used as the accumulator (dangerous for empty arrays)."
+  },
+  {
+    "command": "find() / findIndex()",
+    "purpose": "Finds the first element (or its index) that satisfies a provided testing function.",
+    "syntax": "const item = arr.find(item => condition);",
+    "example": "const user = users.find(u => u.id === '123');",
+    "proTip": "Use find() when you only need a single object; it's more efficient than filter() because it stops as soon as the first match is found.",
+    "commonMistake": "Expecting find() to return an array of all matches (use filter() for that)."
+  },
+  {
+    "command": "some() / every()",
+    "purpose": "Tests whether at least one (some) or all (every) elements in an array pass a test.",
+    "syntax": "const hasAdults = users.some(u => u.age >= 18);",
+    "example": "const allFinished = tasks.every(t => t.completed);",
+    "proTip": "Use these for quick boolean checks before performing expensive operations on the whole array.",
+    "commonMistake": "Confusing some() with filter(); some returns a boolean, filter returns an array."
+  },
+  {
+    "command": "sort()",
+    "purpose": "Sorts the elements of an array in place and returns the sorted array.",
+    "syntax": "arr.sort((a, b) => a - b);",
+    "example": "const numbers = [10, 5, 8]; numbers.sort((a, b) => a - b); // [5, 8, 10]",
+    "proTip": "Always provide a compare function. By default, sort() converts elements to strings, which means '10' comes before '2'!",
+    "commonMistake": "Forgetting that .sort() mutates the original array. Use `[...arr].sort()` to keep the original intact."
+  },
+  {
+    "command": "slice() / splice()",
+    "purpose": "slice returns a shallow copy of a portion of an array; splice changes the contents of an array by removing/replacing elements.",
+    "syntax": "arr.slice(start, end); arr.splice(start, deleteCount, item1...);",
+    "example": "const sub = [1,2,3].slice(1,2); // [2]",
+    "proTip": "Use slice(-1) to quickly get the last element of an array without calculating the length.",
+    "commonMistake": "Confusing the two: remember that 'S-L-I-C-E' is a clean cut (no mutation), while 'S-P-L-I-C-E' is a surgical operation (mutates original)."
+  },
+  {
+    "command": "FlatMap",
+    "purpose": "Maps each element using a mapping function, then flattens the result into a new array.",
+    "syntax": "const flat = arr.flatMap(x => [x, x * 2]);",
+    "example": "const words = ['Hello world'].flatMap(s => s.split(' ')); // ['Hello', 'world']",
+    "proTip": "Perfect for removing unwanted elements during a map by returning an empty array `[]` instead of a value.",
+    "commonMistake": "Using map() followed by flat(), which is less efficient than a single flatMap call."
+  }
+]

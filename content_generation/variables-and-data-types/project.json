@@ -1,0 +1,48 @@
+{
+  "title": "DataVault: The State-Management Micro-Library",
+  "description": "Build a tiny, lightweight state management system from scratch that mimics a simplified version of Zustand or Redux. You will implement a store that handles state updates, notifications, and deep cloning to prevent state mutation.",
+  "difficulty": "beginner",
+  "requirements": [
+    "A Store class that can hold a state object.",
+    "A 'setState' method that updates the state and triggers a callback for all listeners.",
+    "Use the spread operator to ensure state is updated immutably.",
+    "Implement a 'getState' method to retrieve current values.",
+    "Create a 'subscribe' method that allows components to react to state changes.",
+    "Implement a 'deepClone' utility to handle nested object state updates without mutating the original."
+  ],
+  "architecture": {
+    "folderStructure": {
+      "src/core": "Store.js, deepClone.js",
+      "src/examples": "app.js, userStore.js",
+      "tests/": "store.test.js"
+    },
+    "techStack": "Vanilla JavaScript (ES6+)"
+  },
+  "milestones": [
+    {
+      "step": 1,
+      "title": "Basic Store Implementation",
+      "tasks": ["Create the Store class", "Implement constructor for initial state", "Implement basic getState method"]
+    },
+    {
+      "step": 2,
+      "title": "Immutable Updates & Subscription",
+      "tasks": ["Build the setState method using spread operators", "Implement a listeners array to track subscribers", "Ensure setState notifies all subscribers upon update"]
+    },
+    {
+      "step": 3,
+ la la l la "Deep State Handling",
+      "tasks": ["Write a recursive deepClone helper", "Update setState to use deepClone for nested objects", "Add test cases to verify that original state is never mutated"]
+    }
+  ],
+  "stretchGoals": [
+    "Implement 'middleware' that logs every state change to the console.",
+    "Add a 'commit' method that allows batching multiple state updates together.",
+    "Create a simple React wrapper hook `useStore` that connects the vanilla store to React components."
+  ],
+  "evaluationRubric": {
+    "immutability": "Does updating a nested property in the state affect the previous state object?",
+    "reactivity": "Do all subscribers fire correctly when the state changes?",
+    "codeQuality": "Is the store logic decoupled from the usage example?"
+  }
+}

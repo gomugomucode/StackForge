@@ -4,7 +4,7 @@ import { SectionHeader } from '../ui/SectionHeader';
 import { ResourceGrid } from '@/features/resources/components/ResourceGrid';
 import { Button } from '../ui/Button';
 import NextLink from 'next/link';
-import { BookOpen, Code, GraduationCap, Layout, Terminal, Zap, Trophy, FileText, ArrowRight, BarChart } from 'lucide-react';
+import { BookOpen, Code, GraduationCap, Layout, Terminal, Zap, Trophy, FileText, ArrowRight } from 'lucide-react';
 
 export function ResourcesContent() {
   const internalCategories = [
@@ -158,15 +158,15 @@ export function ResourcesContent() {
                    </div>
                    <p className="text-[10px] text-muted-foreground mt-2 text-right">65% Complete</p>
                 </div>
-              ---
-              <Button variant="outline" className="w-full mt-6" asChild>
-                <NextLink href="/dashboard">Go to Dashboard</NextLink>
-              </Button>
+                <Button variant="outline" className="w-full mt-6" asChild>
+                  <NextLink href="/dashboard">Go to Dashboard</NextLink>
+                </Button>
+              </div>
             </div>
 
             <div className="p-6 rounded-2xl border border-border bg-gradient-to-br from-primary/10 to-purple-500/10">
               <h3 className="text-lg font-bold text-foreground mb-2">Recommended For You</h3>
-              <p className="text-sm text-muted-s-foreground mb-4">Based on your progress in JavaScript</p>
+              <p className="text-sm text-muted-foreground mb-4">Based on your progress in JavaScript</p>
               <div className="space-y-3">
                  <NextLink href="/learn/backend/node-runtime" className="block p-2 text-sm font-medium text-primary hover:underline">
                     → Node.js Runtime
