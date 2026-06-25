@@ -31,7 +31,7 @@ export const founder: Founder = {
     { platform: 'GitHub', href: '#', icon: 'GitFork' },
     { platform: 'LinkedIn', href: '#', icon: 'Link2' },
     { platform: 'Twitter', href: '#', icon: 'Share2' },
-    { platform: 'Email', href: 'mailto:hello@codenova.dev', icon: 'Mail' },
+    { platform: 'Email', href: 'mailto:hello@stackforge.dev', icon: 'Mail' },
   ],
 }
 

@@ -12,21 +12,18 @@ export const navLinks: NavLink[] = [
     label: 'Resources', 
     href: '/resources',
     children: [
-      { label: 'Learning Paths', href: '/learn' },
       { label: 'Cheatsheets', href: '/cheatsheets' },
-      { label: 'Quizzes', href: '/roadmaps/quiz' },
-      { label: 'Interview Prep', href: '/interview' },
-      { label: 'Projects', href: '/projects' },
-      { label: 'AI Tutor', href: '/tutor' },
-      { label: 'Roadmaps', href: '/roadmaps' },
+      { label: 'Articles', href: '/blog' },
+      { label: 'Notes', href: '/learn' },
+      { label: 'Downloads', href: '/roadmaps/export' },
       { label: 'Certificates', href: '/cert' },
     ]
   },
   { label: 'Community', href: '/community' },
-  { label: 'Interview Prep', href: '/interview' },
+  { label: 'Interview', href: '/interview' },
   { label: 'Projects', href: '/projects' },
-  { label: 'AI Tutor', href: '/tutor' },
+  { label: 'Tutor', href: '/tutor' },
 ]
 
-export const brandName = 'CodeNova'
+export const brandName = 'StackForge'
 export const brandTagline = 'Learn Programming Interactively'
