@@ -1,0 +1,44 @@
+[
+  {
+    "difficulty": "beginner",
+    "question": "Explain the Node.js Event Loop in simple terms. Why is it called 'non-blocking'?",
+    "idealAnswer": "The Event Loop is a continuous loop that monitors the Call Stack and the Task Queues. When the Call Stack is empty, it pushes the next pending task from the queue onto the stack for execution. It is 'non-blocking' because long-running operations (like reading a file or a network request) are handed off to the OS or a thread pool. Instead of waiting for the operation to finish, Node.js continues executing other code. Once the operation completes, a callback is placed in the queue to be handled by the loop, ensuring the main thread is never stuck waiting for I/O.",
+    "followUpQuestions": [
+      "What happens if you run a heavy loop (e.g., while(true)) inside a request handler?",
+      "How does libuv play a role in this process?"
+    ],
+    "commonMistakes": [
+      "Thinking that Node.js is truly multi-threaded (the main loop is single-threaded).",
+      "Confusing the event loop with the browser's event loop (they are similar but have different phases)."
+    ],
+    "companyTags": ["Amazon", "Uber", "Tiktok"]
+  },
+  {
+    "difficulty": "intermediate",
+    "question": "When would you use a Worker Thread instead of a simple asynchronous function (like a Promise)?",
+    "idealAnswer": "Asynchronous functions (Promises/async-await) are used for I/O-bound tasks (network requests, DB queries, file reading) where the CPU is mostly idle waiting for an external response. Worker Threads should be used for CPU-bound tasks (image processing, heavy encryption, complex mathematical calculations) that would otherwise block the main event loop and make the server unresponsive. Because Workers run in their own OS thread with their own V8 instance, they can execute heavy logic in parallel without freezing the main loop.",
+    "followUpQuestions": [
+      "How do you communicate between the main thread and a worker?",
+      "What is the overhead cost of spawning a new Worker Thread?"
+    ],
+    "commonMistakes": [
+      "Using Worker Threads for simple API calls.",
+      "Assuming Worker Threads share the same global scope as the main thread."
+    ],
+    "companyTags": ["Microsoft", "Netflix", "Meta"]
+  },
+  {
+    "difficulty": "advanced",
+    "question": "Compare and contrast 'process.nextTick()' and 'setImmediate()'. Which one runs first and why?",
+    "idealAnswer": "process.nextTick() is not actually part of the event loop's phases; it is a special queue that is drained immediately after the current operation, regardless of the phase. setImmediate() is a Macrotask that is scheduled to run in the 'Check' phase of the event loop. Therefore, process.nextTick always runs before setImmediate. In fact, process.nextTick runs before Promises (Microtasks) are processed in some versions/scenarios, and definitely before any timer or I/O callback.",
+    "followUpQuestions": [
+      "What is the risk of using process.nextTick recursively?",
+      "How does this behavior differ in the browser's event loop?"
+    ],
+    "commonMistakes": [
+      "Thinking setImmediate runs 'immediately' (it waits for the Poll phase to complete).",
+      "Using process.nextTick for periodic tasks (use setInterval instead)."
+    ],
+    "companyTags": ["Google", "Airbnb", "Shopify"]
+  }
+]

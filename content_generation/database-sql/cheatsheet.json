@@ -1,0 +1,66 @@
+[
+  {
+    "command": "JOIN Types",
+    "purpose": "Combines rows from two or more tables based on a related column.",
+    "syntax": "SELECT columns FROM tableA JOIN tableB ON tableA.id = tableB.aId;",
+    "example": "SELECT users.name, orders.total FROM users JOIN orders ON users.id = orders.userId;",
+    "proTip": "Use LEFT JOIN when you want all records from the left table regardless of whether there is a match in the right table (e.g., all users, even those without orders).",
+    "commonMistake": "Using a CROSS JOIN by accident (forgetting the ON clause), which creates a Cartesian product and can crash the DB with huge datasets."
+  },
+  {
+    "command": "Indexing (B-Tree)",
+    "purpose": "Speeds up data retrieval by creating a pointer structure for a specific column.",
+    "syntax": "CREATE INDEX index_name ON table_name (column_name);",
+    "example": "CREATE INDEX idx_user_email ON users (email);",
+    "proTip": "Only index columns used frequently in WHERE or JOIN clauses. Over-indexing slows down INSERT and UPDATE operations because the index must be updated every time.",
+    "commonMistake": "Indexing every single column in a table, which wastes storage and degrades write performance."
+  },
+  {
+    "command": "ACID Properties",
+    "purpose": "A set of properties that guarantee database transactions are processed reliably.",
+    "syntax": "N/A (Conceptual Framework)",
+    "example": "Atomicity: All or nothing. Consistency: Valid data state. Isolation: Concurrent transactions don't clash. Durability: Committed data survives crashes.",
+    "proTip": "When designing payment systems, prioritize Atomicity and Isolation to prevent double-charging or partial updates.",
+    "commonMistake": "Ignoring Isolation levels, leading to 'Dirty Reads' or 'Phantom Reads' in high-concurrency environments."
+  },
+  {
+    "command": "Normalization (1NF to 3NF)",
+    "purpose": "The process of organizing data to reduce redundancy and improve data integrity.",
+    "syntax": "N/A (Design Process)",
+    "example": "3NF: Every non-key column must depend solely on the primary key (No transitive dependencies).",
+    "proTip": "While normalization is great for integrity, 'Denormalization' (adding redundant data) is often used in read-heavy apps to avoid expensive JOINs.",
+    "commonMistake": "Over-normalizing to the point where a simple query requires 10 JOINs, killing performance."
+  },
+  {
+    "command": "Common Table Expressions (CTE)",
+    "purpose": "Defines a temporary result set that can be referenced within another query.",
+    "syntax": "WITH cte_name AS (SELECT ...) SELECT * FROM cte_name;",
+    "example": "WITH top_users AS (SELECT id FROM users WHERE points > 100) SELECT * FROM orders WHERE userId IN (SELECT id FROM top_users);",
+    "proTip": "Use CTEs instead of complex subqueries to make your SQL significantly more readable and maintainable.",
+    "commonMistake": "Using a CTE for a massive dataset without realizing it might be materialized and slow down the overall query."
+  },
+  {
+    "command": "Aggregate Functions",
+    "purpose": "Perform a calculation on a set of values and return a single value.",
+    "syntax": "SELECT aggregate_func(column) FROM table GROUP BY column;",
+    "example": "SELECT category, COUNT(*), AVG(price) FROM products GROUP BY category;",
+    "proTip": "Use HAVING instead of WHERE when you need to filter based on the result of an aggregate function (e.g., `HAVING COUNT(*) > 5`).",
+    "commonMistake": "Trying to use an aggregate function in the WHERE clause (Incorrect: `WHERE SUM(price) > 100`)."
+  },
+  {
+    "command": "Transactions (BEGIN/COMMIT/ROLLBACK)",
+    "purpose": "Wraps multiple operations into a single logical unit of work.",
+    "syntax": "BEGIN; [Queries...]; COMMIT; (or ROLLBACK;)",
+    "example": "BEGIN; UPDATE accounts SET balance = balance - 10 WHERE id = 1; UPDATE accounts SET balance = balance + 10 WHERE id = 2; COMMIT;",
+    "proTip": "Always use a ROLLBACK in your catch block when performing multiple related updates to ensure the database doesn't end up in a partial state.",
+    "commonMistake": "Keeping a transaction open for too long (e.g., waiting for user input), which locks rows and blocks other users."
+  },
+  {
+    "command": "Window Functions",
+    "purpose": "Perform calculations across a set of table rows that are related to the current row.",
+    "syntax": "SELECT col, RANK() OVER (PARTITION BY group_col ORDER BY sort_col) FROM table;",
+    "example": "SELECT name, salary, RANK() OVER (PARTITION BY dept ORDER BY salary DESC) as rank FROM employees;",
+    "proTip": "Window functions are infinitely more powerful than GROUP BY when you need to keep the individual rows while showing an aggregate value next to them.",
+    "commonMistake": "Trying to use Window functions in a WHERE clause directly (Use a subquery or CTE instead)."
+  }
+]

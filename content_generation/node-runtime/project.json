@@ -1,0 +1,49 @@
+{
+  "title": "StreamSentry: The High-Throughput Log Processor",
+  "description": "Build a production-grade log processing tool that reads massive server logs (simulated as 100MB+ files), filters for critical errors, and calculates real-time statistics without exceeding a 50MB memory limit.",
+  "difficulty": "intermediate",
+  "requirements": [
+    "Implement a Readable Stream to read a large text file in chunks.",
+    "Create a custom Transform Stream that filters lines containing the keyword 'ERROR' and 'CRITICAL'.",
+    "A Writable Stream that writes the filtered 'Critical' logs into a new file.",
+    "A real-time counter that tracks the number of errors per second using the 'data' event.",
+    "Integration of the 'zlib' module to compress the output file on the fly.",
+    "Ensure the total memory usage of the process stays below 50MB regardless of input file size."
+  ],
+  "architecture": {
+    "folderStructure": {
+      "src/streams": "logReader.js, errorFilter.js, compressedWriter.js",
+      "src/utils": "statsTracker.js",
+      "main.js": "Stream orchestration logic"
+    },
+    "techStack": "Node.js (fs, stream, zlib, path)"
+  },
+  "milestones": [
+    {
+      "step": 1,
+      "title": "Basic Pumping",
+      "tasks": ["Set up a basic pipe from a read stream to a write stream", "Generate a mock 100MB log file for testing"]
+    },
+    {
+      {
+      "step": 2,
+      "title": "The Filter Engine",
+      "tasks": ["Implement the Transform stream to detect keywords", "Add a line-by-line processing logic using the 'readline' module or custom chunk splitting"]
+    },
+    {
+      "step": 3,
+      "title": "Optimization & Compression",
+      "tasks": ["Pipe the filtered stream into a Gzip compressor", "Implement the stats tracker to count errors in real-time", "Verify memory usage using process.memoryUsage()"]
+    }
+  ],
+  "stretchGoals": [
+    "Implement a 'Backpressure' mechanism to handle a slow writable stream without crashing.",
+    "Create a Worker Thread that calculates the hash of the log file in parallel to the streaming process.",
+    "Build a simple HTTP server that allows users to trigger a new log scan via an API endpoint."
+  ],
+  "evaluationRubric": {
+    "memoryEfficiency": "Does the process maintain a constant memory footprint regardless of file size?",
+    "throughput": "How many MBs per second can the engine process?",
+    "correctness": "Are all 'CRITICAL' logs captured and correctly compressed?"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "title": "QueryMaster: The E-Commerce Analytics Engine",
+  "description": "Build a complex reporting system for a simulated e-commerce platform. You will design a schema, populate it with thousands of records, and write advanced SQL queries to extract high-level business insights. The focus is on JOINs, Aggregations, and Window Functions.",
+  "difficulty": "intermediate",
+  "requirements": [
+    "Design a 3-table schema: Users, Orders, and OrderItems (with correct Foreign Key relationships).",
+    "Write a query to find the 'Top 3 Customers' by total spend in the last 30 days.",
+    "Implement a 'Customer Lifetime Value' (CLV) report using a CTE to group total spend per user.",
+    "Create a 'Monthly Growth' report using a Window Function to show the percentage increase in orders month-over-month.",
+    "Identify 'Dormant Users' (users who haven't placed an order in 6 months) using a LEFT JOIN and a NULL check.",
+    "Write a query to find the 'most popular product category' for each user using a combination of JOIN and RANK()."
+  ],
+  "architecture": {
+    "folderStructure": {
+      "sql/schema.sql": "Table definitions and constraints",
+      "sql/seeds.sql": "Mock data generation scripts",
+      "sql/queries/": "Reports and analytics queries",
+      "analysis.md": "Explanation of query performance and execution plans"
+    },
+    "techStack": "PostgreSQL / MySQL / SQLite"
+  },
+  "milestones": [
+    {
+      "step": 1,
+      "title": "Schema Design & Normalization",
+      "tasks": ["Define tables in 3NF", "Setup Primary and Foreign keys", "Populate database with mock data using a script"]
+    },
+    {
+      "step": 2,
+      "title": "The Aggregation Suite",
+      "tasks": ["Write the total spend and count queries", "Implement the GROUP BY and HAVING logic for high-value customers"]
+    },
+    {
+      "step": 3,
+      "title": "Advanced Analytics",
+      "tasks": ["Implement the Window Functions for monthly growth", "Use a CTE to organize the complex logic of the 'most popular category' report"]
+    }
+  ],
+  "stretchGoals": [
+    "Add an Index to the 'email' and 'created_at' columns and use `EXPLAIN ANALYZE` to prove the performance gain.",
+    "Create a 'Database View' that summarizes the daily revenue for a dashboard.",
+    "Implement a stored procedure to automatically archive orders older than 2 years."
+  ],
+  "evaluationRubric": {
+    "sqlPrecision": "Are the JOINs correct? Is the output accurate compared to the data?",
+    "performance": "Do the queries execute in O(log n) where possible? Are indexes used correctly?",
+    "normalization": "Does the schema avoid data redundancy?"
+  }
+}

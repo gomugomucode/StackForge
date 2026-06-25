@@ -1,0 +1,90 @@
+{
+  "topic": "node-runtime",
+  "quickQuiz": [
+    {
+      "id": "qq1",
+      "question": "Which of these is NOT a phase of the Node.js Event Loop?",
+      "options": ["Poll", "Check", "Settle", "Close Callbacks"],
+      "correctAnswer": 2,
+      "explanation": "'Settle' is not a phase. The main phases are Timers, Pending Callbacks, Idle/Prepare, Poll, Check, and Close Callbacks.",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "qq2",
+      "question": "What is the main purpose of using a Stream in Node.js?",
+      "options": [
+        "To make the code run faster.",
+        "To process large amounts of data without loading it all into memory.",
+        "To allow the server to handle multiple requests at once.",
+        "To encrypt data during transmission."
+      ],
+      "correctAnswer": 1,
+      "explanation": "Streams process data in chunks, allowing you to handle files larger than the available RAM.",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "qq3",
+      "question": "Which method executes a callback IMMEDIATELY after the current operation, before any other event loop phase?",
+      "options": ["setTimeout(fn, 0)", "setImmediate()", "process.nextTick()", "Promise.resolve().then()"],
+      "correctAnswer": 2,
+      "explanation": "process.nextTick is the highest priority asynchronous operation in Node.js.",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "qq4",
+      "question": "What is the difference between a Worker Thread and a Child Process in Node.js?",
+      "options": [
+        "Worker Threads share memory; Child Processes have their own memory.",
+        "Child Processes are faster for CPU-bound tasks.",
+        "Worker Threads can only run shell commands.",
+        "There is no difference; they are aliases."
+      ],
+      "correctAnswer": 0,
+      "explanation": "Worker Threads are lightweight and share memory via SharedArrayBuffer, whereas Child Processes are separate OS processes with their own memory and PID.",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "qq5",
+      "question": "If you use `fs.readFileSync` in an Express route handler, what happens to other concurrent requests?",
+      "options": [
+        "They are processed normally in the background.",
+        "They are queued and handled after the file is read.",
+        "The entire server freezes until the file is read, blocking all other requests.",
+        "The server crashes immediately."
+      ],
+      "correctAnswer": 2,
+      "explanation": "Synchronous methods block the single main thread of the Event Loop, preventing any other code (including other requests) from executing.",
+      "difficulty": "intermediate"
+    }
+  ],
+  "masteryQuiz": [
+    {
+      "id": "mq1",
+      "type": "output-prediction",
+      "question": "Predict the output order of this code:\n\n```javascript\nconsole.log('1');\nsetTimeout(() => console.log('2'), 0);\nsetImmediate(() => console.log('3'));\nprocess.nextTick(() => console.log('4'));\nPromise.resolve().then(() => console.log('5'));\nconsole.log('6');\n```",
+      "options": [
+        "1, 6, 4, 5, 2, 3",
+        "1, 6, 2, 3, 4, 5",
+        "1, 4, 5, 6, 2, 3",
+        "1, 6, 5, 4, 2, 3"
+      ],
+      "correctAnswer": 0,
+      "explanation": "1. Sync code (1, 6) runs first. 2. nextTick (4) runs immediately after sync. 3. Microtasks/Promises (5) run next. 4. Timers (2) run in the Timers phase. 5. setImmediate (3) runs in the Check phase.",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "mq2",
+      "type": "scenario",
+      "question": "You are building a real-time log processor that reads a 10GB file and calculates a hash. The server keeps crashing with 'Out of Memory'. How do you fix this?",
+      "options": [
+        "Increase the Node.js heap size using --max-old-space-size.",
+        "Use fs.readFile and process the string in chunks.",
+        "Implement a readable stream and pipe it into a crypto hash stream.",
+        "Use Worker Threads to read the file in parallel."
+      ],
+      "correctAnswer": 2,
+      "explanation": "Piping a ReadStream into a Hash stream ensures that only a small chunk of the file is in memory at any given time, regardless of the total file size.",
+      "difficulty": "advanced"
+    }
+  ]
+}

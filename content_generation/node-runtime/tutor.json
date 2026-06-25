@@ -1,0 +1,56 @@
+{
+  "topic": "node-runtime",
+  "concept": "The Event Loop: Call Stack vs Task Queue",
+  "code": "console.log('Sync 1');\n\nsetTimeout(() => {\n  console.log('Async Timeout');\n}, 0);\n\nprocess.nextTick(() => {\n  console.log('Next Tick');\n});\n\nconsole.log('Sync 2');",
+  "executionTimeline": [
+    {
+      "step": 1,
+      "event": "Main Thread Start",
+      "description": "The script starts executing. 'Sync 1' is pushed to the call stack and logged immediately.",
+      "variableState": { "stack": ["main()"], "taskQueue": [] },
+      "callStack": ["main()"],
+      "outputTrace": "Sync 1"
+    },
+    {
+      "step": 2,
+      "event": "Timer Scheduling",
+      "description": "setTimeout is called. The timer is registered with the OS. The callback is scheduled to be moved to the Timers Queue after 0ms.",
+      "variableState": { "stack": ["main()", "setTimeout()"], "taskQueue": [] },
+      "callStack": ["main()", "setTimeout()"],
+      "outputTrace": ""
+    },
+    {
+      "step": 3,
+      "event": "NextTick Scheduling",
+      "description": "process.nextTick is called. The callback is placed into the special NextTick Queue, which has the highest priority in Node.js.",
+      "variableState": { "stack": ["main()", "nextTick()"], "nextTickQueue": ["callback1"] },
+      "callStack": ["main()", "nextTick()"],
+      "outputTrace": ""
+    },
+    {
+      "step": 4,
+      "event": "Final Sync Line",
+      "description": "'Sync 2' is pushed to the call stack and logged immediately.",
+      "variableState": { "stack": ["main()"], "nextTickQueue": ["callback1"] },
+      "callStack": ["main()"],
+      "outputTrace": "Sync 2"
+    },
+    {
+      "step": 5,
+      "event": "Draining NextTick Queue",
+      "description": "The current synchronous block is finished. Before moving to any event loop phase, Node.js immediately drains the NextTick Queue.",
+      "variableState": { "stack": ["nextTickCallback()"], "nextTickQueue": [] },
+      "callStack": ["nextTickCallback()"],
+      "outputTrace": "Next Tick"
+    },
+    {
+      "step": 6,
+      "event": "Event Loop: Timers Phase",
+      "description": "The Event Loop enters the 'Timers' phase. It sees the expired setTimeout callback and pushes it to the stack.",
+      "variableState": { "stack": ["timeoutCallback()"] },
+      "callStack": ["timeoutCallback()"],
+      "outputTrace": "Async Timeout"
+    }
+  ],
+  "theFix": "To avoid 'starving' the event loop, never call process.nextTick() recursively. If you need a periodic task, use setImmediate() or setTimeout(), which allow the event loop to move through its other phases (like I/O and Poll) between executions."
+}

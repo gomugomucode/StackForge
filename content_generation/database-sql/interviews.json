@@ -1,0 +1,44 @@
+[
+  {
+    "difficulty": "beginner",
+    "question": "What is Database Normalization and why is it important? Explain 1NF, 2NF, and 3NF briefly.",
+    "idealAnswer": "Normalization is the process of organizing data in a database to reduce redundancy and improve data integrity. 1NF (First Normal Form) ensures that every column contains atomic values and there are no repeating groups. 2NF (Second Normal Form) requires the table to be in 1NF and that all non-key attributes are fully functionally dependent on the primary key. 3NF (Third Normal Form) requires the table to be in 2NF and that all attributes are dependent ONLY on the primary key, not on other non-key attributes (no transitive dependencies). This prevents data anomalies and ensures a 'single source of truth' for every piece of data.",
+    "followUpQuestions": [
+      "When would you intentionally denormalize a database?",
+      "What is the performance cost of highly normalized tables?"
+    ],
+    "commonMistakes": [
+      "Thinking that more normalization is always better (over-normalization can lead to too many JOINs).",
+      "Confusing 2NF with 3NF."
+    ],
+    "companyTags": ["TCS", "Infosys", "Wipro"]
+  },
+  {
+    "difficulty": "intermediate",
+    "question": "Explain the difference between an Index and a Table Scan. How does a B-Tree index actually work?",
+    "idealAnswer": "A table scan is when the database reads every single row in a table to find a match (O(n) complexity). An index is a separate data structure (usually a B-Tree) that stores a sorted version of a column with pointers to the actual rows. A B-Tree index works by splitting data into a tree of nodes; the search starts at the root and moves down the branches based on the value, reaching the target in O(log n) time. This drastically reduces the number of disk reads required to find a record.",
+    "followUpQuestions": [
+      "What is a 'Covering Index' and why is it extremely fast?",
+      "What happens to index performance during a massive batch INSERT?"
+    ],
+    "commonMistakes": [
+      "Thinking that adding an index to every column makes the DB faster (it slows down writes).",
+      "Forgetting that the index must match the query's search pattern (e.g., a leading wildcard `%text` ignores the index)."
+    ],
+    "companyTags": ["Amazon", "Microsoft", "Uber"]
+  },
+  {
+    "difficulty": "advanced",
+    "question": "What is the 'N+1 Query Problem' in ORMs like Prisma or Sequelize, and how do you solve it?",
+    "idealAnswer": "The N+1 problem occurs when an application fetches a list of records (1 query) and then, for each record, performs an additional query to fetch related data (N queries). This results in N+1 total database hits, which kills performance. In Prisma, this is solved using the 'include' or 'select' keywords to perform an eager load (joining the tables in one query) or by using the fluent API to batch requests. In raw SQL, this is solved by using a JOIN instead of multiple individual queries.",
+    "followUpQuestions": [
+      "What is the difference between 'Eager Loading' and 'Lazy Loading'?",
+      "How can you detect an N+1 problem in a production environment?"
+    ],
+    "commonMistakes": [
+      "Assuming the ORM 'magically' optimizes multiple separate calls to the database.",
+      "Over-fetching data by 'including' everything in every query, leading to massive memory usage."
+    ],
+    "companyTags": ["Google", "Meta", "Netflix"]
+  }
+]

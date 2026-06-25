@@ -1,0 +1,66 @@
+[
+  {
+    "command": "Event Loop (Phases)",
+    "purpose": "The mechanism that allows Node.js to perform non-blocking I/O operations.",
+    "syntax": "N/A (Architectural concept)",
+    "example": "setTimeout (Timers) $\rightarrow$ I/O Callbacks $\rightarrow$ Idle/Prepare $\rightarrow$ Poll $\rightarrow$ Check (setImmediate) $\rightarrow$ Close Callbacks",
+    "proTip": "Remember that process.nextTick() and Promise callbacks (Microtasks) are executed immediately after the current operation, regardless of the current phase of the event loop.",
+    "commonMistake": "Thinking that setTimeout(fn, 0) guarantees immediate execution. It only guarantees it will run 'soon' after the current poll phase."
+  },
+  {
+    "command": "fs.promises",
+    "purpose": "Asynchronous file system operations using Promises instead of callbacks.",
+    "syntax": "import { readFile } from 'fs/promises'; const data = await readFile('file.txt');",
+    "example": "await fs.writeFile('log.txt', 'Hello World');",
+    "proTip": "Always use the 'promises' API instead of synchronous methods (readFileSync) in a production server to avoid blocking the entire event loop.",
+    "commonMistake": "Using readFileSync in a request handler, which freezes the server for all other users while the file is being read."
+  },
+  {
+    "command": "Buffer",
+    "purpose": "Handles binary data (raw bytes) directly, essential for streams and network packets.",
+    "syntax": "Buffer.from('string'); Buffer.alloc(size);",
+    "example": "const buf = Buffer.from('Hello'); console.log(buf.toString());",
+    "proTip": "Use Buffer.allocUnsafe() for extreme performance in high-throughput apps, but be careful: it contains old, sensitive memory data.",
+    "commonMistake": "Trying to treat Buffers as strings. Always remember to use .toString() or .write() for conversion."
+  },
+  {
+    "command": "Streams (Pipe)",
+    "purpose": "Processes data piece-by-piece without loading the entire file into memory.",
+    "syntax": "readableStream.pipe(writableStream);",
+    "example": "fs.createReadStream('big.csv').pipe(zlib.createGzip()).pipe(fs.createWriteStream('big.csv.gz'));",
+    "proTip": "Streams are the secret to handling multi-gigabyte files on a server with only 512MB of RAM. Never use fs.readFile for large files.",
+    "commonMistake": "Not handling the 'error' event on a stream, which leads to unhandled exceptions and server crashes."
+  },
+  {
+    "command": "EventEmitter",
+    "purpose": "Implements the Observer pattern, allowing objects to emit and listen for custom events.",
+    "syntax": "emitter.on('event', callback); emitter.emit('event', data);",
+    "example": "const myEmitter = new EventEmitter(); myEmitter.on('userLogin', (user) => console.log(user)); myEmitter.emit('userLogin', { name: 'Alice' });",
+    "proTip": "Use the 'once' method if the event should only trigger the callback a single time.",
+    "commonMistake": "Forgetting to remove event listeners (removeListener/off) when the object is destroyed, leading to memory leaks."
+  },
+  {
+    "command": "process.nextTick()",
+    "purpose": "Schedules a callback to run immediately after the current operation, before any other I/O or timers.",
+    "syntax": "process.nextTick(() => { ... });",
+    "example": "process.nextTick(() => console.log('Runs before Promise.resolve()'));",
+    "proTip": "Use nextTick for critical cleanup or state updates that must happen before the event loop continues its phase.",
+    "commonMistake": "Recursive calls to process.nextTick(), which can 'starve' the event loop and prevent I/O or timers from ever running."
+  },
+  {
+    "command": "Worker Threads",
+    "purpose": "Allows the execution of JavaScript in parallel threads to handle CPU-intensive tasks.",
+    "syntax": "const { Worker } = require('worker_threads'); new Worker('./worker.js');",
+    "example": "Moving a complex image processing algorithm to a worker thread so the main API stays responsive.",
+    "proTip": "Use 'SharedArrayBuffer' to share memory between the main thread and workers for ultra-fast data transfer.",
+    "commonMistake": "Using Worker Threads for I/O tasks. Workers are for CPU-bound tasks (calc, encryption); for I/O, stick to the standard asynchronous Event Loop."
+  },
+  {
+    "command": "CommonJS vs ESM",
+    "purpose": "Module systems for importing and exporting code in Node.js.",
+    "syntax": "CommonJS: require() / module.exports | ESM: import / export",
+    "example": "const fs = require('fs'); // CommonJS\nimport fs from 'fs'; // ESM",
+    "proTip": "Use ESM ('type': 'module' in package.json) for all new projects to align with browser standards and enable Top-Level Await.",
+    "commonMistake": "Mixing require() and import in the same file without the correct build configuration."
+  }
+]
