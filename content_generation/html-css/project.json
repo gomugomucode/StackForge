@@ -1,0 +1,47 @@
+{
+  "title": "PixelPerfect: Responsive Architecture Challenge",
+  "description": "Build a professional, fully responsive landing page for a futuristic AI agency. The focus is not on JS functionality, but on absolute layout precision and responsive behavior across all screen sizes using modern CSS (Grid, Flex, Variables).",
+  "difficulty": "beginner",
+  "requirements": [
+    "A sticky navigation bar with a logo (left) and links (right) that collapses into a burger menu on mobile.",
+    "A 'Hero Section' with a two-column layout: Text/CTA on the left and a decorative element on the right. Must stack vertically on mobile.",
+    "A 'Features Grid' containing 6 cards. Must transition from 3 columns (Desktop) $\rightarrow$ 2 columns (Tablet) $\rightarrow$ 1 column (Mobile) using CSS Grid.",
+    "A complex pricing table with 3 tiers, where the 'Pro' tier is visually highlighted (scaled up slightly).",
+    "Strict use of CSS Variables for the color palette (Primary, Secondary, Accent, Background).",
+    "Zero overflow-x issues on any screen width (tested from 320px to 2560px)."
+  ],
+  "architecture": {
+    "folderStructure": {
+      "css/": "main.css, variables.css, layout.css, components.css",
+      "assets/": "images/, icons/"
+    },
+    "techStack": "HTML5, CSS3 (Modern Grid/Flex), Google Fonts"
+  },
+  "milestones": [
+    {
+      "step": 1,
+      "title": "Design Tokens & Reset",
+      "tasks": ["Implement a CSS reset (box-sizing: border-box)", "Define all brand colors in :root variables", "Setup basic typography scale"]
+    },
+    {
+      "step": 2,
+      "title": "Core Layout Skeleton",
+      "tasks": ["Build the Navbar and Hero section using Flexbox", "Create the Features Grid using grid-template-columns", "Ensure the layout is 'fluid' using percentages or fr units"]
+    },
+    {
+      "step": 3,
+      "title": "Responsive Refinement",
+      "tasks": ["Write media queries for Tablet (768px) and Mobile (480px)", "Implement the mobile burger menu (CSS-only toggle)", "Optimize image sizes using responsive attributes"]
+    }
+  ],
+  "stretchGoals": [
+    "Implement 'Dark Mode' using a data-theme attribute and CSS variables.",
+    "Add smooth scroll behavior to all internal links.",
+    "Create a complex CSS animation for the hero element (e.g., floating effect)."
+  ],
+  "evaluationRubric": {
+    "responsiveness": "Does the page layout shift logically? Are there any horizontal scrollbars on mobile?",
+    "technicalPrecision": "Are CSS Grid and Flexbox used correctly? Is there an over-reliance on fixed pixel widths?",
+    "codeHygiene": "Is the CSS organized logically? Are variables used instead of hardcoded hex codes?"
+  }
+}

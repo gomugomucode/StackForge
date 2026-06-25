@@ -1,0 +1,85 @@
+{
+  "topic": "html-css",
+  "quickQuiz": [
+    {
+      "id": "qq1",
+      "question": "Which property is used to change the layout of a container to a flexible box model?",
+      "options": ["display: block", "display: inline", "display: flex", "float: left"],
+      "correctAnswer": 2,
+      "explanation": "display: flex initializes the Flexbox layout model for the container and its immediate children.",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "qq2",
+      "question": "What is the default value of the 'box-sizing' property in CSS?",
+      "options": ["border-box", "content-box", "padding-box", "margin-box"],
+      "correctAnswer": 1,
+      "explanation": "The default is content-box, where padding and borders are added to the width, often causing layout overflows.",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "qq3",
+      "question": "How do you center an element both horizontally and vertically using Flexbox?",
+      "options": [
+        "text-align: center; vertical-align: middle;",
+        "justify-content: center; align-items: center;",
+        "display: grid; place-items: center;",
+        "Both B and C are correct"
+      ],
+      "correctAnswer": 3,
+      "explanation": "justify-content/align-items (Flex) and place-items (Grid) are both valid ways to center content.",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "qq4",
+      "question": "Which CSS selector has the highest specificity?",
+      "options": ["Class selector (.btn)", "ID selector (#header)", "Element selector (div)", "Attribute selector [type='text']"],
+      "correctAnswer": 1,
+      "explanation": "ID selectors always override classes and elements regardless of order in the CSS file.",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "qq5",
+      "question": "What is the difference between 'position: absolute' and 'position: fixed'?",
+      "options": [
+        "Fixed is relative to the viewport, absolute is relative to the nearest positioned ancestor.",
+        "Absolute is relative to the viewport, fixed is relative to the ancestor.",
+        "Fixed doesn't remove the element from the document flow, absolute does.",
+        "There is no difference."
+      ],
+      "correctAnswer": 0,
+      "explanation": "Fixed stays in one place even when the page scrolls; Absolute moves with the page but stays relative to its parent.",
+      "difficulty": "intermediate"
+    }
+  ],
+  "masteryQuiz": [
+    {
+      "id": "mq1",
+      "type": "code-analysis",
+      "question": "Given the following CSS:\n\n```css\n.card { width: 300px; padding: 20px; border: 5px solid black; box-sizing: content-box; }\n```\nWhat is the actual total rendered width of the element in the browser?",
+      "options": [
+        "300px",
+        "320px",
+        "340px",
+        "350px"
+      ],
+      "correctAnswer": 3,
+      "explanation": "Calculation: 300px (width) + 20px (left padding) + 20px (right padding) + 5px (left border) + 5px (right border) = 350px.",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "mq2",
+      "type": "scenario",
+      "question": "You want to create a 3-column layout where the middle column takes up all available space and the side columns are exactly 200px each. Which Grid configuration is best?",
+      "options": [
+        "grid-template-columns: 200px 1fr 200px;",
+        "grid-template-columns: 1fr 1fr 1fr;",
+        "grid-template-columns: repeat(3, 200px);",
+        "grid-template-columns: auto auto auto;"
+      ],
+      "correctAnswer": 0,
+      "explanation": "1fr (fractional unit) tells the browser to take the remaining available space after the fixed 200px columns are allocated.",
+      "difficulty": "intermediate"
+    }
+  ]
+}

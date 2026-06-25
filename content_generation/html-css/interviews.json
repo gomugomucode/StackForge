@@ -1,0 +1,44 @@
+[
+  {
+    "difficulty": "beginner",
+    "question": "Explain the CSS Box Model and why it is critical for layout calculations.",
+    "idealAnswer": "The CSS Box Model describes every element as a rectangular box consisting of four layers: the content, the padding, the border, and the margin. Understanding this is critical because the 'width' and 'height' properties behave differently depending on the 'box-sizing' property. In 'content-box', width only applies to the content, and padding/borders are added on top, often breaking layouts. In 'border-box', the padding and border are absorbed into the specified width, making layout math predictable and stable.",
+    "followUpQuestions": [
+      "How does 'margin: auto' work for centering elements?",
+      "What is the difference between padding and margin in terms of background colors?"
+    ],
+    "commonMistakes": [
+      "Confusing padding (inside the border) with margin (outside the border).",
+      "Thinking that 'width: 100%' will always fit the screen without considering padding."
+    ],
+    "companyTags": ["Amazon", "TCS", "Accenture"]
+  },
+  {
+    "difficulty": "intermediate",
+    "question": "What is the 'Critical Rendering Path' (CRP) and how can CSS impact it?",
+    "idealAnswer": "The CRP is the sequence of steps the browser takes to convert HTML, CSS, and JS into pixels on the screen. It involves: DOM construction $\rightarrow$ CSSOM construction $\rightarrow$ Render Tree $\rightarrow$ Layout $\rightarrow$ Paint. CSS is 'render-blocking'; the browser will not paint the page until the CSSOM is fully built. To optimize, developers should minify CSS, use critical CSS for above-the-fold content, and avoid '@import' which creates serial request chains.",
+    "followUpQuestions": [
+      "What is the difference between 'blocking' and 'asynchronous' scripts?",
+      "How does 'content-visibility: auto' improve rendering performance?"
+    ],
+    "commonMistakes": [
+      "Believing that CSS only affects visuals, not loading speed.",
+      "Ignoring the impact of deeply nested CSS selectors on rendering performance."
+    ],
+    "companyTags": ["Google", "Meta", "Microsoft"]
+  },
+  {
+    "difficulty": "advanced",
+    "question": "Compare and contrast Flexbox and CSS Grid. When should you use one over the other?",
+    "idealAnswer": "Flexbox is designed for one-dimensional layouts (either a row OR a column). It excels at distributing space and aligning items within a single axis. CSS Grid is designed for two-dimensional layouts (rows AND columns simultaneously). Grid is better for the overall page structure (main layout), while Flexbox is better for components inside that layout (like a navbar or a card's content). If you need a rigid structure where items must align both vertically and horizontally across different rows, Grid is the only correct choice.",
+    "followUpQuestions": [
+      "Can you nest a Flex container inside a Grid item?",
+      "How does 'grid-area' simplify complex layout management compared to manual placement?"
+    ],
+    "commonMistakes": [
+      "Trying to force Flexbox to do 2D layouts by nesting multiple flex containers.",
+      "Using Grid for simple single-row alignments where Flexbox would be more concise."
+    ],
+    "companyTags": ["Apple", "Airbnb", "Uber"]
+  }
+]

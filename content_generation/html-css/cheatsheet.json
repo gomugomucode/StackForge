@@ -1,0 +1,66 @@
+[
+  {
+    "command": "Flexbox: justify-content",
+    "purpose": "Aligns items along the main axis (horizontal by default).",
+    "syntax": "justify-content: [flex-start | flex-end | center | space-between | space-around | space-evenly];",
+    "example": "justify-content: center; // Centers items horizontally",
+    "proTip": "Use 'space-between' for navbars where logos are left and links are right.",
+    "commonMistake": "Applying justify-content to a block element that isn't display: flex."
+  },
+  {
+    "command": "Flexbox: align-items",
+    "purpose": "Aligns items along the cross axis (vertical by default).",
+    "syntax": "align-items: [stretch | flex-start | flex-end | center | baseline];",
+    "example": "align-items: center; // Centers items vertically",
+    "proTip": "Use 'stretch' (default) to make all children fill the height of the container.",
+    "commonMistake": "Confusing align-items (container) with align-self (individual item)."
+  },
+  {
+    "command": "CSS Grid: grid-template-columns",
+    "purpose": "Defines the column structure of a grid container.",
+    "syntax": "grid-template-columns: [size] [size] ... ;",
+    "example": "grid-template-columns: 1fr 2fr 1fr; // Three columns, middle is double width",
+    "proTip": "Use 'repeat(auto-fit, minmax(200px, 1fr))' for a perfectly responsive grid without media queries.",
+    "commonMistake": "Mixing grid and flexbox on the same element without understanding the child impact."
+  },
+  {
+    "command": "CSS Grid: gap",
+    "purpose": "Sets the spacing between rows and columns.",
+    "syntax": "gap: [row-gap] [column-gap];",
+    "example": "gap: 20px; // 20px between all items",
+    "proTip": "Gap is now supported in Flexbox too in modern browsers!",
+    "commonMistake": "Using margin on children to create gaps, which messes up the outer container alignment."
+  },
+  {
+    "command": "Position: absolute",
+    "purpose": "Positions an element relative to its nearest positioned ancestor.",
+    "syntax": "position: absolute; top: 0; left: 0;",
+    "example": "position: absolute; top: 10px; right: 10px; // Fixed to top-right of parent",
+    "proTip": "Ensure the parent has 'position: relative' otherwise the element will float relative to the body.",
+    "commonMistake": "Forgetting to set a parent relative, causing the absolute element to 'fly' across the page."
+  },
+  {
+    "command": "Position: sticky",
+    "purpose": "Toggles between relative and fixed positioning based on scroll position.",
+    "syntax": "position: sticky; top: 0;",
+    "example": "position: sticky; top: 0; // Stays at top while scrolling the section",
+    "proTip": "Sticky doesn't work if any ancestor has 'overflow: hidden'.",
+    "commonMistake": "Not specifying a threshold (like top: 0), which makes the sticky behavior fail."
+  },
+  {
+    "command": "Box-Sizing: border-box",
+    "purpose": "Includes padding and border in the element's total width and height.",
+    "syntax": "box-sizing: border-box;",
+    "example": "div { box-sizing: border-box; width: 100px; padding: 20px; } // Total width remains 100px",
+    "proTip": "Apply this to all elements using the universal selector `* { box-sizing: border-box; }` at the start of every project.",
+    "commonMistake": "Using content-box (default), which makes a '100% width' element overflow its parent if padding is added."
+  },
+  {
+    "command": "CSS Variables",
+    "purpose": "Stores reusable values for consistent styling.",
+    "syntax": ":root { --main-color: #ff0000; }",
+    "example": "color: var(--main-color);",
+    "proTip": "Use variables for themes (Light/Dark mode) by simply changing the variable values in the :root.",
+    "commonMistake": "Defining variables in a specific class and trying to access them in a sibling element."
+  }
+]

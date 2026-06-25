@@ -1,0 +1,48 @@
+{
+  "topic": "html-css",
+  "concept": "The CSS Cascade and Specificity Resolution",
+  "code": "<!-- HTML -->\n<div id=\"header\" class=\"main-nav\">\n  <p class=\"text\" style=\"color: red;\">Hello World</p>\n</div>\n\n<!-- CSS -->\n<style>\n  p { color: blue; }\n  .text { color: green; }\n  #header .text { color: yellow; }\n</style>",
+  "executionTimeline": [
+    {
+      "step": 1,
+      "event": "DOM Tree Construction",
+      "description": "The browser parses the HTML and identifies the <p> element. It notes its ID, class, and inline styles.",
+      "variableState": { "element": "p", "attributes": { "class": "text", "style": "color: red" } },
+      "callStack": ["parseHTML()"],
+      "outputTrace": "DOM node created for <p>"
+    },
+    {
+      "step": 2,
+      "event": "CSSOM Rule Matching",
+      "description": "The browser finds all CSS rules that target this element: 1. 'p' (Element), 2. '.text' (Class), 3. '#header .text' (ID + Class).",
+      "variableState": { "matchingRules": 3 },
+      "callStack": ["matchCSSRules()"],
+      "outputTrace": "Found 3 matching rules"
+    },
+    {
+      "step": 3,
+      "event": "Specificity Calculation",
+      "description": "The browser assigns a weight to each rule: \n- p: (0,0,1) \n- .text: (0,1,0) \n- #header .text: (1,1,0)",
+      "variableState": { "scores": { "p": 1, "class": 10, "complex": 110 } },
+      "callStack": ["calculateSpecificity()"],
+      "outputTrace": "Ranking rules by weight..."
+    },
+    {
+      "step": 4,
+      "event": "Inline Style Override",
+      "description": "The browser detects an inline style attribute 'color: red'. Inline styles have a weight of (1,0,0,0), which overrides almost everything except !important.",
+      "variableState": { "winningRule": "inline-style" },
+      "callStack": ["resolveCascade()"],
+      "outputTrace": "Inline style detected. Overriding external CSS."
+    },
+    {
+      "step": 5,
+      "event": "Final Paint",
+      "description": "The browser applies the winning rule. The text 'Hello World' is painted red.",
+      "variableState": { "finalColor": "red" },
+      "callStack": ["paint()"],
+      "outputTrace": "Rendering text in red"
+    }
+  ],
+  "theFix": "To override the inline style, you would need to use the `!important` flag in your CSS (e.g., `.text { color: green !important; }`), although this is generally discouraged in professional production code in favor of cleaner architecture."
+}
