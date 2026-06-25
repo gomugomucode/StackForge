@@ -1,0 +1,104 @@
+{
+  "topic": "react-core",
+  "quickQuiz": [
+    {
+      "id": "qq1",
+      "question": "Which hook is used to handle side effects like API calls or timers in a functional component?",
+      "options": ["useState", "useEffect", "useMemo", "useReducer"],
+      "correctAnswer": 1,
+      "explanation": "useEffect is specifically designed to synchronize a component with an external system (side effects).",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "qq2",
+      "question": "What happens if you omit the dependency array in a useEffect hook?",
+      "options": [
+        "The effect runs only once on mount.",
+        "The effect runs only on unmount.",
+        "The effect runs on every single render.",
+        "The effect throws a runtime error."
+      ],
+      "correctAnswer": 2,
+      "explanation": "Without a dependency array, React has no way of knowing when the effect should be skipped, so it runs after every render.",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "qq3",
+      "question": "Which of the following is the correct way to update a state variable based on its previous value?",
+      "options": [
+        "setCount(count + 1)",
+        "setCount(prev => prev + 1)",
+        "count = count + 1",
+        "updateCount(+1)"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Using the functional update pattern ensures that you are working with the most recent state, avoiding closure-related bugs.",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "qq4",
+      "question": "What is the primary purpose of React.memo()?",
+      "options": [
+        "To store data in the browser local storage.",
+        "To prevent unnecessary re-renders of a component if props are unchanged.",
+        "To manage global state across the app.",
+        "To speed up the initial loading of the application."
+      ],
+      "correctAnswer": 1,
+      "explanation": "React.memo is a Higher Order Component that performs a shallow comparison of props and skips rendering if they are the same.",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "qq5",
+      "question": "Which hook should you use to store a value that persists between renders but does NOT trigger a re-render when changed?",
+      "options": ["useState", "useContext", "useRef", "useReducer"],
+      "correctAnswer": 2,
+      "explanation": "useRef creates a mutable object whose .current property can be modified without triggering a component update.",
+      "difficulty": "intermediate"
+    }
+  ],
+  "masteryQuiz": [
+    {
+      "id": "mq1",
+      "type": "code-analysis",
+      "question": "Analyze the following code: \n\n```javascript\nfunction Timer() {\n  const [count, setCount] = useState(0);\n  useEffect(() => {\n    const id = setInterval(() => setCount(count + 1), 1000);\n    return () => clearInterval(id);\n  }, []);\n  return <div>{count}</div>;\n}\n```\nWhy will this timer always display '1' after the first second?",
+      "options": [
+        "setInterval does not work in useEffect.",
+        "The cleanup function is clearing the interval immediately.",
+        "The effect has an empty dependency array, creating a closure over the initial count (0).",
+        "React components cannot update state inside a timer."
+      ],
+      "correctAnswer": 2,
+      "explanation": "The closure inside useEffect captures the initial value of 'count' (0). Every interval tick calls `setCount(0 + 1)`, resulting in a constant value of 1. The fix is using `setCount(prev => prev + 1)`.",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "mq2",
+      "type": "scenario",
+      "question": "You have a heavy computation that takes 500ms. It depends on a prop called 'userId'. How do you ensure this doesn't run on every render unless 'userId' changes?",
+      "options": [
+        "Wrap the computation in a useEffect.",
+        "Use useState to store the result and update it manually.",
+        "Use useMemo to wrap the computation with [userId] as a dependency.",
+        "Wrap the entire component in React.memo."
+      ],
+      "correctAnswer": 2,
+      "explanation": "useMemo is specifically for memoizing expensive values. React.memo prevents the component from rendering, but useMemo prevents a specific expensive block of code within the render from running.",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "mq3",
+      "type": "output-prediction",
+      "question": "What will happen if you call `setState` inside the main body of a functional component (outside of useEffect or event handlers)?",
+      "options": [
+        "The state updates and the component renders once.",
+        "The component enters an infinite render loop.",
+        "React throws a 'Too many re-renders' error.",
+        "Nothing happens; state can only be updated in hooks."
+      ],
+      "correctAnswer": 2,
+      "explanation": "Updating state triggers a re-render. If the update happens in the body, the re-render will trigger another update, leading to an infinite loop and eventually a React crash.",
+      "difficulty": "advanced"
+    }
+  ]
+}

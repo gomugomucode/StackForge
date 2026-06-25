@@ -1,0 +1,157 @@
+{
+  "roadmaps": [
+    {
+      "title": "Frontend Master",
+      "slug": "frontend-master",
+      "category": "Frontend",
+      "modules": [
+        {
+          "title": "The Foundation",
+          "slug": "foundation",
+          "topics": [
+            { "name": "HTML5 Semantics", "slug": "html-semantics", "difficulty": "beginner", "time": 60 },
+            { "name": "CSS Layouts (Flex/Grid)", "slug": "css-layouts", "difficulty": "beginner", "time": 120 },
+            { "name": "Modern JavaScript (ES6+)", "slug": "modern-js", "difficulty": "intermediate", "time": 180 }
+          ]
+        },
+        {
+          "title": "React Ecosystem",
+          "slug": "react-ecosystem",
+          "topics": [
+            { "name": "React Core Concepts", "slug": "react-core", "difficulty": "intermediate", "time": 120 },
+            { "name": "State Management (Zustand/Redux)", "slug": "state-mgmt", "difficulty": "intermediate", "time": 120 },
+            { "name": "Hooks Deep Dive", "slug": "react-hooks", "difficulty": "advanced", "time": 90 }
+          ]
+        },
+        {
+          "title": "Next.js & Performance",
+          "slug": "nextjs-perf",
+          "topics": [
+            { "name": "App Router Architecture", "slug": "nextjs-app", "difficulty": "advanced", "time": 120 },
+            { "name": "Server Components & Actions", "slug": "nextjs-server", "difficulty": "advanced", "time": 90 },
+            { "name": "Core Web Vitals & Optimization", "slug": "web-vitals", "difficulty": "advanced", "time": 60 }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Backend Architect",
+      "slug": "backend-architect",
+      "category": "Backend",
+      "modules": [
+        {
+          "title": "Runtime & Language",
+          "slug": "runtime-lang",
+          "topics": [
+            { "name": "Node.js Event Loop", "slug": "node-runtime", "difficulty": "intermediate", "time": 90 },
+            { "name": "TypeScript for Backend", "slug": "ts-backend", "difficulty": "intermediate", "time": 120 }
+          ]
+        },
+        {
+          "title": "Data Persistence",
+          "slug": "data-persistence",
+          "topics": [
+            { "name": "PostgreSQL & SQL Mastery", "slug": "database-sql", "difficulty": "intermediate", "time": 180 },
+            { "name": "Prisma ORM Advanced Patterns", "slug": "prisma-advanced", "difficulty": "advanced", "time": 90 },
+            { "name": "Redis Caching Strategies", "slug": "redis-caching", "difficulty": "advanced", "time": 60 }
+          ]
+        },
+        {
+          "title": "API Design",
+          "slug": "api-design",
+          "topics": [
+            { "name": "RESTful API Design", "slug": "rest-api", "difficulty": "beginner", "time": 60 },
+            { "name": "GraphQL Architecture", "slug": "graphql-arch", "difficulty": "advanced", "time": 120 },
+            { "name": "WebSockets & Real-time", "slug": "websockets", "difficulty": "intermediate", "time": 90 }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "DevOps Engineer",
+      "slug": "devops-engineer",
+      "category": "Infrastructure",
+      "modules": [
+        {
+          "title": "Containerization",
+          "slug": "containerization",
+          "topics": [
+            { "name": "Docker Fundamentals", "slug": "docker-basics", "difficulty": "beginner", "time": 120 },
+            { "name": "Multi-stage Builds", "slug": "docker-advanced", "difficulty": "intermediate", "time": 60 }
+          ]
+        },
+        {
+          "title": "Orchestration",
+          "slug": "orchestration",
+          "topics": [
+            { "name": "Kubernetes Architecture", "slug": "k8s-arch", "difficulty": "advanced", "time": 180 },
+            { "name": "Helm Charts & Deployments", "slug": "k8s-helm", "difficulty": "advanced", "time": 90 }
+          ]
+        },
+        {
+          "title": "CI/CD Pipelines",
+          "slug": "cicd-pipelines",
+          "topics": [
+            { "name": "GitHub Actions Workflows", "slug": "github-actions", "difficulty": "intermediate", "time": 90 },
+            { "name": "Terraform Infrastructure as Code", "slug": "terraform-iac", "difficulty": "advanced", "time": 120 }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "AI Engineer",
+      "slug": "ai-engineer",
+      "category": "AI",
+      "modules": [
+        {
+          "title": "LLM Fundamentals",
+          "slug": "llm-fundamentals",
+          "topics": [
+            { "name": "Transformer Architecture", "slug": "transformer-arch", "difficulty": "advanced", "time": 180 },
+            { "name": "Prompt Engineering Patterns", "slug": "prompt-eng", "difficulty": "beginner", "time": 60 }
+          ]
+        },
+        {
+          "title": "RAG & Vector Databases",
+          "slug": "rag-vector",
+          "topics": [
+            { "name": "Embeddings & Vector Search", "slug": "embeddings", "difficulty": "intermediate", "time": 90 },
+            { "name": "Pinecone & Milvus Implementation", "slug": "vector-db", "difficulty": "intermediate", "time": 120 }
+          ]
+        },
+        {
+          "title": "AI Agentic Workflows",
+          "slug": "ai-agents",
+          "topics": [
+            { "name": "LangChain & LangGraph", "slug": "langchain", "difficulty": "advanced", "time": 120 },
+            { "name": "Autonomous Agents", "slug": "ai-agents-core", "difficulty": "advanced", "time": 120 }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Python Developer",
+      "slug": "python-developer",
+      "category": "Language",
+      "modules": [
+        {
+          "title": "Python Core",
+          "slug": "python-core",
+          "topics": [
+            { "name": "Advanced Data Structures", "slug": "py-ds", "difficulty": "intermediate", "time": 90 },
+            { "name": "Decorators & Generators", "slug": "py-adv-feat", "difficulty": "advanced", "time": 60 }
+          ]
+        },
+        {
+          "title": "Data Science Stack",
+          "slug": "ds-stack",
+          "topics": [
+            { "name": "Pandas for Data Analysis", "slug": "pandas-core", "difficulty": "intermediate", "time": 120 },
+            { "name": "NumPy Numerical Computing", "slug": "numpy-core", "difficulty": "intermediate", "time": 90 },
+            { "name": "Scikit-Learn Machine Learning", "slug": "sklearn-core", "difficulty": "advanced", "time": 180 }
+          ]
+        }
+      ]
+    }
+  ]
+}

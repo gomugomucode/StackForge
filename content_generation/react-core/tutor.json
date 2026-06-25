@@ -1,0 +1,56 @@
+{
+  "topic": "react-core",
+  "concept": "useEffect Closure and State Staleness",
+  "code": "function Counter() {\n  const [count, setCount] = useState(0);\n\n  useEffect(() => {\n    const timer = setInterval(() => {\n      console.log('Tick: count is ' + count);\n      setCount(count + 1);\n    }, 1000);\n    return () => clearInterval(timer);\n  }, []);\n\n  return <div>{count}</div>;\n}",
+  "executionTimeline": [
+    {
+      "step": 1,
+      "event": "Component Mounts",
+      "description": "The component is initialized. count = 0.",
+      "variableState": { "count": 0 },
+      "callStack": ["render()"],
+      "outputTrace": "Rendering... <div>0</div>"
+    },
+    {
+      "step": 2,
+      "event": "useEffect Execution",
+      "description": "The effect runs for the first time. It defines a closure over the CURRENT scope where count is 0.",
+      "variableState": { "count": 0 },
+      "callStack": ["useEffect()", "setInterval()"],
+      "outputTrace": "Interval set for 1000ms"
+    },
+    {
+      "step": 3,
+      "event": "First Interval Tick",
+      "description": "The timer fires. It accesses 'count' from the closure (captured at step 2).",
+      "variableState": { "count": 0 },
+      "callStack": ["timerCallback()"],
+      "outputTrace": "Tick: count is 0"
+    },
+    {
+      "step": 4,
+      "event": "State Update Triggered",
+      "description": "setCount(0 + 1) is called. React schedules a re-render.",
+      "variableState": { "count": 1 },
+      "callStack": ["setCount()"],
+      "outputTrace": "Re-rendering..."
+    },
+    {
+      "step": 5,
+      "event": "Second Interval Tick",
+      "description": "The timer fires again. Because the effect didn't re-run (empty dependency array), it still uses the SAME closure where count is 0.",
+      "variableState": { "count": 0 },
+      "callStack": ["timerCallback()"],
+      "outputTrace": "Tick: count is 0"
+    },
+    {
+      "step": 6,
+      "event": "State Update Conflict",
+      "description": "setCount(0 + 1) is called again. The state is already 1, so it remains 1.",
+      "variableState": { "count": 1 },
+      "callStack": ["setCount()"],
+      "outputTrace": "State remains 1. UI does not change."
+    }
+  ],
+  "theFix": "Use the functional update pattern: setCount(prevCount => prevCount + 1). This avoids relying on the closure's captured value and always uses the latest state from React's internal store."
+}

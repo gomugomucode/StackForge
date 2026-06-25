@@ -1,0 +1,66 @@
+[
+  {
+    "command": "useState",
+    "purpose": "Adds state to a functional component.",
+    "syntax": "const [state, setState] = useState(initialValue);",
+    "example": "const [count, setCount] = useState(0);",
+    "proTip": "Use a functional update `setCount(prev => prev + 1)` when the new state depends on the previous state to avoid closure staleness.",
+    "commonMistake": "Updating state directly without using the setter function, which doesn't trigger a re-render."
+  },
+  {
+    "command": "useEffect",
+    "purpose": "Performs side effects in functional components.",
+    "syntax": "useEffect(() => { ... }, [dependencies]);",
+    "example": "useEffect(() => { console.log('Mounted'); }, []);",
+    "proTip": "Always include dependencies in the array. If you need to run a function only once, use an empty array `[]`.",
+    "commonMistake": "Forgetting the dependency array, causing the effect to run on every single render."
+  },
+  {
+    "command": "useMemo",
+    "purpose": "Memoizes a computed value to prevent expensive recalculations on every render.",
+    "syntax": "const memoizedValue = useMemo(() => compute(a, b), [a, b]);",
+    "example": "const total = useMemo(() => items.reduce((acc, i) => acc + i, 0), [items]);",
+    "proTip": "Only use useMemo for truly expensive calculations; overusing it can actually slow down your app due to memory overhead.",
+    "commonMistake": "Using useMemo for simple string concatenation or small array filtering."
+  },
+  {
+    "command": "useCallback",
+    "purpose": "Memoizes a function instance to prevent unnecessary re-renders of child components.",
+    "syntax": "const memoizedCallback = useCallback(() => { ... }, [dependencies]);",
+    "example": "const handleClick = useCallback(() => console.log('Clicked'), []);",
+    "proTip": "Pairs perfectly with `React.memo()` on child components to stop the 'prop drilling re-render' chain.",
+    "commonMistake": "Defining a function with useCallback but passing it to a child that isn't wrapped in `React.memo()`."
+  },
+  {
+    "command": "useRef",
+    "purpose": "Creates a mutable ref object that persists for the full lifetime of the component without triggering re-renders.",
+    "syntax": "const myRef = useRef(initialValue);",
+    "example": "const inputRef = useRef(null); // Access via inputRef.current",
+    "proTip": "Great for accessing DOM elements directly or storing 'previous' state values without causing a render loop.",
+    "commonMistake": "Using useRef for things that should trigger a UI change (use useState instead)."
+  },
+  {
+    "command": "useContext",
+    "purpose": "Consumes a value from a React Context provider without passing props through multiple levels.",
+    "syntax": "const value = useContext(MyContext);",
+    "example": "const theme = useContext(ThemeContext);",
+    "proTip": "Combine with a custom provider wrapper to include logic and default values for better DX.",
+    "commonMistake": "Using Context for high-frequency state updates (like a text input), which causes all consumers to re-render."
+  },
+  {
+    "command": "React.memo",
+    "purpose": "Higher Order Component that prevents a component from re-rendering if its props haven't changed.",
+    "syntax": "export default React.memo(MyComponent);",
+    "example": "const MemoizedChild = React.memo(({ name }) => <div>{name}</div>);",
+    "proTip": "Use a custom comparison function as the second argument to `memo` for fine-grained control.",
+    "commonMistake": "Passing an object or array as a prop to a memoized component without using useMemo/useCallback, causing the memo to fail."
+  },
+  {
+    "command": "useReducer",
+    "purpose": "Alternative to useState for complex state logic involving multiple sub-values or state transitions.",
+    "syntax": "const [state, dispatch] = useReducer(reducer, initialArg);",
+    "example": "dispatch({ type: 'INCREMENT' });",
+    "proTip": "Ideal for state that behaves like a state machine (e.g., 'loading' $\rightarrow$ 'success' $\rightarrow$ 'error').",
+    "commonMistake": "Over-engineering simple state that could be handled by 2-3 useState calls."
+  }
+]

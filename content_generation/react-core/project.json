@@ -1,0 +1,48 @@
+{
+  "title": "TaskFlow: High-Performance Kanban Board",
+  "description": "Build a professional-grade Kanban board with drag-and-drop functionality, state persistence, and an optimized rendering engine to handle hundreds of tasks without lag.",
+  "difficulty": "intermediate",
+  "requirements": [
+    "Dynamic column creation (To Do, In Progress, Done).",
+    "Drag-and-drop tasks between columns using a library like dnd-kit or react-beautiful-dnd.",
+    "Persistence using LocalStorage or a simple Backend API.",
+    "Task filtering and search functionality.",
+    "Optimized rendering using React.memo and useCallback for task items."
+  ],
+  "architecture": {
+    "folderStructure": {
+      "src/components": "KanbanBoard, Column, TaskItem, TaskModal",
+      "src/hooks": "useLocalStorage, useKanbanLogic",
+      "src/context": "BoardContext (for global state management)",
+      "src/utils": "helpers.js (for sorting and filtering logic)"
+    },
+    "techStack": "React 18, Tailwind CSS, dnd-kit, Lucide React"
+  },
+  "milestones": [
+    {
+      "step": 1,
+      "title": "Static UI & State Definition",
+      "tasks": ["Define Task and Column interfaces", "Implement the basic grid layout with Tailwind", "Create mock data for initial state"]
+    },
+    {
+      "step": 2,
+      "title": "Interactivity & DnD",
+      "tasks": ["Integrate dnd-kit sensors", "Implement onDragEnd logic to update state based on target column", "Add visual feedback for dragged items"]
+    },
+    {
+      "step": 3,
+      "title": "Optimization & Persistence",
+      "tasks": ["Wrap TaskItem in React.memo to prevent global re-renders on a single task move", "Implement useLocalStorage for auto-save", "Add search bar that filters tasks in real-time"]
+    }
+  ],
+  "stretchGoals": [
+    "Implement multi-user collaboration using WebSockets (Socket.io).",
+    "Add a 'Time in Column' tracker using a custom hook.",
+    "Integrate a Dark Mode toggle using Context API."
+  ],
+  "evaluationRubric": {
+    "performance": "Does the app maintain 60fps during drag-and-drop with 100+ tasks?",
+    "codeQuality": "Are hooks used correctly? Is the state lifting appropriate?",
+    "ux": "Is the drag-and-drop intuitive? Are there loading states for persistence?"
+  }
+}

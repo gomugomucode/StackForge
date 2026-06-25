@@ -1,0 +1,44 @@
+[
+  {
+    "difficulty": "beginner",
+    "question": "What is the Virtual DOM and how does it improve performance?",
+    "idealAnswer": "The Virtual DOM is a lightweight JavaScript representation of the actual DOM. When state changes, React creates a new Virtual DOM tree, compares it with the previous one (a process called 'diffing'), and then only updates the changed parts in the real DOM (called 'reconciliation'). This avoids expensive full-page re-renders and minimizes DOM manipulations, which are the primary cause of slow web performance.",
+    "followUpQuestions": [
+      "What is the time complexity of the diffing algorithm?",
+      "How does the 'key' prop help the reconciliation process?"
+    ],
+    "commonMistakes": [
+      "Saying the Virtual DOM is 'faster than the real DOM' (It's a representation, not a replacement).",
+      "Confusing reconciliation with simple rendering."
+    ],
+    "companyTags": ["Google", "Meta", "Amazon"]
+  },
+  {
+    "difficulty": "intermediate",
+    "question": "Explain the difference between useMemo and useCallback. When would you use one over the other?",
+    "idealAnswer": "useMemo is used to memoize a *value* (the result of a function), while useCallback is used to memoize a *function instance itself*. You use useMemo when you have an expensive calculation that you don't want to run every render. You use useCallback when you are passing a function as a prop to a child component that is wrapped in React.memo; this prevents the child from re-rendering just because the function was recreated in the parent's scope.",
+    "followUpQuestions": [
+      "What is the performance cost of using useMemo everywhere?",
+      "How does useCallback relate to the 'referential equality' concept in JavaScript?"
+    ],
+    "commonMistakes": [
+      "Thinking useCallback actually 'runs' the function.",
+      "Using useMemo for simple variables (e.g., strings) where the cost of memoization exceeds the cost of recalculation."
+    ],
+    "companyTags": ["Netflix", "Microsoft", "Uber"]
+  },
+  {
+    "difficulty": "advanced",
+    "question": "How does the React Fiber architecture work and how does it enable Concurrent Mode?",
+    "idealAnswer": "React Fiber is a complete rewrite of the React core reconciliation engine. It changes the stack-based reconciliation (which was synchronous and blocking) into an incremental rendering process. Fiber introduces a 'work-in-progress' tree and the ability to pause, abort, or reuse work. This allows React to split rendering work into small units, prioritizing urgent updates (like user input) over non-urgent ones (like background data loading), which is the foundation of Concurrent Mode (Transitions, Suspense).",
+    "followUpQuestions": [
+      "What are the different phases of the Fiber rendering process?",
+      "How does the 'priority queue' in Fiber determine what to render first?"
+    ],
+    "commonMistakes": [
+      "Confusing Fiber with the Virtual DOM (Fiber is the engine that manages the VDOM).",
+      "Thinking Fiber makes the actual DOM update faster (it makes the *calculation* of the update non-blocking)."
+    ],
+    "companyTags": ["Meta", "Airbnb", "Shopify"]
+  }
+]
