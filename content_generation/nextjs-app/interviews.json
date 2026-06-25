@@ -1,0 +1,44 @@
+[
+  {
+    "difficulty": "beginner",
+    "question": "What is the 'App Router' in Next.js and how does it differ from the older 'Pages Router'?",
+    "idealAnswer": "The App Router is a new routing system introduced in Next.js 13 that uses a file-system based approach within an 'app/' directory. Unlike the Pages Router, where every file in 'pages/' became a route, the App Router uses folders to define routes and specific file names (like page.tsx, layout.tsx, loading.tsx) to define behavior. The biggest shift is the introduction of React Server Components (RSC) as the default, allowing data fetching to happen on the server by default, whereas the Pages Router relied on functions like getStaticProps and getServerSideProps.",
+    "followUpQuestions": [
+      "Can you still use the Pages Router in a Next.js 15 project?",
+      "How does the App Router handle nested layouts differently than the Pages Router?"
+    ],
+    "commonMistakes": [
+      "Thinking that all components in the 'app/' folder are Server Components (they are, unless 'use client' is added).",
+      "Confusing the 'app/' directory with the 'pages/' directory."
+    ],
+    "companyTags": ["Vercel", "Tiktok", "Twitch"]
+  },
+  {
+    "difficulty": "intermediate",
+    "question": "Explain the conceptual difference between a Server Component and a Client Component. When should you use each?",
+    "idealAnswer": "Server Components render on the server and never send JS to the client for that specific component, making them ideal for data fetching and static content. Client Components (marked with 'use client') are hydrated on the browser, allowing them to use hooks (useState, useEffect) and event listeners. The rule of thumb: Use Server Components for the layout, data fetching, and heavy logic; use Client Components for interactivity, forms, and browser-specific APIs (like window or localStorage).",
+    "followUpQuestions": [
+      "What happens if you import a Client Component into a Server Component?",
+      "Can a Server Component be imported into a Client Component?"
+    ],
+    "commonMistakes": [
+      "Overusing 'use client' at the top of every file, effectively killing the performance benefits of RSC.",
+      "Trying to use a hook in a Server Component."
+    ],
+    "companyTags": ["Amazon", "Microsoft", "Uber"]
+  },
+  {
+    "difficulty": "advanced",
+    "question": "How do Server Actions work, and how do they replace the need for a traditional API route (REST endpoint)?",
+    "idealAnswer": "Server Actions are asynchronous functions defined with 'use server' that can be called directly from a Client Component as if they were local functions. When called, Next.js automatically creates a POST request to a hidden internal endpoint, executes the function on the server, and returns the result. This removes the need to manually write an API route, handle JSON parsing, and manage fetch calls. They integrate deeply with forms via the 'action' attribute and can trigger a 'revalidatePath' to refresh the page cache immediately after a mutation.",
+    "followUpQuestions": [
+      "How do you handle validation and security in a Server Action?",
+      "How does a Server Action differ from a standard API route in terms of deployment (e.g., Cold Starts)?"
+    ],
+    "commonMistakes": [
+      "Thinking Server Actions are only for forms (they can be called in event handlers too).",
+      "Forgetting to handle the asynchronous nature of the action on the client side (e.g., not showing a loading state)."
+    ],
+    "companyTags": ["Google", "Meta", "Shopify"]
+  }
+]

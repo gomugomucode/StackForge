@@ -1,0 +1,48 @@
+{
+  "topic": "nextjs-app",
+  "concept": "Server Components vs Client Components (The Hydration Bridge)",
+  "code": "// server-component.tsx\nasync function ServerComp() {\n  const data = await db.users.findMany();\n  return <ClientComp initialData={data} />;\n}\n\n// client-component.tsx\n'use client';\nfunction ClientComp({ initialData }) {\n  const [count, setCount] = useState(0);\n  return <button onClick={() => setCount(count + 1)}>Count: {count}</button>;\n}",
+  "executionTimeline": [
+    {
+      "step": 1,
+      "event": "Request Received",
+      "description": "User requests the page. The Next.js server identifies that the root is a Server Component.",
+      "variableState": { "phase": "Server Rendering" },
+      "callStack": ["handleRequest()", "ServerComp()"],
+      "outputTrace": "Fetching data from DB..."
+    },
+    {
+      "step": 2,
+      "event": "Server-Side Execution",
+      "description": "The server executes the async function, fetches data from the DB, and renders the component to a special format (RSC payload).",
+      "variableState": { "data": "[{id: 1, name: 'Alice'}]" },
+      "callStack": ["db.users.findMany()"],
+      "outputTrace": "Rendering HTML on server..."
+    },
+    {
+      "step": 3,
+      "event": "Payload Transmission",
+      "description": "The server sends the static HTML and the RSC payload (which contains the logic for Client Components) to the browser.",
+      "variableState": { "transport": "HTTP Stream" },
+      "callStack": ["sendResponse()"],
+      "outputTrace": "Streaming HTML to client..."
+    },
+    {
+      "step": 4,
+      "event": "Client-Side Hydration",
+      "description": "The browser displays the static HTML immediately. Then, the React runtime 'hydrates' the Client Component, attaching event listeners to the existing HTML.",
+      "variableState": { "hydration": "Complete" },
+      "callStack": ["hydrateRoot()", "ClientComp()"],
+      "outputTrace": "Attaching onClick listeners..."
+    },
+    {
+      "step": 5,
+      "event": "Interactive State Update",
+      "description": "The user clicks the button. The Client Component's state changes, triggering a local re-render in the browser without contacting the server.",
+      "variableState": { "count": 1 },
+      "callStack": ["setCount()", "ClientComp()"],
+      "outputTrace": "Updating UI: Count: 1"
+    }
+  ],
+  "theFix": "To avoid 'Text content did not match' hydration errors, ensure that you don't use browser-only values (like window.innerWidth) during the initial render. Use a 'useEffect' to update those values after the component has mounted on the client."
+}

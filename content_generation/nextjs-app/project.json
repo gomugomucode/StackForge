@@ -1,0 +1,49 @@
+{
+  "title": "SaaS-Ready: The High-Performance Content Hub",
+  "description": "Build a production-grade Content Hub (similar to a blog or documentation site) using Next.js 15. The project focuses on the 'Golden Path' of modern web dev: Server Components for speed, Client Components for interactivity, and Server Actions for data mutations.",
+  "difficulty": "advanced",
+  "requirements": [
+    "A dynamic route `/articles/[slug]` that uses `generateStaticParams` to pre-render the top 10 most popular articles.",
+    "A 'Newsletter Subscription' form using a Server Action that validates input and updates a mock database.",
+    "A search bar that uses a Client Component and debounced input to filter a list of articles without page reloads.",
+    "Implementation of 'Streaming' using <Suspense> for a 'Related Articles' sidebar that loads slower than the main content.",
+    "A nested layout structure: Root Layout $\rightarrow$ Blog Layout (Sidebar/Nav) $\rightarrow$ Article Page.",
+    "Integration of a 'Table of Contents' that automatically generates links based on H2/H3 tags in the content."
+  ],
+  "architecture": {
+    "folderStructure": {
+      "app/": "layout.tsx, page.tsx, articles/[slug]/page.tsx, api/newsletter/route.ts",
+      "components/server/": "ArticleContent.tsx, RelatedArticles.tsx",
+      "components/client/": "SearchInput.tsx, SubscribeForm.tsx, TOC.tsx",
+      "lib/": "db.ts, actions.ts"
+    },
+    "techStack": "Next.js 15, Tailwind CSS, TypeScript, Prisma/Supabase"
+  },
+  "milestones": [
+    {
+      "step": 1,
+      "title": "The Static Shell",
+      "tasks": ["Build the Root and Blog layouts", "Implement the main articles list page", "Create the dynamic article page with basic data fetching"]
+    },
+    {
+      "step": 2,
+      "title": "Interactivity & Mutation",
+      "tasks": ["Create the Subscribe form as a Client Component", "Implement the Server Action to handle the subscription", "Add a loading state using useFormStatus"]
+    },
+    {
+      "step": 3,
+      "title": "Performance Optimization",
+      "tasks": ["Implement generateStaticParams for high-traffic articles", "Wrap the Related Articles section in Suspense with a skeleton", "Add a debounced search filter"]
+    }
+  ],
+  "stretchGoals": [
+    "Implement 'Incremental Static Regeneration' (ISR) to update articles without a full rebuild.",
+    "Add a 'Reading Progress Bar' that updates as the user scrolls.",
+    "Integrate a Markdown parser (like gray-matter) to load content from local .md files instead of a DB."
+  ],
+  "evaluationRubric": {
+    "performance": "Does the page maintain a perfect Lighthouse score? Are Server Components used where possible?",
+    "architecturalIntegrity": "Is the boundary between Client and Server components clean? Is the folder structure logical?",
+    "ux": "Is the streaming experience smooth? Does the form handle errors gracefully?"
+  }
+}

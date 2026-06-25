@@ -1,0 +1,66 @@
+[
+  {
+    "command": "App Router (app/)",
+    "purpose": "The modern file-system based router for Next.js, enabling Server Components and simplified layout nesting.",
+    "syntax": "app/layout.tsx (Root Layout), app/page.tsx (Route Page), app/blog/[slug]/page.tsx (Dynamic Route)",
+    "example": "To create a profile page: create app/profile/page.tsx. The file becomes the route handler.",
+    "proTip": "Use 'loading.tsx' and 'error.tsx' in any folder to automatically create a streaming UI and error boundaries for that segment.",
+    "commonMistake": "Trying to use 'useState' or 'useEffect' in a Server Component without the 'use client' directive at the top."
+  },
+  {
+    "command": "Server Components (RSC)",
+    "purpose": "Components that render exclusively on the server, reducing the amount of JS sent to the client.",
+    "syntax": "async function Page() { const data = await db.query(); return <main>{data}</main>; }",
+    "example": "Fetch data directly inside the component using 'await' without needing useEffect or fetch wrappers.",
+    "proTip": "Keep the 'leaves' of your component tree as Client Components and the 'branches/trunk' as Server Components for maximum performance.",
+    "commonMistake": "Using 'use client' on every page, which essentially turns Next.js back into a standard client-side SPA."
+  },
+  {
+    "command": "Client Components",
+    "purpose": "Components that are hydrated on the client, allowing for interactivity and browser-only APIs.",
+    "syntax": "'use client'; \n function Component() { return <button onClick={...} />; }",
+    "example": "Use for Search bars, Modals, and forms that require immediate user feedback.",
+    "proTip": "Pass Server Components as 'children' to Client Components to maintain server-side rendering for the internal content.",
+    "commonMistake": "Trying to perform direct database queries inside a Client Component."
+  },
+  {
+    "command": "Server Actions",
+    "purpose": "Functions that run on the server, triggered by client-side interactions (like form submissions).",
+    "syntax": "async function action(formData: FormData) { 'use server'; // Update DB }",
+    "example": "<form action={createPost}> <input name='title' /> <button>Submit</button> </form>",
+    "proTip": "Use 'useFormStatus' and 'useFormState' hooks to handle loading and error states during an action.",
+    "commonMistake": "Using Server Actions for simple state changes that should be handled locally on the client."
+  },
+  {
+    "command": "Dynamic Routing",
+    "purpose": "Creating routes based on dynamic data (e.g., individual product pages).",
+    "syntax": "app/products/[id]/page.tsx",
+    "example": "export default function Page({ params }: { params: { id: string } }) { return <div>Product {params.id}</div> }",
+    "proTip": "Use 'generateStaticParams' to pre-render these dynamic routes at build time for near-instant loading (SSG).",
+    "commonMistake": "Forgetting that params are passed as an object, and attempting to access them directly as strings."
+  },
+  {
+    "command": "Layout Nesting",
+    "purpose": "Defining shared UI for a segment and its children without re-rendering the shared part.",
+    "syntax": "app/dashboard/layout.tsx (Sidebar) $\rightarrow$ app/dashboard/settings/page.tsx (Content)",
+    "example": "Create a layout in /dashboard that includes the sidebar; all sub-routes will automatically share that sidebar.",
+    "proTip": "Use the 'template.tsx' file if you need the layout to re-mount on every navigation (e.g., for enter/exit animations).",
+    "commonMistake": "Wrapping the page content in another layout that duplicates the global root layout's styles."
+  },
+  {
+    "command": "Streaming & Suspense",
+    "purpose": "Breaking the page into chunks and sending them to the client as they are ready, preventing 'all-or-nothing' loading.",
+    "syntax": "<Suspense fallback={<Skeleton />}> <SlowComponent /> </Suspense>",
+    "example": "Wrap a slow API-driven component in Suspense so the rest of the page loads instantly while the component 'streams' in.",
+    "proTip": "Use 'loading.tsx' for the entire page, but use <Suspense> for specific high-latency components within a page.",
+    "commonMistake": "Putting the Suspense boundary too high in the tree, causing the entire page to disappear while waiting for one small component."
+  },
+  {
+    "command": "Middleware",
+    "purpose": "Running code before a request is completed, used for auth, redirects, and internationalization.",
+    "syntax": "export function middleware(request: NextRequest) { return NextResponse.redirect(...); }",
+    "example": "Checking for a session cookie and redirecting unauthenticated users to /login.",
+    "proTip": "Use the 'matcher' config to avoid running middleware on every single static asset (images, fonts) for better performance.",
+    "commonMistake": "Performing heavy database queries inside middleware, as it runs on every single request and can significantly slow down the site."
+  }
+]

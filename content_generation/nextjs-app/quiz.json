@@ -1,0 +1,90 @@
+{
+  "topic": "nextjs-app",
+  "quickQuiz": [
+    {
+      "id": "qq1",
+      "question": "Where should you place the 'use client' directive in a Next.js file?",
+      "options": ["At the bottom of the file", "Inside the function body", "At the very top of the file", "In the next.config.js file"],
+      "correctAnswer": 2,
+      "explanation": "The 'use client' directive must be at the absolute top of the file to signal to the compiler that this component and its imports should be bundled for the client.",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "qq2",
+      "question": "Which file name is used to define a shared layout for a specific route segment and all its children?",
+      "options": ["page.tsx", "loading.tsx", "layout.tsx", "template.tsx"],
+      "correctAnswer": 2,
+      "explanation": "layout.tsx allows you to define UI that is shared across multiple pages, preserving state and avoiding unnecessary re-renders during navigation.",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "qq3",
+      "question": "What is the primary benefit of using Server Components over Client Components?",
+      "options": [
+        "They are faster to write.",
+        "They can use useState and useEffect.",
+        "They reduce the amount of JavaScript sent to the browser.",
+        "They are better for interactive forms."
+      ],
+      "correctAnswer": 2,
+      "explanation": "Server Components execute on the server and only send the final HTML/CSS to the client, drastically reducing the bundle size and improving First Contentful Paint (FCP).",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "qq4",
+      "question": "What happens if you use a Server Action inside a Client Component?",
+      "options": [
+        "It throws a runtime error.",
+        "It works normally if the action is imported from a separate file with 'use server'.",
+        "It only works if the Client Component is wrapped in a Server Component.",
+        "It forces the entire page to become a Server Component."
+      ],
+      "correctAnswer": 1,
+      "explanation": "Server Actions can be called from Client Components as long as the action itself is defined in a file with the 'use server' directive at the top.",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "qq5",
+      "question": "What is the purpose of 'generateStaticParams' in a dynamic route?",
+      "options": [
+        "To generate random URLs for the page.",
+        "To pre-render dynamic routes at build time (Static Site Generation).",
+        "To prevent the page from being cached by the browser.",
+        "To define the metadata for the page."
+      ],
+      "correctAnswer": 1,
+      "explanation": "generateStaticParams tells Next.js which dynamic IDs (e.g., product slugs) should be pre-rendered into static HTML during the build process.",
+      "difficulty": "advanced"
+    }
+  ],
+  "masteryQuiz": [
+    {
+      "id": "mq1",
+      "type": "code-analysis",
+      "question": "Analyze this structure:\n\n/app\n  /dashboard\n    layout.tsx\n    page.tsx\n    /settings\n      page.tsx\n\nIf the user is at /dashboard/settings, which layout(s) will be rendered?",
+      "options": [
+        "Only the root layout.",
+        "Only the /dashboard layout.",
+        "Both the root layout and the /dashboard layout.",
+        "The /dashboard layout and the /settings page layout."
+      ],
+      "correctAnswer": 2,
+      "explanation": "Next.js layouts nest. The root layout wraps everything, and the /dashboard layout wraps all routes within the /dashboard segment, including /settings.",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "mq2",
+      "type": "scenario",
+      "question": "You have a page with a heavy API call taking 5 seconds. You want the header and sidebar to appear instantly, while the main content shows a loading skeleton. What is the correct implementation?",
+      "options": [
+        "Use a useEffect with a loading state in the page component.",
+        "Wrap the heavy component in <Suspense> with a fallback skeleton.",
+        "Use 'force-dynamic' in the page config to prevent caching.",
+        "Move the API call to a Client Component and use a loading spinner."
+      ],
+      "correctAnswer": 1,
+      "explanation": "Suspense allows you to 'stream' parts of the page. By wrapping the slow component, the rest of the static shell (Header/Sidebar) renders immediately while the server works on the slow part.",
+      "difficulty": "advanced"
+    }
+  ]
+}
