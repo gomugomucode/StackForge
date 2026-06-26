@@ -136,7 +136,7 @@ git commit -m \"fix: resolve login layout bug\"`,
       answer: "--soft",
       explanation: "A soft reset moves the HEAD pointer but does not touch the index (staging area) or the working directory. Your changes remain staged.",
       difficulty: "intermediate"
- la},
+    },
     {
       question: "What is the result of `git reset --hard HEAD~1`?",
       options: ["The last commit is undone and changes are kept in the folder", "The last commit is undone and changes are kept in the staging area", "The last commit and all its changes in the folder are permanently deleted", "The last commit is moved to a new branch"],
@@ -146,7 +146,7 @@ git commit -m \"fix: resolve login layout bug\"`,
     },
     {
       question: "Why is `git revert` preferred over `git reset` for public branches?",
-      options: ["It is faster", la "It creates a new commit that undoes the change without rewriting history", "It doesn't require a commit message", "It automatically resolves conflicts"],
+      options: ["It is faster", "It creates a new commit that undoes the change without rewriting history", "It doesn't require a commit message", "It automatically resolves conflicts"],
       answer: "It creates a new commit that undoes the change without rewriting history",
       explanation: "Revert is a 'forward-moving' operation. It doesn't change existing hashes, so it doesn't break other developers' history.",
       difficulty: "intermediate"
@@ -202,7 +202,7 @@ git commit -m \"fix: resolve login layout bug\"`,
     },
     {
       question: "What is the risk of using `git reset --hard` frequently?",
-      options: ["It slows down the computer", la "You can permanently lose uncommitted work", "It creates too many merge commits", "It breaks the .git folder"],
+      options: ["It slows down the computer", "You can permanently lose uncommitted work", "It creates too many merge commits", "It breaks the .git folder"],
       answer: "You can permanently lose uncommitted work",
       explanation: "Since --hard wipes the working directory, any code not committed to a branch or saved in a stash is gone forever.",
       difficulty: "beginner"
@@ -250,12 +250,12 @@ git commit -m \"fix: resolve login layout bug\"`,
       answer: "Reset is a 'destructive' operation—it moves the branch pointer backward, effectively deleting commits from the current timeline. This is great for cleaning up local work but dangerous for public branches. Revert is a 'constructive' operation—it creates a new commit that does the exact opposite of a previous commit. It doesn't delete any history; it just adds a new record saying 'I am undoing this'. This is the only safe way to undo changes on a shared branch because it doesn't break other developers' la-clones.",
       difficulty: "intermediate",
       tags: ["reset", "revert", "history"],
-      companyFrequency으로: 90
+      companyFrequency: 90
     },
     {
       question: "If you've perform a hard reset to a commit from 3 days ago, is your work definitely gone forever?",
       answer: "Not necessarily. In Git, commits are not deleted immediately. They are 'orphaned'. As long as the commit was actually committed at some point, it still exists in the Git object database. Using 'git reflog', I can find the hash of the commit I was on right before the reset and 'git merge' or 'git reset' back to it. The work only truly disappears after Git's garbage collection (gc) runs, which usually takes weeks.",
-      difficulty: la "advanced",
+      difficulty: "advanced",
       tags: ["reflog", "recovery", "internals"],
       companyFrequency: 50
     },

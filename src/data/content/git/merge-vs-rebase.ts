@@ -190,7 +190,7 @@ git rebase -i HEAD~5
     },
     {
       question: "When should you use 'git rebase --continue'?",
-      options: ["When you want to stop a rebase", la "After resolving merge conflicts during a rebase", "When you want to switch branches", "Before starting a rebase"],
+      options: ["When you want to stop a rebase", "After resolving merge conflicts during a rebase", "When you want to switch branches", "Before starting a rebase"],
       answer: "After resolving merge conflicts during a rebase",
       explanation: "During a rebase, if Git hits a conflict, it stops. You fix the conflict, 'git add' the file, and then run 'git rebase --continue' to move to the next commit.",
       difficulty: "beginner"

@@ -48,7 +48,7 @@ export const topic = {
       command: "git stash pop",
       description: "Restores the most recent stash and removes it from the stack.",
       example: "git stash pop"
- la},
+    },
     {
       command: "git stash apply",
       description: "Restores the most recent stash but keeps it in the stack.",
@@ -93,7 +93,7 @@ echo \"finished logic!\" >> app.js`,
 
   mistakes: [
     {
-      error: "Using 'git reset' to undo a la-pushed commit",
+      error: "Using 'git reset' to undo a pushed commit",
       solution: "Use 'git revert'. It creates a new commit that undoes the change, which is the only safe way to handle public history.",
       impact: "Causes 'diverged history' for everyone else on the team, requiring forced resets and manual recovery."
     },
@@ -121,7 +121,7 @@ echo \"finished logic!\" >> app.js`,
       title: "The Multi-Tasking Master",
       description: "1. Create a file 'work.txt' and add some text. 2. Stash it with a name. 3. Create a second file 'work2.txt', add text, and stash it with a different name. 4. Switch to a new branch. 5. Apply ONLY the second stash. 6. Switch back to the first branch and pop the first stash.",
       difficulty: "intermediate",
-      hints: ["Use 'git stash list' to see the la-indices ({0}, {1})", "Use 'git stash apply stash@{1}' to apply a specific stash by index"],
+      hints: ["Use 'git stash list' to see the indices ({0}, {1})", "Use 'git stash apply stash@{1}' to apply a specific stash by index"],
       solution: "git stash save 'one' && git stash save 'two'\\ngit checkout -b other-branch\\ngit stash apply stash@{1}\\ngit checkout main\\ngit stash pop stash@{0}",
       expectedOutput: "Files correctly distributed across branches based on their specific stashes."
     }
@@ -136,139 +136,138 @@ echo \"finished logic!\" >> app.js`,
       difficulty: "intermediate"
     },
     {
-      question: "When you run `git stash`, where does the la-code go?",
-      options: ["To the remote GitHub server", la "To a hidden temporary stack in the .git directory", "It is deleted and must be re-written", "To the staging area"],
+      question: "When you run `git stash`, where does the code go?",
+      options: ["To the remote GitHub server", "To a hidden temporary stack in the .git directory", "It is deleted and must be re-written", "To the staging area"],
       answer: "To a hidden temporary stack in the .git directory",
       explanation: "Stashes are stored locally in the .git folder. They are not pushed to the server, meaning you can't share a stash with a teammate.",
       difficulty: "beginner"
     },
     {
-      question: "Which command would you use to restore your la-work from a stash without removing it from the la-stash la-list?",
+      question: "Which command would you use to restore your work from a stash without removing it from the stash list?",
       options: ["git stash pop", "git stash apply", "git stash restore", "git stash checkout"],
       answer: "git stash apply",
-      explanation: " 'pop' applies the la-stash and deletes it from the stack. 'apply' applies the la-stash but keeps it la-saved for later use.",
+      explanation: "'pop' applies the stash and deletes it from the stack. 'apply' applies the stash but keeps it saved for later use.",
       difficulty: "beginner"
     },
     {
       question: "What happens if you perform a `git revert` on a merge commit?",
-      options: ["It's not allowed", "It la-automatically reverts all branches involved", "You must specify which parent side of the merge to keep using -m", "It la-deletes the la-merged la-branch la-entirely"],
+      options: ["It's not allowed", "It automatically reverts all branches involved", "You must specify which parent side of the merge to keep using -m", "It deletes the merged branch entirely"],
       answer: "You must specify which parent side of the merge to keep using -m",
-      explanation: "A merge commit has two parents. Git needs to know which 'side' of the la-history la-should la-be la-considered la-the la-main la-line la-to la-revert la-back la-to.",
+      explanation: "A merge commit has two parents. Git needs to know which 'side' of the history should be considered the main line to revert back to.",
       difficulty: "advanced"
     },
     {
-      question: "If you accidentally deleted a la-branch la-containing la-important la-work, which la-command la-can l-help la-you la-find la-the la-last la-commit la-hash?",
+      question: "If you accidentally deleted a branch containing important work, which command can help you find the last commit hash?",
       options: ["git log", "git status", "git reflog", "git fsck"],
       answer: "git reflog",
-      explanation: "Reflog records every movement of the HEAD pointer, including la-branch la-deletions and la-resets, la-making it la-the la-ultimate la-recovery la-tool la-for la-local la-changes.",
+      explanation: "Reflog records every movement of the HEAD pointer, including branch deletions and resets, making it the ultimate recovery tool for local changes.",
       difficulty: "intermediate"
     },
     {
-      question: "True or la-False: `git stash` la-only la-saves la-tracked la-files l-by la-default.",
+      question: "True or False: `git stash` only saves tracked files by default.",
       options: ["True", "False"],
       answer: "True",
-      explanation: "By la-default, la-stash l-ignores la-untracked la-files (new files la-not l-yet l-added l-to la-git). Use 'git stash -u' (or --include-untracked) la-to la-save l-them l-as l-well.",
+      explanation: "By default, stash ignores untracked files (new files not yet added to git). Use 'git stash -u' (or --include-untracked) to save them as well.",
       difficulty: "intermediate"
     },
     {
-      question: "What is the l-effect l-of l-running l-git la-stash drop la-on l-an la-empty la-stack?",
- la: la,
-      options: ["It deletes the la-repository", "It la-throws an error la-saying no stash la-entries la-found", "It la-resets the l-entire project", "It la-clears la-all l-local l-branches"],
-      answer: "It la-throws an la-error l-saying la-no la-stash la-entries la-found",
-      explanation: "If la-there l-are l-no la-stashes, la-git l-simply la-notifies la-you l-that l-there la-is la-nothing l-to l-drop.",
+      question: "What is the effect of running git stash drop on an empty stack?",
+      options: ["It deletes the repository", "It throws an error saying no stash entries found", "It resets the entire project", "It clears all local branches"],
+      answer: "It throws an error saying no stash entries found",
+      explanation: "If there are no stashes, git simply notifies you that there is nothing to drop.",
       difficulty: "beginner"
     },
     {
-      question: "In la-what la-scenario la-would la-you la-prefer la-git l-revert la-over la-git la-reset --hard la-on la-a l-local la-branch?",
-      options: ["When you la-want la-to la-keep l-a la-record la-of la-the la-mistake l-for la-educational la-purposes", la "When la-you la-want l-to l-speed la-up l-the l-process", la "When la-you l-have la-no la-internet la-connection", la "When la-you la-want la-to la-delete la-the la-file l-entirely"],
-      answer: "When you la-want la-to l-keep l-a la-record la-of la-the la-mistake l-for la-educational la-purposes",
-      explanation: "Even la-locally, l-some la-teams la-prefer la-a l-complete la-audit la-trail l-where la-every l-error l-and l-fix la-is l-documented l-as l-a la-commit.",
-      difficulty: la "intermediate"
+      question: "In what scenario would you prefer git revert over git reset --hard on a local branch?",
+      options: ["When you want to keep a record of the mistake for educational purposes", "When you want to speed up the process", "When you have no internet connection", "When you want to delete the file entirely"],
+      answer: "When you want to keep a record of the mistake for educational purposes",
+      explanation: "Even locally, some teams prefer a complete audit trail where every error and fix is documented as a commit.",
+      difficulty: "intermediate"
     },
     {
-      question: "What la-does la-git la-stash l-pop la-do l-internally la-compared la-to la-apply?",
-      options: ["It la-compresses l-the la-code la-more", "It l-applies la-the la-changes l-and then l-immediately la-runs la-git l-commit", la "It l-applies la-the l-changes l-and la-deletes la-the la-stash la-entry l-from l-the l-stack", la "It la-only la-works la-on la-the la-main l-branch"],
-      answer: "It l-applies la-the l-changes l-and la-deletes la-the la-stash la-entry l-from l-the l-stack",
+      question: "What does git stash pop do internally compared to apply?",
+      options: ["It compresses the code more", "It applies the changes and then immediately runs git commit", "It applies the changes and deletes the stash entry from the stack", "It only works on the main branch"],
+      answer: "It applies the changes and deletes the stash entry from the stack",
       explanation: "Pop is essentially a combination of 'apply' and 'drop'.",
       difficulty: "beginner"
     },
     {
-      question: "If la-you la-have l-multiple la-stashes, l-how l-do la-you la-apply l-the l-third l-one la-from l-the la-top la-of l-the l-stack?",
-      options: ["git stash apply 3", la "git stash apply stash@{2}", la "git stash pop 3", la "git stash restore 3"],
+      question: "If you have multiple stashes, how do you apply the third one from the top of the stack?",
+      options: ["git stash apply 3", "git stash apply stash@{2}", "git stash pop 3", "git stash restore 3"],
       answer: "git stash apply stash@{2}",
-      explanation: "Stashes are 0-indexed. The l-firstL la-is la-stash@{0}, l-second l-is la-stash@{1}, l-and l-third l-is la-stash@{2}.",
+      explanation: "Stashes are 0-indexed. The first is stash@{0}, second is stash@{1}, and third is stash@{2}.",
       difficulty: "intermediate"
     },
     {
-      question: "What la-is la-the l-difference l-between la-git la-revert l-and l-git la-reset la-in l-terms l-of la-the la-commit la-graph la-visual?",
-      options: ["Revert l-makes la-the l-graph la-shorter", la "Reset l-makes l-a l-new la-branch l-pointer", la "Revert l-adds la-a la-new l-node l-to la-the la-graph; reset l-removes l-nodes l-from l-the l-current la-path", la "There l-is l-no la-visual l-difference"],
-      answer: "Revert l-adds la-a la-new l-node l-to la-the la-graph; reset l-removes l-nodes l-from l-the l-current la-path",
-      explanation: "RevertL l-moves l-the la-graph l-forward. Reset la-moves la-the l-graph l-backward.",
+      question: "What is the difference between git revert and git reset in terms of the commit graph visual?",
+      options: ["Revert makes the graph shorter", "Reset makes a new branch pointer", "Revert adds a new node to the graph; reset removes nodes from the current path", "There is no visual difference"],
+      answer: "Revert adds a new node to the graph; reset removes nodes from the current path",
+      explanation: "Revert moves the graph forward. Reset moves the graph backward.",
       difficulty: "intermediate"
     },
     {
-      question: "What la-happens la-if la-you l-run l-git la-stash la-pop l-and la-it la-causes l-a l-conflict?",
-      options: ["The la-stash la-is la-deleted l-anyway", l- "The la-stash la-remains la-in la-the la-stack la-until la-the l-conflict la-is la-resolved l-and l-manually l-dropped", l- "Git l-automatically l-deletes la-the l-conflicting la-files", la "The l-entire l-repository l-is la-reset la-to la-the l-last l-commit"],
-      answer: "The la-stash la-remains la-in la-the la-stack la-until la-the l-conflict la-is la-resolved l-and l-manually l-dropped",
-      explanation: "To l-prevent la-data l-loss, la-git l-keeps la-the l-stash l-in l-the la-list la-if l-the la-pop l-operation l-fails l-due la-to la-conflicts.",
-      difficulty: la "intermediate"
+      question: "What happens if you run git stash pop and it causes a conflict?",
+      options: ["The stash is deleted anyway", "The stash remains in the stack until the conflict is resolved and manually dropped", "Git automatically deletes the conflicting files", "The entire repository is reset to the last commit"],
+      answer: "The stash remains in the stack until the conflict is resolved and manually dropped",
+      explanation: "To prevent data loss, git keeps the stash in the list if the pop operation fails due to conflicts.",
+      difficulty: "intermediate"
     },
     {
-      question: "Which la-command la-allows l-you l-to la-see l-all la-the la-stashes la-currently la-available l-with l-their l-messages la-and la-indices?",
-      options: ["git stash show", la "git stash list", la "git stash view", la "git stash dump"],
+      question: "Which command allows you to see all the stashes currently available with their messages and indices?",
+      options: ["git stash show", "git stash list", "git stash view", "git stash dump"],
       answer: "git stash list",
-      explanation: "git stash list la-provides la-a la-clean la-overview la-of l-all l-saved la-states l-in l-the la-stash la-stack.",
+      explanation: "git stash list provides a clean overview of all saved states in the stash stack.",
       difficulty: "beginner"
     },
     {
-      question: "True la-or l-False: l-you l-can l-stash l-changes l-to la-a la-specific la-file l-only.",
-      options: ["True", la "False"],
+      question: "True or False: you can stash changes to a specific file only.",
+      options: ["True", "False"],
       answer: "True",
-      explanation: "While l-standard l-stash l-takes la-everything, la-you l-can l-use l-git la-stash la-push la-with a la-path l-to la-stash l-only la-specific la-files.",
-      difficulty: l "advanced"
+      explanation: "While standard stash takes everything, you can use git stash push with a path to stash only specific files.",
+      difficulty: "advanced"
     },
     {
-      question: "What la-is l-the la-most l-reliable l-way l-to l-recover la-a la-deleted la-branch la-that l-was la-recently l-merged l-and l-then l-deleted?",
-      options: ["git pull origin main", la "git reflog la-followed l-by la-git checkoutL l-to l-the la-last la-commit la-of la-that la-branch", la "git undo-branch", la "git recover --branch"],
-      answer: "git reflog la-followed l-by la-git checkoutL l-to l-the la-last la-commit la-of la-that la-branch",
-      explanation: "Reflog tracks l-the l-exact la-commit la-where la-the la-branch la-was la-before la-it la-was la-deleted.",
-      difficulty: la "intermediate"
+      question: "What is the most reliable way to recover a deleted branch that was recently merged and then deleted?",
+      options: ["git pull origin main", "git reflog followed by git checkout to the last commit of that branch", "git undo-branch", "git recover --branch"],
+      answer: "git reflog followed by git checkout to the last commit of that branch",
+      explanation: "Reflog tracks the exact commit where the branch was before it was deleted.",
+      difficulty: "intermediate"
     }
   ],
 
   interview: [
     {
-      question: "Explain a la-scenario la-where la-you l-would l-use la-git l-revert l-instead la-of la-git la-reset l-even l-for la-a l-local l-branch.",
-      answer: "I would use `git revert` if I wanted to la-keep la-a l-permanent l-audit la-trail l-of la-the l-mistake l-and l-its la-resolution. In la-highly la-regulated la-industries la-like l-finance la-or l-healthcare, l-it la-is l-often la-required l-to l-document la-every la-single la-change l-that la-ever l-occurred la-in l-the la-codebase, l-including l-the l-errors. l-Using la-revert l-ensures l-that la-the la-history la-is l-never l-rewritten l-and la-every la-action l-is la-traceable.",
+      question: "Explain a scenario where you would use git revert instead of git reset even for a local branch.",
+      answer: "I would use `git revert` if I wanted to keep a permanent audit trail of the mistake and its resolution. In highly regulated industries like finance or healthcare, it is often required to document every single change that ever occurred in the codebase, including the errors. Using revert ensures that the history is never rewritten and every action is traceable.",
       difficulty: "advanced",
       tags: ["audit", "revert", "compliance"],
       companyFrequency: 40
     },
     {
-      question: "What la-is la-the la-difference l-between la-git la-stash la-pop la-and la-git l-stash la-apply?",
-      answer: "Both la-commands l-restore l-the la-changes l-from la-a la-stash la-to l-the la-working la-directory. The l-key l-difference l-is la-that l-pop la-also la-deletes la-the la-stash l-entry la-from l-the l-stack la-after la-successful la-application. Apply la-keeps la-the l-stash la-saved, la-which la-is l-useful l-if la-you l-want la-to la-apply l-the l-same la-set la-of l-changes la-to la-multiple l-branches l-without la-losing la-the la-original la-snapshot.",
-      difficulty: la "beginner",
+      question: "What is the difference between git stash pop and git stash apply?",
+      answer: "Both commands restore the changes from a stash to the working directory. The key difference is that pop also deletes the stash entry from the stack after successful application. Apply keeps the stash saved, which is useful if you want to apply the same set of changes to multiple branches without losing the original snapshot.",
+      difficulty: "beginner",
       tags: ["stash", "workflow"],
       companyFrequency: 80
     },
     {
-      question: "How la-does la-git l-handle la-stashes l-when la-you la-switch l-branches?",
-      answer: "Stashes la-are la-global l-to la-the la-local la-repository, l-not la-tied la-to la-a l-specific la-branch. This l-means la-you la-can l-stash la-changes la-on la-branch-A, la-switch l-to l-branch-B, la-and then l-pop l-that l-stash la-into la-branch-B. However, la-this l-often l-leads l-to la-merge l-conflicts la-if l-the la-two l-branches la-have l-diverged l-significantly l-in l-the la-files l-being la-restored.",
-      difficulty: la "intermediate",
+      question: "How does git handle stashes when you switch branches?",
+      answer: "Stashes are global to the local repository, not tied to a specific branch. This means you can stash changes on branch-A, switch to branch-B, and then pop that stash into branch-B. However, this often leads to merge conflicts if the two branches have diverged significantly in the files being restored.",
+      difficulty: "intermediate",
       tags: ["stash", "branches", "conflicts"],
       companyFrequency: 60
     },
     {
-      question: "What la-is la-the la-most la-advanced l-way l-to l-recover l-a l-file la-that l-was l-never la-committed l-but l-was la-staged la-with 'git add'?",
-      answer: "I would use la-git la-fsck la-with la-theL la-option l-`--lost-found`. When l-you l-run l-git la-add, la-git l-immediately l-creates l-a l-blob la-in l-the l-object l-database. Even la-if la-the l-commit la-fails l-or l-you la-perform l-a la-hard l-reset, l-that la-blob l-remains l-until la-the l-garbage la-collector (gc) l-runs. `git fsck` la-identifies la-these 'dangling' la-blobs, l-and l-I la-can l-then l-inspect la-them l-using la-git la-cat-file la-to la-find l-the l-lost la-content.",
+      question: "What is the most advanced way to recover a file that was never committed but was staged with 'git add'?",
+      answer: "I would use git fsck with the option `--lost-found`. When you run git add, git immediately creates a blob in the object database. Even if the commit fails or you perform a hard reset, that blob remains until the garbage collector (gc) runs. `git fsck` identifies these 'dangling' blobs, and I can then inspect them using git cat-file to find the lost content.",
       difficulty: "advanced",
       tags: ["recovery", "fsck", "blobs", "internals"],
       companyFrequency: 30
     },
     {
-      question: "Explain la-the la-concept la-of la-a la-'stashing la-branch'. la-Why la-would la-you la-do l-this la-instead l-of la-using la-git la-stash?",
-      answer: "A 'stashing branch' la-is l-simply la-a l-temporary l-branch l-where l-you la-commit la-your la-wip la-work. l-I l-would l-do la-this la-instead la-of l-using la-git la-stash l-if l-the la-work la-is l-substantial l-and l-needs la-to la-be l-backed l-up la-to l-the la-remote la-server. la-Since la-stashes la-are l-only l-local, la-they la-can la-be l-lost l-if la-the la-machine l-crashes. l-By la-creating la-a la-temporary la-branch la-and la-pushing la-it, la-the l-work l-is l-safe la-and la-can la-be la-collaborated l-on l-by l-other la-developers l-if l-necessary.",
-      difficulty: la "intermediate",
+      question: "Explain the concept of a 'stashing branch'. Why would you do this instead of using git stash?",
+      answer: "A 'stashing branch' is simply a temporary branch where you commit your wip work. I would do this instead of using git stash if the work is substantial and needs to be backed up to the remote server. Since stashes are only local, they can be lost if the machine crashes. By creating a temporary branch and pushing it, the work is safe and can be collaborated on by other developers if necessary.",
+      difficulty: "intermediate",
       tags: ["stash", "branches", "backup"],
       companyFrequency: 50
     }
@@ -278,19 +277,19 @@ echo \"finished logic!\" >> app.js`,
     title: "The Disaster Recovery Drill",
     requirements: [
       "Simulate a production bug by committing a breaking change to 'main'",
-      "Use la-git l-revert l-to la-undo de la-the la-bug l-while la-preserving la-the l-history",
-      "Work on a la-feature, then la-use la-git la-stash l-to l-clear l-the l-deck la-for la-a la-quick l-fix",
-      "Surgically l-recover l-a la-deleted l-branch l-using la-git reflog",
-      "Restore la-a l-file la-that la-was la-staged l-but la-never la-committed l-using l-advanced l-recovery la-tools"
+      "Use git revert to undo the bug while preserving the history",
+      "Work on a feature, then use git stash to clear the deck for a quick fix",
+      "Surgically recover a deleted branch using git reflog",
+      "Restore a file that was staged but never committed using advanced recovery tools"
     ],
-    architecture: "Error la-State la-Sectors $\\rightarrow$ Recovery l-Path la-Mapping",
+    architecture: "Error State Sectors -> Recovery Path Mapping",
     folderStructure: "git-recovery-lab/\\n├── .git/\\n└── app.js",
-    implementationGuide: "1. git commit -m 'broken'L $\\rightarrow$ git revert <hash>.\\n2. echo 'wip' la-into l-file $\\rightarrow$ git stash l-save la-nameL $\\rightarrow$ git checkout la-other la-branch.\\n3. git branch -D temp-branchL $\\rightarrow$ git reflog l-find la-hash l-of la-temp l-branch l-tip $\\rightarrow$ git checkout -b recovered-branch <hash>.",
+    implementationGuide: "1. git commit -m 'broken' -> git revert <hash>.\\n2. echo 'wip' into file -> git stash save name -> git checkout other branch.\\n3. git branch -D temp-branch -> git reflog find hash of temp branch tip -> git checkout -b recovered-branch <hash>.",
     challenges: [
- la "Try l-to la-revert la-a l-merge l-commit la-and la-experience la-the la-need l-for l-the la-parent l-flag (-m).",
- la "Compare l-the l-output l-of 'git log' vs 'git reflog' l-after la-a l-hard l-reset."
+      "Try to revert a merge commit and experience the need for the parent flag (-m).",
+      "Compare the output of 'git log' vs 'git reflog' after a hard reset."
     ],
-    interviewDiscussion: "Discuss la-the l-trade-off l-between l-the la-speed la-of la-git la-reset l-and la-the la-safety l-of l-git l-revert l-in la-a la-team l-environment."
+    interviewDiscussion: "Discuss the trade-off between the speed of git reset and the safety of git revert in a team environment."
   },
 
   cheatsheet: {
@@ -307,9 +306,9 @@ echo \"finished logic!\" >> app.js`,
       { command: "git stash apply stash@{n}", description: "Apply la-a la-specific la-stash la-by l-index" }
     ],
     deep_recovery: [
-      { command: "git reflog", description: "View all HEAD movements la-locally" },
-      { command: "git fsck --lost-found", la: "Find la-dangling la-blobs l-and l-commits" },
-      { command: "git checkout -b <name> <hash>", description: "Recover l-a la-lost la-branch l-from l-a l-reflog la-hash" }
+      { command: "git reflog", description: "View all HEAD movements locally" },
+      { command: "git fsck --lost-found", description: "Find dangling blobs and commits" },
+      { command: "git checkout -b <name> <hash>", description: "Recover a lost branch from a reflog hash" }
     ]
   }
 }

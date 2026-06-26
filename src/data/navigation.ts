@@ -6,24 +6,31 @@ export interface NavLink {
 
 export const navLinks: NavLink[] = [
   { label: 'Home', href: '/' },
-  { label: 'Learn', href: '/learn' },
   { label: 'Roadmaps', href: '/roadmaps' },
+  { label: 'Learn', href: '/learn' },
+  { label: 'Cheatsheets', href: '/cheatsheets' },
+  { label: 'Quizzes', href: '/roadmaps' }, // In StackForge, quizzes are tied to modules/roadmaps
+  { label: 'Projects', href: '/projects' },
+  { label: 'Interview Prep', href: '/interview' },
+  { label: 'AI Tutor', href: '/tutor' },
+  { label: 'Community', href: '/community' },
   { 
     label: 'Resources', 
     href: '/resources',
     children: [
       { label: 'Cheatsheets', href: '/cheatsheets' },
       { label: 'Articles', href: '/blog' },
-      { label: 'Notes', href: '/learn' },
-      { label: 'Downloads', href: '/roadmaps/export' },
-      { label: 'Certificates', href: '/cert' },
+      { label: 'Tutorials', href: '/learn' },
+      { label: 'Projects', href: '/projects' },
+      { label: 'Interview Questions', href: '/interview' },
+      { label: 'Roadmaps', href: '/roadmaps' },
+      { label: 'Official Docs', href: 'https://react.dev' },
+      { label: 'External References', href: 'https://developer.mozilla.org' },
     ]
   },
-  { label: 'Community', href: '/community' },
-  { label: 'Interview', href: '/interview' },
-  { label: 'Projects', href: '/projects' },
-  { label: 'Tutor', href: '/tutor' },
+  { label: 'Dashboard', href: '/dashboard' },
 ]
 
 export const brandName = 'StackForge'
 export const brandTagline = 'Learn Programming Interactively'
+

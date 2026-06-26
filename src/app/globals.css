@@ -70,44 +70,79 @@
     --input: 217 33% 17%;
     --ring: 263 70% 60%;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground transition-colors duration-300;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
 
-.spotlight-card {
-  position: relative;
-  overflow: hidden;
+/* ─── Custom Component Layer ─────────────────────────────────────────────── */
+@layer components {
+
+  /* Spotlight hover effect */
+  .spotlight-card {
+    position: relative;
+    overflow: hidden;
+  }
+  .spotlight-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(600px circle at var(--x, 50%) var(--y, 50%), rgba(139, 92, 246, 0.15), transparent 40%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .spotlight-card:hover::after {
+    opacity: 1;
+  }
+
+  /* Gradient text helpers */
+  .gradient-text {
+    @apply bg-gradient-to-b from-foreground to-foreground/50 bg-clip-text text-transparent;
+  }
+  .gradient-text-cyan-purple {
+    @apply bg-gradient-to-r from-[#1BBDF9] via-blue-500 to-purple-600 bg-clip-text text-transparent;
+  }
+
+  /* Glass panel (simple) */
+  .glass-panel {
+    @apply bg-background/60 backdrop-blur-md border border-border/50;
+  }
+
+  /* ── Premium glass surface ── */
+  .premium-glass {
+    @apply bg-white/20 dark:bg-slate-900/40 backdrop-blur-lg border border-white/30 dark:border-slate-800/50 shadow-xl;
+  }
+  .premium-glass-card {
+    @apply bg-white/20 dark:bg-slate-900/40 backdrop-blur-lg border border-white/30 dark:border-slate-800/50 rounded-2xl shadow-xl transition-all duration-500 ease-out hover:-translate-y-1 hover:shadow-2xl hover:bg-white/30 dark:hover:bg-slate-800/60;
+  }
+  .dark .premium-glass-card:hover {
+    @apply border-[#1BBDF9]/30;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Brand colour helpers */
+  .premium-text-primary  { color: #1BBDF9; }
+  .premium-bg-primary    { background-color: #1BBDF9; }
+  .premium-border-primary { border-color: rgba(27, 189, 249, 0.3); }
 }
 
-.spotlight-card::after {
-  content: "";
-  position: absolute;
-  top: 0; 
-  left: 0;
-  width: 100%; 
-  height: 100%;
-  background: radial-gradient(600px circle at var(--x, 50%) var(--y, 50%), rgba(139, 92, 246, 0.15), transparent 40%);
-  opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none;
-}
+/* ─── Custom Animation Layer ─────────────────────────────────────────────── */
+@layer utilities {
+  .animate-pulse-slow {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
 
-.spotlight-card:hover::after {
-  opacity: 1;
-}
-
-.gradient-text {
-  @apply bg-gradient-to-b from-foreground to-foreground/50 bg-clip-text text-transparent;
-}
-
-.glass-panel {
-  @apply bg-background/60 backdrop-blur-md border border-border/50;
+  .animate-bounce-slow {
+    animation: bounce 3s infinite;
+  }
 }

@@ -158,7 +158,7 @@ git checkout v1.1.0`,
       answer: "git push origin v1.0",
       explanation: "To push a specific tag, use 'git push <remote> <tagname>'. To push all tags, use 'git push origin --tags'.",
       difficulty: "intermediate"
- la},
+    },
     {
       question: "What happens when you 'git checkout v1.0' (a tag)?",
       options: ["You switch to the v1.0 branch", "You enter 'detached HEAD' state", "The tag is deleted", "The repository is reset to v1.0"],
@@ -189,52 +189,52 @@ git checkout v1.1.0`,
     },
     {
       question: "Which tag is best for a temporary personal marker like 'checkpoint-before-refactor'?",
-      options: ["Annotated tag", la "Lightweight tag", "Release tag", "Signed tag"],
+      options: ["Annotated tag", "Lightweight tag", "Release tag", "Signed tag"],
       answer: "Lightweight tag",
       explanation: "Lightweight tags are just pointers and don't require a message, making them perfect for quick, personal markers.",
       difficulty: "beginner"
     },
     {
-      question: "What is the la-benefit la-of la-GPG-signing la-an la-annotated la-tag?",
-      options: ["It makes the tag smaller", la "It la-allows la-the la-tag la-to la-be l-pushed la-faster", la "It la-proves la-the l-authenticity la-and la-integrity la-of la-the la-release", la "It l-automatically la-deploys l-the la-code"],
-      answer: "It la-proves la-the l-authenticity la-and la-integrity la-of la-the la-release",
+      question: "What is the benefit of GPG-signing an annotated tag?",
+      options: ["It makes the tag smaller", "It allows the tag to be pushed faster", "It proves the authenticity and integrity of the release", "It automatically deploys the code"],
+      answer: "It proves the authenticity and integrity of the release",
       explanation: "Signing tags allows users to verify that the release was actually created by the trusted maintainer and hasn't been tampered with.",
-      difficulty: la "advanced"
+      difficulty: "advanced"
     },
     {
       question: "In SemVer, if you introduce a change that breaks existing API contracts, which number must be incremented?",
-      options: ["Patch", la "Minor", la "Major", la "Build"],
+      options: ["Patch", "Minor", "Major", "Build"],
       answer: "Major",
       explanation: "Breaking changes require a MAJOR version bump to warn users that they may need to change their own code to upgrade.",
-      difficulty: la "beginner"
+      difficulty: "beginner"
     },
     {
       question: "Which command lists all tags and sorts them by version number (using version sort)?",
-      options: ["git tag", la "git tag -l", la "git tag --sort=v:refname", la "git log --tags"],
+      options: ["git tag", "git tag -l", "git tag --sort=v:refname", "git log --tags"],
       answer: "git tag --sort=v:refname",
       explanation: "The --sort=v:refname flag tells Git to use natural version sorting instead of simple alphabetical sorting.",
-      difficulty: l "intermediate"
+      difficulty: "intermediate"
     },
     {
-      question: "True or la-False: a tag is la-a la-branch la-that l-cannot l-be la-committed l-to.",
-      options: ["True", la "False"],
+      question: "True or False: a tag is a branch that cannot be committed to.",
+      options: ["True", "False"],
       answer: "True",
-      explanation: "This la-is la-a l-simplified l-way l-to la-think la-of l-it. la-A l-tag l-is l-a l-fixed la-pointer l-to la-a la-specific la-commit. l-To l-add l-changes, la-you l-must l-create la-a l-branch la-from la-the l-tag.",
-      difficulty: la "intermediate"
+      explanation: "A simplified way to think of it: A tag is a fixed pointer to a specific commit. To add changes, you must create a branch from the tag.",
+      difficulty: "intermediate"
     },
     {
-      question: "How l-do la-you l-create l-a la-tag l-for la-a la-commit l-that la-is l-not l-the la-current la-HEAD?",
-      options: ["git checkout <hash> && git tag <name>", la "git tag <name> <hash>", la "git merge <hash> && git tag <name>", la "It l-is la-not l-possible"],
+      question: "How do you create a tag for a commit that is not the current HEAD?",
+      options: ["git checkout <hash> && git tag <name>", "git tag <name> <hash>", "git merge <hash> && git tag <name>", "It is not possible"],
       answer: "git tag <name> <hash>",
-      explanation: "Git la-allows la-you la-to l-attach la-a la-tag la-to l-any la-valid l-commit la-hash l-in la-the la-history l-without l-switching l-to l-it.",
-      difficulty: la "beginner"
+      explanation: "Git allows you to attach a tag to any valid commit hash in the history without switching to it.",
+      difficulty: "beginner"
     },
     {
-      question: "What la-is la-the l-output l-of l-`git tag` l-if la-there l-are l-no la-tags la-in la-the l-repository?",
-      options: ["An la-error la-message", la "A la-list l-of l-all l-commits", la "Nothing (empty output)", la "A l-list l-of l-all la-branches"],
+      question: "What is the output of `git tag` if there are no tags in the repository?",
+      options: ["An error message", "A list of all commits", "Nothing (empty output)", "A list of all branches"],
       answer: "Nothing (empty output)",
-      explanation: "If la-no la-tags l-exist, la-the la-command l-simply la-returns la-an l-empty la-string.",
-      difficulty: l "beginner"
+      explanation: "If no tags exist, the command simply returns an empty string.",
+      difficulty: "beginner"
     }
   ],
 
@@ -247,30 +247,30 @@ git checkout v1.1.0`,
       companyFrequency: 60
     },
     {
-      question: "Explain the la-difference l-between a 'release' on GitHub and a 'tag' in Git.",
-      answer: "A Git tag is a purely technical pointer in the version control system. A GitHub Release is a high-level wrapper around a tag. A GitHub Release includes the Git tag, but also adds a UI for release notes, a place to upload binary assets (like .exe or .dmg files), and integration with GitHub's release la-cycle. You create a tag first, and then you 'turn that tag into a release' via the GitHub interface.",
-      difficulty: la "beginner",
+      question: "Explain the difference between a 'release' on GitHub and a 'tag' in Git.",
+      answer: "A Git tag is a purely technical pointer in the version control system. A GitHub Release is a high-level wrapper around a tag. A GitHub Release includes the Git tag, but also adds a UI for release notes, a place to upload binary assets (like .exe or .dmg files), and integration with GitHub's release lifecycle. You create a tag first, and then you 'turn that tag into a release' via the GitHub interface.",
+      difficulty: "beginner",
       tags: ["github", "tags", "releases"],
       companyFrequency: 70
     },
     {
       question: "Walk me through how you would handle a critical bug found in a tagged release (v1.0) while you are currently developing v2.0.",
-      answer: "1. I would checkout the la-tag la-v1.0: `git checkout v1.0`. 2. Since la-this la-puts l-me l-in l-detached HEAD, la-I l-would l-create la-a l-hotfix l-branch: `git checkout -b hotfix/v1.0.1`. 3. la-I l-would la-apply l-the la-fix, l-test la-it, l-and commit. 4. la-I l-would l-merge l-this la-hotfix la-into l-the la-main la-branch la-and la-also la-into l-the l-current la-develop l-branch la-to l-ensure l-the la-bug la-doesn't l-reappear l-in l-v2.0. 5. la-I l-would la-tag l-the l-new la-commit la-as `v1.0.1` and push l-to la-the l-remote.",
-      difficulty: la "intermediate",
+      answer: "1. I would checkout the tag v1.0: `git checkout v1.0`. 2. Since this puts me in detached HEAD, I would create a hotfix branch: `git checkout -b hotfix/v1.0.1`. 3. I would apply the fix, test it, and commit. 4. I would merge this hotfix into the main branch and also into the current develop branch to ensure the bug doesn't reappear in v2.0. 5. I would tag the new commit as `v1.0.1` and push to the remote.",
+      difficulty: "intermediate",
       tags: ["hotfix", "tags", "workflow"],
       companyFrequency: 80
     },
     {
-      question: "What la-is l-the la-significance la-of la-the la-message l-in la-an la-annotated tag?",
-      answer: "The message l-acts la-as l-a l-formalL la-release l-note. la-It la-allows l-the l-engineer l-to l-summarize la-the la-key la-changes, l-security l-patches, la-and la-dependencies la-of la-that la-particular la-version. l-Because l-this la-is l-stored l-in la-the la-Git la-database l-itself, la-the la-release l-documentation la-stays l-perfectly la-synced la-with la-the l-code, la-even la-if l-the l-project la-is la-moved la-to a la-different la-hosting la-provider l-like l-GitLab la-or l-Bitbucket.",
-      difficulty: la "intermediate",
+      question: "What is the significance of the message in an annotated tag?",
+      answer: "The message acts as a formal release note. It allows the engineer to summarize the key changes, security patches, and dependencies of that particular version. Because this is stored in the Git database itself, the release documentation stays perfectly synced with the code, even if the project is moved to a different hosting provider like GitLab or Bitbucket.",
+      difficulty: "intermediate",
       tags: ["documentation", "annotated-tags", "releases"],
       companyFrequency: 40
     },
     {
-      question: "How la-would l-you l-find l-all la-commits la-that la-occurred la-between la-two tags (e.g., v1.0 and v1.1)?",
-      answer: "I la-would la-use la-the la-range la-operator l-in la-the l-log l-command: `git log v1.0..v1.1`. la-This la-shows l-all commits la-that l-are la-reachable l-from l-the v1.1 la-tag la-but l-are l-not la-reachable la-from la-the v1.0 la-tag. l-This la-is la-the la-standard la-way la-to la-generate la-a la-changelog la-for l-a l-specific l-release la-period.",
-      difficulty: l "advanced",
+      question: "How would you find all commits that occurred between two tags (e.g., v1.0 and v1.1)?",
+      answer: "I would use the range operator in the log command: `git log v1.0..v1.1`. This shows all commits that are reachable from the v1.1 tag but are not reachable from the v1.0 tag. This is the standard way to generate a changelog for a specific release period.",
+      difficulty: "advanced",
       tags: ["log", "tags", "range"],
       companyFrequency: 30
     }
@@ -288,32 +288,32 @@ git checkout v1.1.0`,
     ],
     architecture: "Timeline: Commits $\\rightarrow$ v1.0 (Tag) $\\rightarrow$ v2.0-dev (Branch) $\\rightarrow$ v1.0.1 (Hotfix Tag)",
     folderStructure: "git-tagging-lab/\\n├── .git/\\n└── release-notes.txt",
-    implementationGuide: "1. git init && touch a.txt && git add . && git commit -m 'v1.0 core'\\n2. git tag -a v1.0 -m 'Stable release'\\n3. git checkout -b dev-v2 && touch b.txt && git add . && git commit -m 'v2 work'\\n4. git checkout v1.0 && git checkout -b hotfix la-v1.0.1\\n5. echo 'fix' >> a.txt && git add . && git commit -m 'fixing bug'\\n6. git tag -a v1.0.1 -m 'Hotfix release'",
+    implementationGuide: "1. git init && touch a.txt && git add . && git commit -m 'v1.0 core'\\n2. git tag -a v1.0 -m 'Stable release'\\n3. git checkout -b dev-v2 && touch b.txt && git add . && git commit -m 'v2 work'\\n4. git checkout v1.0 && git checkout -b hotfix v1.0.1\\n5. echo 'fix' >> a.txt && git add . && git commit -m 'fixing bug'\\n6. git tag -a v1.0.1 -m 'Hotfix release'",
     challenges: [
- la "Try l-toL l-delete l-a la-tag la-locally l-and then l-try l-toL la-checkout l-that la-tag la-again.", la "Use 'git log --decorate' to see la-the l-visualL l-mapping l-of la-branches la-and la-tags la-on l-the l-same l-timeline."
+      "Try to delete a tag locally and then try to checkout that tag again.", "Use 'git log --decorate' to see the visual mapping of branches and tags on the same timeline."
     ],
-    interviewDiscussion: "Discuss the la-trade-off la-between la-using l-a l-branch la-for l-releases la-vs la-using la-tags. la-Why la-are la-tags l-considered l-more la-stable la-for la-deployment?"
+    interviewDiscussion: "Discuss the trade-off between using a branch for releases vs using tags. Why are tags considered more stable for deployment?"
   },
 
   cheatsheet: {
     creation: [
       { command: "git tag <name>", description: "Lightweight tag" },
       { command: "git tag -a <name> -m \"msg\"", description: "Annotated tag" },
-      { command: "git tag <name> <hash>", description: "Tag a la-past l-commit" }
+      { command: "git tag <name> <hash>", description: "Tag a past commit" }
     ],
     management: [
-      { command: "git tag", description: "List l-all tags" },
+      { command: "git tag", description: "List all tags" },
       { command: "git show <name>", description: "View tag metadata" },
-      { command: "git tag -d <name>", description: "Delete l-a l-local tag" }
+      { command: "git tag -d <name>", description: "Delete a local tag" }
     ],
     syncing: [
-      { command: "git push origin <name>", description: "Push a l-single la-tag" },
-      { command: "git push origin --tags", description: "Push la-all l-local la-tags" },
-      { command: "git push origin --delete <name>", description: "Delete la-a l-remote la-tag" }
+      { command: "git push origin <name>", description: "Push a single tag" },
+      { command: "git push origin --tags", description: "Push all local tags" },
+      { command: "git push origin --delete <name>", description: "Delete a remote tag" }
     ],
     navigation: [
-      { command: "git checkout <name>", description: "Switch to a l-tagged la-snapshot" },
-      { command: "git log v1.0..v2.0", description: "Commits l-between la-two la-tags" }
+      { command: "git checkout <name>", description: "Switch to a tagged snapshot" },
+      { command: "git log v1.0..v2.0", description: "Commits between two tags" }
     ]
   }
 }
