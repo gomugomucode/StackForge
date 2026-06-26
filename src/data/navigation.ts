@@ -6,26 +6,44 @@ export interface NavLink {
 
 export const navLinks: NavLink[] = [
   { label: 'Home', href: '/' },
+  { 
+    label: 'Learn', 
+    href: '/learn',
+    children: [
+      { label: 'Frontend', href: '/learn/frontend' },
+      { label: 'Backend', href: '/learn/backend' },
+      { label: 'Full Stack', href: '/learn/fullstack' },
+      { label: 'Python', href: '/learn/python' },
+      { label: 'DevOps', href: '/learn/devops' },
+      { label: 'Data Science', href: '/learn/datascience' },
+      { label: 'AI Engineering', href: '/learn/ai' },
+      { label: 'Cyber Security', href: '/learn/cybersecurity' },
+    ]
+  },
   { label: 'Roadmaps', href: '/roadmaps' },
-  { label: 'Learn', href: '/learn' },
-  { label: 'Cheatsheets', href: '/cheatsheets' },
-  { label: 'Quizzes', href: '/roadmaps' }, // In StackForge, quizzes are tied to modules/roadmaps
-  { label: 'Projects', href: '/projects' },
-  { label: 'Interview Prep', href: '/interview' },
-  { label: 'AI Tutor', href: '/tutor' },
+  { 
+    label: 'Practice', 
+    href: '#',
+    children: [
+      { label: 'Quizzes', href: '/roadmaps' },
+      { label: 'Coding Challenges', href: '/learn' },
+      { label: 'Projects', href: '/projects' },
+      { label: 'Interview Prep', href: '/interview' },
+      { label: 'AI Tutor', href: '/tutor' },
+    ]
+  },
   { label: 'Community', href: '/community' },
   { 
     label: 'Resources', 
     href: '/resources',
     children: [
-      { label: 'Cheatsheets', href: '/cheatsheets' },
       { label: 'Articles', href: '/blog' },
+      { label: 'Cheatsheets', href: '/cheatsheets' },
       { label: 'Tutorials', href: '/learn' },
       { label: 'Projects', href: '/projects' },
       { label: 'Interview Questions', href: '/interview' },
-      { label: 'Roadmaps', href: '/roadmaps' },
-      { label: 'Official Docs', href: 'https://react.dev' },
-      { label: 'External References', href: 'https://developer.mozilla.org' },
+      { label: 'Downloads', href: '/resources' },
+      { label: 'External References', href: '/resources' },
     ]
   },
   { label: 'Dashboard', href: '/dashboard' },
@@ -33,4 +51,3 @@ export const navLinks: NavLink[] = [
 
 export const brandName = 'StackForge'
 export const brandTagline = 'Learn Programming Interactively'
-
