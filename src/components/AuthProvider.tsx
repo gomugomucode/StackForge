@@ -68,9 +68,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<AppProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  async function fetchProfile(userId: string) {
+  async function fetchProfile(token?: string) {
     try {
-      const response = await fetch("/api/user/profile", { credentials: "include" });
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      const response = await fetch("/api/user/profile", {
+        headers,
+        credentials: "include",
+      });
       if (response.ok) {
         const data = await response.json();
         setProfile(data as AppProfile);
@@ -94,7 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        await fetchProfile(session.user.id);
+        await fetchProfile(session.access_token);
       }
       setIsLoading(false);
     }
@@ -108,7 +115,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        await fetchProfile(session.user.id);
+        await fetchProfile(session.access_token);
       } else {
         setProfile(null);
       }

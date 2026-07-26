@@ -31,8 +31,8 @@ export async function POST(req: NextRequest) {
     const avatar: string | undefined = body?.avatar;
     const provider: string | undefined = body?.provider;
 
-    // 1. Verify the caller via the request's Supabase session cookie.
-    const sessionUser = await getSupabaseServerUser();
+    // 1. Verify the caller via the request's Supabase session cookie or Bearer header.
+    const sessionUser = await getSupabaseServerUser(req);
     if (!sessionUser) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

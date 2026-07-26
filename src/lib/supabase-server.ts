@@ -74,10 +74,30 @@ export type AuthedUser = {
  *   // Always scope Prisma queries by user.id:
  *   const profile = await prisma.profile.findUnique({ where: { userId: user.id } });
  */
-export async function getSupabaseServerUser(): Promise<AuthedUser | null> {
+import { NextRequest } from "next/server";
+
+export async function getSupabaseServerUser(req?: NextRequest): Promise<AuthedUser | null> {
   const supabase = await getSupabaseServerClient();
   const {
-    data: { user },
+    data: { user: cookieUser },
   } = await supabase.auth.getUser();
-  return user as AuthedUser | null;
+
+  if (cookieUser) {
+    return cookieUser as AuthedUser;
+  }
+
+  if (req) {
+    const authHeader = req.headers.get("authorization");
+    if (authHeader && authHeader.toLowerCase().startsWith("bearer ")) {
+      const token = authHeader.substring(7).trim();
+      if (token) {
+        const { data: { user: bearerUser } } = await supabase.auth.getUser(token);
+        if (bearerUser) {
+          return bearerUser as AuthedUser;
+        }
+      }
+    }
+  }
+
+  return null;
 }

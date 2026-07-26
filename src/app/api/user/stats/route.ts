@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseServerUser } from "@/lib/supabase-server";
 import { getUserGamificationStats } from "@/features/gamification/services/xpService";
 
@@ -7,8 +7,8 @@ import { getUserGamificationStats } from "@/features/gamification/services/xpSer
  *
  * Returns the authenticated user's unified gamification stats from xpService.
  */
-export async function GET() {
-  const user = await getSupabaseServerUser();
+export async function GET(req: NextRequest) {
+  const user = await getSupabaseServerUser(req);
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSupabaseServerUser } from "@/lib/supabase-server";
 
@@ -10,8 +10,8 @@ import { getSupabaseServerUser } from "@/lib/supabase-server";
  * Authorization is enforced at the API layer (Supabase session → user
  * id) AND in Postgres via RLS (see reports/AUTH_REMEDIATION_REPORT.md).
  */
-export async function GET() {
-  const user = await getSupabaseServerUser();
+export async function GET(req: NextRequest) {
+  const user = await getSupabaseServerUser(req);
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

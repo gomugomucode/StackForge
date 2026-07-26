@@ -68,7 +68,10 @@ function AuthCallbackContent() {
         try {
           await fetch("/api/auth/init", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session.access_token}`,
+            },
             body: JSON.stringify({
               userId: session.user.id,
               email: session.user.email,
