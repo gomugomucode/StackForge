@@ -41,6 +41,18 @@ interface Certificate {
   issuedAt: string;
 }
 
+interface ResumeLearningItem {
+  roadmapSlug: string;
+  roadmapTitle: string;
+  moduleTitle: string;
+  moduleSlug: string;
+  lessonTitle: string;
+  lessonSlug: string;
+  completionPercentage: number;
+  hoursRemaining: number;
+  xpReward: number;
+}
+
 interface ProjectSubmissionItem {
   id: string;
   title: string;
@@ -61,10 +73,11 @@ export default function DashboardPage() {
   const { user, profile } = useAuth();
   const { xp, level, streak } = useUserStats();
   const [dashboardData, setDashboardData] = useState<{
+    resumeLearning: ResumeLearningItem | null;
     activeRoadmaps: RoadmapProgress[];
     certificates: Certificate[];
     projectSubmissions: ProjectSubmissionItem[];
-  }>({ activeRoadmaps: [], certificates: [], projectSubmissions: [] });
+  }>({ resumeLearning: null, activeRoadmaps: [], certificates: [], projectSubmissions: [] });
   const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -79,6 +92,7 @@ export default function DashboardPage() {
         if (dashRes.ok) {
           const data = await dashRes.json();
           setDashboardData({
+            resumeLearning: data.resumeLearning || null,
             activeRoadmaps: data.activeRoadmaps || [],
             certificates: data.certificates || [],
             projectSubmissions: data.projectSubmissions || [],
@@ -249,41 +263,73 @@ export default function DashboardPage() {
               <ProgressOverview />
             </div>
 
-            {/* Continue Learning / Active Roadmaps */}
+            {/* Resume Learning / Active Roadmap Focus */}
             <div className="p-6 rounded-3xl premium-glass border border-border/50 space-y-4 hover:border-[#1BBDF9]/30 transition-all duration-300">
-              <h3 className="font-bold text-sm flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-[#1BBDF9]" /> Continue Learning
-              </h3>
-              <div className="grid gap-3">
-                {isLoading ? (
-                  <div className="space-y-3">
-                    <div className="h-20 animate-pulse bg-secondary/40 rounded-2xl" />
-                    <div className="h-20 animate-pulse bg-secondary/40 rounded-2xl" />
-                  </div>
-                ) : dashboardData.activeRoadmaps.length > 0 ? (
-                  dashboardData.activeRoadmaps.slice(0, 2).map((roadmap) => (
-                    <div key={roadmap.id} className="p-4 rounded-2xl bg-black/10 dark:bg-slate-900/40 border border-border/40 flex items-center justify-between group hover:border-[#1BBDF9]/30 transition-colors">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${roadmap.color} flex items-center justify-center`}>
-                          <Layout className="w-5 h-5 text-white" />
-                        </div>
-                        <div>
-                          <h4 className="text-xs font-bold">{roadmap.title}</h4>
-                          <span className="text-[10px] text-muted-foreground">{roadmap.progress}% Completed</span>
-                        </div>
-                      </div>
-                      <Button to={`/roadmaps/${roadmap.slug}`} variant="ghost" size="sm" className="rounded-full bg-white/5 group-hover:bg-[#1BBDF9] group-hover:text-white transition-all">Resume</Button>
-                    </div>
-                  ))
-                ) : (
-                  <div className="p-6 rounded-2xl border border-dashed border-border text-center space-y-3">
-                    <p className="text-xs text-muted-foreground">No started roadmaps in progress.</p>
-                    <Button variant="outline" size="sm" className="rounded-full" asChild>
-                      <Link href="/roadmaps">Start Journey</Link>
-                    </Button>
-                  </div>
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-sm flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-[#1BBDF9]" /> Resume Learning
+                </h3>
+                {dashboardData.resumeLearning && (
+                  <span className="text-[10px] bg-[#1BBDF9]/10 text-[#1BBDF9] font-bold px-2 py-0.5 rounded-full uppercase">
+                    {dashboardData.resumeLearning.roadmapTitle}
+                  </span>
                 )}
               </div>
+
+              {isLoading ? (
+                <div className="h-28 animate-pulse bg-secondary/40 rounded-2xl" />
+              ) : dashboardData.resumeLearning ? (
+                <div className="p-5 rounded-2xl bg-black/10 dark:bg-slate-900/40 border border-border/40 space-y-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                        {dashboardData.resumeLearning.moduleTitle}
+                      </span>
+                      <h4 className="text-base font-extrabold text-foreground">
+                        {dashboardData.resumeLearning.lessonTitle}
+                      </h4>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-xs font-bold text-amber-500 flex items-center gap-1 justify-end">
+                        ⚡ +{dashboardData.resumeLearning.xpReward} XP
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        ~{dashboardData.resumeLearning.hoursRemaining}h remaining
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-[11px]">
+                      <span className="text-muted-foreground font-semibold">Track Progress</span>
+                      <span className="text-[#1BBDF9] font-bold">{dashboardData.resumeLearning.completionPercentage}%</span>
+                    </div>
+                    <div className="h-2 w-full bg-secondary dark:bg-slate-800 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-[#1BBDF9] to-purple-600 rounded-full transition-all duration-500"
+                        style={{ width: `${dashboardData.resumeLearning.completionPercentage}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <Button
+                    to={`/roadmaps/${dashboardData.resumeLearning.roadmapSlug}/lesson/${dashboardData.resumeLearning.lessonSlug}`}
+                    variant="primary"
+                    size="sm"
+                    className="w-full rounded-full bg-[#1BBDF9] hover:bg-[#159ecf] text-white font-semibold gap-2 mt-2"
+                  >
+                    <span>Resume Next Lesson</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="p-6 rounded-2xl border border-dashed border-border/60 text-center space-y-3">
+                  <p className="text-xs text-muted-foreground">You haven't started a roadmap yet. Choose a learning track to begin your developer journey.</p>
+                  <Button variant="outline" size="sm" className="rounded-full" asChild>
+                    <Link href="/roadmaps">Browse Roadmaps</Link>
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
 

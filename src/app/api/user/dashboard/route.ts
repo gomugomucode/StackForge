@@ -35,7 +35,66 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
+    // Calculate database-backed Resume Learning target for most recent active roadmap
+    let resumeLearning = null;
+    const mostRecentRoadmap = (roadmaps as any[])[0];
+    if (mostRecentRoadmap && mostRecentRoadmap.roadmap) {
+      const rm = mostRecentRoadmap.roadmap;
+      const [userProgress, modules] = await Promise.all([
+        prisma.progress.findMany({
+          where: { userId: user.id, completed: true },
+          select: { lessonId: true },
+        }),
+        prisma.module.findMany({
+          where: { roadmapId: rm.id },
+          include: {
+            lessons: {
+              select: {
+                id: true,
+                slug: true,
+                title: true,
+                difficulty: true,
+                estimatedHours: true,
+              },
+            },
+          },
+        }),
+      ]);
+
+      const completedLessonIds = new Set((userProgress as any[]).map((p) => p.lessonId));
+      let nextLesson: any = null;
+      let nextModule: any = null;
+      let hoursRemaining = 0;
+
+      for (const mod of modules) {
+        for (const les of mod.lessons) {
+          if (!completedLessonIds.has(les.id)) {
+            hoursRemaining += les.estimatedHours || 1;
+            if (!nextLesson) {
+              nextLesson = les;
+              nextModule = mod;
+            }
+          }
+        }
+      }
+
+      if (nextLesson && nextModule) {
+        resumeLearning = {
+          roadmapSlug: rm.slug,
+          roadmapTitle: rm.title,
+          moduleTitle: nextModule.title,
+          moduleSlug: nextModule.slug,
+          lessonTitle: nextLesson.title,
+          lessonSlug: nextLesson.slug,
+          completionPercentage: mostRecentRoadmap.completionPercentage,
+          hoursRemaining,
+          xpReward: nextLesson.difficulty === "advanced" ? 200 : nextLesson.difficulty === "intermediate" ? 150 : 100,
+        };
+      }
+    }
+
     return NextResponse.json({
+      resumeLearning,
       activeRoadmaps: (roadmaps as any[]).map(r => ({
         id: r.roadmapId,
         title: r.roadmap.title,
