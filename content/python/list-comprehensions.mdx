@@ -1,0 +1,63 @@
+# Python List Comprehensions: Write Cleaner, Faster Code
+
+List comprehensions provide a concise and expressive way to create lists in Python. By replacing traditional `for` loops with clear inline expressions, you can make your Python code significantly more readable and Pythonic.
+
+---
+
+## 1. The Anatomy of a List Comprehension
+
+The general syntax of a list comprehension is:
+
+```python
+[expression for item in iterable if condition]
+```
+
+### Basic Example
+
+Transforming a list of numbers into their squares using a traditional loop:
+
+```python
+numbers = [1, 2, 3, 4, 5]
+squares = []
+for n in numbers:
+    squares.append(n ** 2)
+```
+
+With a list comprehension:
+
+```python
+numbers = [1, 2, 3, 4, 5]
+squares = [n ** 2 for n in numbers]
+print(squares) # Output: [1, 4, 9, 16, 25]
+```
+
+---
+
+## 2. Adding Filtering Conditions
+
+You can easily filter elements by adding an `if` clause at the end:
+
+```python
+numbers = range(1, 11)
+even_squares = [n ** 2 for n in numbers if n % 2 == 0]
+print(even_squares) # Output: [4, 16, 36, 64, 100]
+```
+
+---
+
+## 3. Nested List Comprehensions
+
+List comprehensions can also handle flattening nested structures:
+
+```python
+matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+flattened = [val for row in matrix for val in row]
+print(flattened) # Output: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
+---
+
+## Key Takeaways
+
+- Use list comprehensions for simple sequence transformations and filtering.
+- Keep them readable — if a list comprehension spans multiple lines or complex logic, prefer a standard `for` loop.

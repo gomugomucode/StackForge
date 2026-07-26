@@ -1,0 +1,55 @@
+# Building REST APIs with Node.js and Express
+
+REST (Representational State Transfer) is the architectural blueprint of modern web APIs. In this article, we explore how to build high-performance, maintainable RESTful services using Express and TypeScript.
+
+---
+
+## 1. REST Architectural Principles
+
+A true REST API adheres to key constraints:
+- **Statelessness**: Every request contains all necessary data for authentication and context.
+- **Resource-Oriented Endpoints**: URIs represent resources (nouns like `/api/users`), while HTTP verbs represent actions (`GET`, `POST`, `PUT`, `DELETE`).
+- **Uniform Response Format**: Predictable JSON error and payload structures.
+
+---
+
+## 2. Setting Up an Express Server with TypeScript
+
+```typescript
+import express, { Request, Response, NextFunction } from "express";
+
+const app = express();
+app.use(express.json());
+
+// GET /api/v1/health
+app.get("/api/v1/health", (req: Request, res: Response) => {
+  res.json({ status: "healthy", timestamp: new Date().toISOString() });
+});
+
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
+```
+
+---
+
+## 3. Global Error Handling Middleware
+
+Always catch unhandled promise rejections and format standardized API responses:
+
+```typescript
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error("[API Error]:", err);
+  res.status(500).json({
+    error: "Internal Server Error",
+    message: err.message,
+  });
+});
+```
+
+---
+
+## Summary
+
+Designing production REST APIs requires clean resource definitions, standardized HTTP status codes, and robust error handling.

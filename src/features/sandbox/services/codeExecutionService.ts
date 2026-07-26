@@ -14,11 +14,19 @@ export interface ExecutionResult {
 export class CodeExecutionService {
   /**
    * Executes code snippet in JavaScript, TypeScript, Python, or SQL.
+   * Tries Piston remote execution engine first, falling back to node:vm / python CLI / local VM.
    */
   static async executeCode(code: string, language: string): Promise<ExecutionResult> {
     const startTime = Date.now();
     const lang = language.toLowerCase().trim();
 
+    // 1. Attempt Piston API Remote Sandbox Execution
+    const remoteResult = await this.executePistonRemote(code, lang, startTime);
+    if (remoteResult) {
+      return remoteResult;
+    }
+
+    // 2. Local Sandbox Fallback Engine
     try {
       if (lang === "javascript" || lang === "js") {
         return await this.executeJavaScript(code, startTime);
@@ -43,6 +51,65 @@ export class CodeExecutionService {
         executionTime: Date.now() - startTime,
         error: err.message || String(err),
       };
+    }
+  }
+
+  private static async executePistonRemote(
+    code: string,
+    language: string,
+    startTime: number
+  ): Promise<ExecutionResult | null> {
+    const pistonUrl = process.env.PISTON_API_URL || "https://emkc.org/api/v2/piston/execute";
+    
+    let pistonLang = language;
+    if (language === "javascript" || language === "js") pistonLang = "javascript";
+    else if (language === "typescript" || language === "ts") pistonLang = "typescript";
+    else if (language === "python" || language === "py") pistonLang = "python";
+    else return null; // Piston does not execute arbitrary SQL safely
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+      const response = await fetch(pistonUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
+        body: JSON.stringify({
+          language: pistonLang,
+          version: "*",
+          files: [{ content: code }],
+        }),
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) return null;
+
+      const data = await response.json();
+      if (!data.run) return null;
+
+      const executionTime = Date.now() - startTime;
+      const stdout = data.run.stdout || "";
+      const stderr = data.run.stderr || "";
+
+      if (data.run.code !== 0 && stderr) {
+        return {
+          success: false,
+          output: stdout,
+          executionTime,
+          error: stderr || `Exit code ${data.run.code}`,
+        };
+      }
+
+      return {
+        success: true,
+        output: stdout || stderr || "Program executed successfully with no output.",
+        executionTime,
+      };
+    } catch {
+      // Remote Piston execution failed or timed out — fallback to local VM
+      return null;
     }
   }
 
@@ -157,3 +224,4 @@ function formatArg(arg: any): string {
   }
   return String(arg);
 }
+

@@ -1,0 +1,44 @@
+# CSS Grid vs Flexbox: When to Use Which
+
+Modern CSS offers two powerful layout systems: **CSS Grid** and **Flexbox**. While they share some overlapping capabilities, they are optimized for fundamentally different layout requirements.
+
+---
+
+## 1. Core Paradigm Difference
+
+- **Flexbox**: One-dimensional layout model (Row OR Column). Excellent for alignment and distribution of items along a single axis.
+- **CSS Grid**: Two-dimensional layout model (Rows AND Columns). Designed for overall page layout grid architecture.
+
+---
+
+## 2. When to Choose Flexbox
+
+Use Flexbox when you need:
+- Navigation bars with spaced items
+- Centering a child element vertically & horizontally
+- Component-level dynamic item alignment
+
+```css
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+```
+
+---
+
+## 3. When to Choose CSS Grid
+
+Use CSS Grid when you need:
+- Responsive card grids without complex math
+- Two-dimensional dashboard layouts with headers, sidebars, and main content
+- Overlapping element placement
+
+```css
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+```

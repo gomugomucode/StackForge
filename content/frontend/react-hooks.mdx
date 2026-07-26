@@ -1,0 +1,61 @@
+# React Hooks: useState and useEffect Patterns
+
+React Hooks revolutionized state and side-effect management in functional components. Understanding proper hook dependencies and cleanup lifecycle patterns prevents memory leaks and stale closure bugs.
+
+---
+
+## 1. Mastering `useState`
+
+`useState` declares state variables in functional components:
+
+```tsx
+import { useState } from "react";
+
+export function Counter() {
+  const [count, setCount] = useState(0);
+
+  // Always use functional state updates when next state depends on previous state
+  const increment = () => setCount((prev) => prev + 1);
+
+  return (
+    <button onClick={increment} className="px-4 py-2 bg-indigo-600 text-white rounded-lg">
+      Count: {count}
+    </button>
+  );
+}
+```
+
+---
+
+## 2. Managing Side Effects with `useEffect`
+
+`useEffect` synchronizes components with external systems (APIs, DOM events, subscriptions):
+
+```tsx
+import { useState, useEffect } from "react";
+
+export function WindowWidthNotifier() {
+  const [width, setWidth] = useState<number>(0);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    
+    // Set initial size
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    
+    // Cleanup event listener on unmount
+    return () => window.removeEventListener("resize", handleResize);
+  }, []); // Empty dependency array means run once on mount
+
+  return <p>Current Window Width: {width}px</p>;
+}
+```
+
+---
+
+## Rule of Hooks
+
+1. Only call Hooks at the top level of React function components.
+2. Do not call Hooks inside loops, conditions, or nested functions.

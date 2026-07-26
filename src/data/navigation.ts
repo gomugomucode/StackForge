@@ -25,7 +25,7 @@ export const navLinks: NavLink[] = [
     label: 'Practice', 
     href: '#',
     children: [
-      { label: 'Quizzes', href: '/roadmaps' },
+      { label: 'Quizzes', href: '/quizzes' },
       { label: 'Coding Challenges', href: '/learn' },
       { label: 'Projects', href: '/projects' },
       { label: 'Interview Prep', href: '/interview' },

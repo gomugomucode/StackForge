@@ -1,0 +1,43 @@
+# Getting Started with Git: Essential Commands
+
+Git is the industry-standard distributed version control system. Mastering Git workflow commands is a fundamental requirement for modern software engineers.
+
+---
+
+## 1. Core Daily Workflow
+
+```bash
+# Check status of changed files
+git status
+
+# Stage specific changes
+git add src/index.ts
+
+# Commit staged changes with message
+git commit -m "feat: add user authentication handler"
+
+# Push branch to remote repository
+git push origin feature/user-auth
+```
+
+---
+
+## 2. Branching & Merging Best Practices
+
+Always isolate new feature development inside dedicated feature branches:
+
+```bash
+# Create and switch to new branch
+git checkout -b feature/interactive-dashboard
+
+# Rebase onto main to stay updated
+git fetch origin
+git rebase origin/main
+```
+
+---
+
+## Key Rules
+
+- Keep commits atomic and focused on single tasks.
+- Write clear, present-tense commit messages (`feat: add...`, `fix: resolve...`).

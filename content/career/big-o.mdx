@@ -1,0 +1,46 @@
+# Big O Notation Explained for Beginners
+
+Big O notation is the standard metric used by computer scientists and software engineers to describe the efficiency of an algorithm in terms of time and space growth as input sizes grow.
+
+---
+
+## 1. Common Time Complexities
+
+| Big O | Name | Example Algorithm |
+| :--- | :--- | :--- |
+| **O(1)** | Constant | Array lookup by index |
+| **O(log N)** | Logarithmic | Binary search in a sorted array |
+| **O(N)** | Linear | Single pass loop over array |
+| **O(N log N)** | Linearithmic | Merge sort, Quick sort |
+| **O(N²)** | Quadratic | Nested loops / Bubble sort |
+
+---
+
+## 2. Practical Code Example: O(1) vs O(N)
+
+### O(1) Constant Time
+
+```javascript
+function getFirstElement(arr) {
+  return arr[0]; // Always 1 step regardless of array length
+}
+```
+
+### O(N) Linear Time
+
+```javascript
+function findItem(arr, target) {
+  for (let item of arr) {
+    if (item === target) return true;
+  }
+  return false;
+}
+```
+
+---
+
+## 3. How to Analyze Complexity in Technical Interviews
+
+1. Drop constants: $O(2N)$ simplifies to $O(N)$.
+2. Drop non-dominant terms: $O(N^2 + N)$ simplifies to $O(N^2)$.
+3. Always evaluate worst-case scenario unless asked otherwise.
