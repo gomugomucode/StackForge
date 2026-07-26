@@ -3,33 +3,46 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
   try {
-    const topProfiles = await prisma.profile.findMany({
-      take: 10,
-      orderBy: {
-        xp: 'desc',
-      },
+    const { searchParams } = new URL(req.url);
+    const limit = Math.min(parseInt(searchParams.get("limit") || "20", 10), 100);
+
+    const profiles = await prisma.profile.findMany({
+      take: limit,
+      orderBy: [
+        { xp: "desc" },
+        { level: "desc" },
+        { streak: "desc" },
+      ],
       include: {
         user: {
           select: {
+            id: true,
             name: true,
+            email: true,
             avatar: true,
           },
         },
       },
     });
 
-    const leaderboard = topProfiles.map((p, idx) => ({
-      rank: idx + 1,
-      name: p.user?.name || "Student",
+    const leaderboard = (profiles as any[]).map((p, index) => ({
+      rank: index + 1,
+      userId: p.userId,
+      name: p.user?.name || p.user?.email?.split("@")[0] || "Anonymous Developer",
+      username: p.user?.email?.split("@")[0] || p.userId.substring(0, 8),
       avatar: p.user?.avatar || null,
-      xp: p.xp,
       level: p.level,
+      xp: p.xp,
       streak: p.streak,
+      skillLevel: p.skillLevel || "Developer",
     }));
 
     return NextResponse.json({ leaderboard });
-  } catch (error) {
-    console.error("[API /user/leaderboard] Error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  } catch (error: any) {
+    console.error("[API /api/user/leaderboard] Error:", error);
+    return NextResponse.json(
+      { error: error?.message || "Internal server error" },
+      { status: 500 }
+    );
   }
 }
