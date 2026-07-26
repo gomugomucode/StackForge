@@ -128,9 +128,7 @@ export function RegisterForm() {
         if (data.session) {
           router.replace(redirectTo);
         } else {
-          setInfoMessage(
-            "Account created successfully! Check your email inbox to confirm your account."
-          );
+          router.push(`/auth/verify-email?email=${encodeURIComponent(values.email)}`);
         }
       }
     } catch (err: any) {
