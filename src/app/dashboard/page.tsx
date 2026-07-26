@@ -128,67 +128,164 @@ export default function DashboardPage() {
     user?.email?.split("@")[0] ||
     "Learner";
 
-  // Calculate target XP for next level (legacy formula or standard)
-  const currentLevelXp = level * 1000;
-  const xpNeededForNextLevel = 1000;
+  const hour = new Date().getHours();
+  const timeGreeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
+  const streakMessage = streak >= 3 
+    ? `You've maintained your streak for ${streak} days. Let's make it ${streak + 1} today!` 
+    : "Stay consistent today to build your engineering momentum.";
+
   const progressToNextLevel = Math.min(Math.round(((xp % 1000) / 1000) * 100), 100);
+  const xpNeeded = 1000 - (xp % 1000);
 
   return (
     <ProtectedRoute>
       <div className="container mx-auto px-4 py-24 space-y-8 max-w-7xl relative">
         
-        {/* Ambient Gradient Backgrounds (whoami style) */}
+        {/* Ambient Gradient Backgrounds */}
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-600/10 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-pulse-slow -z-10" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-r from-pink-400/10 to-orange-600/10 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-pulse-slow -z-10" />
 
-        {/* Bento Grid Header / Welcome */}
+        {/* 1. SINGLE-MISSION PERSONALIZED HERO CARD */}
+        <div className="p-8 rounded-3xl premium-glass border border-border/50 relative overflow-hidden flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 group hover:border-[#1BBDF9]/40 transition-all duration-300">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#1BBDF9]/10 to-purple-600/10 rounded-full filter blur-3xl opacity-60 pointer-events-none" />
+          
+          <div className="space-y-3 max-w-2xl relative z-10">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1BBDF9]/10 text-[#1BBDF9] text-xs font-black uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5" /> Workspace Hub
+            </span>
+            <h1 className="text-3xl lg:text-5xl font-black tracking-tight">
+              {timeGreeting}, <span className="gradient-text-cyan-purple font-extrabold">{displayName}</span> 👋
+            </h1>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              {dashboardData.resumeLearning 
+                ? `You're in the middle of ${dashboardData.resumeLearning.roadmapTitle}. ${streakMessage}`
+                : streakMessage}
+            </p>
+          </div>
+
+          {/* Primary Action Card Focus */}
+          {dashboardData.resumeLearning ? (
+            <div className="w-full lg:w-96 p-5 rounded-2xl bg-black/30 dark:bg-slate-900/60 border border-border/60 relative z-10 space-y-4 shadow-xl">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-[#1BBDF9] uppercase tracking-wider">
+                  Continue {dashboardData.resumeLearning.roadmapTitle}
+                </span>
+                <span className="text-xs font-bold text-amber-500 flex items-center gap-1">
+                  ⚡ +{dashboardData.resumeLearning.xpReward} XP
+                </span>
+              </div>
+
+              <div>
+                <h3 className="text-base font-extrabold text-foreground truncate">
+                  {dashboardData.resumeLearning.lessonTitle}
+                </h3>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  ~{dashboardData.resumeLearning.hoursRemaining * 18 || 18} mins estimated
+                </p>
+              </div>
+
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-muted-foreground font-semibold">Track Completion</span>
+                  <span className="text-[#1BBDF9] font-bold">{dashboardData.resumeLearning.completionPercentage}%</span>
+                </div>
+                <div className="h-2 w-full bg-secondary dark:bg-slate-800 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-[#1BBDF9] to-purple-600 rounded-full transition-all duration-500" 
+                    style={{ width: `${dashboardData.resumeLearning.completionPercentage}%` }} 
+                  />
+                </div>
+              </div>
+
+              <Button 
+                to={`/roadmaps/${dashboardData.resumeLearning.roadmapSlug}/lesson/${dashboardData.resumeLearning.lessonSlug}`}
+                variant="primary" 
+                size="sm" 
+                className="w-full rounded-full bg-[#1BBDF9] hover:bg-[#159ecf] text-white font-semibold gap-2"
+              >
+                <span>Resume Lesson</span>
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </div>
+          ) : (
+            <div className="w-full lg:w-80 p-5 rounded-2xl bg-black/30 border border-border/60 text-center space-y-3 relative z-10">
+              <p className="text-xs text-muted-foreground">Select a learning track to begin your developer journey.</p>
+              <Button to="/roadmaps" variant="primary" size="sm" className="w-full rounded-full bg-[#1BBDF9] text-white">
+                Browse Roadmaps
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {/* 2. TODAY'S MISSION & AI MENTOR INTELLIGENCE BANNER */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
-          {/* Welcome Card - Large */}
-          <div className="lg:col-span-8 p-8 rounded-3xl premium-glass border border-border/50 relative overflow-hidden flex flex-col justify-between gap-6 group">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-[#1BBDF9]/10 to-purple-600/10 rounded-full filter blur-3xl opacity-60 animate-pulse-slow pointer-events-none" />
-            <div className="space-y-3 relative z-10">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1BBDF9]/10 text-[#1BBDF9] text-xs font-black uppercase tracking-wider">
-                <Sparkles className="w-3.5 h-3.5" /> Premium Learning Platform
+          {/* Today's Mission Card */}
+          <div className="lg:col-span-6 p-6 rounded-3xl premium-glass border border-border/50 space-y-5 hover:border-[#1BBDF9]/30 transition-all duration-300">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <CheckSquare className="w-5 h-5 text-emerald-500" />
+                <h3 className="font-bold text-base">Today's Mission</h3>
+              </div>
+              <span className="text-xs bg-emerald-500/10 text-emerald-500 font-bold px-2.5 py-1 rounded-full">
+                +450 XP REWARD
               </span>
-              <h1 className="text-4xl lg:text-5xl font-black tracking-tight mt-2">
-                Welcome back, <span className="gradient-text-cyan-purple font-extrabold">{displayName}</span>! 👋
-              </h1>
-              <p className="text-muted-foreground text-sm max-w-xl leading-relaxed">
-                You're making incredible headway. Dive back into your modules, challenge your code, and level up your stack today!
-              </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3 relative z-10">
-              <Button to="/roadmaps" variant="primary" size="md" className="gap-2 rounded-full bg-[#1BBDF9] hover:bg-[#159ecf] text-white">
-                Explore Roadmaps <ArrowRight className="w-4 h-4" />
-              </Button>
-              <Button to="/interview" variant="outline" size="md" className="gap-2 rounded-full border-border/60 hover:bg-secondary/40">
-                Practice Questions
-              </Button>
+
+            <p className="text-xs text-muted-foreground">Complete 3 daily activities to keep your streak active and level up.</p>
+
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs font-semibold">
+                <span className="text-muted-foreground">Mission Progress</span>
+                <span className="text-emerald-500 font-bold">1 / 3 Tasks</span>
+              </div>
+              <div className="h-2 w-full bg-secondary dark:bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-full bg-emerald-500 w-1/3 transition-all duration-500" />
+              </div>
+            </div>
+
+            <div className="space-y-2 pt-1">
+              <div className="p-3 rounded-xl bg-black/10 dark:bg-slate-900/40 border border-border/40 flex items-center justify-between text-xs">
+                <span className="text-foreground font-medium">✓ Finish React Hooks Overview</span>
+                <span className="text-[10px] text-emerald-500 font-bold">COMPLETED</span>
+              </div>
+              <div className="p-3 rounded-xl bg-black/10 dark:bg-slate-900/40 border border-border/40 flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">○ Solve Lexical Closure Challenge</span>
+                <Link href="/challenges" className="text-[10px] text-[#1BBDF9] font-bold hover:underline">Start →</Link>
+              </div>
+              <div className="p-3 rounded-xl bg-black/10 dark:bg-slate-900/40 border border-border/40 flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">○ Submit Portfolio Project Draft</span>
+                <Link href="/projects" className="text-[10px] text-[#1BBDF9] font-bold hover:underline">Submit →</Link>
+              </div>
             </div>
           </div>
 
-          {/* Level / XP Bento Card */}
-          <div className="lg:col-span-4 p-8 rounded-3xl premium-glass border border-border/50 flex flex-col justify-between hover:border-[#1BBDF9]/40 transition-all duration-300 group">
+          {/* AI Mentor Intelligence Banner */}
+          <div className="lg:col-span-6 p-6 rounded-3xl premium-glass border border-border/50 space-y-5 hover:border-[#1BBDF9]/30 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Leveling Engine</span>
-              <Trophy className="w-5 h-5 text-yellow-500 group-hover:scale-110 transition-transform duration-300" />
-            </div>
-            <div className="my-6">
-              <div className="text-5xl font-black tracking-tight">Lv. {level}</div>
-              <p className="text-xs text-muted-foreground mt-1">{xp.toLocaleString()} Total XP earned</p>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground font-semibold">Progress to Lv. {level + 1}</span>
-                <span className="text-[#1BBDF9] font-bold">{progressToNextLevel}%</span>
+              <div className="flex items-center gap-2.5">
+                <Bot className="w-5 h-5 text-[#1BBDF9]" />
+                <h3 className="font-bold text-base">AI Mentor Recommendation</h3>
               </div>
-              <div className="h-2 w-full bg-secondary dark:bg-slate-800 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-[#1BBDF9] to-purple-600 rounded-full transition-all duration-500" 
-                  style={{ width: `${progressToNextLevel}%` }} 
-                />
-              </div>
+              <span className="text-xs bg-[#1BBDF9]/10 text-[#1BBDF9] font-bold px-2.5 py-1 rounded-full uppercase">
+                INTELLIGENT GUIDE
+              </span>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-[#1BBDF9]/5 border border-[#1BBDF9]/20 space-y-2">
+              <p className="text-xs text-foreground leading-relaxed font-medium">
+                💡 Based on your recent quizzes and progress, we recommend focusing on <strong className="text-[#1BBDF9]">React Hooks & Closures</strong> next.
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                Estimated completion time: ~18 minutes. Mastering this will unlock advanced React pattern challenges.
+              </p>
+            </div>
+
+            <div className="pt-2">
+              <Button to="/tutor" variant="primary" size="sm" className="w-full rounded-full bg-[#1BBDF9] hover:bg-[#159ecf] text-white gap-2 font-semibold">
+                <Bot className="w-4 h-4" />
+                <span>Start Session with AI Mentor</span>
+              </Button>
             </div>
           </div>
         </div>
@@ -199,60 +296,50 @@ export default function DashboardPage() {
           {/* Column Left: Study Stats & Weekly Goals */}
           <div className="lg:col-span-4 space-y-6 flex flex-col">
             
-            {/* Streak & Study Stats Card */}
+            {/* Streak & Progression Motivation Card */}
             <div className="p-6 rounded-3xl premium-glass border border-border/50 flex-1 space-y-6 hover:border-[#1BBDF9]/30 transition-all duration-300">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-xl bg-orange-500/10 text-orange-500">
                   <Flame className="w-5 h-5 animate-pulse" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm">Streak Tracking</h3>
-                  <p className="text-[10px] text-muted-foreground">Keep the flame burning</p>
+                  <h3 className="font-bold text-sm">Habit Engine</h3>
+                  <p className="text-[10px] text-muted-foreground">Consistency is your superpower</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-2xl bg-black/10 dark:bg-slate-900/40 border border-border/40">
-                  <span className="text-xs font-semibold text-muted-foreground">Current</span>
-                  <div className="text-2xl font-black text-orange-500 mt-1">{streak} Days</div>
+              
+              <div className="p-4 rounded-2xl bg-black/10 dark:bg-slate-900/40 border border-border/40 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-orange-500 flex items-center gap-1">
+                    🔥 {streak} Day Learning Streak
+                  </span>
+                  <span className="text-[10px] text-emerald-500 font-bold uppercase">ACTIVE TODAY</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-black/10 dark:bg-slate-900/40 border border-border/40">
-                  <span className="text-xs font-semibold text-muted-foreground">Longest</span>
-                  <div className="text-2xl font-black text-foreground mt-1">{Math.max(streak, 7)} Days</div>
-                </div>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Complete today's mission to preserve your streak momentum and boost your global developer ranking.
+                </p>
               </div>
-              <div className="flex items-center gap-2.5 text-xs text-muted-foreground border-t border-border/40 pt-4">
-                <Clock className="w-4 h-4 text-[#1BBDF9]" />
-                <span>Estimated Study: <strong className="text-foreground">{(level * 3.5).toFixed(1)} hrs</strong> total</span>
-              </div>
-            </div>
 
-            {/* Weekly Goal Widget */}
-            <div className="p-6 rounded-3xl premium-glass border border-border/50 space-y-4 hover:border-[#1BBDF9]/30 transition-all duration-300">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <CheckSquare className="w-4 h-4 text-emerald-500" />
-                  <h3 className="font-bold text-sm">Weekly Goals</h3>
+              {/* Leveling & Unlocks */}
+              <div className="space-y-3 border-t border-border/40 pt-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-foreground">Level {level} Engineer</span>
+                  <span className="text-[10px] text-[#1BBDF9] font-bold">{xpNeeded} XP to Lv. {level + 1}</span>
                 </div>
-                <span className="text-[10px] bg-emerald-500/10 text-emerald-500 font-bold px-2 py-0.5 rounded-full">ACTIVE</span>
-              </div>
-              <div className="space-y-3">
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">Weekly XP Target (500 XP)</span>
-                    <span className="font-bold text-foreground">300 / 500 XP</span>
-                  </div>
-                  <div className="h-1.5 w-full bg-secondary dark:bg-slate-800 rounded-full overflow-hidden">
-                    <div className="h-full bg-emerald-500 w-3/5" />
-                  </div>
+                <div className="h-2 w-full bg-secondary dark:bg-slate-800 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-[#1BBDF9] to-purple-600 rounded-full transition-all duration-500" 
+                    style={{ width: `${progressToNextLevel}%` }} 
+                  />
                 </div>
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">Quizzes Completed (2)</span>
-                    <span className="font-bold text-foreground">1 / 2</span>
-                  </div>
-                  <div className="h-1.5 w-full bg-secondary dark:bg-slate-800 rounded-full overflow-hidden">
-                    <div className="h-full bg-emerald-500 w-1/2" />
-                  </div>
+                
+                <div className="space-y-1 pt-1">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Unlocks at Level {level + 1}:</span>
+                  <ul className="text-[11px] text-muted-foreground space-y-0.5">
+                    <li className="flex items-center gap-1.5 text-foreground">✓ Advanced React Patterns Sandbox</li>
+                    <li className="flex items-center gap-1.5 text-foreground">✓ Verified Credentials Badge</li>
+                    <li className="flex items-center gap-1.5 text-foreground">✓ Priority AI Tutor Code Reviews</li>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -389,10 +476,20 @@ export default function DashboardPage() {
             </div>
 
             {/* Certifications Card */}
-            <div className="p-6 rounded-3xl premium-glass border border-border/50 hover:border-[#1BBDF9]/30 transition-all duration-300">
-              <h3 className="font-bold text-sm flex items-center gap-2 mb-4">
-                <Award className="w-4 h-4 text-emerald-500" /> Certificates
-              </h3>
+            <div className="p-6 rounded-3xl premium-glass border border-border/50 hover:border-[#1BBDF9]/30 transition-all duration-300 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-sm flex items-center gap-2">
+                  <Award className="w-4 h-4 text-emerald-500" /> Certificates
+                </h3>
+                <span className="text-[9px] bg-emerald-500/10 text-emerald-500 font-bold px-2 py-0.5 rounded-full uppercase">
+                  VERIFIED
+                </span>
+              </div>
+
+              <p className="text-[11px] text-muted-foreground">
+                Publicly verifiable credentials that prove your fullstack code mastery to recruiters.
+              </p>
+
               {isLoading ? (
                 <div className="h-24 animate-pulse bg-secondary/40 rounded-2xl" />
               ) : dashboardData.certificates.length > 0 ? (
@@ -410,9 +507,9 @@ export default function DashboardPage() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-4 space-y-2">
-                  <p className="text-[11px] text-muted-foreground">No certifications earned yet.</p>
-                  <Button to="/roadmaps" variant="outline" size="sm" className="w-full text-[10px] rounded-full h-8">Finish Roadmap</Button>
+                <div className="text-center py-3 space-y-2 border border-dashed border-border/60 rounded-xl p-3">
+                  <p className="text-[11px] text-muted-foreground">No certifications earned yet. Finish a roadmap to claim your credential.</p>
+                  <Button to="/roadmaps" variant="outline" size="sm" className="w-full text-[10px] rounded-full h-8">Browse Roadmaps</Button>
                 </div>
               )}
             </div>
