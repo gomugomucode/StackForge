@@ -14,6 +14,10 @@ const AUTH_ROUTES = [
   "/auth/signup",
 ];
 
+const ADMIN_ROUTES = [
+  "/admin",
+];
+
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
@@ -61,7 +65,25 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // 2. Redirect authenticated users away from auth pages to /dashboard
+  // 2. Enforce Admin Role Verification for /admin/* routes
+  const isAdminRoute = ADMIN_ROUTES.some((route) => pathname.startsWith(route));
+  if (isAdminRoute) {
+    if (!user) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/auth/login";
+      redirectUrl.searchParams.set("redirectTo", pathname);
+      return NextResponse.redirect(redirectUrl);
+    }
+
+    const userRole = user.app_metadata?.role || user.user_metadata?.role;
+    if (userRole !== "ADMIN") {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/dashboard";
+      return NextResponse.redirect(redirectUrl);
+    }
+  }
+
+  // 3. Redirect authenticated users away from auth pages to /dashboard
   const isAuthRoute = AUTH_ROUTES.some((route) => pathname.startsWith(route));
   if (isAuthRoute && user) {
     const redirectUrl = request.nextUrl.clone();

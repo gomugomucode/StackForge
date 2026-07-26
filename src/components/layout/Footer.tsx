@@ -4,8 +4,8 @@ import { brandName, brandTagline, navLinks } from '../../data/navigation'
 
 const footerLinks = [
   { label: 'Courses', href: '/resources' },
-  { label: 'Quizzes', href: '/#weekly-challenge' },
-  { label: 'Roadmaps', href: '/#roadmaps' },
+  { label: 'Quizzes', href: '/quizzes' },
+  { label: 'Roadmaps', href: '/roadmaps' },
   { label: 'Blog', href: '/blog' },
   { label: 'About', href: '/about' },
 ]
