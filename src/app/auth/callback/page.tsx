@@ -37,9 +37,16 @@ function AuthCallbackContent() {
 
     async function run() {
       try {
-        // The supabase-js browser client already detects `?code=` in the
-        // URL and exchanges it for a session. Calling getSession() forces
-        // it to commit the result.
+        const code = searchParams?.get("code");
+
+        // If authorization code is present in URL (PKCE flow), exchange code for session
+        if (code) {
+          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+          if (exchangeError) {
+            console.error("[AuthCallback] Code exchange error:", exchangeError);
+          }
+        }
+
         const {
           data: { session },
           error,
