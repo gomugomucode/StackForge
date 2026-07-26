@@ -60,6 +60,13 @@ interface ProjectSubmissionItem {
   submittedAt: string;
 }
 
+interface TutorSessionItem {
+  id: string;
+  topic: string;
+  messageCount: number;
+  updatedAt: string;
+}
+
 interface LeaderboardUser {
   rank: number;
   name: string;
@@ -77,7 +84,8 @@ export default function DashboardPage() {
     activeRoadmaps: RoadmapProgress[];
     certificates: Certificate[];
     projectSubmissions: ProjectSubmissionItem[];
-  }>({ resumeLearning: null, activeRoadmaps: [], certificates: [], projectSubmissions: [] });
+    tutorSessions: TutorSessionItem[];
+  }>({ resumeLearning: null, activeRoadmaps: [], certificates: [], projectSubmissions: [], tutorSessions: [] });
   const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -96,6 +104,7 @@ export default function DashboardPage() {
             activeRoadmaps: data.activeRoadmaps || [],
             certificates: data.certificates || [],
             projectSubmissions: data.projectSubmissions || [],
+            tutorSessions: data.tutorSessions || [],
           });
         }
         
@@ -421,16 +430,24 @@ export default function DashboardPage() {
               </h3>
               <span className="text-[10px] bg-[#1BBDF9]/10 text-[#1BBDF9] font-bold px-2 py-0.5 rounded-full">COPILOT</span>
             </div>
-            <div className="space-y-2">
-              <div className="p-3 rounded-xl bg-black/10 dark:bg-slate-900/40 border border-border/40 text-xs hover:bg-secondary/40 cursor-pointer transition-colors">
-                <p className="font-semibold text-foreground">Discussed: Closures and Lexical Scope</p>
-                <span className="text-[9px] text-muted-foreground">Yesterday • 14 exchanges</span>
+            
+            {isLoading ? (
+              <div className="h-24 animate-pulse bg-secondary/40 rounded-2xl" />
+            ) : dashboardData.tutorSessions.length > 0 ? (
+              <div className="space-y-2">
+                {dashboardData.tutorSessions.map((ts) => (
+                  <div key={ts.id} className="p-3 rounded-xl bg-black/10 dark:bg-slate-900/40 border border-border/40 text-xs hover:bg-secondary/40 cursor-pointer transition-colors">
+                    <p className="font-semibold text-foreground">Discussed: {ts.topic}</p>
+                    <span className="text-[9px] text-muted-foreground">{new Date(ts.updatedAt).toLocaleDateString()} • {ts.messageCount} exchanges</span>
+                  </div>
+                ))}
               </div>
-              <div className="p-3 rounded-xl bg-black/10 dark:bg-slate-900/40 border border-border/40 text-xs hover:bg-secondary/40 cursor-pointer transition-colors">
-                <p className="font-semibold text-foreground">Discussed: React Server Components (RSCs)</p>
-                <span className="text-[9px] text-muted-foreground">3 days ago • 8 exchanges</span>
+            ) : (
+              <div className="p-4 rounded-2xl border border-dashed border-border/60 text-center space-y-2">
+                <p className="text-[11px] text-muted-foreground">No tutor sessions yet. Ask AI Tutor for code explanations or debugging help.</p>
               </div>
-            </div>
+            )}
+            
             <Button to="/tutor" variant="ghost" size="sm" className="w-full text-xs hover:bg-secondary/40 rounded-full">Launch AI Mentor</Button>
           </div>
 

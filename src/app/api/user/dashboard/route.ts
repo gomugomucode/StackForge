@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
     const user = await getSupabaseServerUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const [roadmaps, activities, certificates, submissions] = await Promise.all([
+    const [roadmaps, activities, certificates, submissions, tutorSessions] = await Promise.all([
       // Fetch roadmaps the user has started (has progress)
       prisma.roadmapCompletion.findMany({
         where: { userId: user.id },
@@ -32,6 +32,13 @@ export async function GET(req: NextRequest) {
         include: { project: true },
         orderBy: { createdAt: 'desc' },
         take: 5,
+      }),
+      // Fetch real AI tutor sessions
+      prisma.tutorSession.findMany({
+        where: { userId: user.id },
+        include: { messages: true },
+        orderBy: { updatedAt: 'desc' },
+        take: 3,
       }),
     ]);
 
@@ -118,6 +125,12 @@ export async function GET(req: NextRequest) {
         title: s.project?.title || 'Mini-Project',
         repoUrl: s.repoUrl,
         submittedAt: s.createdAt,
+      })),
+      tutorSessions: (tutorSessions as any[]).map(ts => ({
+        id: ts.id,
+        topic: ts.topic,
+        messageCount: ts.messages?.length || 0,
+        updatedAt: ts.updatedAt,
       })),
     });
   } catch (error) {
