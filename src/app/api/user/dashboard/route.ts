@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
     const user = await getSupabaseServerUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const [roadmaps, activities, certificates] = await Promise.all([
+    const [roadmaps, activities, certificates, submissions] = await Promise.all([
       // Fetch roadmaps the user has started (has progress)
       prisma.roadmapCompletion.findMany({
         where: { userId: user.id },
@@ -23,29 +23,42 @@ export async function GET(req: NextRequest) {
       // Fetch earned certifications
       prisma.certification.findMany({
         where: { userId: user.id },
-        include: { roadmap: true }, // Assuming we might want roadmap name
+        include: { roadmap: true },
         orderBy: { issuedAt: 'desc' },
+      }),
+      // Fetch real user project submissions
+      prisma.projectSubmission.findMany({
+        where: { userId: user.id },
+        include: { project: true },
+        orderBy: { createdAt: 'desc' },
+        take: 5,
       }),
     ]);
 
     return NextResponse.json({
-      activeRoadmaps: roadmaps.map(r => ({
+      activeRoadmaps: (roadmaps as any[]).map(r => ({
         id: r.roadmapId,
         title: r.roadmap.title,
         progress: r.completionPercentage,
         slug: r.roadmap.slug,
         color: r.roadmap.color,
       })),
-      recentActivity: activities.map(a => ({
+      recentActivity: (activities as any[]).map(a => ({
         id: a.id,
         action: a.reason,
         date: a.createdAt,
         type: 'xp',
       })),
-      certificates: certificates.map(c => ({
+      certificates: (certificates as any[]).map(c => ({
         id: c.id,
         roadmapName: c.roadmap?.title || 'Course',
         issuedAt: c.issuedAt,
+      })),
+      projectSubmissions: (submissions as any[]).map(s => ({
+        id: s.id,
+        title: s.project?.title || 'Mini-Project',
+        repoUrl: s.repoUrl,
+        submittedAt: s.createdAt,
       })),
     });
   } catch (error) {

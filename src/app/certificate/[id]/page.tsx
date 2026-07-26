@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { Certification } from "@prisma/client";
 
 async function getCertificate(id: string) {
   const cert = await prisma.certification.findUnique({
@@ -15,8 +14,9 @@ async function getCertificate(id: string) {
   return cert;
 }
 
-export default async function CertificatePage({ params }: { params: { id: string } }) {
-  const cert = await getCertificate(params.id);
+export default async function CertificatePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const cert = await getCertificate(id);
 
   if (!cert) {
     return notFound();

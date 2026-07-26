@@ -79,7 +79,11 @@ export function Navbar() {
     !pathname.startsWith('/auth');
 
   const resourceLink = navLinks.find(link => link.label === 'Resources');
-  const otherLinks = navLinks.filter(link => link.label !== 'Resources');
+  const otherLinks = navLinks.filter(link => {
+    if (link.label === 'Resources') return false;
+    if (link.label === 'Dashboard' && !isAuthenticated) return false;
+    return true;
+  });
 
   return (
     <>
@@ -293,21 +297,17 @@ export function Navbar() {
               <ThemeToggle />
 
               {isAuthenticated ? (
-                <Button to="/dashboard" variant="primary" size="sm" className="bg-[#1BBDF9] hover:bg-[#159ecf] text-white">
+                <Button to="/dashboard" variant="primary" size="sm" className="bg-[#1BBDF9] hover:bg-[#159ecf] text-white font-semibold">
                   Dashboard
                 </Button>
               ) : (
                 <Button
-                  to={
-                    isLearningPage
-                      ? `/auth/login?from=${encodeURIComponent(pathname)}`
-                      : '/auth/login'
-                  }
+                  to="/auth/signup"
                   variant="primary"
                   size="sm"
-                  className="bg-[#1BBDF9] hover:bg-[#159ecf] text-white"
+                  className="bg-[#1BBDF9] hover:bg-[#159ecf] text-white font-semibold"
                 >
-                  Start Learning
+                  Get Started
                 </Button>
               )}
             </div>
@@ -334,7 +334,9 @@ export function Navbar() {
                 className="xl:hidden pb-4 border-t border-border mt-2 bg-background/95 backdrop-blur-md rounded-2xl p-4 shadow-xl"
               >
                 <div className="flex flex-col gap-1">
-                  {navLinks.map((link) => (
+                  {navLinks
+                    .filter((link) => link.label !== 'Dashboard' || isAuthenticated)
+                    .map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}

@@ -3,14 +3,14 @@ import { TopicPage } from "@/features/learning/pages/TopicPage";
 import { getTopicData } from "@/features/learning/services/topicServerService";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     technology: string;
     topic: string;
-  };
+  }>;
 }
 
 export default async function Page({ params }: PageProps) {
-  const { technology, topic: topicSlug } = params;
+  const { technology, topic: topicSlug } = await params;
 
   const data = await getTopicData(technology, topicSlug);
 

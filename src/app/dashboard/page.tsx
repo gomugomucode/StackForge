@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useUserStats } from "@/context/UserStatsContext";
 import { ProtectedRoute } from "@/features/auth/components/ProtectedRoute";
@@ -40,6 +41,13 @@ interface Certificate {
   issuedAt: string;
 }
 
+interface ProjectSubmissionItem {
+  id: string;
+  title: string;
+  repoUrl: string;
+  submittedAt: string;
+}
+
 interface LeaderboardUser {
   rank: number;
   name: string;
@@ -55,7 +63,8 @@ export default function DashboardPage() {
   const [dashboardData, setDashboardData] = useState<{
     activeRoadmaps: RoadmapProgress[];
     certificates: Certificate[];
-  }>({ activeRoadmaps: [], certificates: [] });
+    projectSubmissions: ProjectSubmissionItem[];
+  }>({ activeRoadmaps: [], certificates: [], projectSubmissions: [] });
   const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -72,6 +81,7 @@ export default function DashboardPage() {
           setDashboardData({
             activeRoadmaps: data.activeRoadmaps || [],
             certificates: data.certificates || [],
+            projectSubmissions: data.projectSubmissions || [],
           });
         }
         
@@ -269,7 +279,7 @@ export default function DashboardPage() {
                   <div className="p-6 rounded-2xl border border-dashed border-border text-center space-y-3">
                     <p className="text-xs text-muted-foreground">No started roadmaps in progress.</p>
                     <Button variant="outline" size="sm" className="rounded-full" asChild>
-                      <NextLink href="/roadmaps">Start Journey</NextLink>
+                      <Link href="/roadmaps">Start Journey</Link>
                     </Button>
                   </div>
                 )}
@@ -338,9 +348,9 @@ export default function DashboardPage() {
                         <h4 className="text-xs font-bold truncate">{cert.roadmapName}</h4>
                         <span className="text-[9px] text-muted-foreground">{new Date(cert.issuedAt).toLocaleDateString()}</span>
                       </div>
-                      <NextLink href={`/verify/${cert.id}`} className="text-[#1BBDF9] hover:underline text-[10px] font-bold flex items-center gap-0.5">
+                      <Link href={`/verify/${cert.id}`} className="text-[#1BBDF9] hover:underline text-[10px] font-bold flex items-center gap-0.5">
                         Verify <ArrowRight className="w-3 h-3" />
-                      </NextLink>
+                      </Link>
                     </div>
                   ))}
                 </div>
@@ -382,27 +392,42 @@ export default function DashboardPage() {
           <div className="lg:col-span-4 p-6 rounded-3xl premium-glass border border-border/50 hover:border-[#1BBDF9]/30 transition-all duration-300 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-sm flex items-center gap-2">
-                <FolderGit2 className="w-4 h-4 text-orange-500" /> Project Sandbox
+                <FolderGit2 className="w-4 h-4 text-orange-500" /> Project Submissions
               </h3>
-              <span className="text-[10px] bg-orange-500/10 text-orange-500 font-bold px-2 py-0.5 rounded-full">MINI-PROJECTS</span>
+              <span className="text-[10px] bg-orange-500/10 text-orange-500 font-bold px-2 py-0.5 rounded-full">PORTFOLIO</span>
             </div>
-            <div className="space-y-2">
-              <div className="p-3 rounded-xl bg-black/10 dark:bg-slate-900/40 border border-border/40 text-xs">
-                <div className="flex justify-between items-center">
-                  <p className="font-semibold text-foreground">Interactive React Todo</p>
-                  <span className="text-[9px] bg-yellow-500/10 text-yellow-500 px-1.5 py-0.5 rounded-md font-bold">DRAFT</span>
-                </div>
-                <p className="text-[10px] text-muted-foreground mt-1">4 of 5 requirements verified in Sandbox</p>
+            
+            {isLoading ? (
+              <div className="h-24 animate-pulse bg-secondary/40 rounded-2xl" />
+            ) : dashboardData.projectSubmissions.length > 0 ? (
+              <div className="space-y-2">
+                {dashboardData.projectSubmissions.map((sub) => (
+                  <div key={sub.id} className="p-3 rounded-xl bg-black/10 dark:bg-slate-900/40 border border-border/40 text-xs flex items-center justify-between">
+                    <div>
+                      <p className="font-semibold text-foreground">{sub.title}</p>
+                      <span className="text-[9px] text-muted-foreground">Submitted {new Date(sub.submittedAt).toLocaleDateString()}</span>
+                    </div>
+                    <a 
+                      href={sub.repoUrl} 
+                      target="_blank" 
+                      rel="noreferrer" 
+                      className="text-[#1BBDF9] hover:underline text-[10px] font-bold"
+                    >
+                      Repo ↗
+                    </a>
+                  </div>
+                ))}
               </div>
-              <div className="p-3 rounded-xl bg-black/10 dark:bg-slate-900/40 border border-border/40 text-xs">
-                <div className="flex justify-between items-center">
-                  <p className="font-semibold text-foreground">Responsive CSS Layout Grid</p>
-                  <span className="text-[9px] bg-emerald-500/10 text-emerald-500 px-1.5 py-0.5 rounded-md font-bold">SUBMITTED</span>
-                </div>
-                <p className="text-[10px] text-muted-foreground mt-1">Grade: Elite • 500 XP Earned</p>
+            ) : (
+              <div className="p-4 rounded-2xl border border-dashed border-border/60 text-center space-y-2">
+                <p className="text-[11px] text-muted-foreground">No projects submitted yet. Build fullstack apps in the portfolio sandbox.</p>
+                <Button to="/projects" variant="outline" size="sm" className="w-full text-[10px] rounded-full h-8">
+                  Browse Projects
+                </Button>
               </div>
-            </div>
-            <Button to="/projects" variant="ghost" size="sm" className="w-full text-xs hover:bg-secondary/40 rounded-full">View Projects</Button>
+            )}
+            
+            <Button to="/projects" variant="ghost" size="sm" className="w-full text-xs hover:bg-secondary/40 rounded-full">Explore All Projects</Button>
           </div>
 
           {/* Recent Activity Card */}
