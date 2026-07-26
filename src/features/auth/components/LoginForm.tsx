@@ -72,7 +72,10 @@ export function LoginForm() {
         try {
           await fetch("/api/auth/init", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              ...(data.session?.access_token ? { Authorization: `Bearer ${data.session.access_token}` } : {}),
+            },
             body: JSON.stringify({
               userId: data.user.id,
               email: data.user.email,

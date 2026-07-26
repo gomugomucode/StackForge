@@ -60,10 +60,8 @@ export default function ProjectsPage() {
           icon={<FolderKanban className="w-6 h-6 text-primary" />}
           reason={`No projects found matching "${searchQuery}".`}
           benefit="Try clearing your search query or selecting a different difficulty filter."
-          primaryCTA={{
-            label: "Clear Search",
-            onClick: () => setSearchQuery("")
-          }}
+          primaryCtaLabel="Clear Search"
+          onPrimaryClick={() => setSearchQuery("")}
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -107,8 +105,7 @@ export default function ProjectsPage() {
                     variant="outline" 
                     size="sm" 
                     className="flex-1 gap-2" 
-                    onClick={(e) => {
-                      e.preventDefault();
+                    onClick={() => {
                       setSelectedProjectId(project.id);
                       setSubmitModalOpen(true);
                     }}
