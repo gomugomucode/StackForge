@@ -47,6 +47,9 @@ export interface TopicCheatsheet {
   bestPractices: string[];
   interviewNotes: string[];
   quickRevision: string[];
+  examples?: string[];
+  commonMistakes?: string[];
+  interviewTips?: string[];
 }
 
 export interface TopicResource {
@@ -66,38 +69,10 @@ export interface TopicExample {
   explanation: string;
 }
 
-export interface Challenge {
-  id: string;
-  topicId: string;
-  title: string;
-  description: string;
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
-  solution: string;
-  hints: string[];
-  expectedOutput: string;
-}
+import { Challenge } from './challenge';
+import { Quiz, Question } from './quiz';
 
-export interface Quiz {
-  id: string;
-  title: string;
-  description?: string | null;
-  difficulty: string;
-  lessonId?: string | null;
-  roadmapId?: string | null;
-  topicId?: string | null;
-  questions?: Question[];
-}
-
-export interface Question {
-  id: string;
-  quizId?: string | null;
-  examId?: string | null;
-  question: string;
-  options: string[];
-  answer: string;
-  explanation?: string | null;
-  difficulty: string;
-}
+export type { Challenge, Quiz, Question };
 
 export interface InterviewQuestion {
   id: string;

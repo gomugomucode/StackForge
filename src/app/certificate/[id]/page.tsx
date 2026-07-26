@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { Certification } from "@/features/content/types"; // Assuming types exist
+import { Certification } from "@prisma/client";
 
 async function getCertificate(id: string) {
   const cert = await prisma.certification.findUnique({
@@ -9,7 +9,7 @@ async function getCertificate(id: string) {
       user: {
         select: { name: true },
       },
-      // We might need to link to roadmap for the title
+      roadmap: true,
     },
   });
   return cert;
@@ -48,8 +48,7 @@ export default async function CertificatePage({ params }: { params: { id: string
           <div className="space-y-2 py-6">
             <p className="text-lg text-zinc-500">has successfully completed the roadmap</p>
             <h3 className="text-2xl font-bold text-zinc-800">
-              {/* Since we don't have the roadmap name in the current include, we might need to fetch it */}
-              Roadmap Certification
+              {cert.roadmap?.title || "Roadmap Certification"}
             </h3>
           </div>
 

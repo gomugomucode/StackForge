@@ -85,6 +85,7 @@ model Progress {
   completedAt  DateTime?
   updatedAt    DateTime  @updatedAt
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson       Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   @@unique([userId, lessonId])
 }
@@ -106,8 +107,9 @@ model Certification {
   roadmapId        String
   issuedAt         DateTime @default(now())
   score            Int
-  verificationCode String   @unique
+  verificationCode String   @unique @default(cuid())
   user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  roadmap          Roadmap  @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
 
   @@unique([userId, roadmapId])
 }
@@ -180,18 +182,20 @@ model QuizAttempt {
 }
 
 model Roadmap {
-  id          String     @id @default(cuid())
-  slug        String     @unique
-  title       String
-  description String
-  category    String
-  color       String
-  icon        String
-  overview    String
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  finalExam   FinalExam?
-  modules     Module[]
+  id             String              @id @default(cuid())
+  slug           String              @unique
+  title          String
+  description    String
+  category       String
+  color          String
+  icon           String
+  overview       String
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  finalExam      FinalExam?
+  modules        Module[]
+  certifications Certification[]
+  completions    RoadmapCompletion[]
 }
 
 model Module {
@@ -229,6 +233,7 @@ model Lesson {
   updatedAt      DateTime   @updatedAt
   module         Module     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   resources      Resource[]
+  progress       Progress[]
 }
 
 model Resource {
@@ -425,6 +430,7 @@ model RoadmapCompletion {
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
   user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  roadmap              Roadmap  @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
 
   @@unique([userId, roadmapId])
 }

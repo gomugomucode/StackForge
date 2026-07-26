@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { Topic } from "@/features/content/types";
+import { Topic } from "@/features/content/types/topic";
 
 export async function getTopicData(technology: string, slug: string) {
   const topic = await prisma.topic.findFirst({

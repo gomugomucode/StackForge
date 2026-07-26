@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { getSupabaseServerUser } from "@/lib/supabase-server";
+import { getUserGamificationStats } from "@/features/gamification/services/xpService";
 
 /**
  * GET /api/user/stats
  *
- * Returns the authenticated user's XP, level, streak, totalHours, and
- * lastActive from the Profile table. Always scoped to the caller — no
- * cross-user reads possible.
+ * Returns the authenticated user's unified gamification stats from xpService.
  */
 export async function GET() {
   const user = await getSupabaseServerUser();
@@ -16,37 +14,8 @@ export async function GET() {
   }
 
   try {
-    const [profile, streakData] = await Promise.all([
-      prisma.profile.findUnique({
-        where: { userId: user.id },
-      }),
-      prisma.streakTracking.findUnique({
-        where: { userId: user.id },
-      }),
-    ]);
-
-    if (!profile) {
-      // Lazy-provision a default row so the dashboard renders instead
-      // of returning a partial state.
-      const created = await prisma.profile.create({
-        data: { userId: user.id },
-      });
-      return NextResponse.json({
-        xp: created.xp,
-        level: created.level,
-        streak: streakData?.currentStreak ?? 0,
-        totalHours: created.totalHours,
-        lastActive: created.lastActive,
-      });
-    }
-
-    return NextResponse.json({
-      xp: profile.xp,
-      level: profile.level,
-      streak: streakData?.currentStreak ?? profile.streak,
-      totalHours: profile.totalHours,
-      lastActive: profile.lastActive,
-    });
+    const stats = await getUserGamificationStats(user.id);
+    return NextResponse.json(stats);
   } catch (error) {
     console.error("[api/user/stats] error:", error);
     return NextResponse.json(

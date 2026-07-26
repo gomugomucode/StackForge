@@ -12,7 +12,7 @@ async function main() {
   await prisma.lesson.deleteMany();
   await prisma.module.deleteMany();
   await prisma.roadmap.deleteMany();
-  await prisma.cheatsheet.deleteMany();
+  await prisma.cheatSheet.deleteMany();
   await prisma.interviewQuestion.deleteMany();
   await prisma.project.deleteMany();
   await prisma.finalExam.deleteMany();
@@ -65,7 +65,7 @@ async function main() {
     ],
   });
 
-  await prisma.cheatsheet.create({
+  await prisma.cheatSheet.create({
     data: {
       lessonId: pyLesson1.id,
       slug: 'py-variables-cheatsheet',
@@ -128,7 +128,7 @@ async function main() {
     },
   });
 
-  await prisma.cheatsheet.create({
+  await prisma.cheatSheet.create({
     data: {
       lessonId: jsLesson1.id,
       slug: 'js-closures-cheatsheet',
@@ -178,7 +178,7 @@ async function main() {
     },
   });
 
-  await prisma.cheatsheet.create({
+  await prisma.cheatSheet.create({
     data: {
       lessonId: reactLesson1.id,
       slug: 'react-usestate-cheatsheet',
@@ -206,6 +206,101 @@ async function main() {
       },
     ],
   });
+
+  // 4. Seed Frontend, Backend, Fullstack roadmaps
+  const { roadmaps } = await import('../src/data/roadmaps');
+  for (const r of roadmaps) {
+    const dbRoadmap = await prisma.roadmap.upsert({
+      where: { slug: r.slug },
+      update: {
+        title: r.title,
+        description: r.description,
+        category: r.category,
+        color: r.color,
+        icon: r.icon,
+        overview: r.overview,
+      },
+      create: {
+        slug: r.slug,
+        title: r.title,
+        description: r.description,
+        category: r.category,
+        color: r.color,
+        icon: r.icon,
+        overview: r.overview,
+      },
+    });
+
+    for (const m of r.modules) {
+      const existingModule = await prisma.module.findFirst({
+        where: { roadmapId: dbRoadmap.id, slug: m.slug },
+      });
+      const dbModule =
+        existingModule ||
+        (await prisma.module.create({
+          data: {
+            roadmapId: dbRoadmap.id,
+            slug: m.slug,
+            title: m.title,
+            description: m.description,
+          },
+        }));
+
+      for (const l of m.lessons) {
+        await prisma.lesson.upsert({
+          where: { id: `${dbModule.id}-${l.slug}` },
+          update: {
+            title: l.title,
+            description: l.description,
+            whatIsIt: l.whatIsIt,
+            whyItMatters: l.whyItMatters,
+            syntax: l.syntax,
+            declaration: l.declaration,
+            example: l.example,
+            commonMistakes: l.commonMistakes,
+            practiceTask: l.practiceTask,
+            difficulty: l.difficulty.toLowerCase(),
+          },
+          create: {
+            id: `${dbModule.id}-${l.slug}`,
+            moduleId: dbModule.id,
+            slug: l.slug,
+            title: l.title,
+            description: l.description,
+            whatIsIt: l.whatIsIt,
+            whyItMatters: l.whyItMatters,
+            syntax: l.syntax,
+            declaration: l.declaration,
+            example: l.example,
+            commonMistakes: l.commonMistakes,
+            practiceTask: l.practiceTask,
+            difficulty: l.difficulty.toLowerCase(),
+            estimatedHours: parseInt(l.estimatedTime, 10) || 1,
+            prerequisites: [],
+          },
+        });
+      }
+    }
+
+    if (r.finalExam) {
+      await prisma.finalExam.upsert({
+        where: { roadmapId: dbRoadmap.id },
+        update: { passingScore: r.finalExam.passingScore },
+        create: {
+          roadmapId: dbRoadmap.id,
+          passingScore: r.finalExam.passingScore,
+          questions: {
+            create: r.finalExam.questions.map((q) => ({
+              question: q.question,
+              options: q.options,
+              answer: String(q.correctOption),
+              difficulty: "medium",
+            })),
+          },
+        },
+      });
+    }
+  }
 
   console.log('Seed completed successfully!');
 }

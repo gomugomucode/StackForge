@@ -1,10 +1,11 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
+import { Slot } from '@radix-ui/react-slot'
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline'
 type ButtonSize = 'sm' | 'md' | 'lg'
 
-interface ButtonProps {
+export interface ButtonProps {
   children: ReactNode
   variant?: ButtonVariant
   size?: ButtonSize
@@ -15,6 +16,7 @@ interface ButtonProps {
   type?: 'button' | 'submit'
   ariaLabel?: string
   disabled?: boolean
+  asChild?: boolean
 }
 
 const variants: Record<ButtonVariant, string> = {
@@ -44,8 +46,17 @@ export function Button({
   type = 'button',
   ariaLabel,
   disabled,
+  asChild = false,
 }: ButtonProps) {
   const classes = `inline-flex items-center justify-center gap-2 rounded-full font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${variants[variant]} ${sizes[size]} ${className} ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`
+
+  if (asChild) {
+    return (
+      <Slot className={classes} aria-label={ariaLabel}>
+        {children}
+      </Slot>
+    )
+  }
 
   if (to) {
     return (

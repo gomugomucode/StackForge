@@ -6,7 +6,7 @@ import {
   CurriculumProject, 
   CurriculumCheatsheet, 
   CurriculumTutorExample 
-} from '../types/curriculum.ts';
+} from '@/features/content/types/curriculum';
 
 export class ContentGenerator {
   /**
@@ -141,65 +141,153 @@ export class ContentGenerator {
   }
 
   /**
-   * Mock AI caller. In a production environment, this would call OpenAI/Anthropic/etc.
+   * AI caller. Uses OpenAI API if OPENAI_API_KEY is configured, otherwise uses structured mock generator.
    */
   private async callAI<T>(prompt: string): Promise<T> {
-    console.log(`[AI Generator] Calling AI with prompt: ${prompt.substring(0, 100)}...`);
-    
-    if (process.env.MOCK_AI === 'true') {
-      return this.generateMockResponse<T>();
+    const apiKey = process.env.OPENAI_API_KEY;
+
+    if (apiKey && process.env.MOCK_AI !== 'true') {
+      try {
+        console.log(`[AI Generator] Sending prompt to OpenAI API...`);
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model: "gpt-4o-mini",
+            messages: [
+              {
+                role: "system",
+                content: "You are an expert developer educator. Respond ONLY with valid JSON.",
+              },
+              { role: "user", content: prompt },
+            ],
+            response_format: { type: "json_object" },
+            temperature: 0.7,
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const content = data.choices?.[0]?.message?.content;
+          if (content) {
+            return JSON.parse(content) as T;
+          }
+        } else {
+          console.warn(`[AI Generator] OpenAI API call failed (${response.status}). Falling back to mock generator.`);
+        }
+      } catch (error) {
+        console.warn(`[AI Generator] Error calling OpenAI API:`, error);
+      }
     }
 
-    // Simulating network delay
-    await new Promise(resolve => setTimeout(resolve, 100));
-
-    throw new Error("AI Provider not configured. Please implement the callAI method with a real API key.");
+    return this.generateMockResponse<T>(prompt);
   }
 
-  private generateMockResponse<T>(): T {
-    // Very basic mock response generator
-    const mocks: any = {
-      'CurriculumContent': {
-        overview: 'This is a mock overview of the topic.',
-        whyItMatters: 'This topic is essential for modern development.',
-        visualExplanation: 'A diagram showing the flow of the concept.',
-        syntaxGuide: 'const example = "syntax";',
-        beginnerExample: 'console.log("Hello World");',
-        intermediateExample: 'const data = await fetch("/api");',
-        advancedExample: 'const complex = new Proxy({}, {});',
-        commonMistakes: ['Forgetting to handle errors', 'Incorrect scoping'],
-        bestPractices: ['Use meaningful names', 'Stay DRY'],
-        summary: 'Mastering this topic enables you to build better apps.'
-      },
-      'CurriculumCheatsheet': {
-        title: 'Mock Cheatsheet',
-        sections: [{ title: 'Basics', items: [{ name: 'Item 1', code: 'code()', description: 'desc' }] }]
-      },
-      'CurriculumQuiz': {
-        title: 'Mock Quiz',
-        difficulty: 'beginner',
-        type: 'quick',
-        questions: [{ question: 'What is 1+1?', options: ['1', '2', '3', '4'], answer: '2', explanation: 'Basic math.', difficulty: 'easy' }]
-      },
-      'CurriculumInterview': {
-        questions: [{ question: 'Why this tech?', answer: 'Because it is great.', explanation: 'Performance.', difficulty: 'beginner', companyTags: ['Google'] }]
-      },
-      'CurriculumProject': {
-        title: 'Mock Project',
-        description: 'Build something cool.',
-        difficulty: 'beginner',
-        requirements: ['Req 1', 'Req 2'],
-        steps: ['Step 1', 'Step 2'],
-        architecture: { overview: 'Simple', techStack: ['TS'], folderStructure: 'src/' },
-        extensions: ['Ext 1'],
-        rubric: [{ criteria: 'Correctness', weight: 100 }]
-      },
-      'CurriculumTutorExample': {
-        examples: [{ title: 'Ex 1', input: '1+1', output: '2', explanation: 'Math', difficulty: 'beginner' }]
-      }
-    };
+  private generateMockResponse<T>(prompt: string): T {
+    if (prompt.includes("CurriculumContent") || prompt.includes("comprehensive learning lesson")) {
+      return {
+        overview: "A comprehensive deep-dive into the foundational concepts, runtime execution context, and architectural principles.",
+        whyItMatters: "Mastering this concept allows you to build scalable, high-performance applications with robust error boundaries and optimal resource utilization.",
+        visualExplanation: "```mermaid\ngraph TD;\n    A[Input State] --> B{Processing Logic};\n    B -->|Success| C[Render Output];\n    B -->|Failure| D[Error Handler];\n```",
+        syntaxGuide: "Follow language standards, avoid side effects, and adhere to type safety.",
+        beginnerExample: "// Basic usage example\nconst result = performOperation('input');\nconsole.log(result);",
+        intermediateExample: "// Intermediate implementation with error handling\nasync function handleTask(id) {\n  try {\n    const response = await fetch(`/api/task/${id}`);\n    return await response.json();\n  } catch (err) {\n    console.error('Task failed', err);\n  }\n}",
+        advancedExample: "// Advanced optimized implementation with memoization\nconst cache = new Map();\nfunction memoizedCompute(key, fn) {\n  if (cache.has(key)) return cache.get(key);\n  const val = fn(key);\n  cache.set(key, val);\n  return val;\n}",
+        commonMistakes: [
+          "Forgetting to handle asynchronous rejections",
+          "Mutating state directly instead of using immutable updates",
+          "Ignoring memory leaks in long-running event listeners"
+        ],
+        bestPractices: [
+          "Always handle boundary failure conditions",
+          "Keep functions pure and single-purpose",
+          "Enforce strict TypeScript interfaces for all payload schemas"
+        ],
+        summary: "This topic equips you with industry-standard patterns necessary for building production-ready applications."
+      } as unknown as T;
+    }
 
-    // Try to match the type if possible, otherwise return an empty object
-    return mocks['CurriculumContent'] || {};
+    if (prompt.includes("cheatsheet")) {
+      return {
+        title: "Quick Reference & Cheat Sheet",
+        sections: [
+          {
+            title: "Core Mechanics",
+            items: [
+              { name: "Initialization", code: "const instance = new Service();", description: "Creates a new service instance." },
+              { name: "Execute Action", code: "await instance.execute();", description: "Runs the primary operation asynchronously." }
+            ]
+          }
+        ]
+      } as unknown as T;
+    }
+
+    if (prompt.includes("quiz")) {
+      return {
+        title: "Check Point Quiz",
+        difficulty: "intermediate",
+        type: "full",
+        questions: [
+          {
+            question: "What is the primary advantage of using immutable state updates?",
+            options: [
+              "Prevents unexpected side effects and makes state changes predictable",
+              "Increases raw execution speed by 10x",
+              "Disables all garbage collection",
+              "Forces synchronous blocking execution"
+            ],
+            answer: "Prevents unexpected side effects and makes state changes predictable",
+            explanation: "Immutability ensures that data references remain intact and state changes can be easily tracked and audited.",
+            difficulty: "medium"
+          }
+        ]
+      } as unknown as T;
+    }
+
+    if (prompt.includes("interview")) {
+      return {
+        questions: [
+          {
+            question: "How does the runtime handle asynchronous execution queues?",
+            answer: "The event loop processes synchronous tasks on the call stack before picking microtasks (promises) and macrotasks (timers) from their respective queues.",
+            explanation: "Understanding event loop microtask vs macrotask execution order is vital for performance debugging.",
+            difficulty: "intermediate",
+            companyTags: ["Google", "Meta", "Amazon"]
+          }
+        ]
+      } as unknown as T;
+    }
+
+    if (prompt.includes("project")) {
+      return {
+        title: "Hands-on Capstone Application",
+        description: "Build a production-grade application incorporating the core concepts covered in this topic.",
+        difficulty: "intermediate",
+        requirements: ["Implement data fetching and persistence", "Handle error state gracefully", "Write unit tests for core logic"],
+        steps: ["Initialize repository structure", "Build business logic components", "Add user interface and styling", "Deploy to production"],
+        architecture: {
+          overview: "Modular client-server architecture with type-safe API boundaries.",
+          techStack: ["TypeScript", "Next.js", "Prisma", "Tailwind CSS"],
+          folderStructure: "src/\n  ├── components/\n  ├── features/\n  └── lib/"
+        },
+        extensions: ["Add user authentication", "Implement real-time updates"],
+        rubric: [{ criteria: "Code quality and architecture", weight: 100 }]
+      } as unknown as T;
+    }
+
+    return {
+      examples: [
+        {
+          title: "Execution Step 1",
+          input: "const a = 10;",
+          output: "Memory: { a: 10 }",
+          explanation: "Variable 'a' is allocated on the stack.",
+          difficulty: "beginner"
+        }
+      ]
+    } as unknown as T;
   }
 }

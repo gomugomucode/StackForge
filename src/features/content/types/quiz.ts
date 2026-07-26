@@ -7,6 +7,7 @@ export interface Quiz {
   roadmapId?: string | null;
   topicId?: string | null;
   questions?: Question[];
+  type?: string;
   createdAt?: string;
   updatedAt?: string;
 }

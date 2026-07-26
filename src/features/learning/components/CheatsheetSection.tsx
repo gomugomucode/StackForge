@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { Download, FileText, Print, Code } from "lucide-react";
+import { Download, FileText, Printer, Code } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { exportToPDF, exportToMarkdown } from "@/features/cheatsheets/exportService";
 
-import { TopicCheatsheet } from "@/features/content/types";
+import { TopicCheatsheet } from "@/features/content/types/topic";
 
 interface CheatsheetSectionProps {
   title: string;
@@ -30,6 +30,9 @@ export function CheatsheetSection({ title, cheatsheet, topicSlug }: CheatsheetSe
 
   function formatCheatsheet(cs?: TopicCheatsheet): string {
     if (!cs) return "No cheatsheet available";
+    const examples = cs.examples || cs.methods?.map((m: { name: string; description: string; example?: string }) => `${m.name}: ${m.description}`) || [];
+    const commonMistakes = cs.commonMistakes || cs.commonErrors || [];
+    const interviewTips = cs.interviewTips || cs.interviewNotes || [];
     return `
 # ${title} Cheatsheet
 
@@ -37,20 +40,22 @@ export function CheatsheetSection({ title, cheatsheet, topicSlug }: CheatsheetSe
 ${cs.summary}
 
 ## Syntax
-${cs.syntax.join('\\n')}
+${cs.syntax.join('\n')}
 
 ## Examples
-${cs.examples.join('\\n')}
+${examples.join('\n')}
 
 ## Common Mistakes
-${cs.commonMistakes.join('\\n')}
+${commonMistakes.join('\n')}
 
 ## Interview Tips
-${cs.interviewTips.join('\\n')}
+${interviewTips.join('\n')}
     `.trim();
   }
 
   if (!cheatsheet) return null;
+
+  const interviewTips = cheatsheet.interviewTips || cheatsheet.interviewNotes || [];
 
   return (
     <section className="space-y-6 py-8">
@@ -84,7 +89,7 @@ ${cs.interviewTips.join('\\n')}
             onClick={handlePrint} 
             className="gap-2 text-xs"
           >
-            <Print className="w-3.5 h-3.5" /> Print
+            <Printer className="w-3.5 h-3.5" /> Print
           </Button>
         </div>
       </div>
@@ -98,7 +103,7 @@ ${cs.interviewTips.join('\\n')}
           <div className="space-y-3">
             <h5 className="text-xs font-bold uppercase tracking-wider text-primary">Syntax</h5>
             <ul className="space-y-2">
-              {cheatsheet.syntax.map((item, i) => (
+              {cheatsheet.syntax.map((item: string, i: number) => (
                 <li key={i} className="text-xs font-mono bg-muted p-2 rounded border border-border">{item}</li>
               ))}
             </ul>
@@ -106,7 +111,7 @@ ${cs.interviewTips.join('\\n')}
           <div className="space-y-3">
             <h5 className="text-xs font-bold uppercase tracking-wider text-primary">Interview Tips</h5>
             <ul className="space-y-2">
-              {cheatsheet.interviewTips.map((item, i) => (
+              {interviewTips.map((item: string, i: number) => (
                 <li key={i} className="text-xs text-muted-foreground flex gap-2">
                   <span className="text-primary">•</span> {item}
                 </li>

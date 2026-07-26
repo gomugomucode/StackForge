@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
       })),
       certificates: certificates.map(c => ({
         id: c.id,
-        roadmapName: (c as any).roadmap?.title || 'Course',
+        roadmapName: c.roadmap?.title || 'Course',
         issuedAt: c.issuedAt,
       })),
     });

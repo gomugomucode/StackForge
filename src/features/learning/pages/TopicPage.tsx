@@ -27,7 +27,7 @@ import {
   Challenge, 
   Quiz, 
   InterviewQuestion 
-} from "@/features/content/types";
+} from "@/features/content/types/topic";
 
 interface TopicPageProps {
   topic: Topic;

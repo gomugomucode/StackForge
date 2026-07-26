@@ -69,21 +69,38 @@ export async function addXP(userId: string, rewardType: RewardType, referenceId?
   return { success: true, profile: result };
 }
 
-function calculateLevel(xp: number): number {
-  // xp: 0-99 -> L1
-  // xp: 100-249 -> L2 (req 100)
-  // xp: 250-449 -> L3 (req 150)
-  // xp: 450-749 -> L4 (req 200)
-  // Formula: level = n, xp_required = sum(100 + 50*(i-1)) for i from 1 to n
-  // This is a simple arithmetic progression.
-  // xp = n/2 * (2*100 + (n-1)*50) = n/2 * (200 + 50n - 50) = n/2 * (150 + 50n) = 75n + 25n^2
-  // 25n^2 + 75n - xp = 0
-  // n = (-75 + sqrt(75^2 - 4*25*(-xp))) / (2*25)
-  // n = (-75 + sqrt(5625 + 100xp)) / 50
-  
+export function calculateLevel(xp: number): number {
   if (xp < 100) return 1;
   const n = (-75 + Math.sqrt(5625 + 100 * xp)) / 50;
   return Math.floor(n) + 1;
+}
+
+export function getXPForLevel(level: number): number {
+  if (level <= 1) return 0;
+  const n = level - 1;
+  return 25 * n * n + 75 * n;
+}
+
+export function getLevelStats(xp: number) {
+  const level = calculateLevel(xp);
+  const currentLevelXP = getXPForLevel(level);
+  const nextLevelXP = getXPForLevel(level + 1);
+  const xpInCurrentLevel = xp - currentLevelXP;
+  const xpNeededForNextLevel = nextLevelXP - currentLevelXP;
+  const progressPercentage = Math.min(
+    100,
+    Math.round((xpInCurrentLevel / xpNeededForNextLevel) * 100)
+  );
+
+  return {
+    level,
+    xp,
+    currentLevelXP,
+    nextLevelXP,
+    xpInCurrentLevel,
+    xpNeededForNextLevel,
+    progressPercentage,
+  };
 }
 
 export async function getUserXP(userId: string) {
@@ -91,4 +108,31 @@ export async function getUserXP(userId: string) {
     where: { userId },
     select: { xp: true, level: true },
   });
+}
+
+export async function getUserGamificationStats(userId: string) {
+  let profile = await prisma.profile.findUnique({
+    where: { userId },
+  });
+
+  if (!profile) {
+    profile = await prisma.profile.create({
+      data: { userId },
+    });
+  }
+
+  const streakData = await prisma.streakTracking.findUnique({
+    where: { userId },
+  });
+
+  const levelStats = getLevelStats(profile.xp);
+
+  return {
+    xp: profile.xp,
+    level: levelStats.level,
+    streak: streakData?.currentStreak ?? profile.streak,
+    totalHours: profile.totalHours,
+    lastActive: profile.lastActive,
+    levelStats,
+  };
 }

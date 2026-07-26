@@ -1,6 +1,6 @@
 import React from 'react';
 import { ExternalLink, BookOpen, Video, FileText } from 'lucide-react';
-import { TopicResource } from '@/features/content/types';
+import { TopicResource } from '@/features/content/types/topic';
 
 interface ResourcesSectionProps {
   resources: TopicResource[];

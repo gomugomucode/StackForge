@@ -29,16 +29,34 @@ import { useEffect, useState } from "react";
 import { Resource } from "@/features/resources/types/resource";
 import { exportRoadmapPDF } from "@/features/roadmaps/export/roadmapExport";
 
+import { getRoadmapBySlug } from "@/features/roadmaps/services/roadmapService";
+import { Roadmap } from "@/data/roadmaps";
+
 export default function RoadmapPage() {
   const params = useParams();
-  const roadmap = roadmaps.find((r) => r.slug === params.slug);
+  const [roadmap, setRoadmap] = useState<Roadmap | null>(null);
   const [roadmapResources, setRoadmapResources] = useState<Resource[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (roadmap) {
-      resourceService.getResourcesByTechnology(roadmap.slug).then(setRoadmapResources);
+    if (params?.slug) {
+      const slug = params.slug as string;
+      getRoadmapBySlug(slug).then((data) => {
+        setRoadmap(data);
+        setIsLoading(false);
+      });
+      resourceService.getResourcesByTechnology(slug).then(setRoadmapResources);
     }
-  }, [roadmap]);
+  }, [params?.slug]);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-20 text-center space-y-4">
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
+        <p className="text-muted-foreground text-sm">Loading roadmap...</p>
+      </div>
+    );
+  }
 
   if (!roadmap) {
     return <div className="container mx-auto px-4 py-20 text-center">Roadmap not found</div>;
@@ -111,8 +129,8 @@ export default function RoadmapPage() {
           ) : (
             <div className="col-span-full p-12 rounded-3xl border border-dashed border-border text-center space-y-3">
               <p className="text-muted-foreground">No specific resources curated for this path yet. Check the global resources tab.</p>
-              <Button variant="outline" asChild>
-                <NextLink href="/resources">View All Resources</NextLink>
+              <Button variant="outline" to="/resources">
+                View All Resources
               </Button>
             </div>
           )}
@@ -135,7 +153,7 @@ export default function RoadmapPage() {
                 <span className="text-xs font-bold px-2 py-1 rounded-full bg-secondary text-muted-foreground">
                   {project.difficulty}
                 </span>
- la</div>
+              </div>
               <h3 className="text-xl font-bold">{project.title}</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">{project.description}</p>
               <div className="flex flex-wrap gap-2">
@@ -145,8 +163,8 @@ export default function RoadmapPage() {
                   </span>
                 ))}
               </div>
-              <Button variant="outline" size="sm" className="w-full gap-2" asChild>
-                <NextLink href={`/projects/${project.slug}`}>View Requirements <ArrowRight className="w-3 h-3" /></NextLink>
+              <Button variant="outline" size="sm" className="w-full gap-2" to={`/projects/${project.slug}`}>
+                View Requirements <ArrowRight className="w-3 h-3" />
               </Button>
             </div>
           ))}
@@ -173,8 +191,8 @@ export default function RoadmapPage() {
                 <div className="p-4 rounded-xl bg-black/20 border border-border text-sm text-muted-foreground italic leading-relaxed">
                   {q.answer.substring(0, 150)}...
                 </div>
-                <Button variant="ghost" size="sm" className="p-0 h-auto text-primary hover:bg-transparent" asChild>
-                  <NextLink href={`/interview/${relevantInterviews.slug}`}>View Full Answer <ArrowRight className="w-3 h-3 ml-1" /></NextLink>
+                <Button variant="ghost" size="sm" className="p-0 h-auto text-primary hover:bg-transparent" to={`/interview/${relevantInterviews.slug}`}>
+                  View Full Answer <ArrowRight className="w-3 h-3 ml-1" />
                 </Button>
               </div>
             ))}
@@ -198,8 +216,8 @@ export default function RoadmapPage() {
               Get a condensed summary of all key concepts, syntax patterns, and interview tips for the {roadmap.title} roadmap.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Button variant="primary" size="lg" className="gap-2" asChild>
-                <NextLink href={`/roadmaps/${roadmap.slug}/cheatsheet`}>View Full Cheatsheet <BookOpen className="w-4 h-4" /></NextLink>
+              <Button variant="primary" size="lg" className="gap-2" to={`/roadmaps/${roadmap.slug}/cheatsheet`}>
+                View Full Cheatsheet <BookOpen className="w-4 h-4" />
               </Button>
               <Button 
                 variant="outline" 

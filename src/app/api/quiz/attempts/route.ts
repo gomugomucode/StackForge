@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/auth";
+import { getSupabaseServerUser } from "@/lib/supabase-server";
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
+    const user = await getSupabaseServerUser();
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -16,12 +15,6 @@ export async function GET(req: NextRequest) {
     if (!quizId) {
       return NextResponse.json({ error: "quizId is required" }, { status: 400 });
     }
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    });
-
-    if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
     const attempts = await prisma.quizAttempt.findMany({
       where: {

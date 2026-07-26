@@ -1,8 +1,7 @@
-import { PrismaClient } from '@prisma/client';
-import { roadmaps } from '../src/data/roadmaps.ts';
-import { ContentGenerator } from '../src/features/curriculum/services/contentGenerator.ts';
+import { prisma } from '../src/lib/prisma';
+import { roadmaps } from '../src/data/roadmaps';
+import { ContentGenerator } from '../src/features/curriculum/services/contentGenerator';
 
-const prisma = new PrismaClient();
 const generator = new ContentGenerator();
 
 async function seedCurriculum() {
@@ -150,6 +149,12 @@ async function seedCurriculum() {
             tags: topic.tags,
           });
 
+          // Clean existing topic child records to ensure script idempotency
+          await prisma.quiz.deleteMany({ where: { topicId: topic.id } });
+          await prisma.interviewQuestion.deleteMany({ where: { topicId: topic.id } });
+          await prisma.project.deleteMany({ where: { topicId: topic.id } });
+          await prisma.topicExample.deleteMany({ where: { topicId: topic.id } });
+
           // Quick Quiz
           await prisma.quiz.create({
             data: {
@@ -158,7 +163,7 @@ async function seedCurriculum() {
               type: 'quick',
               topicId: topic.id,
               questions: {
-                create: quizData.questions.slice(0, 3).map(q => ({
+                create: quizData.questions.slice(0, 3).map((q: any) => ({
                   question: q.question,
                   options: q.options,
                   answer: q.answer,
@@ -177,7 +182,7 @@ async function seedCurriculum() {
               type: 'full',
               topicId: topic.id,
               questions: {
-                create: quizData.questions.map(q => ({
+                create: quizData.questions.map((q: any) => ({
                   question: q.question,
                   options: q.options,
                   answer: q.answer,
@@ -202,7 +207,7 @@ async function seedCurriculum() {
           });
 
           await prisma.interviewQuestion.createMany({
-            data: interviews.questions.map(q => ({
+            data: interviews.questions.map((q: any) => ({
               topicId: topic.id,
               question: q.question,
               answer: q.answer,
@@ -248,7 +253,7 @@ async function seedCurriculum() {
           });
 
           await prisma.topicExample.createMany({
-            data: tutorEx.examples.map(e => ({
+            data: tutorEx.examples.map((e: any) => ({
               topicId: topic.id,
               title: e.title,
               code: e.input,

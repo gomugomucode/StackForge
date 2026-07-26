@@ -1,9 +1,11 @@
-import { roadmaps } from '@/data/roadmaps'
-import { SectionHeader } from '@/components/ui/SectionHeader'
-import Link from 'next/link'
-import { ChevronRight, Code2 } from 'lucide-react'
+import { getAllRoadmaps } from "@/features/roadmaps/services/roadmapService";
+import { SectionHeader } from "@/components/ui/SectionHeader";
+import Link from "next/link";
+import { ChevronRight, Code2 } from "lucide-react";
 
-export default function RoadmapsPage() {
+export default async function RoadmapsPage() {
+  const roadmaps = await getAllRoadmaps();
+
   return (
     <div className="container mx-auto px-4 py-20">
       <SectionHeader 
@@ -14,9 +16,9 @@ export default function RoadmapsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         {roadmaps.map((roadmap) => (
           <Link 
-            key={roadmap.id} 
-            href={`/roadmaps/${roadmap.id}`} 
-            className={`group relative p-8 rounded-3xl border border-border bg-card hover:border-primary/50 transition-all hover:-translate-y-1 overflow-hidden`}
+            key={roadmap.slug} 
+            href={`/roadmaps/${roadmap.slug}`} 
+            className="group relative p-8 rounded-3xl border border-border bg-card hover:border-primary/50 transition-all hover:-translate-y-1 overflow-hidden"
           >
             <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${roadmap.color} blur-3xl opacity-30 group-hover:opacity-50 transition-opacity`} />
             
@@ -36,5 +38,5 @@ export default function RoadmapsPage() {
         ))}
       </div>
     </div>
-  )
+  );
 }
