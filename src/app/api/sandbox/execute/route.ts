@@ -2,11 +2,37 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseServerUser } from "@/lib/supabase-server";
 import { CodeExecutionService } from "@/features/sandbox/services/codeExecutionService";
 
+const executionRateMap = new Map<string, { count: number; resetTime: number }>();
+
+function checkRateLimit(userId: string): boolean {
+  const now = Date.now();
+  const userRate = executionRateMap.get(userId);
+
+  if (!userRate || now > userRate.resetTime) {
+    executionRateMap.set(userId, { count: 1, resetTime: now + 60000 });
+    return true;
+  }
+
+  if (userRate.count >= 10) {
+    return false;
+  }
+
+  userRate.count += 1;
+  return true;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const user = await getSupabaseServerUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!checkRateLimit(user.id)) {
+      return NextResponse.json(
+        { error: "Rate limit exceeded. Please wait a minute before running code again." },
+        { status: 429 }
+      );
     }
 
     const { code, language } = await req.json();
