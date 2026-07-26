@@ -18,19 +18,19 @@ export default async function RoadmapsPage() {
           <Link 
             key={roadmap.slug} 
             href={`/roadmaps/${roadmap.slug}`} 
-            className="group relative p-8 rounded-2xl border border-[#E8E1D8] dark:border-[#383028] bg-white dark:bg-[#1C1814] hover:border-emerald-600/40 shadow-[0_1px_3px_rgba(44,36,28,0.04)] hover:shadow-[0_4px_16px_rgba(5,150,105,0.08)] transition-all duration-200 overflow-hidden"
+            className="group relative p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-500/40 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
           >
             <div className="relative z-10 space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-emerald-600/10 text-emerald-700 dark:text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+              <div className="w-12 h-12 rounded-xl bg-blue-600/10 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
                 <Code2 className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-[#2C241C] dark:text-white mb-2">{roadmap.title}</h3>
-                <p className="text-[#6C6257] dark:text-[#93887B] text-sm leading-relaxed">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{roadmap.title}</h3>
+                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
                   {roadmap.description}
                 </p>
               </div>
-              <div className="flex items-center text-sm font-bold text-emerald-700 dark:text-emerald-400 gap-1 group-hover:gap-2 transition-all pt-2">
+              <div className="flex items-center text-sm font-bold text-blue-600 dark:text-blue-400 gap-1 group-hover:gap-2 transition-all pt-2">
                 <span>Explore Path</span>
                 <ChevronRight className="w-4 h-4" />
               </div>

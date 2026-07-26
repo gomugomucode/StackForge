@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react";
+import { tokens } from "@/lib/tokens";
 
 export interface CardProps {
   children: ReactNode;
@@ -9,11 +10,11 @@ export interface CardProps {
 }
 
 const variantStyles = {
-  default: "bg-white border border-[#E8E1D8] shadow-[0_1px_3px_rgba(44,36,28,0.04)]",
-  subtle: "bg-[#F5F2EC] border border-[#E8E1D8]/60",
-  elevated: "bg-[#FFFDFC] border border-[#E8E1D8] shadow-[0_4px_12px_rgba(44,36,28,0.06)]",
+  default: `bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm`,
+  subtle: `bg-slate-50 dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800`,
+  elevated: `bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md`,
   interactive:
-    "bg-white border border-[#E8E1D8] shadow-[0_1px_3px_rgba(44,36,28,0.04)] hover:border-emerald-600/40 hover:shadow-[0_4px_16px_rgba(5,150,105,0.08)] transition-all duration-200 cursor-pointer",
+    `bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-blue-500/40 hover:shadow-md transition-all duration-200 cursor-pointer`,
 };
 
 const paddingStyles = {
@@ -33,7 +34,7 @@ export function Card({
   return (
     <div
       onClick={onClick}
-      className={`rounded-2xl ${variantStyles[variant]} ${paddingStyles[padding]} ${className}`}
+      className={`${tokens.radii.card} ${variantStyles[variant]} ${paddingStyles[padding]} ${className}`}
     >
       {children}
     </div>

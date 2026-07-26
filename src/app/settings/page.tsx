@@ -1,22 +1,23 @@
-"use client";
-
 import { ProtectedRoute } from "@/features/auth/components/ProtectedRoute";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
+import { tokens } from "@/lib/tokens";
 import { User, Lock, Bell, Globe } from "lucide-react";
 
 export default function SettingsPage() {
   return (
     <ProtectedRoute>
-      <div className="max-w-4xl mx-auto p-6 space-y-8">
+      <div className="max-w-4xl mx-auto px-4 py-24 space-y-8">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold">Settings</h1>
-          <p className="text-gray-500">Manage your account and preferences</p>
+          <h1 className={tokens.typography.h1}>Account Settings</h1>
+          <p className={tokens.typography.body}>Manage your profile parameters and security preferences.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-2">
             <nav className="flex flex-col gap-1">
-              <Button variant="ghost" className="justify-start gap-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600">
+              <Button variant="ghost" className="justify-start gap-2 bg-blue-600/10 text-blue-600 dark:text-blue-400 font-bold">
                 <User className="w-4 h-4" /> Account
               </Button>
               <Button variant="ghost" className="justify-start gap-2">
@@ -31,29 +32,29 @@ export default function SettingsPage() {
             </nav>
           </div>
 
-          <div className="md:col-span-2 space-y-6 bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-800">
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold">Account Information</h2>
-              <div className="grid grid-cols-1 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Full Name</label>
-                  <input 
-                    type="text" 
-                    className="w-full px-3 py-2 border rounded-md bg-transparent outline-none focus:ring-2 focus:ring-blue-500" 
-                    defaultValue="John Doe" 
-                  />
+          <div className="md:col-span-2">
+            <Card padding="lg" className="space-y-6">
+              <div className="space-y-4">
+                <h2 className={tokens.typography.h2}>Account Information</h2>
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="space-y-2">
+                    <label className={tokens.typography.caption}>Full Name</label>
+                    <Input 
+                      type="text" 
+                      defaultValue="Learner" 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className={tokens.typography.caption}>Email Address</label>
+                    <Input 
+                      type="email" 
+                      defaultValue="learner@stackforge.com" 
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Email Address</label>
-                  <input 
-                    type="email" 
-                    className="w-full px-3 py-2 border rounded-md bg-transparent outline-none focus:ring-2 focus:ring-blue-500" 
-                    defaultValue="john@example.com" 
-                  />
-                </div>
+                <Button variant="primary" className="w-fit">Save Changes</Button>
               </div>
-              <Button className="w-fit">Save Changes</Button>
-            </div>
+            </Card>
           </div>
         </div>
       </div>

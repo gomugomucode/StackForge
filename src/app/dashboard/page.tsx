@@ -146,17 +146,17 @@ export default function DashboardPage() {
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-r from-pink-400/10 to-orange-600/10 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-pulse-slow -z-10" />
 
         {/* 1. SINGLE-MISSION PERSONALIZED HERO CARD */}
-        <div className="p-8 rounded-3xl bg-white dark:bg-[#1C1814] border border-[#E8E1D8] dark:border-[#383028] shadow-[0_2px_8px_rgba(44,36,28,0.04)] relative overflow-hidden flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 group hover:border-emerald-600/30 transition-all duration-300">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-emerald-600/5 to-emerald-800/5 rounded-full filter blur-3xl opacity-60 pointer-events-none" />
+        <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 group hover:border-blue-500/30 transition-all duration-300">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-blue-600/5 to-indigo-600/5 rounded-full filter blur-3xl opacity-60 pointer-events-none" />
           
           <div className="space-y-3 max-w-2xl relative z-10">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600/10 text-emerald-700 dark:text-emerald-400 text-xs font-black uppercase tracking-wider">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-600/10 text-blue-600 dark:text-blue-400 text-xs font-black uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5" /> Workspace Hub
             </span>
-            <h1 className="text-3xl lg:text-5xl font-black tracking-tight text-[#2C241C] dark:text-white">
-              {timeGreeting}, <span className="text-emerald-600 font-extrabold">{displayName}</span> 👋
+            <h1 className="text-3xl lg:text-5xl font-black tracking-tight text-slate-900 dark:text-white">
+              {timeGreeting}, <span className="text-blue-600 dark:text-blue-400 font-extrabold">{displayName}</span> 👋
             </h1>
-            <p className="text-[#6C6257] dark:text-[#93887B] text-sm leading-relaxed">
+            <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
               {dashboardData.resumeLearning 
                 ? `You're in the middle of ${dashboardData.resumeLearning.roadmapTitle}. ${streakMessage}`
                 : streakMessage}
@@ -165,33 +165,33 @@ export default function DashboardPage() {
 
           {/* Primary Action Card Focus */}
           {dashboardData.resumeLearning ? (
-            <div className="w-full lg:w-96 p-5 rounded-2xl bg-[#F5F2EC] dark:bg-[#25201A] border border-[#E8E1D8] dark:border-[#383028] relative z-10 space-y-4 shadow-sm">
+            <div className="w-full lg:w-96 p-5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 relative z-10 space-y-4 shadow-sm">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
+                <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
                   Continue {dashboardData.resumeLearning.roadmapTitle}
                 </span>
-                <span className="text-xs font-bold text-amber-600 flex items-center gap-1">
+                <span className="text-xs font-bold text-amber-500 flex items-center gap-1">
                   ⚡ +{dashboardData.resumeLearning.xpReward} XP
                 </span>
               </div>
 
               <div>
-                <h3 className="text-base font-extrabold text-foreground truncate">
+                <h3 className="text-base font-extrabold text-slate-900 dark:text-white truncate">
                   {dashboardData.resumeLearning.lessonTitle}
                 </h3>
-                <p className="text-[11px] text-muted-foreground mt-0.5">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                   ~{dashboardData.resumeLearning.hoursRemaining * 18 || 18} mins estimated
                 </p>
               </div>
 
               <div className="space-y-1.5">
                 <div className="flex justify-between text-[11px]">
-                  <span className="text-muted-foreground font-semibold">Track Completion</span>
-                  <span className="text-[#1BBDF9] font-bold">{dashboardData.resumeLearning.completionPercentage}%</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-semibold">Track Completion</span>
+                  <span className="text-blue-600 dark:text-blue-400 font-bold">{dashboardData.resumeLearning.completionPercentage}%</span>
                 </div>
-                <div className="h-2 w-full bg-secondary dark:bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-gradient-to-r from-[#1BBDF9] to-purple-600 rounded-full transition-all duration-500" 
+                    className="h-full bg-blue-600 rounded-full transition-all duration-500" 
                     style={{ width: `${dashboardData.resumeLearning.completionPercentage}%` }} 
                   />
                 </div>
@@ -201,16 +201,16 @@ export default function DashboardPage() {
                 to={`/roadmaps/${dashboardData.resumeLearning.roadmapSlug}/lesson/${dashboardData.resumeLearning.lessonSlug}`}
                 variant="primary" 
                 size="sm" 
-                className="w-full rounded-full bg-[#1BBDF9] hover:bg-[#159ecf] text-white font-semibold gap-2"
+                className="w-full rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold gap-2"
               >
                 <span>Resume Lesson</span>
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </div>
           ) : (
-            <div className="w-full lg:w-80 p-5 rounded-2xl bg-black/30 border border-border/60 text-center space-y-3 relative z-10">
-              <p className="text-xs text-muted-foreground">Select a learning track to begin your developer journey.</p>
-              <Button to="/roadmaps" variant="primary" size="sm" className="w-full rounded-full bg-[#1BBDF9] text-white">
+            <div className="w-full lg:w-80 p-5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-center space-y-3 relative z-10">
+              <p className="text-xs text-slate-500 dark:text-slate-400">Select a learning track to begin your developer journey.</p>
+              <Button to="/roadmaps" variant="primary" size="sm" className="w-full rounded-full bg-blue-600 text-white">
                 Browse Roadmaps
               </Button>
             </div>
@@ -221,68 +221,68 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
           {/* Today's Mission Card */}
-          <div className="lg:col-span-6 p-6 rounded-3xl bg-white dark:bg-[#1C1814] border border-[#E8E1D8] dark:border-[#383028] shadow-[0_1px_3px_rgba(44,36,28,0.04)] space-y-5 hover:border-emerald-600/30 transition-all duration-300">
+          <div className="lg:col-span-6 p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5 hover:border-blue-500/30 transition-all duration-300">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <CheckSquare className="w-5 h-5 text-emerald-600" />
-                <h3 className="font-bold text-base text-[#2C241C] dark:text-white">Today's Mission</h3>
+                <CheckSquare className="w-5 h-5 text-blue-600" />
+                <h3 className="font-bold text-base text-slate-900 dark:text-white">Today's Mission</h3>
               </div>
-              <span className="text-xs bg-emerald-600/10 text-emerald-700 dark:text-emerald-400 font-bold px-2.5 py-1 rounded-full">
+              <span className="text-xs bg-blue-600/10 text-blue-600 dark:text-blue-400 font-bold px-2.5 py-1 rounded-full">
                 +450 XP REWARD
               </span>
             </div>
 
-            <p className="text-xs text-[#6C6257] dark:text-[#93887B]">Complete 3 daily activities to keep your streak active and level up.</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Complete 3 daily activities to keep your streak active and level up.</p>
 
             <div className="space-y-2">
               <div className="flex justify-between text-xs font-semibold">
-                <span className="text-[#6C6257] dark:text-[#93887B]">Mission Progress</span>
-                <span className="text-emerald-600 font-bold">1 / 3 Tasks</span>
+                <span className="text-slate-500 dark:text-slate-400">Mission Progress</span>
+                <span className="text-blue-600 dark:text-blue-400 font-bold">1 / 3 Tasks</span>
               </div>
-              <div className="h-2 w-full bg-[#F5F2EC] dark:bg-[#28221C] rounded-full overflow-hidden">
-                <div className="h-full bg-emerald-600 w-1/3 transition-all duration-500" />
+              <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-full bg-blue-600 w-1/3 transition-all duration-500" />
               </div>
             </div>
 
             <div className="space-y-2 pt-1">
-              <div className="p-3 rounded-xl bg-[#F5F2EC] dark:bg-[#25201A] border border-[#E8E1D8] dark:border-[#383028] flex items-center justify-between text-xs">
-                <span className="text-[#2C241C] dark:text-white font-medium">✓ Finish React Hooks Overview</span>
-                <span className="text-[10px] text-emerald-600 font-bold">COMPLETED</span>
+              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+                <span className="text-slate-900 dark:text-white font-medium">✓ Finish React Hooks Overview</span>
+                <span className="text-[10px] text-blue-600 font-bold">COMPLETED</span>
               </div>
-              <div className="p-3 rounded-xl bg-[#F5F2EC] dark:bg-[#25201A] border border-[#E8E1D8] dark:border-[#383028] flex items-center justify-between text-xs">
-                <span className="text-[#6C6257] dark:text-[#93887B]">○ Solve Lexical Closure Challenge</span>
-                <Link href="/challenges" className="text-[10px] text-emerald-600 font-bold hover:underline">Start →</Link>
+              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+                <span className="text-slate-600 dark:text-slate-400">○ Solve Lexical Closure Challenge</span>
+                <Link href="/challenges" className="text-[10px] text-blue-600 font-bold hover:underline">Start →</Link>
               </div>
-              <div className="p-3 rounded-xl bg-[#F5F2EC] dark:bg-[#25201A] border border-[#E8E1D8] dark:border-[#383028] flex items-center justify-between text-xs">
-                <span className="text-[#6C6257] dark:text-[#93887B]">○ Submit Portfolio Project Draft</span>
-                <Link href="/projects" className="text-[10px] text-emerald-600 font-bold hover:underline">Submit →</Link>
+              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+                <span className="text-slate-600 dark:text-slate-400">○ Submit Portfolio Project Draft</span>
+                <Link href="/projects" className="text-[10px] text-blue-600 font-bold hover:underline">Submit →</Link>
               </div>
             </div>
           </div>
 
           {/* AI Mentor Intelligence Banner */}
-          <div className="lg:col-span-6 p-6 rounded-3xl bg-white dark:bg-[#1C1814] border border-[#E8E1D8] dark:border-[#383028] shadow-[0_1px_3px_rgba(44,36,28,0.04)] space-y-5 hover:border-emerald-600/30 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
+          <div className="lg:col-span-6 p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5 hover:border-blue-500/30 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <Bot className="w-5 h-5 text-emerald-600" />
-                <h3 className="font-bold text-base text-[#2C241C] dark:text-white">AI Mentor Recommendation</h3>
+                <Bot className="w-5 h-5 text-blue-600" />
+                <h3 className="font-bold text-base text-slate-900 dark:text-white">AI Mentor Recommendation</h3>
               </div>
-              <span className="text-xs bg-emerald-600/10 text-emerald-700 dark:text-emerald-400 font-bold px-2.5 py-1 rounded-full uppercase">
+              <span className="text-xs bg-blue-600/10 text-blue-600 dark:text-blue-400 font-bold px-2.5 py-1 rounded-full uppercase">
                 INTELLIGENT GUIDE
               </span>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#F5F2EC] dark:bg-[#25201A] border border-[#E8E1D8] dark:border-[#383028] space-y-2">
-              <p className="text-xs text-[#2C241C] dark:text-white leading-relaxed font-medium">
-                💡 Based on your recent quizzes and progress, we recommend focusing on <strong className="text-emerald-600">React Hooks & Closures</strong> next.
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2">
+              <p className="text-xs text-slate-900 dark:text-white leading-relaxed font-medium">
+                💡 Based on your recent quizzes and progress, we recommend focusing on <strong className="text-blue-600 dark:text-blue-400">React Hooks & Closures</strong> next.
               </p>
-              <p className="text-[11px] text-[#6C6257] dark:text-[#93887B]">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">
                 Estimated completion time: ~18 minutes. Mastering this will unlock advanced React pattern challenges.
               </p>
             </div>
 
             <div className="pt-2">
-              <Button to="/tutor" variant="primary" size="sm" className="w-full rounded-full bg-emerald-600 hover:bg-emerald-700 text-white gap-2 font-semibold">
+              <Button to="/tutor" variant="primary" size="sm" className="w-full rounded-full bg-blue-600 hover:bg-blue-700 text-white gap-2 font-semibold">
                 <Bot className="w-4 h-4" />
                 <span>Start Session with AI Mentor</span>
               </Button>

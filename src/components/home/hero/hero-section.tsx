@@ -20,9 +20,9 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-medium mb-8"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-600/10 border border-blue-600/20 text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-wider mb-8"
         >
-          <Sparkles className="w-3 h-3" />
+          <Sparkles className="w-3.5 h-3.5" />
           <span>The Ultimate Developer's Forge</span>
         </motion.div>
 
@@ -30,10 +30,10 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-5xl md:text-7xl font-bold tracking-tight mb-6 gradient-text"
+          className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 text-slate-900 dark:text-white"
         >
           Master the Modern <br className="hidden md:block" /> 
-          <span className="text-primary">Tech Stack</span>
+          <span className="text-blue-600 dark:text-blue-400">Tech Stack</span>
         </motion.h1>
 
         <motion.p 
@@ -52,14 +52,14 @@ export function HeroSection() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
-          <Button size="lg" className="h-12 px-8 gap-2 group" asChild>
+          <Button size="lg" className="h-12 px-8 gap-2 group bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md" asChild>
             <Link href="/roadmaps">
-              Get Started <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <span>Get Started</span> <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </Button>
-          <Button variant="outline" size="lg" className="h-12 px-8 gap-2" asChild>
+          <Button variant="outline" size="lg" className="h-12 px-8 gap-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 font-semibold" asChild>
             <Link href="/roadmaps">
-              <Terminal className="w-4 h-4" /> View Roadmaps
+              <Terminal className="w-4 h-4 text-blue-600 dark:text-blue-400" /> <span>View Roadmaps</span>
             </Link>
           </Button>
         </motion.div>

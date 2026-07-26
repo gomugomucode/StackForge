@@ -21,12 +21,12 @@ export interface ButtonProps {
 
 const variants: Record<ButtonVariant, string> = {
   primary:
-    'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm active:scale-[0.98]',
+    'bg-blue-600 text-white hover:bg-blue-700 shadow-sm active:scale-[0.98]',
   secondary:
-    'bg-[#F5F2EC] text-[#2C241C] border border-[#E8E1D8] hover:bg-[#EAE4D9] active:scale-[0.98]',
-  ghost: 'text-[#6C6257] hover:bg-[#F5F2EC] hover:text-[#2C241C]',
+    'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.98]',
+  ghost: 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white',
   outline:
-    'border border-[#E8E1D8] text-[#2C241C] hover:bg-[#F5F2EC] active:scale-[0.98]',
+    'border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-[0.98]',
   danger:
     'bg-red-600 text-white hover:bg-red-700 shadow-sm active:scale-[0.98]',
   success:

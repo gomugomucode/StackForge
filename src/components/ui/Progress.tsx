@@ -14,12 +14,12 @@ export function Progress({ value, className }: ProgressProps) {
   return (
     <div
       className={cn(
-        "relative h-2 w-full overflow-hidden rounded-full bg-secondary",
+        "relative h-2 w-full overflow-hidden rounded-full bg-[#F5F2EC] dark:bg-[#28221C]",
         className
       )}
     >
       <div
-        className="absolute inset-0 transition-all duration-500 ease-out bg-primary"
+        className="absolute inset-0 transition-all duration-500 ease-out bg-emerald-600 rounded-full"
         style={{ 
           width: `${roundedValue}%`,
           transform: 'translateX(0)' 
