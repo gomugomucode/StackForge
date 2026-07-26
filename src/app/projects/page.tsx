@@ -20,7 +20,7 @@ export default function ProjectsPage() {
   )
 
   return (
-    <div className="container mx-auto px-4 py-20">
+    <div className="container mx-auto px-4 py-24 max-w-7xl">
       <SectionHeader 
         title="Project Learning System" 
         subtitle="Stop following tutorials. Start building real-world systems from requirements to solution."
@@ -31,11 +31,11 @@ export default function ProjectsPage() {
           <input 
             type="text" 
             placeholder="Search projects, tags..." 
-            className="w-full pl-4 pr-4 py-2 rounded-xl border border-border bg-card focus:ring-2 focus:ring-primary outline-none transition-all"
+            className="w-full pl-4 pr-4 py-2 rounded-xl border border-[#E8E1D8] dark:border-[#383028] bg-white dark:bg-[#1C1814] text-[#2C241C] dark:text-white focus:ring-2 focus:ring-emerald-600 outline-none transition-all"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-        </div >
+        </div>
         <div className="flex gap-2 overflow-x-auto w-full md:w-auto">
           {['Beginner', 'Intermediate', 'Advanced'].map(level => (
             <Button 
@@ -47,7 +47,7 @@ export default function ProjectsPage() {
               {level}
             </Button>
           ))}
-        </div >
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -55,7 +55,7 @@ export default function ProjectsPage() {
           <Link 
             key={project.id} 
             href={`/projects/${project.slug}`} 
-            className="group relative p-8 rounded-3xl border border-border bg-card hover:border-primary/50 transition-all hover:-translate-y-1"
+            className="group relative p-8 rounded-2xl border border-[#E8E1D8] dark:border-[#383028] bg-white dark:bg-[#1C1814] hover:border-emerald-600/40 shadow-[0_1px_3px_rgba(44,36,28,0.04)] hover:shadow-[0_4px_16px_rgba(5,150,105,0.08)] transition-all duration-200"
           >
             <div className="flex items-center justify-between mb-6">
               <div className={`px-3 py-1 rounded-full text-xs font-bold ${

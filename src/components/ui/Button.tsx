@@ -2,7 +2,7 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { Slot } from '@radix-ui/react-slot'
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline'
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline' | 'danger' | 'success'
 type ButtonSize = 'sm' | 'md' | 'lg'
 
 export interface ButtonProps {
@@ -21,12 +21,16 @@ export interface ButtonProps {
 
 const variants: Record<ButtonVariant, string> = {
   primary:
-    'bg-primary text-primary-foreground hover:brightness-110 shadow-lg shadow-primary/25 active:scale-95',
+    'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm active:scale-[0.98]',
   secondary:
-    'bg-secondary text-secondary-foreground border border-border hover:bg-secondary/80 transition-colors',
-  ghost: 'text-foreground hover:bg-secondary/50 hover:text-foreground transition-colors',
+    'bg-[#F5F2EC] text-[#2C241C] border border-[#E8E1D8] hover:bg-[#EAE4D9] active:scale-[0.98]',
+  ghost: 'text-[#6C6257] hover:bg-[#F5F2EC] hover:text-[#2C241C]',
   outline:
-    'border border-border text-foreground hover:bg-secondary/50 transition-colors',
+    'border border-[#E8E1D8] text-[#2C241C] hover:bg-[#F5F2EC] active:scale-[0.98]',
+  danger:
+    'bg-red-600 text-white hover:bg-red-700 shadow-sm active:scale-[0.98]',
+  success:
+    'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm active:scale-[0.98]',
 }
 
 const sizes: Record<ButtonSize, string> = {

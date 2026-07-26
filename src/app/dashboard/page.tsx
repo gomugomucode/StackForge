@@ -146,17 +146,17 @@ export default function DashboardPage() {
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-r from-pink-400/10 to-orange-600/10 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-pulse-slow -z-10" />
 
         {/* 1. SINGLE-MISSION PERSONALIZED HERO CARD */}
-        <div className="p-8 rounded-3xl premium-glass border border-border/50 relative overflow-hidden flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 group hover:border-[#1BBDF9]/40 transition-all duration-300">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#1BBDF9]/10 to-purple-600/10 rounded-full filter blur-3xl opacity-60 pointer-events-none" />
+        <div className="p-8 rounded-3xl bg-white dark:bg-[#1C1814] border border-[#E8E1D8] dark:border-[#383028] shadow-[0_2px_8px_rgba(44,36,28,0.04)] relative overflow-hidden flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 group hover:border-emerald-600/30 transition-all duration-300">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-emerald-600/5 to-emerald-800/5 rounded-full filter blur-3xl opacity-60 pointer-events-none" />
           
           <div className="space-y-3 max-w-2xl relative z-10">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1BBDF9]/10 text-[#1BBDF9] text-xs font-black uppercase tracking-wider">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600/10 text-emerald-700 dark:text-emerald-400 text-xs font-black uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5" /> Workspace Hub
             </span>
-            <h1 className="text-3xl lg:text-5xl font-black tracking-tight">
-              {timeGreeting}, <span className="gradient-text-cyan-purple font-extrabold">{displayName}</span> 👋
+            <h1 className="text-3xl lg:text-5xl font-black tracking-tight text-[#2C241C] dark:text-white">
+              {timeGreeting}, <span className="text-emerald-600 font-extrabold">{displayName}</span> 👋
             </h1>
-            <p className="text-muted-foreground text-sm leading-relaxed">
+            <p className="text-[#6C6257] dark:text-[#93887B] text-sm leading-relaxed">
               {dashboardData.resumeLearning 
                 ? `You're in the middle of ${dashboardData.resumeLearning.roadmapTitle}. ${streakMessage}`
                 : streakMessage}
@@ -165,12 +165,12 @@ export default function DashboardPage() {
 
           {/* Primary Action Card Focus */}
           {dashboardData.resumeLearning ? (
-            <div className="w-full lg:w-96 p-5 rounded-2xl bg-black/30 dark:bg-slate-900/60 border border-border/60 relative z-10 space-y-4 shadow-xl">
+            <div className="w-full lg:w-96 p-5 rounded-2xl bg-[#F5F2EC] dark:bg-[#25201A] border border-[#E8E1D8] dark:border-[#383028] relative z-10 space-y-4 shadow-sm">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold text-[#1BBDF9] uppercase tracking-wider">
+                <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
                   Continue {dashboardData.resumeLearning.roadmapTitle}
                 </span>
-                <span className="text-xs font-bold text-amber-500 flex items-center gap-1">
+                <span className="text-xs font-bold text-amber-600 flex items-center gap-1">
                   ⚡ +{dashboardData.resumeLearning.xpReward} XP
                 </span>
               </div>
@@ -221,68 +221,68 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
           {/* Today's Mission Card */}
-          <div className="lg:col-span-6 p-6 rounded-3xl premium-glass border border-border/50 space-y-5 hover:border-[#1BBDF9]/30 transition-all duration-300">
+          <div className="lg:col-span-6 p-6 rounded-3xl bg-white dark:bg-[#1C1814] border border-[#E8E1D8] dark:border-[#383028] shadow-[0_1px_3px_rgba(44,36,28,0.04)] space-y-5 hover:border-emerald-600/30 transition-all duration-300">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <CheckSquare className="w-5 h-5 text-emerald-500" />
-                <h3 className="font-bold text-base">Today's Mission</h3>
+                <CheckSquare className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-bold text-base text-[#2C241C] dark:text-white">Today's Mission</h3>
               </div>
-              <span className="text-xs bg-emerald-500/10 text-emerald-500 font-bold px-2.5 py-1 rounded-full">
+              <span className="text-xs bg-emerald-600/10 text-emerald-700 dark:text-emerald-400 font-bold px-2.5 py-1 rounded-full">
                 +450 XP REWARD
               </span>
             </div>
 
-            <p className="text-xs text-muted-foreground">Complete 3 daily activities to keep your streak active and level up.</p>
+            <p className="text-xs text-[#6C6257] dark:text-[#93887B]">Complete 3 daily activities to keep your streak active and level up.</p>
 
             <div className="space-y-2">
               <div className="flex justify-between text-xs font-semibold">
-                <span className="text-muted-foreground">Mission Progress</span>
-                <span className="text-emerald-500 font-bold">1 / 3 Tasks</span>
+                <span className="text-[#6C6257] dark:text-[#93887B]">Mission Progress</span>
+                <span className="text-emerald-600 font-bold">1 / 3 Tasks</span>
               </div>
-              <div className="h-2 w-full bg-secondary dark:bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-emerald-500 w-1/3 transition-all duration-500" />
+              <div className="h-2 w-full bg-[#F5F2EC] dark:bg-[#28221C] rounded-full overflow-hidden">
+                <div className="h-full bg-emerald-600 w-1/3 transition-all duration-500" />
               </div>
             </div>
 
             <div className="space-y-2 pt-1">
-              <div className="p-3 rounded-xl bg-black/10 dark:bg-slate-900/40 border border-border/40 flex items-center justify-between text-xs">
-                <span className="text-foreground font-medium">✓ Finish React Hooks Overview</span>
-                <span className="text-[10px] text-emerald-500 font-bold">COMPLETED</span>
+              <div className="p-3 rounded-xl bg-[#F5F2EC] dark:bg-[#25201A] border border-[#E8E1D8] dark:border-[#383028] flex items-center justify-between text-xs">
+                <span className="text-[#2C241C] dark:text-white font-medium">✓ Finish React Hooks Overview</span>
+                <span className="text-[10px] text-emerald-600 font-bold">COMPLETED</span>
               </div>
-              <div className="p-3 rounded-xl bg-black/10 dark:bg-slate-900/40 border border-border/40 flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">○ Solve Lexical Closure Challenge</span>
-                <Link href="/challenges" className="text-[10px] text-[#1BBDF9] font-bold hover:underline">Start →</Link>
+              <div className="p-3 rounded-xl bg-[#F5F2EC] dark:bg-[#25201A] border border-[#E8E1D8] dark:border-[#383028] flex items-center justify-between text-xs">
+                <span className="text-[#6C6257] dark:text-[#93887B]">○ Solve Lexical Closure Challenge</span>
+                <Link href="/challenges" className="text-[10px] text-emerald-600 font-bold hover:underline">Start →</Link>
               </div>
-              <div className="p-3 rounded-xl bg-black/10 dark:bg-slate-900/40 border border-border/40 flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">○ Submit Portfolio Project Draft</span>
-                <Link href="/projects" className="text-[10px] text-[#1BBDF9] font-bold hover:underline">Submit →</Link>
+              <div className="p-3 rounded-xl bg-[#F5F2EC] dark:bg-[#25201A] border border-[#E8E1D8] dark:border-[#383028] flex items-center justify-between text-xs">
+                <span className="text-[#6C6257] dark:text-[#93887B]">○ Submit Portfolio Project Draft</span>
+                <Link href="/projects" className="text-[10px] text-emerald-600 font-bold hover:underline">Submit →</Link>
               </div>
             </div>
           </div>
 
           {/* AI Mentor Intelligence Banner */}
-          <div className="lg:col-span-6 p-6 rounded-3xl premium-glass border border-border/50 space-y-5 hover:border-[#1BBDF9]/30 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
+          <div className="lg:col-span-6 p-6 rounded-3xl bg-white dark:bg-[#1C1814] border border-[#E8E1D8] dark:border-[#383028] shadow-[0_1px_3px_rgba(44,36,28,0.04)] space-y-5 hover:border-emerald-600/30 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <Bot className="w-5 h-5 text-[#1BBDF9]" />
-                <h3 className="font-bold text-base">AI Mentor Recommendation</h3>
+                <Bot className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-bold text-base text-[#2C241C] dark:text-white">AI Mentor Recommendation</h3>
               </div>
-              <span className="text-xs bg-[#1BBDF9]/10 text-[#1BBDF9] font-bold px-2.5 py-1 rounded-full uppercase">
+              <span className="text-xs bg-emerald-600/10 text-emerald-700 dark:text-emerald-400 font-bold px-2.5 py-1 rounded-full uppercase">
                 INTELLIGENT GUIDE
               </span>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#1BBDF9]/5 border border-[#1BBDF9]/20 space-y-2">
-              <p className="text-xs text-foreground leading-relaxed font-medium">
-                💡 Based on your recent quizzes and progress, we recommend focusing on <strong className="text-[#1BBDF9]">React Hooks & Closures</strong> next.
+            <div className="p-4 rounded-2xl bg-[#F5F2EC] dark:bg-[#25201A] border border-[#E8E1D8] dark:border-[#383028] space-y-2">
+              <p className="text-xs text-[#2C241C] dark:text-white leading-relaxed font-medium">
+                💡 Based on your recent quizzes and progress, we recommend focusing on <strong className="text-emerald-600">React Hooks & Closures</strong> next.
               </p>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-[11px] text-[#6C6257] dark:text-[#93887B]">
                 Estimated completion time: ~18 minutes. Mastering this will unlock advanced React pattern challenges.
               </p>
             </div>
 
             <div className="pt-2">
-              <Button to="/tutor" variant="primary" size="sm" className="w-full rounded-full bg-[#1BBDF9] hover:bg-[#159ecf] text-white gap-2 font-semibold">
+              <Button to="/tutor" variant="primary" size="sm" className="w-full rounded-full bg-emerald-600 hover:bg-emerald-700 text-white gap-2 font-semibold">
                 <Bot className="w-4 h-4" />
                 <span>Start Session with AI Mentor</span>
               </Button>

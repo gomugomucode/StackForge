@@ -90,10 +90,10 @@ export function Navbar() {
       <CommandMenu />
       <header className="fixed top-0 z-50 w-full transition-all duration-300">
         <nav className="container mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-          <div className="flex items-center justify-between h-16 backdrop-blur-md bg-white/10 dark:bg-slate-950/40 border border-white/20 dark:border-slate-800/40 rounded-2xl px-4 shadow-xl shadow-black/5 transition-all duration-300">
+          <div className="flex items-center justify-between h-16 backdrop-blur-md bg-[#FAF8F5]/90 dark:bg-[#1C1814]/90 border border-[#E8E1D8] dark:border-[#383028] rounded-2xl px-4 shadow-[0_2px_12px_rgba(44,36,28,0.06)] transition-all duration-300">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 group" aria-label={`${brandName} home`}>
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1BBDF9] to-purple-600 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-lg shadow-[#1BBDF9]/20">
+              <div className="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-md">
                 <Code2 className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-black text-foreground tracking-tight group-hover:text-[#1BBDF9] transition-colors duration-300">

@@ -103,54 +103,51 @@ export default async function QuizzesPage() {
     : DEFAULT_QUIZZES;
 
   return (
-    <main className="min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-8">
-      {/* Background Glow */}
-      <div className="absolute top-20 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-b from-indigo-500/10 via-purple-500/5 to-transparent blur-3xl pointer-events-none -z-10" />
-
+    <main className="min-h-screen bg-[#FAF8F5] dark:bg-[#15120F] text-[#2C241C] dark:text-white py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Page Header */}
         <div className="text-center space-y-4 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-medium">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-600/10 border border-emerald-600/20 text-emerald-700 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider">
             <BrainCircuit className="w-4 h-4" />
             <span>Interactive Assessment Engine</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-[#2C241C] dark:text-white">
             Developer Knowledge Checks
           </h1>
-          <p className="text-zinc-400 text-base sm:text-lg">
+          <p className="text-[#6C6257] dark:text-[#93887B] text-base sm:text-lg">
             Validate your theoretical mastery, identify knowledge gaps, and earn XP with interactive developer quizzes.
           </p>
         </div>
 
         {/* Stats Strip */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 backdrop-blur-xl">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-white dark:bg-[#1C1814] border border-[#E8E1D8] dark:border-[#383028] rounded-2xl p-6 shadow-[0_1px_3px_rgba(44,36,28,0.04)]">
           <div className="flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+            <div className="p-3 rounded-xl bg-emerald-600/10 border border-emerald-600/20 text-emerald-700 dark:text-emerald-400">
               <HelpCircle className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-xs text-zinc-400 font-medium">Available Quizzes</p>
-              <p className="text-2xl font-bold text-white">{quizzes.length}+ Modules</p>
+              <p className="text-xs text-[#6C6257] dark:text-[#93887B] font-medium">Available Quizzes</p>
+              <p className="text-2xl font-bold text-[#2C241C] dark:text-white">{quizzes.length}+ Modules</p>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
+            <div className="p-3 rounded-xl bg-emerald-600/10 border border-emerald-600/20 text-emerald-700 dark:text-emerald-400">
               <Zap className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-xs text-zinc-400 font-medium">Instant Feedback</p>
-              <p className="text-2xl font-bold text-white">Server-side Eval</p>
+              <p className="text-xs text-[#6C6257] dark:text-[#93887B] font-medium">Instant Feedback</p>
+              <p className="text-2xl font-bold text-[#2C241C] dark:text-white">Server-side Eval</p>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
+            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400">
               <Trophy className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-xs text-zinc-400 font-medium">Gamified Rewards</p>
-              <p className="text-2xl font-bold text-white">+100-200 XP</p>
+              <p className="text-xs text-[#6C6257] dark:text-[#93887B] font-medium">Gamified Rewards</p>
+              <p className="text-2xl font-bold text-[#2C241C] dark:text-white">+100-200 XP</p>
             </div>
           </div>
         </div>
@@ -160,41 +157,41 @@ export default async function QuizzesPage() {
           {quizzes.map((quiz) => (
             <div
               key={quiz.id}
-              className="flex flex-col justify-between p-6 rounded-2xl bg-zinc-900/70 border border-zinc-800 hover:border-zinc-700 transition-all duration-200 group hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-0.5"
+              className="flex flex-col justify-between p-6 rounded-2xl bg-white dark:bg-[#1C1814] border border-[#E8E1D8] dark:border-[#383028] hover:border-emerald-600/40 shadow-[0_1px_3px_rgba(44,36,28,0.04)] hover:shadow-[0_4px_16px_rgba(5,150,105,0.08)] transition-all duration-200 group"
             >
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold px-3 py-1 rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700">
+                  <span className="text-xs font-semibold px-3 py-1 rounded-full bg-[#F5F2EC] dark:bg-[#25201A] text-[#2C241C] dark:text-white border border-[#E8E1D8] dark:border-[#383028]">
                     {quiz.category}
                   </span>
                   <span
                     className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${
                       quiz.difficulty === "Beginner"
-                        ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                        ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20"
                         : quiz.difficulty === "Intermediate"
-                        ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                        : "bg-purple-500/10 text-purple-400 border border-purple-500/20"
+                        ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20"
+                        : "bg-purple-500/10 text-purple-700 dark:text-purple-400 border border-purple-500/20"
                     }`}
                   >
                     {quiz.difficulty}
                   </span>
                 </div>
 
-                <h3 className="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors">
+                <h3 className="text-xl font-bold text-[#2C241C] dark:text-white group-hover:text-emerald-600 transition-colors">
                   {quiz.title}
                 </h3>
-                <p className="text-xs text-zinc-400 line-clamp-3 leading-relaxed">
+                <p className="text-xs text-[#6C6257] dark:text-[#93887B] line-clamp-3 leading-relaxed">
                   {quiz.description}
                 </p>
               </div>
 
-              <div className="pt-6 mt-4 border-t border-zinc-800/80 flex items-center justify-between">
-                <div className="flex items-center gap-3 text-xs text-zinc-400">
+              <div className="pt-6 mt-4 border-t border-[#E8E1D8] dark:border-[#383028] flex items-center justify-between">
+                <div className="flex items-center gap-3 text-xs text-[#6C6257] dark:text-[#93887B]">
                   <span className="flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                     {quiz.questionCount} Questions
                   </span>
-                  <span className="flex items-center gap-1 text-amber-400 font-medium">
+                  <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-medium">
                     <Zap className="w-3.5 h-3.5" />
                     +{quiz.xpReward} XP
                   </span>
@@ -203,7 +200,7 @@ export default async function QuizzesPage() {
                 <Button
                   asChild
                   variant="outline"
-                  className="py-1.5 px-3 text-xs rounded-xl border-indigo-500/30 bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500 hover:text-white transition-all gap-1.5"
+                  className="py-1.5 px-3 text-xs rounded-xl border-[#E8E1D8] dark:border-[#383028] bg-transparent hover:bg-[#F5F2EC] dark:hover:bg-[#25201A] text-[#2C241C] dark:text-white transition-all gap-1.5"
                 >
                   <Link href={`/roadmaps/${quiz.slug}`}>
                     <span>Start Quiz</span>
