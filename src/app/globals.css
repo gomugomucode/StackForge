@@ -27,48 +27,48 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%; /* #FAFAFA Crisp Light Canvas */
-    --foreground: 222.2 84% 4.9%; /* #0F172A Slate 900 */
-    --card: 0 0% 100%; /* #FFFFFF Pure White */
-    --card-foreground: 222.2 84% 4.9%;
+    --background: 38 33% 97%; /* #FAF8F5 Warm Canvas */
+    --foreground: 28 23% 14%; /* #2C241C Dark Charcoal */
+    --card: 0 0% 100%; /* #FFFFFF Pure White Card */
+    --card-foreground: 28 23% 14%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%; /* #2563EB Vercel Electric Blue */
+    --popover-foreground: 28 23% 14%;
+    --primary: 160 94% 30%; /* #059669 Warm Emerald Accent */
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96.1%; /* #F1F5F9 Slate 100 */
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%; /* #64748B Slate 500 */
-    --accent: 221.2 83.2% 53.3%;
+    --secondary: 38 25% 94%; /* #F5F2EC Secondary Surface */
+    --secondary-foreground: 28 23% 14%;
+    --muted: 38 25% 94%;
+    --muted-foreground: 32 11% 38%; /* #6C6257 Secondary Text */
+    --accent: 160 94% 30%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84.2% 60.2%; /* #DC2626 Danger */
     --destructive-foreground: 0 0% 100%;
-    --border: 214.3 31.8% 91.4%; /* #E2E8F0 Slate 200 */
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --border: 35 22% 88%; /* #E8E1D8 Soft Border */
+    --input: 35 22% 88%;
+    --ring: 160 94% 30%;
     --radius: 1rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 47% 11%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 47% 7%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 91.2% 59.8%;
-    --accent-foreground: 210 40% 98%;
+    --background: 0 0% 7%; /* #121212 Dark Canvas */
+    --foreground: 0 0% 96%; /* #F5F5F5 Primary Text */
+    --card: 0 0% 13%; /* #202020 Card Surface */
+    --card-foreground: 0 0% 96%;
+    --popover: 0 0% 10%; /* #1A1A1A Popover Surface */
+    --popover-foreground: 0 0% 96%;
+    --primary: 156 72% 52%; /* #34D399 Warm Emerald Accent */
+    --primary-foreground: 161 86% 16%;
+    --secondary: 0 0% 10%; /* #1A1A1A Surface */
+    --secondary-foreground: 0 0% 96%;
+    --muted: 0 0% 15%; /* #262626 Muted Background */
+    --muted-foreground: 0 0% 70%; /* #B3B3B3 Secondary Text */
+    --accent: 156 72% 52%;
+    --accent-foreground: 161 86% 16%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 18%; /* #2F2F2F Border */
+    --input: 0 0% 18%;
+    --ring: 156 72% 52%;
   }
 
   * {

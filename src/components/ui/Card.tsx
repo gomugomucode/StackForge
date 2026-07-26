@@ -10,11 +10,11 @@ export interface CardProps {
 }
 
 const variantStyles = {
-  default: `bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm`,
-  subtle: `bg-slate-50 dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800`,
-  elevated: `bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md`,
+  default: `bg-card text-card-foreground border border-border shadow-sm`,
+  subtle: `bg-secondary text-secondary-foreground border border-border/60`,
+  elevated: `bg-popover text-popover-foreground border border-border shadow-md`,
   interactive:
-    `bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-blue-500/40 hover:shadow-md transition-all duration-200 cursor-pointer`,
+    `bg-card text-card-foreground border border-border shadow-sm hover:border-primary/40 hover:shadow-md transition-all duration-200 cursor-pointer`,
 };
 
 const paddingStyles = {
@@ -39,4 +39,20 @@ export function Card({
       {children}
     </div>
   );
+}
+
+export function CardHeader({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <div className={`space-y-1.5 ${className}`}>{children}</div>;
+}
+
+export function CardTitle({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <h3 className={`text-xl font-bold tracking-tight text-foreground ${className}`}>{children}</h3>;
+}
+
+export function CardContent({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <div className={`pt-2 ${className}`}>{children}</div>;
+}
+
+export function CardFooter({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <div className={`pt-4 flex items-center justify-between ${className}`}>{children}</div>;
 }

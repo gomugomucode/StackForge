@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import { Slot } from '@radix-ui/react-slot'
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline' | 'danger' | 'success'
-type ButtonSize = 'sm' | 'md' | 'lg'
+type ButtonSize = 'sm' | 'md' | 'lg' | 'icon'
 
 export interface ButtonProps {
   children: ReactNode
@@ -21,22 +21,23 @@ export interface ButtonProps {
 
 const variants: Record<ButtonVariant, string> = {
   primary:
-    'bg-blue-600 text-white hover:bg-blue-700 shadow-sm active:scale-[0.98]',
+    'bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm active:scale-[0.98]',
   secondary:
-    'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.98]',
-  ghost: 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white',
+    'bg-secondary text-secondary-foreground border border-border hover:bg-secondary/80 active:scale-[0.98]',
+  ghost: 'text-foreground hover:bg-secondary hover:text-foreground',
   outline:
-    'border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-[0.98]',
+    'border border-border text-foreground hover:bg-secondary active:scale-[0.98]',
   danger:
-    'bg-red-600 text-white hover:bg-red-700 shadow-sm active:scale-[0.98]',
+    'bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm active:scale-[0.98]',
   success:
-    'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm active:scale-[0.98]',
+    'bg-emerald-600 dark:bg-emerald-500 text-white hover:bg-emerald-700 shadow-sm active:scale-[0.98]',
 }
 
 const sizes: Record<ButtonSize, string> = {
   sm: 'px-3 py-1.5 text-xs',
   md: 'px-5 py-2 text-sm',
   lg: 'px-8 py-3 text-base',
+  icon: 'p-2 text-xs',
 }
 
 export function Button({

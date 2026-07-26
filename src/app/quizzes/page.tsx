@@ -2,6 +2,9 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { HelpCircle, BrainCircuit, Sparkles, CheckCircle2, ArrowRight, Zap, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import { tokens } from "@/lib/tokens";
 
 export const metadata = {
   title: "Quizzes & Knowledge Checks | StackForge",
@@ -71,127 +74,131 @@ const DEFAULT_QUIZZES = [
   },
 ];
 
-export default async function QuizzesPage() {
-  let dbQuizzes: any[] = [];
+async function getQuizzesData() {
   try {
-    dbQuizzes = await prisma.quiz.findMany({
-      include: {
-        _count: {
-          select: { questions: true },
-        },
-        topic: {
-          select: { title: true, slug: true },
-        },
+    const dbQuizzes = await prisma.quiz.findMany({
+      take: 12,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        difficulty: true,
+        type: true,
       },
-      take: 20,
     });
-  } catch (error) {
-    console.warn("[Quizzes Page] DB query error, utilizing default quiz inventory:", error);
-  }
 
-  const quizzes = dbQuizzes.length > 0
-    ? dbQuizzes.map((q) => ({
-        id: q.id,
-        title: q.title,
-        description: q.description || `Interactive quiz on ${q.topic?.title || "software development"}.`,
-        difficulty: q.difficulty || "Intermediate",
-        category: q.topic?.title || "Fullstack",
-        questionCount: q._count?.questions || 8,
-        xpReward: 150,
-        slug: q.topic?.slug || "frontend",
-      }))
-    : DEFAULT_QUIZZES;
+    if (!dbQuizzes || dbQuizzes.length === 0) {
+      return DEFAULT_QUIZZES;
+    }
+
+    return dbQuizzes.map((q: { id: string; title: string; description: string | null; difficulty: string | null; type: string | null }) => ({
+      id: q.id,
+      title: q.title,
+      description: q.description || "Master core concepts with instant validation.",
+      difficulty: q.difficulty || "Intermediate",
+      category: q.type || "General",
+      questionCount: 10,
+      xpReward: 150,
+      slug: "javascript",
+    }));
+  } catch (error) {
+    console.error("Error fetching quizzes data from database:", error);
+    return DEFAULT_QUIZZES;
+  }
+}
+
+export default async function QuizzesPage() {
+  const quizzes = await getQuizzesData();
 
   return (
-    <main className="min-h-screen bg-[#FAF8F5] dark:bg-[#15120F] text-[#2C241C] dark:text-white py-24 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-background py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-12">
-        {/* Page Header */}
-        <div className="text-center space-y-4 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-600/10 border border-emerald-600/20 text-emerald-700 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider">
-            <BrainCircuit className="w-4 h-4" />
-            <span>Interactive Assessment Engine</span>
+        {/* Header Hero Section */}
+        <div className="relative overflow-hidden rounded-3xl bg-secondary border border-border p-8 sm:p-12">
+          <div className="relative z-10 max-w-3xl space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
+              <BrainCircuit className="w-4 h-4" />
+              Interactive Skill Checks
+            </div>
+
+            <h1 className={tokens.typography.display}>
+              Validate Your Knowledge with Targeted Quizzes
+            </h1>
+
+            <p className={tokens.typography.bodyLarge}>
+              Short, high-density quizzes designed to test your mental model of key software concepts. Earn XP, track progress, and solidify your understanding before building projects.
+            </p>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-[#2C241C] dark:text-white">
-            Developer Knowledge Checks
-          </h1>
-          <p className="text-[#6C6257] dark:text-[#93887B] text-base sm:text-lg">
-            Validate your theoretical mastery, identify knowledge gaps, and earn XP with interactive developer quizzes.
-          </p>
+
+          <div className="absolute -right-12 -bottom-12 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
         </div>
 
-        {/* Stats Strip */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-white dark:bg-[#1C1814] border border-[#E8E1D8] dark:border-[#383028] rounded-2xl p-6 shadow-[0_1px_3px_rgba(44,36,28,0.04)]">
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-emerald-600/10 border border-emerald-600/20 text-emerald-700 dark:text-emerald-400">
+        {/* Quick Stats Strip */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card padding="md" className="flex items-center gap-4">
+            <div className="p-3 rounded-xl bg-primary/10 border border-primary/20 text-primary">
               <HelpCircle className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-xs text-[#6C6257] dark:text-[#93887B] font-medium">Available Quizzes</p>
-              <p className="text-2xl font-bold text-[#2C241C] dark:text-white">{quizzes.length}+ Modules</p>
+              <p className={tokens.typography.caption}>Available Quizzes</p>
+              <p className="text-2xl font-bold text-foreground">{quizzes.length}+ Modules</p>
             </div>
-          </div>
+          </Card>
 
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-emerald-600/10 border border-emerald-600/20 text-emerald-700 dark:text-emerald-400">
+          <Card padding="md" className="flex items-center gap-4">
+            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
               <Zap className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-xs text-[#6C6257] dark:text-[#93887B] font-medium">Instant Feedback</p>
-              <p className="text-2xl font-bold text-[#2C241C] dark:text-white">Server-side Eval</p>
+              <p className={tokens.typography.caption}>Instant Feedback</p>
+              <p className="text-2xl font-bold text-foreground">Server-side Eval</p>
             </div>
-          </div>
+          </Card>
 
-          <div className="flex items-center gap-4">
+          <Card padding="md" className="flex items-center gap-4">
             <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400">
               <Trophy className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-xs text-[#6C6257] dark:text-[#93887B] font-medium">Gamified Rewards</p>
-              <p className="text-2xl font-bold text-[#2C241C] dark:text-white">+100-200 XP</p>
+              <p className={tokens.typography.caption}>Gamified Rewards</p>
+              <p className="text-2xl font-bold text-foreground">+100-200 XP</p>
             </div>
-          </div>
+          </Card>
         </div>
 
         {/* Quizzes Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {quizzes.map((quiz) => (
-            <div
-              key={quiz.id}
-              className="flex flex-col justify-between p-6 rounded-2xl bg-white dark:bg-[#1C1814] border border-[#E8E1D8] dark:border-[#383028] hover:border-emerald-600/40 shadow-[0_1px_3px_rgba(44,36,28,0.04)] hover:shadow-[0_4px_16px_rgba(5,150,105,0.08)] transition-all duration-200 group"
-            >
+          {quizzes.map((quiz: typeof DEFAULT_QUIZZES[number]) => (
+            <Card key={quiz.id} variant="interactive" padding="lg" className="flex flex-col justify-between group">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold px-3 py-1 rounded-full bg-[#F5F2EC] dark:bg-[#25201A] text-[#2C241C] dark:text-white border border-[#E8E1D8] dark:border-[#383028]">
+                  <Badge variant="outline">
                     {quiz.category}
-                  </span>
-                  <span
-                    className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${
-                      quiz.difficulty === "Beginner"
-                        ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20"
-                        : quiz.difficulty === "Intermediate"
-                        ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20"
-                        : "bg-purple-500/10 text-purple-700 dark:text-purple-400 border border-purple-500/20"
-                    }`}
-                  >
+                  </Badge>
+                  <Badge variant={
+                    quiz.difficulty === "Beginner" ? "success" : 
+                    quiz.difficulty === "Intermediate" ? "secondary" : 
+                    "danger"
+                  }>
                     {quiz.difficulty}
-                  </span>
+                  </Badge>
                 </div>
 
-                <h3 className="text-xl font-bold text-[#2C241C] dark:text-white group-hover:text-emerald-600 transition-colors">
+                <h3 className={`${tokens.typography.h3} group-hover:text-primary transition-colors`}>
                   {quiz.title}
                 </h3>
-                <p className="text-xs text-[#6C6257] dark:text-[#93887B] line-clamp-3 leading-relaxed">
+                <p className={`${tokens.typography.body} line-clamp-3`}>
                   {quiz.description}
                 </p>
               </div>
 
-              <div className="pt-6 mt-4 border-t border-[#E8E1D8] dark:border-[#383028] flex items-center justify-between">
-                <div className="flex items-center gap-3 text-xs text-[#6C6257] dark:text-[#93887B]">
-                  <span className="flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+              <div className="pt-6 mt-4 border-t border-border flex items-center justify-between">
+                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1 font-medium">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
                     {quiz.questionCount} Questions
                   </span>
-                  <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-medium">
+                  <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold">
                     <Zap className="w-3.5 h-3.5" />
                     +{quiz.xpReward} XP
                   </span>
@@ -200,15 +207,16 @@ export default async function QuizzesPage() {
                 <Button
                   asChild
                   variant="outline"
-                  className="py-1.5 px-3 text-xs rounded-xl border-[#E8E1D8] dark:border-[#383028] bg-transparent hover:bg-[#F5F2EC] dark:hover:bg-[#25201A] text-[#2C241C] dark:text-white transition-all gap-1.5"
+                  size="sm"
+                  className="gap-1.5"
                 >
                   <Link href={`/roadmaps/${quiz.slug}`}>
                     <span>Start Quiz</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-3.5 h-3.5 text-primary" />
                   </Link>
                 </Button>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       </div>

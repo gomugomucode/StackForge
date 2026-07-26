@@ -1,49 +1,52 @@
 /**
- * STACKFORGE DESIGN SYSTEM TOKENS
- * Single source of truth for design parameters:
- * Crisp Modern Light Theme (Vercel / Linear Aesthetic: Slate & Electric Blue)
+ * STACKFORGE SEMANTIC DESIGN SYSTEM TOKENS
+ * Single source of truth for semantic design parameters.
+ * Eliminates hardcoded hex/color utilities across Light & Dark themes.
  */
 
 export const tokens = {
-  // 1. COLOR PALETTE & SEMANTIC ROLES
+  // 1. SEMANTIC ROLES & CONTAINER CLASSES
   colors: {
-    // Canvas & Surface
-    canvas: "#FAFAFA",       // Crisp slate light background
-    subtle: "#F8FAFC",       // Secondary light surface / sidebars / inputs
-    card: "#FFFFFF",         // Pure white card surface
-    cardElevated: "#FFFFFF", // Floating popovers / hovered cards
+    canvas: "bg-background text-foreground",
+    surface: "bg-secondary text-secondary-foreground",
+    card: "bg-card text-card-foreground",
+    cardElevated: "bg-popover text-popover-foreground",
 
     // Borders
-    border: "#E2E8F0",       // Crisp 1px slate border
-    borderDark: "#334155",   // Dark mode border
-    borderHover: "rgba(37, 99, 235, 0.4)", // Electric Blue hover glow
+    border: "border-border",
+    borderMuted: "border-border/60",
+    borderHover: "hover:border-primary/40",
 
-    // Typography Colors
-    textPrimary: "#0F172A",  // Slate 900 high contrast primary
-    textSecondary: "#475569",// Slate 600 secondary
-    textMuted: "#64748B",    // Slate 500 muted text
+    // Semantic Text Roles
+    textPrimary: "text-foreground",
+    textSecondary: "text-muted-foreground",
+    textMuted: "text-muted-foreground/80",
 
-    // Accents & Feedback
-    primary: "#2563EB",      // Vercel Electric Blue
-    primaryHover: "#1D4ED8",
-    primaryLight: "rgba(37, 99, 235, 0.08)",
-    successGreen: "#10B981",
-    successLight: "rgba(16, 185, 129, 0.1)",
-    warningAmber: "#F59E0B",
-    warningLight: "rgba(245, 158, 11, 0.1)",
-    dangerRed: "#EF4444",
-    dangerLight: "rgba(239, 68, 68, 0.1)",
+    // Brand Accent & Feedback Roles
+    primary: "bg-primary text-primary-foreground",
+    primaryText: "text-primary",
+    primaryHover: "hover:bg-primary/90",
+    primaryLight: "bg-primary/10 text-primary",
+
+    success: "text-emerald-500 dark:text-emerald-400",
+    successLight: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+
+    warning: "text-amber-500 dark:text-amber-400",
+    warningLight: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+
+    danger: "text-destructive",
+    dangerLight: "bg-destructive/10 text-destructive",
   },
 
-  // 2. TYPOGRAPHY SCALE
+  // 2. TYPOGRAPHY SCALE (Semantic Text Tokens)
   typography: {
-    display: "text-4xl sm:text-5xl font-black tracking-tight text-slate-900 dark:text-white",
-    h1: "text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white",
-    h2: "text-2xl font-bold tracking-tight text-slate-900 dark:text-white",
-    h3: "text-xl font-bold text-slate-900 dark:text-white",
-    bodyLarge: "text-base leading-relaxed text-slate-600 dark:text-slate-300",
-    body: "text-sm leading-relaxed text-slate-600 dark:text-slate-400",
-    caption: "text-xs font-medium text-slate-500 dark:text-slate-400",
+    display: "text-4xl sm:text-5xl font-black tracking-tight text-foreground",
+    h1: "text-3xl font-extrabold tracking-tight text-foreground",
+    h2: "text-2xl font-bold tracking-tight text-foreground",
+    h3: "text-xl font-bold text-foreground",
+    bodyLarge: "text-base leading-relaxed text-muted-foreground",
+    body: "text-sm leading-relaxed text-muted-foreground",
+    caption: "text-xs font-medium text-muted-foreground",
     badge: "text-[10px] font-bold uppercase tracking-wider",
   },
 
@@ -73,9 +76,9 @@ export const tokens = {
 
   // 5. SHADOWS & ELEVATION
   shadows: {
-    card: "shadow-[0_1px_3px_rgba(15,23,42,0.06)]",
-    elevated: "shadow-[0_4px_16px_rgba(15,23,42,0.08)]",
-    hover: "shadow-[0_4px_20px_rgba(37,99,235,0.12)]",
+    card: "shadow-sm",
+    elevated: "shadow-md",
+    hover: "shadow-lg",
   },
 
   // 6. MOTION & TRANSITIONS

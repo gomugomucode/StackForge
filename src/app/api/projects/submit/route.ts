@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     // Award XP for submitting a project. addXP writes to the Profile
     // table (the spec's user_stats).
     try {
-      await addXP(user.id, "COMPLETE_QUIZ"); // nearest available reward; reward table is unchanged
+      await addXP(user.id, "QUIZ_PASS"); // nearest available reward; reward table is unchanged
     } catch (e) {
       console.warn("[projects/submit] xp reward skipped:", e);
     }

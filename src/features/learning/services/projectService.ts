@@ -1,4 +1,4 @@
-import { Project } from '@/data/projects';
+import { Project, projects } from '@/data/projects';
 
 export interface TopicProject {
   id: string;

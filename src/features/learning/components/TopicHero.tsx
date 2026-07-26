@@ -11,10 +11,10 @@ interface TopicHeroProps {
 
 export function TopicHero({ title, description, difficulty, estimatedTime, xpReward = 25 }: TopicHeroProps) {
   const difficultyColor = {
-    beginner: 'text-green-500 bg-green-500/10',
-    intermediate: 'text-blue-500 bg-blue-500/10',
-    advanced: 'text-red-500 bg-red-500/10',
-  }[difficulty.toLowerCase()] || 'text-gray-500 bg-gray-500/10';
+    beginner: 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10',
+    intermediate: 'text-amber-600 dark:text-amber-400 bg-amber-500/10',
+    advanced: 'text-rose-600 dark:text-rose-400 bg-rose-500/10',
+  }[difficulty.toLowerCase()] || 'text-muted-foreground bg-muted';
 
   return (
     <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/20 to-purple-500/20 p-8 border border-border mb-8">
