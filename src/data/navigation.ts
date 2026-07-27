@@ -22,14 +22,14 @@ export const navLinks: NavLink[] = [
   },
   { label: 'Roadmaps', href: '/roadmaps' },
   { 
-    label: 'Practice', 
+    label: 'Solve Challenges', 
     href: '#',
     children: [
-      { label: 'Quizzes', href: '/quizzes' },
+      { label: 'Test Your Knowledge', href: '/quizzes' },
       { label: 'Coding Challenges', href: '/learn' },
-      { label: 'Projects', href: '/projects' },
+      { label: 'Build Projects', href: '/projects' },
       { label: 'Interview Prep', href: '/interview' },
-      { label: 'AI Tutor', href: '/tutor' },
+      { label: 'Ask AI Mentor', href: '/tutor' },
     ]
   },
   { label: 'Community', href: '/community' },
@@ -46,8 +46,8 @@ export const navLinks: NavLink[] = [
       { label: 'External References', href: '/resources' },
     ]
   },
-  { label: 'Dashboard', href: '/dashboard' },
+  { label: 'Workspace', href: '/dashboard' },
 ]
 
 export const brandName = 'StackForge'
-export const brandTagline = 'Learn Programming Interactively'
+export const brandTagline = 'Master Modern Engineering Interactively'
