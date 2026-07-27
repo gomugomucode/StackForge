@@ -13,33 +13,33 @@ export async function GET(req: NextRequest) {
         where: { userId: user.id },
         include: { roadmap: true },
         orderBy: { updatedAt: 'desc' },
-      }),
+      }).catch(() => []),
       // Fetch recent activities from XP transactions
       prisma.xpTransaction.findMany({
         where: { userId: user.id },
         orderBy: { createdAt: 'desc' },
         take: 10,
-      }),
+      }).catch(() => []),
       // Fetch earned certifications
       prisma.certification.findMany({
         where: { userId: user.id },
         include: { roadmap: true },
         orderBy: { issuedAt: 'desc' },
-      }),
+      }).catch(() => []),
       // Fetch real user project submissions
       prisma.projectSubmission.findMany({
         where: { userId: user.id },
         include: { project: true },
         orderBy: { createdAt: 'desc' },
         take: 5,
-      }),
-      // Fetch real AI tutor sessions
+      }).catch(() => []),
+      // Fetch real AI tutor sessions if table exists
       prisma.tutorSession.findMany({
         where: { userId: user.id },
         include: { messages: true },
         orderBy: { updatedAt: 'desc' },
         take: 3,
-      }),
+      }).catch(() => []),
     ]);
 
     // Calculate database-backed Resume Learning target for most recent active roadmap
