@@ -1,5 +1,7 @@
 import React from 'react';
-import { Trophy, Clock, BarChart } from 'lucide-react';
+import { Trophy, Clock } from 'lucide-react';
+import { Card } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
 
 interface TopicHeroProps {
   title: string;
@@ -10,35 +12,33 @@ interface TopicHeroProps {
 }
 
 export function TopicHero({ title, description, difficulty, estimatedTime, xpReward = 25 }: TopicHeroProps) {
-  const difficultyColor = {
-    beginner: 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10',
-    intermediate: 'text-amber-600 dark:text-amber-400 bg-amber-500/10',
-    advanced: 'text-rose-600 dark:text-rose-400 bg-rose-500/10',
-  }[difficulty.toLowerCase()] || 'text-muted-foreground bg-muted';
+  const badgeVariant = {
+    beginner: 'success',
+    intermediate: 'warning',
+    advanced: 'danger',
+  }[difficulty.toLowerCase()] as any || 'secondary';
 
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/20 to-purple-500/20 p-8 border border-border mb-8">
-      <div className="relative z-10 max-w-3xl">
-        <h1 className="text-4xl font-bold text-foreground mb-4">{title}</h1>
-        <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+    <Card variant="default" padding="lg" className="mb-6 space-y-4 relative overflow-hidden">
+      <div className="space-y-2">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">{title}</h1>
+        <p className="text-sm text-muted-foreground leading-relaxed max-w-3xl">
           {description}
         </p>
-        <div className="flex flex-wrap gap-4">
-          <div className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${difficultyColor}`}>
-            {difficulty}
-          </div>
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary/50 text-xs font-medium text-muted-foreground">
-            <Clock className="w-3.5 h-3.5" />
-            {estimatedTime} mins
-          </div>
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-yellow-500/10 text-xs font-bold text-yellow-600">
-            <Trophy className="w-3.5 h-3.5" />
-            +{xpReward} XP
-          </div>
+      </div>
+      <div className="flex flex-wrap gap-2.5 pt-1">
+        <Badge variant={badgeVariant}>
+          {difficulty}
+        </Badge>
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-secondary text-xs font-medium text-muted-foreground border border-border/40">
+          <Clock className="w-3.5 h-3.5" />
+          <span>{estimatedTime} mins</span>
+        </div>
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/10 text-xs font-bold text-amber-500 border border-amber-500/20">
+          <Trophy className="w-3.5 h-3.5" />
+          <span>+{xpReward} XP</span>
         </div>
       </div>
-      <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
-      <div className="absolute -left-10 -top-10 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl" />
-    </div>
+    </Card>
   );
 }
