@@ -10,11 +10,11 @@ export interface CardProps {
 }
 
 const variantStyles = {
-  default: `bg-card text-card-foreground border border-border shadow-sm`,
+  default: `bg-card text-card-foreground border border-border shadow-xs`,
   subtle: `bg-secondary text-secondary-foreground border border-border/60`,
   elevated: `bg-popover text-popover-foreground border border-border shadow-md`,
   interactive:
-    `bg-card text-card-foreground border border-border shadow-sm hover:border-primary/40 hover:shadow-md transition-all duration-200 cursor-pointer`,
+    `bg-card text-card-foreground border border-border shadow-xs hover:border-primary/50 hover:shadow-sm transition-all duration-150 ease-out cursor-pointer`,
 };
 
 const paddingStyles = {
@@ -46,13 +46,17 @@ export function CardHeader({ children, className = "" }: { children: ReactNode; 
 }
 
 export function CardTitle({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <h3 className={`text-xl font-bold tracking-tight text-foreground ${className}`}>{children}</h3>;
+  return <h3 className={`text-lg font-semibold tracking-tight text-foreground ${className}`}>{children}</h3>;
+}
+
+export function CardDescription({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <p className={`text-xs leading-normal text-muted-foreground ${className}`}>{children}</p>;
 }
 
 export function CardContent({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`pt-2 ${className}`}>{children}</div>;
+  return <div className={`pt-3 ${className}`}>{children}</div>;
 }
 
 export function CardFooter({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`pt-4 flex items-center justify-between ${className}`}>{children}</div>;
+  return <div className={`pt-4 flex items-center justify-between border-t border-border/40 mt-4 ${className}`}>{children}</div>;
 }

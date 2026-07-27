@@ -12,20 +12,20 @@ const footerLinks = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-surface-700/50 bg-surface-850">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+    <footer className="border-t border-border bg-card text-card-foreground">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2.5 mb-4">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-accent-purple to-accent-cyan flex items-center justify-center">
-                <Code2 className="w-5 h-5 text-white" />
+            <Link href="/" className="flex items-center gap-2 mb-3">
+              <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center">
+                <Code2 className="w-4.5 h-4.5" />
               </div>
-              <span className="text-xl font-bold text-text-primary">{brandName}</span>
+              <span className="text-lg font-bold text-foreground tracking-tight">{brandName}</span>
             </Link>
-            <p className="text-text-secondary max-w-md mb-6 leading-relaxed">
-              {brandTagline}. Free courses, quizzes, games, roadmaps, and resources to help you become a better developer.
+            <p className="text-xs text-muted-foreground max-w-md mb-4 leading-normal">
+              {brandTagline}. Free courses, quizzes, roadmaps, and resources for software engineers.
             </p>
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               {[
                 { icon: GitFork, label: 'GitHub' },
                 { icon: Share2, label: 'Twitter' },
@@ -35,22 +35,22 @@ export function Footer() {
                   key={label}
                   href="#"
                   aria-label={label}
-                  className="w-10 h-10 rounded-lg bg-surface-750 border border-surface-600 flex items-center justify-center text-text-secondary hover:text-accent-purple hover:border-accent-purple/40 transition-all"
+                  className="w-8 h-8 rounded-lg bg-secondary border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all"
                 >
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-4 h-4" />
                 </a>
               ))}
             </div>
           </div>
 
           <div>
-            <h3 className="text-text-primary font-semibold mb-4">Quick Links</h3>
-            <ul className="space-y-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground mb-3">Quick Links</h3>
+            <ul className="space-y-2">
               {footerLinks.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-text-secondary hover:text-accent-purple transition-colors text-sm"
+                    className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -60,13 +60,13 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="text-text-primary font-semibold mb-4">Get in Touch</h3>
-            <p className="text-text-secondary text-sm mb-4 leading-relaxed">
-              Have questions or suggestions? Reach out anytime — we typically reply within minutes.
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground mb-3">Get in Touch</h3>
+            <p className="text-xs text-muted-foreground mb-3 leading-normal">
+              Have questions or suggestions? Reach out anytime — we typically reply quickly.
             </p>
             <a
               href="#"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600/10 text-emerald-400 border border-emerald-600/30 text-sm font-medium hover:bg-emerald-600/20 transition-all"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20 text-xs font-medium hover:bg-primary/20 transition-all"
             >
               <MessageCircle className="w-4 h-4" />
               Message us
@@ -74,16 +74,16 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-surface-700/50 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-text-muted text-sm">
+        <div className="mt-8 pt-6 border-t border-border/40 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-muted-foreground">
             &copy; {new Date().getFullYear()} {brandName}. All rights reserved.
           </p>
-          <div className="flex gap-6">
+          <div className="flex gap-4">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-text-muted hover:text-text-secondary text-sm transition-colors"
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
                 {link.label}
               </Link>
