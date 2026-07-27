@@ -1,9 +1,11 @@
 'use client';
+
 import { motion } from 'framer-motion';
 import { CheckCircle2, Circle, Lock, Clock, Trophy } from 'lucide-react';
 import { useProgress } from '@/context/ProgressContext';
 import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/SectionHeader';
+import { Card } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
 import Link from 'next/link';
 
 interface RoadmapNodeProps {
@@ -17,14 +19,14 @@ export function RoadmapNode({ node, index, isLocked = false }: RoadmapNodeProps)
   const isCompleted = completedNodes.has(node.id);
 
   return (
-    <div className="relative flex gap-6 mb-12 group">
+    <div className="relative flex gap-4 md:gap-6 mb-8 group">
       {/* Visual Line connecting nodes */}
-      <div className="absolute left-6 top-0 bottom-0 w-px bg-zinc-800 group-last:hidden">
+      <div className="absolute left-5 top-0 bottom-0 w-px bg-border/60 group-last:hidden">
         <motion.div 
           initial={{ height: 0 }}
           animate={{ height: '100%' }}
-          transition={{ duration: 1, delay: index * 0.1 }}
-          className="w-full bg-gradient-to-b from-violet-500 to-transparent"
+          transition={{ duration: 0.5, delay: index * 0.05 }}
+          className="w-full bg-primary/40"
         />
       </div>
 
@@ -32,54 +34,56 @@ export function RoadmapNode({ node, index, isLocked = false }: RoadmapNodeProps)
       <div className="relative z-10">
         <button 
           onClick={() => !isLocked && toggleNode(node.id)}
-          className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 
-            ${isCompleted ? 'bg-violet-500 text-white shadow-[0_0_20px_rgba(139,92,246,0.4)]' : 
-              isLocked ? 'bg-zinc-800 text-zinc-600 border border-zinc-700 cursor-not-allowed opacity-50' : 
-              'bg-zinc-900 text-zinc-500 border border-zinc-700 hover:border-zinc-500'}`}
+          className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-150 
+            ${isCompleted ? 'bg-primary text-primary-foreground shadow-xs' : 
+              isLocked ? 'bg-secondary text-muted-foreground border border-border opacity-50 cursor-not-allowed' : 
+              'bg-card text-muted-foreground border border-border hover:border-primary/50'}`}
         >
-          {isCompleted ? <CheckCircle2 className="w-6 h-6" /> : 
-           isLocked ? <Lock className="w-5 h-5" /> : <Circle className="w-6 h-6" />}
+          {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : 
+           isLocked ? <Lock className="w-4 h-4" /> : <Circle className="w-5 h-5 text-primary" />}
         </button>
       </div>
 
       {/* Content Card */}
       <div className="flex-1">
-        <Card className={`p-6 bg-zinc-900/40 border-zinc-800 hover:border-zinc-700 transition-all 
-          ${isCompleted ? 'bg-violet-500/5' : isLocked ? 'opacity-50 grayscale' : ''}`}>
+        <Card variant="default" padding="md" className={`transition-all ${isCompleted ? 'border-primary/30 bg-primary/5' : isLocked ? 'opacity-50' : ''}`}>
           <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <h3 className={`text-xl font-bold transition-colors ${isCompleted ? 'text-violet-400' : 'text-white'}`}>
+            <div className="flex-1 space-y-2">
+              <div className="flex items-center gap-2">
+                <h3 className={`text-base font-semibold ${isCompleted ? 'text-primary' : 'text-foreground'}`}>
                   {node.title}
                 </h3>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700 font-medium uppercase">
-                  {node.difficulty}
-                </span>
+                {node.difficulty && (
+                  <Badge variant="secondary">
+                    {node.difficulty}
+                  </Badge>
+                )}
               </div>
-              <p className="text-zinc-400 text-sm mb-4 leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-normal">
                 {node.description}
               </p>
-              <div className="flex items-center gap-4 mb-4">
-                <div className="flex items-center gap-1.5 text-zinc-500 text-xs">
-                  <Clock className="w-3 h-3" /> {node.estimatedTime}
+              <div className="flex items-center gap-4 pt-1">
+                <div className="flex items-center gap-1 text-muted-foreground text-xs">
+                  <Clock className="w-3.5 h-3.5" /> {node.estimatedTime}
                 </div>
-                <div className="flex items-center gap-1.5 text-yellow-500 text-xs font-bold">
-                  <Trophy className="w-3 h-3" /> {node.xpReward} XP
+                <div className="flex items-center gap-1 text-amber-500 text-xs font-semibold">
+                  <Trophy className="w-3.5 h-3.5" /> {node.xpReward} XP
                 </div>
               </div>
-              <Link 
-                href={`/learn/${node.technology || 'javascript'}/${node.slug}`} 
-                className={`text-sm font-medium transition-colors ${isLocked ? 'text-zinc-600 pointer-events-none' : 'text-violet-400 hover:text-violet-300'}`}
-              >
-                {isLocked ? 'Locked - Complete previous lesson' : 'Start Learning →'}
-              </Link>
+              <div className="pt-2">
+                <Link 
+                  href={`/learn/${node.technology || 'javascript'}/${node.slug}`} 
+                  className={`text-xs font-semibold transition-colors ${isLocked ? 'text-muted-foreground pointer-events-none' : 'text-primary hover:underline'}`}
+                >
+                  {isLocked ? 'Locked - Complete previous lesson' : 'Start Learning →'}
+                </Link>
+              </div>
             </div>
             <div className="hidden sm:block">
               <Button 
-                variant="outline" 
+                variant={isCompleted ? "success" : "outline"} 
                 size="sm" 
                 disabled={isLocked}
-                className={`rounded-full text-xs ${isCompleted ? 'bg-violet-500/20 text-violet-400 border-violet-500/30' : 'border-zinc-700 text-zinc-400'}`}
                 onClick={() => toggleNode(node.id)}
               >
                 {isCompleted ? 'Completed' : 'Mark Complete'}

@@ -9,6 +9,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Card } from "@/components/ui/Card";
 import {
   Form,
   FormControl,
@@ -19,7 +20,7 @@ import {
 } from "@/components/ui/Form";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { SocialLoginButtons } from "./SocialLoginButtons";
-import { Loader2, Eye, EyeOff, Sparkles, Check, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, Sparkles, Check, ArrowRight } from "lucide-react";
 
 const passwordSchema = z
   .string()
@@ -143,30 +144,27 @@ export function RegisterForm() {
 
   return (
     <div className="w-full max-w-md mx-auto my-6 sm:my-10">
-      <div className="relative rounded-3xl border border-zinc-800/80 bg-zinc-950/80 p-8 md:p-10 shadow-2xl backdrop-blur-2xl overflow-hidden">
-        {/* Glow Accent */}
-        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-72 h-36 bg-blue-500/20 blur-3xl pointer-events-none rounded-full" />
-        
+      <Card variant="default" padding="lg" className="space-y-6">
         {/* Header */}
-        <div className="text-center mb-8 relative z-10 space-y-2">
-          <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-zinc-900 border border-zinc-800/80 text-white mb-2 shadow-inner">
-            <Sparkles className="w-6 h-6 text-indigo-400" />
+        <div className="text-center space-y-1.5">
+          <div className="inline-flex items-center justify-center p-2.5 rounded-xl bg-primary/10 text-primary mb-1">
+            <Sparkles className="w-5 h-5" />
           </div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-white">Join StackForge</h1>
-          <p className="text-xs text-zinc-400">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Join StackForge</h1>
+          <p className="text-xs text-muted-foreground">
             Start your journey toward engineering mastery today
           </p>
         </div>
 
         {/* Social Authentication */}
-        <div className="relative z-10 space-y-4 mb-6">
+        <div className="space-y-4">
           <SocialLoginButtons />
           
-          <div className="relative flex items-center justify-center py-2">
+          <div className="relative flex items-center justify-center py-1">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-zinc-800/80" />
+              <div className="w-full border-t border-border/60" />
             </div>
-            <span className="relative px-3 text-[11px] font-semibold tracking-wider text-zinc-500 uppercase bg-zinc-950">
+            <span className="relative px-3 text-[10px] font-bold tracking-wider text-muted-foreground uppercase bg-card">
               Or sign up with email
             </span>
           </div>
@@ -174,11 +172,11 @@ export function RegisterForm() {
 
         {/* Signup Form */}
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 relative z-10">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3.5">
             {errorMessage && (
               <div
                 role="alert"
-                className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-xs font-medium text-red-300 animate-in fade-in"
+                className="rounded-lg border border-destructive/30 bg-destructive/10 px-3.5 py-2.5 text-xs font-medium text-destructive animate-in fade-in"
               >
                 {errorMessage}
               </div>
@@ -187,7 +185,7 @@ export function RegisterForm() {
             {infoMessage && (
               <div
                 role="alert"
-                className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-xs font-medium text-emerald-200 animate-in fade-in"
+                className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-2.5 text-xs font-medium text-emerald-600 dark:text-emerald-400 animate-in fade-in"
               >
                 {infoMessage}
               </div>
@@ -199,16 +197,15 @@ export function RegisterForm() {
                 name="name"
                 render={({ field }: { field: any }) => (
                   <FormItem className="space-y-1">
-                    <FormLabel className="text-xs font-medium text-zinc-300">Full Name</FormLabel>
+                    <FormLabel className="text-xs font-medium text-foreground">Full Name</FormLabel>
                     <FormControl>
                       <Input
                         autoComplete="name"
                         placeholder="Ada Lovelace"
                         {...field}
-                        className="bg-zinc-900/90 border-zinc-800 text-white text-sm rounded-xl py-2.5 px-3.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-zinc-600"
                       />
                     </FormControl>
-                    <FormMessage className="text-[11px] text-red-400" />
+                    <FormMessage className="text-[11px] text-destructive" />
                   </FormItem>
                 )}
               />
@@ -218,15 +215,14 @@ export function RegisterForm() {
                 name="username"
                 render={({ field }: { field: any }) => (
                   <FormItem className="space-y-1">
-                    <FormLabel className="text-xs font-medium text-zinc-300">Username</FormLabel>
+                    <FormLabel className="text-xs font-medium text-foreground">Username</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="ada_dev"
                         {...field}
-                        className="bg-zinc-900/90 border-zinc-800 text-white text-sm rounded-xl py-2.5 px-3.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-zinc-600"
                       />
                     </FormControl>
-                    <FormMessage className="text-[11px] text-red-400" />
+                    <FormMessage className="text-[11px] text-destructive" />
                   </FormItem>
                 )}
               />
@@ -237,17 +233,16 @@ export function RegisterForm() {
               name="email"
               render={({ field }: { field: any }) => (
                 <FormItem className="space-y-1">
-                  <FormLabel className="text-xs font-medium text-zinc-300">Email address</FormLabel>
+                  <FormLabel className="text-xs font-medium text-foreground">Email address</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
                       autoComplete="email"
                       placeholder="engineer@stackforge.dev"
                       {...field}
-                      className="bg-zinc-900/90 border-zinc-800 text-white text-sm rounded-xl py-2.5 px-3.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-zinc-600"
                     />
                   </FormControl>
-                  <FormMessage className="text-[11px] text-red-400" />
+                  <FormMessage className="text-[11px] text-destructive" />
                 </FormItem>
               )}
             />
@@ -257,7 +252,7 @@ export function RegisterForm() {
               name="password"
               render={({ field }: { field: any }) => (
                 <FormItem className="space-y-1">
-                  <FormLabel className="text-xs font-medium text-zinc-300">Password</FormLabel>
+                  <FormLabel className="text-xs font-medium text-foreground">Password</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input
@@ -265,40 +260,40 @@ export function RegisterForm() {
                         autoComplete="new-password"
                         placeholder="••••••••"
                         {...field}
-                        className="bg-zinc-900/90 border-zinc-800 text-white text-sm rounded-xl py-2.5 pl-3.5 pr-10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-zinc-600"
+                        className="pr-10"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-200 transition-colors p-1"
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
                         aria-label={showPassword ? "Hide password" : "Show password"}
                       >
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
                   </FormControl>
-                  <FormMessage className="text-[11px] text-red-400" />
+                  <FormMessage className="text-[11px] text-destructive" />
                 </FormItem>
               )}
             />
 
             {/* Password Validation Indicators */}
             {passwordValue.length > 0 && (
-              <div className="p-3 rounded-xl bg-zinc-900/70 border border-zinc-800/60 space-y-1.5 animate-in fade-in">
-                <p className="text-[11px] font-semibold text-zinc-400">Password Requirements:</p>
-                <div className="grid grid-cols-2 gap-1.5 text-[11px]">
+              <div className="p-2.5 rounded-lg bg-secondary/60 border border-border/40 space-y-1.5 animate-in fade-in">
+                <p className="text-[11px] font-semibold text-muted-foreground">Password Requirements:</p>
+                <div className="grid grid-cols-2 gap-1 text-[11px]">
                   {passwordChecks.map((check, idx) => (
                     <div key={idx} className="flex items-center gap-1.5">
                       <div
                         className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] ${
                           check.valid
-                            ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                            : "bg-zinc-800 text-zinc-600"
+                            ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+                            : "bg-muted text-muted-foreground"
                         }`}
                       >
                         {check.valid ? <Check className="w-2.5 h-2.5" /> : "•"}
                       </div>
-                      <span className={check.valid ? "text-emerald-300 font-medium" : "text-zinc-500"}>
+                      <span className={check.valid ? "text-foreground font-medium" : "text-muted-foreground"}>
                         {check.label}
                       </span>
                     </div>
@@ -312,7 +307,7 @@ export function RegisterForm() {
               name="confirmPassword"
               render={({ field }: { field: any }) => (
                 <FormItem className="space-y-1">
-                  <FormLabel className="text-xs font-medium text-zinc-300">Confirm Password</FormLabel>
+                  <FormLabel className="text-xs font-medium text-foreground">Confirm Password</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input
@@ -320,40 +315,37 @@ export function RegisterForm() {
                         autoComplete="new-password"
                         placeholder="••••••••"
                         {...field}
-                        className="bg-zinc-900/90 border-zinc-800 text-white text-sm rounded-xl py-2.5 pl-3.5 pr-10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-zinc-600"
+                        className="pr-10"
                       />
                       <button
                         type="button"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-200 transition-colors p-1"
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
                         aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                       >
                         {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
                   </FormControl>
-                  <FormMessage className="text-[11px] text-red-400" />
+                  <FormMessage className="text-[11px] text-destructive" />
                 </FormItem>
               )}
             />
 
             <Button
               disabled={isLoading}
+              isLoading={isLoading}
               type="submit"
-              className="w-full py-3 mt-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-all duration-200 shadow-lg shadow-indigo-600/25 active:scale-[0.99] flex items-center justify-center gap-2"
+              variant="primary"
+              size="md"
+              className="w-full gap-2 mt-2"
             >
-              {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin text-white" />
-              ) : (
-                <>
-                  <span>Create Account</span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
+              <span>Create Account</span>
+              <ArrowRight className="w-4 h-4" />
             </Button>
 
-            <div className="pt-4 border-t border-zinc-800/80 text-center">
-              <p className="text-xs text-zinc-400">
+            <div className="pt-3 border-t border-border/40 text-center">
+              <p className="text-xs text-muted-foreground">
                 Already have an account?{" "}
                 <Link
                   href={
@@ -361,7 +353,7 @@ export function RegisterForm() {
                       ? `/auth/login?from=${encodeURIComponent(fromParam)}`
                       : "/auth/login"
                   }
-                  className="font-semibold text-indigo-400 hover:text-indigo-300 transition-colors hover:underline"
+                  className="font-semibold text-primary hover:underline"
                 >
                   Sign in
                 </Link>
@@ -369,7 +361,7 @@ export function RegisterForm() {
             </div>
           </form>
         </Form>
-      </div>
+      </Card>
     </div>
   );
 }

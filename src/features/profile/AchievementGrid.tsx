@@ -1,6 +1,7 @@
 "use client";
 
-import { Award } from "lucide-react";
+import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
 
 export function AchievementGrid() {
   const achievements = [
@@ -11,24 +12,27 @@ export function AchievementGrid() {
   ];
 
   return (
-    <div className="space-y-6 p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800">
-      <h2 className="text-xl font-semibold">Achievements</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <Card variant="default" padding="md" className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-foreground">Achievements</h2>
+        <Badge variant="primary">2 / 4 Unlocked</Badge>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {achievements.map((ach) => (
           <div 
             key={ach.id} 
-            className={`p-4 rounded-xl border text-center transition-all ${
+            className={`p-3.5 rounded-lg border text-center transition-all ${
               ach.unlocked 
-                ? "bg-white dark:bg-gray-800 border-blue-500 ring-1 ring-blue-500" 
-                : "bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-800 opacity-50 grayscale"
+                ? "bg-card border-primary/40 ring-1 ring-primary/20 shadow-xs" 
+                : "bg-secondary/40 border-border/40 opacity-50 grayscale"
             }`}
           >
-            <div className="text-3xl mb-2">{ach.icon}</div>
-            <p className="text-sm font-bold">{ach.name}</p>
-            <p className="text-[10px] text-muted-foreground">{ach.desc}</p>
+            <div className="text-2xl mb-1.5">{ach.icon}</div>
+            <p className="text-xs font-bold text-foreground">{ach.name}</p>
+            <p className="text-[10px] text-muted-foreground leading-normal mt-0.5">{ach.desc}</p>
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   );
 }

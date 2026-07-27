@@ -1,6 +1,7 @@
 'use client';
 import { motion } from 'framer-motion';
-import { Card } from '@/components/ui/SectionHeader';
+import { Card } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
@@ -8,35 +9,37 @@ import { Button } from '@/components/ui/Button';
 export function ArticleCard({ article, featured = false }: { article: { id: string, title: string, excerpt: string, category: string, date: string, author: string }; featured?: boolean }) {
   return (
     <motion.div
-      whileHover={{ y: -5 }}
-      className={`relative group overflow-hidden rounded-3xl border transition-all duration-300 
-        ${featured ? 'md:col-span-2 border-violet-500/30' : 'border-white/5 hover:border-white/20'}`}
+      whileHover={{ y: -4 }}
+      className={`relative group overflow-hidden ${featured ? 'md:col-span-2' : ''}`}
     >
-      <Card className="h-full p-6 bg-zinc-900/40 border-none">
-        <div className="flex flex-col h-full">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-violet-400 px-2 py-1 rounded-md bg-violet-500/10 border border-violet-500/20">
+      <Card variant="default" padding="md" className="h-full flex flex-col justify-between hover:border-primary/50 transition-colors">
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Badge variant="primary">
               {article.category}
-            </span>
-            <span className="text-xs text-zinc-500">{article.date}</span>
+            </Badge>
+            <span className="text-[11px] text-muted-foreground">{article.date}</span>
           </div>
-          <h3 className="text-xl font-bold text-white mb-3 group-hover:text-violet-400 transition-colors">
+          <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
             {article.title}
           </h3>
-          <p className="text-zinc-400 text-sm leading-relaxed mb-6 line-clamp-3">
+          <p className="text-muted-foreground text-xs leading-relaxed line-clamp-3">
             {article.excerpt}
           </p>
-          <div className="mt-auto flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-zinc-700" />
-              <span className="text-xs text-zinc-300">{article.author}</span>
+        </div>
+        <div className="pt-4 mt-4 border-t border-border/40 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">
+              {article.author.charAt(0)}
             </div>
-            <Link href={`/blog/${article.id}`}>
-              <Button variant="ghost" size="sm" className="text-white p-0 hover:bg-transparent group/btn">
-                Read More <ArrowRight className="ml-1 w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
+            <span className="text-xs font-semibold text-foreground">{article.author}</span>
           </div>
+          <Link href={`/blog/${article.id}`}>
+            <Button variant="ghost" size="sm" className="gap-1 p-0 hover:bg-transparent">
+              <span>Read More</span>
+              <ArrowRight className="w-3.5 h-3.5 text-primary group-hover:translate-x-0.5 transition-transform" />
+            </Button>
+          </Link>
         </div>
       </Card>
     </motion.div>

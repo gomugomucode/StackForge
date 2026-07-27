@@ -3,8 +3,9 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
 import { Progress } from '@/components/ui/Progress';
-import { CheckCircle2, XCircle, ArrowRight, RotateCcw } from 'lucide-react';
+import { CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Question {
@@ -59,28 +60,29 @@ export function QuizView({ quizId, questions, onComplete }: QuizViewProps) {
     const score = (correctCount / questions.length) * 100;
 
     return (
-      <Card className="w-full max-w-2xl mx-auto border-zinc-800 bg-zinc-950/50 backdrop-blur-xl">
+      <Card variant="default" padding="lg" className="w-full max-w-2xl mx-auto space-y-6">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Quiz Completed!</CardTitle>
+          <CardTitle className="text-2xl font-bold text-foreground">Quiz Completed!</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col items-center justify-center py-8">
-          <div className="relative w-32 h-32 flex items-center justify-center mb-6">
+        <CardContent className="flex flex-col items-center justify-center py-6">
+          <div className="relative w-28 h-28 flex items-center justify-center mb-4">
             <svg className="w-full h-full transform -rotate-90">
-              <circle cx="64" cy="64" r="60" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-zinc-800" />
-              <circle cx="64" cy="64" r="60" stroke="currentColor" strokeWidth="8" fill="transparent" 
-                strokeDasharray={377} 
-                strokeDashoffset={377 - (377 * score) / 100}
-                className="text-primary transition-all duration-1000" 
+              <circle cx="56" cy="56" r="50" stroke="currentColor" strokeWidth="6" fill="transparent" className="text-muted/40" />
+              <circle cx="56" cy="56" r="50" stroke="currentColor" strokeWidth="6" fill="transparent" 
+                strokeDasharray={314} 
+                strokeDashoffset={314 - (314 * score) / 100}
+                className="text-primary transition-all duration-700" 
               />
             </svg>
-            <span className="absolute text-3xl font-bold">{Math.round(score)}%</span>
+            <span className="absolute text-2xl font-bold text-foreground">{Math.round(score)}%</span>
           </div>
-          <p className="text-lg text-zinc-400 mb-6">
+          <p className="text-sm text-muted-foreground mb-6">
             You got {correctCount} out of {questions.length} questions correct.
           </p>
           <Button 
+            variant="primary"
+            size="md"
             onClick={() => onComplete({ score: Math.round(score), passed: score >= 70 })}
-            className="bg-white text-black hover:bg-zinc-200"
           >
             Claim Rewards
           </Button>
@@ -90,38 +92,42 @@ export function QuizView({ quizId, questions, onComplete }: QuizViewProps) {
   }
 
   return (
-    <Card className="w-full max-w-2xl mx-auto border-zinc-800 bg-zinc-950/50 backdrop-blur-xl">
+    <Card variant="default" padding="lg" className="w-full max-w-2xl mx-auto space-y-4">
       <CardHeader>
-        <div className="flex justify-between items-center mb-4">
-          <span className="text-sm text-zinc-500">Question {currentQuestion + 1} of {questions.length}</span>
-          <span className="text-xs font-bold px-2 py-1 rounded-full bg-primary/10 text-primary">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-xs text-muted-foreground">Question {currentQuestion + 1} of {questions.length}</span>
+          <Badge variant="primary">
             {currentQ.difficulty || 'General'}
-          </span>
+          </Badge>
         </div>
-        <Progress value={progress} className="h-2 bg-zinc-800" />
+        <Progress value={progress} />
       </CardHeader>
       
-      <CardContent className="space-y-6 py-8">
+      <CardContent className="space-y-4 py-4">
         <motion.div 
           key={currentQuestion}
-          initial={{ opacity: 0, x: 20 }}
+          initial={{ opacity: 0, x: 12 }}
           animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
+          exit={{ opacity: 0, x: -12 }}
+          className="space-y-4"
         >
-          <h3 className="text-xl font-medium text-white mb-6 leading-relaxed">
+          <h3 className="text-lg font-semibold text-foreground leading-normal">
             {currentQ.question}
           </h3>
           
-          <div className="grid gap-3">
+          <div className="grid gap-2.5">
             {currentQ.options.map((option) => {
               const isCorrect = option === currentQ.answer;
               const isSelected = selectedOption === option;
               
-              let variant = "border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-zinc-300";
+              let styleClass = "border-border bg-card hover:bg-secondary hover:border-primary/40 text-foreground";
+              if (isSelected && !isAnswered) {
+                styleClass = "border-primary bg-primary/10 text-primary font-semibold";
+              }
               if (isAnswered) {
-                if (isCorrect) variant = "border-green-500 bg-green-500/10 text-green-400";
-                else if (isSelected) variant = "border-red-500 bg-red-500/10 text-red-400";
-                else variant = "border-zinc-800 bg-zinc-900 text-zinc-500 opacity-50";
+                if (isCorrect) styleClass = "border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold";
+                else if (isSelected) styleClass = "border-destructive bg-destructive/10 text-destructive font-semibold";
+                else styleClass = "border-border/40 bg-card text-muted-foreground opacity-50";
               }
 
               return (
@@ -129,11 +135,11 @@ export function QuizView({ quizId, questions, onComplete }: QuizViewProps) {
                   key={option}
                   onClick={() => handleOptionSelect(option)}
                   disabled={isAnswered}
-                  className={`w-full text-left p-4 rounded-xl border transition-all flex justify-between items-center ${variant}`}
+                  className={`w-full text-left p-3.5 rounded-lg border text-xs transition-all flex justify-between items-center ${styleClass}`}
                 >
-                  <span className="font-medium">{option}</span>
-                  {isAnswered && isCorrect && <CheckCircle2 className="w-5 h-5 text-green-500" />}
-                  {isAnswered && isSelected && !isCorrect && <XCircle className="w-5 h-5 text-red-500" />}
+                  <span>{option}</span>
+                  {isAnswered && isCorrect && <CheckCircle2 className="w-4 h-4 text-emerald-500" />}
+                  {isAnswered && isSelected && !isCorrect && <XCircle className="w-4 h-4 text-destructive" />}
                 </button>
               );
             })}
@@ -143,20 +149,21 @@ export function QuizView({ quizId, questions, onComplete }: QuizViewProps) {
         <AnimatePresence>
           {isAnswered && (
             <motion.div 
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="p-4 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-zinc-400"
+              className="p-3.5 rounded-lg bg-secondary/60 border border-border/40 text-xs text-muted-foreground"
             >
-              <strong className="text-zinc-200 block mb-1">Explanation:</strong>
+              <strong className="text-foreground block mb-1">Explanation:</strong>
               {currentQ.explanation || "No detailed explanation available for this question."}
             </motion.div>
           )}
         </AnimatePresence>
       </CardContent>
 
-      <CardFooter className="flex justify-between py-6">
+      <CardFooter className="flex justify-between pt-4 border-t border-border/40">
         <Button 
-          variant="ghost" 
+          variant="ghost"
+          size="sm" 
           disabled={currentQuestion === 0}
           onClick={() => {
             setCurrentQuestion(currentQuestion - 1);
@@ -169,18 +176,21 @@ export function QuizView({ quizId, questions, onComplete }: QuizViewProps) {
         
         {!isAnswered ? (
           <Button 
+            variant="primary"
+            size="sm"
             disabled={!selectedOption} 
             onClick={handleSubmitAnswer} 
-            className="bg-white text-black"
           >
             Check Answer
           </Button>
         ) : (
           <Button 
+            variant="primary"
+            size="sm"
             onClick={handleNext} 
-            className="bg-white text-black flex items-center gap-2"
+            className="gap-1.5"
           >
-            {currentQuestion + 1 === questions.length ? 'Finish' : 'Next'}
+            <span>{currentQuestion + 1 === questions.length ? 'Finish' : 'Next'}</span>
             <ArrowRight className="w-4 h-4" />
           </Button>
         )}

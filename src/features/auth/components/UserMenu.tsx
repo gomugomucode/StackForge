@@ -11,12 +11,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-/**
- * Authenticated user menu shown in the navbar. Backed by Supabase Auth
- * via /src/components/AuthProvider.tsx. Hidden entirely for anonymous
- * visitors — never reveals the existence of the dashboard to logged-out
- * users.
- */
 export function UserMenu() {
   const { user, isAuthenticated, profile } = useAuth();
 
@@ -37,29 +31,29 @@ export function UserMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="flex items-center gap-2 p-1 pr-3 rounded-full">
-          <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
-            {avatarLetter || <User className="w-4 h-4" />}
+          <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs">
+            {avatarLetter || <User className="w-3.5 h-3.5" />}
           </div>
-          <span className="text-sm font-medium">{displayName}</span>
+          <span className="text-xs font-semibold text-foreground">{displayName}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end" className="w-52">
         <DropdownMenuItem onClick={() => (window.location.href = "/dashboard")}>
-          <LayoutDashboard className="w-4 h-4 mr-2" /> Dashboard
+          <LayoutDashboard className="w-4 h-4 mr-2 text-primary" /> Dashboard
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => (window.location.href = "/profile")}>
-          <User className="w-4 h-4 mr-2" /> Profile
+          <User className="w-4 h-4 mr-2 text-primary" /> Profile
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => (window.location.href = "/profile/achievements")}>
-          <Award className="w-4 h-4 mr-2" /> Achievements
+          <Award className="w-4 h-4 mr-2 text-primary" /> Achievements
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => (window.location.href = "/settings")}>
-          <Settings className="w-4 h-4 mr-2" /> Settings
+          <Settings className="w-4 h-4 mr-2 text-primary" /> Settings
         </DropdownMenuItem>
-        <div className="h-px bg-gray-200 dark:bg-gray-800 my-1" />
+        <div className="h-px bg-border/60 my-1" />
         <DropdownMenuItem
           onClick={() => authService.logout()}
-          className="text-red-500"
+          className="text-destructive font-medium"
         >
           <LogOut className="w-4 h-4 mr-2" /> Sign Out
         </DropdownMenuItem>

@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, Star, Send, X, GitBranch, ExternalLink, MessageSquare } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Send, X, GitBranch, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
 
 interface SubmissionProps {
   projectId: string;
@@ -21,10 +23,11 @@ export function ProjectSubmitModal({ projectId, onClose, onSuccess }: Submission
     try {
       const res = await fetch('/api/projects/submit', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, projectId })
       });
       if (res.ok) onSuccess();
-    } catch (err) {
+    } catch {
       alert("Submission failed. Please try again.");
     } finally {
       setIsLoading(false);
@@ -33,53 +36,62 @@ export function ProjectSubmitModal({ projectId, onClose, onSuccess }: Submission
 
   return (
     <motion.div 
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md"
     >
-      <div className="w-full max-w-lg bg-card border border-border rounded-3xl shadow-2xl overflow-hidden">
-        <div className="p-8 space-y-6">
-          <div className="flex items-center justify-between">
-            <h3 className="text-2xl font-bold">Submit Project for Review</h3>
-            <Button variant="ghost" size="sm" onClick={onClose}><X className="w-5 h-5" /></Button>
+      <div className="w-full max-w-lg bg-popover text-popover-foreground border border-border rounded-2xl shadow-2xl overflow-hidden">
+        <div className="p-6 space-y-5">
+          <div className="flex items-center justify-between border-b border-border/40 pb-3">
+            <h3 className="text-lg font-bold text-foreground">Submit Project for Review</h3>
+            <Button variant="ghost" size="icon" onClick={onClose} ariaLabel="Close dialog">
+              <X className="w-4 h-4" />
+            </Button>
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-muted-foreground uppercase">GitHub Repository URL *</label>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-foreground">GitHub Repository URL *</label>
               <div className="relative">
                 <GitBranch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input 
+                <Input 
                   required 
-                  className="w-full pl-10 pr-4 py-2 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary outline-none transition-all" 
+                  className="pl-9" 
                   placeholder="https://github.com/username/repo"
                   value={form.repoUrl}
                   onChange={e => setForm({...form, repoUrl: e.target.value})}
                 />
               </div>
             </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-muted-foreground uppercase">Live Demo URL</label>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-foreground">Live Demo URL</label>
               <div className="relative">
                 <ExternalLink className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input 
-                  className="w-full pl-10 pr-4 py-2 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary outline-none transition-all" 
+                <Input 
+                  className="pl-9" 
                   placeholder="https://project-demo.vercel.app"
                   value={form.demoUrl}
                   onChange={e => setForm({...form, demoUrl: e.target.value})}
                 />
               </div>
             </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-muted-foreground uppercase">Project Notes</label>
-              <textarea 
-                className="w-full p-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary outline-none transition-all h-32" 
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-foreground">Project Notes</label>
+              <Textarea 
                 placeholder="What were the biggest challenges? What did you implement differently?"
                 value={form.description}
                 onChange={e => setForm({...form, description: e.target.value})}
               />
             </div>
-            <Button variant="primary" className="w-full gap-2" disabled={isLoading}>
-              {isLoading ? 'Submitting...' : 'Submit for Peer Review'} <Send className="w-4 h-4" />
-            </Button>
+
+            <div className="pt-2">
+              <Button variant="primary" size="md" className="w-full gap-2" disabled={isLoading} isLoading={isLoading}>
+                <span>Submit for Peer Review</span>
+                <Send className="w-4 h-4" />
+              </Button>
+            </div>
           </form>
         </div>
       </div>

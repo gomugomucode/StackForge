@@ -1,20 +1,21 @@
 "use client";
 
 import React, { useState } from "react";
-import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Textarea } from "@/components/ui/Textarea";
 import { 
   Play, 
-  Pause, 
-  RotateCcw, 
   ChevronRight, 
   ChevronLeft, 
   Cpu, 
   Layers, 
   Database, 
-  PlayCircle 
+  PlayCircle,
+  Code2
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 
 interface ExecutionStep {
   line: number;
@@ -33,7 +34,6 @@ export default function TutorPage() {
 console.log(factorial(3));`);
   const [steps, setSteps] = useState<ExecutionStep[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const simulateExecution = async () => {
@@ -45,7 +45,7 @@ console.log(factorial(3));`);
         body: JSON.stringify({ code }),
       });
       const data = await res.json();
-      setSteps(data.steps);
+      setSteps(data.steps || []);
       setCurrentStep(0);
     } catch (e) {
       console.error("Tutor Error:", e);
@@ -55,108 +55,114 @@ console.log(factorial(3));`);
   };
 
   return (
-    <div className="container mx-auto px-4 py-12 space-y-12 max-w-7xl">
-      <div className="text-center space-y-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider">
-          <Cpu className="w-3 h-3" /> AI Logic Visualizer
-        </div>
-        <h1 className="text-5xl font-black tracking-tight">Visualize <span className="gradient-text">How Code Works</span></h1>
-        <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-          Stop guessing. See exactly how variables change, how the call stack grows, and how your loops execute in real-time.
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 space-y-8">
+      <div className="text-center space-y-2 max-w-2xl mx-auto">
+        <Badge variant="primary">
+          <Cpu className="w-3.5 h-3.5" /> AI Logic Visualizer
+        </Badge>
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+          Visualize <span className="text-primary">How Code Works</span>
+        </h1>
+        <p className="text-sm text-muted-foreground leading-normal">
+          See exactly how variables change, how the call stack grows, and how your loops execute in real-time.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[700px]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[600px]">
         {/* CODE EDITOR SECTION */}
-        <div className="lg:col-span-5 flex flex-col gap-4">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-              <CodeIcon /> Input Code
-            </h3>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={() => setCode(`const arr = [1, 2, 3];\nconst double = arr.map(x => x * 2);\nconsole.log(double);`)}>Arrays</Button>
-              <Button variant="outline" size="sm" onClick={() => setCode(`function fib(n) {\n  if (n < 2) return n;\n  return fib(n-1) + fib(n-2);\n}\nconsole.log(fib(4));`)}>Recursion</Button>
+        <Card variant="default" padding="md" className="lg:col-span-5 flex flex-col justify-between space-y-4">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <Code2 className="w-4 h-4 text-primary" /> Input Code
+              </h3>
+              <div className="flex gap-1.5">
+                <Button variant="outline" size="sm" onClick={() => setCode(`const arr = [1, 2, 3];\nconst double = arr.map(x => x * 2);\nconsole.log(double);`)}>Arrays</Button>
+                <Button variant="outline" size="sm" onClick={() => setCode(`function fib(n) {\n  if (n < 2) return n;\n  return fib(n-1) + fib(n-2);\n}\nconsole.log(fib(4));`)}>Recursion</Button>
+              </div>
             </div>
-          </div>
-          <div className="flex-1 relative rounded-3xl border border-border bg-zinc-950 overflow-hidden shadow-2xl">
-            <textarea 
-              className="absolute inset-0 w-full h-full p-6 bg-transparent text-zinc-300 font-mono text-sm resize-none focus:outline-none"
+            <Textarea 
+              className="w-full h-80 font-mono text-xs p-3 bg-muted/60"
               value={code}
               onChange={(e) => setCode(e.target.value)}
               spellCheck={false}
             />
-            <div className="absolute bottom-6 right-6">
-              <Button 
-                variant="primary" 
-                size="lg" 
-                className="gap-2 shadow-xl" 
-                onClick={simulateExecution}
-                disabled={isLoading}
-              >
-                {isLoading ? 'Analyzing...' : <><Play className="w-4 h-4" /> Visualize Execution</>}
-              </Button>
-            </div>
           </div>
-        </div>
+
+          <div>
+            <Button 
+              variant="primary" 
+              size="md" 
+              className="w-full gap-2" 
+              onClick={simulateExecution}
+              disabled={isLoading}
+              isLoading={isLoading}
+            >
+              <Play className="w-4 h-4" />
+              <span>Visualize Execution</span>
+            </Button>
+          </div>
+        </Card>
 
         {/* VISUALIZER SECTION */}
         <div className="lg:col-span-7 flex flex-col gap-6">
           {steps.length === 0 ? (
-            <div className="flex-1 rounded-3xl border border-dashed border-border flex flex-col items-center justify-center text-center p-12 space-y-4 bg-card/30">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary animate-pulse">
-                <PlayCircle className="w-8 h-8" />
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-xl font-bold">Ready to visualize?</h3>
-                <p className="text-muted-foreground text-sm">Write some code and click "Visualize Execution" to see the magic.</p>
-              </div>
-            </div>
+            <EmptyState
+              icon={<PlayCircle className="w-6 h-6" />}
+              title="Ready to Visualize Execution?"
+              reason="Write or paste your code snippet on the left and click 'Visualize Execution'."
+              benefit="Watch variables update in real-time frame by frame."
+              primaryCtaLabel="Run Sample Code"
+              onPrimaryClick={simulateExecution}
+            />
           ) : (
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Variable Memory View */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  <Database className="w-4 h-4" /> Memory Heap
+              <div className="space-y-3">
+                <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  <Database className="w-4 h-4 text-primary" /> Memory Heap
                 </div>
-                <div className="p-6 rounded-2xl bg-card border border-border space-y-4 min-h-[200px]">
+                <Card variant="default" padding="sm" className="space-y-2 min-h-[160px]">
                   {Object.entries(steps[currentStep].variables).map(([key, val]) => (
-                    <div key={key} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 border border-border group transition-all hover:bg-primary/5">
-                      <span className="text-sm font-mono text-primary font-bold">{key}</span>
-                      <span className="text-sm font-mono text-foreground">{JSON.stringify(val)}</span>
+                    <div key={key} className="flex items-center justify-between p-2 rounded-md bg-secondary/60 border border-border/40 text-xs font-mono">
+                      <span className="text-primary font-bold">{key}</span>
+                      <span className="text-foreground">{JSON.stringify(val)}</span>
                     </div>
                   ))}
                   {Object.keys(steps[currentStep].variables).length === 0 && (
-                    <p className="text-sm text-muted-foreground italic text-center py-8">No variables in scope</p>
+                    <p className="text-xs text-muted-foreground italic text-center py-6">No variables in scope</p>
                   )}
-                </div>
+                </Card>
 
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  <Layers className="w-4 h-4" /> Call Stack
+                <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  <Layers className="w-4 h-4 text-primary" /> Call Stack
                 </div>
-                <div className="p-6 rounded-2xl bg-card border border-border space-y-2 min-h-[200px]">
+                <Card variant="default" padding="sm" className="space-y-1.5 min-h-[160px]">
                   {steps[currentStep].callStack.map((frame, i) => (
-                    <div key={i} className="p-2 rounded-lg bg-zinc-800 border border-border text-xs font-mono text-zinc-400 flex items-center gap-2">
+                    <div key={i} className="p-2 rounded-md bg-muted text-xs font-mono text-foreground flex items-center gap-2">
                       <span className="text-primary font-bold">#{i+1}</span> {frame}
                     </div>
                   ))}
-                </div>
+                </Card>
               </div>
 
               {/* Timeline & Output View */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  <Play className="w-4 h-4" /> Execution Trace
-                </div>
-                <div className="p-6 rounded-2xl bg-card border border-border space-y-4">
-                  <div className="p-4 rounded-xl bg-black/50 border border-border font-mono text-sm text-green-400 min-h-[80px]">
-                    {steps[currentStep].output || '> No output yet...'}
+              <div className="space-y-3 flex flex-col justify-between">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    <Play className="w-4 h-4 text-primary" /> Execution Trace
                   </div>
-                  <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 text-sm text-foreground leading-relaxed italic">
-                    "{steps[currentStep].explanation}"
-                  </div>
+                  <Card variant="default" padding="sm" className="space-y-3">
+                    <div className="p-3 rounded-md bg-muted font-mono text-xs text-emerald-600 dark:text-emerald-400 min-h-[60px]">
+                      {steps[currentStep].output || '> No output yet...'}
+                    </div>
+                    <div className="p-3 rounded-md bg-primary/10 text-xs text-foreground leading-normal italic">
+                      "{steps[currentStep].explanation}"
+                    </div>
+                  </Card>
                 </div>
 
-                <div className="flex items-center justify-between gap-4 pt-4">
+                <div className="flex items-center justify-between gap-3 pt-2">
                   <Button 
                     variant="outline" 
                     size="sm" 
@@ -165,9 +171,9 @@ console.log(factorial(3));`);
                   >
                     <ChevronLeft className="w-4 h-4" /> Prev
                   </Button>
-                  <div className="text-xs font-bold text-muted-foreground">
+                  <span className="text-xs font-semibold text-muted-foreground">
                     Step {currentStep + 1} of {steps.length}
-                  </div>
+                  </span>
                   <Button 
                     variant="outline" 
                     size="sm" 
@@ -183,11 +189,5 @@ console.log(factorial(3));`);
         </div>
       </div>
     </div>
-  );
-}
-
-function CodeIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5-1-6.5 12.5L2-1"/><path d="m22 1 6.5-12.5L20 1"/></svg>
   );
 }

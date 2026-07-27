@@ -23,39 +23,35 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-zinc-950 p-4">
-      <div className="max-w-3xl w-full bg-white text-black rounded-2xl p-12 shadow-2xl border-[16px] border-double border-primary relative overflow-hidden">
-        {/* Decorative Elements */}
-        <div className="absolute top-0 left-0 w-32 h-32 bg-primary/10 rounded-full -translate-x-16 -translate-y-16 blur-3xl" />
-        <div className="absolute bottom-0 right-0 w-32 h-32 bg-primary/10 rounded-full translate-x-16 translate-y-16 blur-3xl" />
-
-        <div className="text-center space-y-8 relative z-10">
-          <div className="flex justify-center mb-8">
-            <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center text-white shadow-lg">
-              <span className="text-4xl font-bold">SF</span>
+    <div className="min-h-screen flex items-center justify-center bg-background text-foreground p-4 sm:p-8">
+      <div className="max-w-3xl w-full bg-card text-card-foreground rounded-2xl p-8 sm:p-12 shadow-2xl border-4 border-primary/40 relative overflow-hidden">
+        <div className="text-center space-y-6 relative z-10">
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-20 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg">
+              <span className="text-3xl font-bold">SF</span>
             </div>
           </div>
 
-          <h1 className="text-4xl font-serif font-bold text-zinc-900">Certificate of Completion</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold text-foreground">Certificate of Completion</h1>
           
           <div className="space-y-2">
-            <p className="text-lg text-zinc-500 italic">This is to certify that</p>
-            <h2 className="text-5xl font-bold text-primary underline underline-offset-8 decoration-zinc-300">
+            <p className="text-sm text-muted-foreground italic">This is to certify that</p>
+            <h2 className="text-3xl sm:text-5xl font-bold text-primary underline underline-offset-8 decoration-border">
               {cert.user?.name || "The Learner"}
             </h2>
           </div>
 
-          <div className="space-y-2 py-6">
-            <p className="text-lg text-zinc-500">has successfully completed the roadmap</p>
-            <h3 className="text-2xl font-bold text-zinc-800">
+          <div className="space-y-1.5 py-4">
+            <p className="text-sm text-muted-foreground">has successfully completed the roadmap</p>
+            <h3 className="text-xl sm:text-2xl font-bold text-foreground">
               {cert.roadmap?.title || "Roadmap Certification"}
             </h3>
           </div>
 
-          <div className="flex justify-between items-end pt-12 px-12">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-6 pt-8 px-4 border-t border-border/40">
             <div className="text-left space-y-1">
-              <p className="text-sm font-bold text-zinc-800">Issued Date</p>
-              <p className="text-sm text-zinc-500">
+              <p className="text-xs font-bold text-muted-foreground uppercase">Issued Date</p>
+              <p className="text-xs font-semibold text-foreground">
                 {cert.issuedAt.toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
@@ -63,20 +59,20 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
                 })}
               </p>
             </div>
-            <div className="text-center space-y-2">
-              <div className="w-32 border-b-2 border-zinc-300 mx-auto h-10" />
-              <p className="text-xs font-bold text-zinc-400 uppercase">Academy Director</p>
+            <div className="text-center space-y-1">
+              <div className="w-28 border-b border-border mx-auto h-6" />
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Academy Director</p>
             </div>
             <div className="text-right space-y-1">
-              <p className="text-sm font-bold text-zinc-800">Verification ID</p>
-              <p className="text-sm text-zinc-500 font-mono">
+              <p className="text-xs font-bold text-muted-foreground uppercase">Verification ID</p>
+              <p className="text-xs font-mono text-foreground">
                 {cert.id}
               </p>
             </div>
           </div>
 
-          <div className="mt-12 pt-6 border-t border-zinc-100 flex items-center justify-center gap-2 text-zinc-400">
-            <span className="text-xs font-medium uppercase tracking-widest">Verified by StackForge Academy</span>
+          <div className="pt-4 flex items-center justify-center gap-2 text-muted-foreground">
+            <span className="text-[10px] font-bold uppercase tracking-widest">Verified by StackForge Academy</span>
           </div>
         </div>
       </div>

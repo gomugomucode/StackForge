@@ -18,7 +18,7 @@ export function SearchInput({
   return (
     <div className={`relative ${className}`}>
       <SearchIcon
-        className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted pointer-events-none"
+        className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none"
         aria-hidden="true"
       />
       <input
@@ -27,7 +27,7 @@ export function SearchInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full pl-12 pr-4 py-3 rounded-xl bg-surface-800 border border-surface-600 text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-purple/50 focus:ring-2 focus:ring-accent-purple/20 transition-all"
+        className="w-full pl-9 pr-3 h-9 rounded-lg bg-card border border-border text-sm text-foreground placeholder:text-muted-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 focus-visible:ring-offset-background"
         aria-label={placeholder}
       />
     </div>

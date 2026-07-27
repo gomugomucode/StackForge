@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { CheckCircle2, HelpCircle, Send } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 
 interface PracticeSectionProps {
   title: string;
@@ -22,69 +24,74 @@ export function PracticeSection({ title, description, hints, expectedOutput, sol
     try {
       await onComplete(challengeId);
       setIsSubmitted(true);
-    } catch (e) {
+    } catch {
       setError("Submission failed. Please try again.");
     }
   };
 
   return (
-    <div className="mb-8 p-6 rounded-2xl border border-primary/20 bg-primary/5">
-      <div className="flex items-center gap-2 mb-4">
-        <CheckCircle2 className="w-5 h-5 text-primary" />
-        <h3 className="text-xl font-semibold text-foreground">{title}</h3>
+    <Card variant="default" padding="md" className="mb-6 space-y-4">
+      <div className="flex items-center gap-2">
+        <CheckCircle2 className="w-4.5 h-4.5 text-primary" />
+        <h3 className="text-lg font-semibold text-foreground">{title}</h3>
       </div>
-      <p className="text-muted-foreground mb-6 leading-relaxed">{description}</p>
+      <p className="text-xs text-muted-foreground leading-normal">{description}</p>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="space-y-4">
-          <div className="rounded-xl border border-border overflow-hidden bg-zinc-900">
-            <div className="px-4 py-2 border-b border-border bg-zinc-800 text-xs font-mono text-zinc-400">
-              Editor
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="space-y-3">
+          <div className="rounded-lg border border-border overflow-hidden bg-muted/80">
+            <div className="px-3 py-1.5 border-b border-border bg-muted text-xs font-mono text-muted-foreground flex justify-between items-center">
+              <span>Editor</span>
+              <span className="text-[10px]">.js</span>
             </div>
             <textarea
-              className="w-full h-64 p-4 bg-zinc-900 text-zinc-300 font-mono text-sm focus:outline-none resize-none"
+              className="w-full h-48 p-3 bg-muted/50 text-foreground font-mono text-xs focus:outline-none resize-none placeholder:text-muted-foreground"
               placeholder="Write your solution here..."
               value={userCode}
               onChange={(e) => setUserCode(e.target.value)}
             />
-            <div className="px-4 py-3 border-t border-border bg-zinc-800 flex justify-between items-center">
+            <div className="px-3 py-2 border-t border-border bg-muted flex justify-between items-center">
               <button 
+                type="button"
                 onClick={() => setShowHints(!showHints)}
-                className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200 transition-colors"
+                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
                 <HelpCircle className="w-3.5 h-3.5" />
                 {showHints ? 'Hide Hints' : 'Show Hints'}
               </button>
-              <button 
+              <Button 
                 onClick={handleSubmit}
                 disabled={isSubmitted}
-                className="flex items-center gap-1.5 px-4 py-1.5 bg-primary text-white rounded-lg text-xs font-bold hover:bg-primary/90 transition-colors disabled:opacity-50"
+                variant="primary"
+                size="sm"
+                className="gap-1.5"
               >
                 <Send className="w-3.5 h-3.5" />
-                Submit Solution
-              </button>
+                <span>Submit Solution</span>
+              </Button>
             </div>
           </div>
-          {error && <div className="p-3 rounded-lg bg-red-500/10 text-red-500 text-xs">{error}</div>}
-          {isSubmitted && <div className="p-3 rounded-lg bg-green-500/10 text-green-500 text-xs font-bold">Challenge Completed! XP awarded.</div>}
+          {error && <div className="p-2.5 rounded-lg bg-destructive/10 text-destructive text-xs">{error}</div>}
+          {isSubmitted && <div className="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">Challenge Completed! XP awarded.</div>}
         </div>
-        <div className="space-y-4">
-          <div className="p-4 rounded-xl border border-border bg-card">
-            <span className="text-xs font-bold text-muted-foreground uppercase block mb-2">Expected Output</span>
-            <div className="font-mono text-sm text-zinc-400 bg-black p-3 rounded-lg">
+
+        <div className="space-y-3">
+          <div className="p-3.5 rounded-lg border border-border bg-card space-y-1.5">
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Expected Output</span>
+            <div className="font-mono text-xs text-foreground bg-muted p-2.5 rounded-md">
               {expectedOutput}
             </div>
           </div>
           {showHints && (
-            <div className="p-4 rounded-xl border border-primary/20 bg-primary/5">
-              <span className="text-xs font-bold text-primary uppercase block mb-2">Hints</span>
-              <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
+            <div className="p-3.5 rounded-lg border border-primary/20 bg-primary/5 space-y-1.5">
+              <span className="text-[10px] font-bold text-primary uppercase tracking-wider block">Hints</span>
+              <ul className="list-disc list-inside text-xs text-muted-foreground space-y-1">
                 {hints.map((hint, i) => <li key={i}>{hint}</li>)}
               </ul>
             </div>
           )}
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
