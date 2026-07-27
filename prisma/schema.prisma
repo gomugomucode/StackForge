@@ -673,3 +673,139 @@ model SpacedRepetition {
   @@unique([userId, topicId])
   @@index([userId, nextReviewDue])
 }
+
+model ContentSource {
+  id        String   @id @default(cuid())
+  name      String
+  type      String   // "RSS" | "MEDIUM" | "GITHUB" | "BLOG"
+  url       String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ExternalArticle {
+  id             String   @id @default(cuid())
+  title          String
+  slug           String   @unique
+  description    String
+  content        String?
+  author         String   @default("StackForge Content Engine")
+  coverImage     String?
+  tags           String[] @default([])
+  readingTime    Int      @default(5)
+  source         String
+  sourceUrl      String
+  canonicalUrl   String?
+  mediumUrl      String?
+  publishedAt    DateTime @default(now())
+  score          Float    @default(100.0)
+  keyTakeaways   String[] @default([])
+  prerequisites String[] @default([])
+  difficulty     String   @default("Intermediate")
+  status         String   @default("PUBLISHED")
+  isPinned       Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([source, publishedAt])
+}
+
+model ExternalProject {
+  id            String   @id @default(cuid())
+  title         String
+  slug          String   @unique
+  description   String
+  repoUrl       String
+  stars         Int      @default(0)
+  forks         Int      @default(0)
+  language      String   @default("TypeScript")
+  topics        String[] @default([])
+  readmeContent String?
+  ogImage       String?
+  updatedAt     DateTime @updatedAt
+}
+
+model RSSFeed {
+  id             String    @id @default(cuid())
+  url            String    @unique
+  sourceName     String
+  lastFetchedAt  DateTime?
+  status         String    @default("ACTIVE")
+  createdAt      DateTime  @default(now())
+}
+
+model SyncHistory {
+  id          String   @id @default(cuid())
+  sourceName  String
+  itemsSynced Int      @default(0)
+  status      String   @default("SUCCESS")
+  errorLog    String?
+  timestamp   DateTime @default(now())
+}
+
+model ContentCache {
+  id        String   @id @default(cuid())
+  cacheKey  String   @unique
+  dataJson  Json
+  expiresAt DateTime
+  updatedAt DateTime @updatedAt
+
+  @@index([cacheKey, expiresAt])
+}
+
+model LearningNode {
+  id                 String   @id @default(cuid())
+  entityType         String   // "LESSON" | "ARTICLE" | "CHEATSHEET" | "QUIZ" | "CHALLENGE" | "PROJECT" | "INTERVIEW" | "CERTIFICATE"
+  entityId           String
+  title              String
+  slug               String   @unique
+  technology         String
+  difficulty         String   @default("Intermediate")
+  qualityScore       Float    @default(85.0)
+  learningObjectives String[] @default([])
+  prerequisites      String[] @default([])
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([technology, difficulty])
+}
+
+model LearningEdge {
+  id           String @id @default(cuid())
+  sourceNodeId String
+  targetNodeId String
+  edgeType     String @default("NEXT_REC") // "PREREQUISITE" | "NEXT_REC" | "RELATED"
+  weight       Float  @default(1.0)
+
+  @@unique([sourceNodeId, targetNodeId])
+}
+
+model LearningCollection {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String
+  icon        String   @default("Layers")
+  color       String   @default("emerald")
+  technology  String
+  itemIds     String[] @default([])
+  isFeatured  Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model WeeklyLearningReport {
+  id               String   @id @default(cuid())
+  userId           String
+  weekStartDate    String
+  progressScore    Int      @default(0)
+  topicsImproved   String[] @default([])
+  weakTopics       String[] @default([])
+  projectsFinished Int      @default(0)
+  readingSummary   String
+  nextWeekPlan     String
+  createdAt        DateTime @default(now())
+
+  @@unique([userId, weekStartDate])
+}

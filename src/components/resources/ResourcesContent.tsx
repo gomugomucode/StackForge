@@ -1,191 +1,178 @@
-'use client';
+"use client";
 
-import { SectionHeader } from '../ui/SectionHeader';
-import { ResourceGrid } from '@/features/resources/components/ResourceGrid';
-import { Button } from '../ui/Button';
-import NextLink from 'next/link';
-import { BookOpen, Code, GraduationCap, Layout, Terminal, Zap, Trophy, FileText, ArrowRight } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import NextLink from "next/link";
+import { 
+  Sparkles, BookOpen, ExternalLink, Code2, Layers, 
+  Award, FileText, ArrowRight, Star, TrendingUp, CheckCircle, ShieldCheck 
+} from "lucide-react";
+import { learningCollections } from "@/data/learningCollections";
 
 export function ResourcesContent() {
-  const internalCategories = [
-    { 
-      title: 'Learning Paths', 
-      href: '/roadmaps', 
-      icon: <GraduationCap className="w-5 h-5" />, 
-      description: 'Structured paths to master new technologies from zero to hero.',
-      color: 'bg-blue-500/10 text-blue-500'
-    },
-    { 
-      title: 'Cheatsheets', 
-      href: '/cheatsheets', 
-      icon: <FileText className="w-5 h-5" />, 
-      description: 'High-density reference guides for fast revision and lookup.',
-      color: 'bg-purple-500/10 text-purple-500'
-    },
-    { 
-      title: 'Quizzes', 
-      href: '/roadmaps/quiz', 
-      icon: <Zap className="w-5 h-5" />, 
-      description: 'Test your knowledge with quick and mastery-level assessments.',
-      color: 'bg-yellow-500/10 text-yellow-500'
-    },
-    { 
-      title: 'Interview Prep', 
-      href: '/interview', 
-      icon: <Code className="w-5 h-5" />, 
-      description: 'Master FAANG-style interview questions with deep explanations.',
-      color: 'bg-emerald-500/10 text-emerald-500'
-    },
-    { 
-      title: 'Projects', 
-      href: '/projects', 
-      icon: <Layout className="w-5 h-5" />, 
-      description: 'Hands-on mini projects to build a real-world portfolio.',
-      color: 'bg-orange-500/10 text-orange-500'
-    },
-    { 
-      title: 'AI Tutor', 
-      href: '/tutor', 
-      icon: <Terminal className="w-5 h-5" />, 
-      description: 'Interactive visualizer and AI mentor for complex concepts.',
-      color: 'bg-pink-500/10 text-pink-500'
-    },
-    { 
-      title: 'Certificates', 
-      href: '/cert', 
-      icon: <Trophy className="w-5 h-5" />, 
-      description: 'Earn and verify industry-standard certifications.',
-      color: 'bg-cyan-500/10 text-cyan-500'
-    },
-    { 
-      title: 'Knowledge Base', 
-      href: '/learn', 
-      icon: <BookOpen className="w-5 h-5" />, 
-      description: 'Deep-dive articles and technical guides for every topic.',
-      color: 'bg-indigo-500/10 text-indigo-500'
-    },
-  ];
+  const [collections, setCollections] = useState(learningCollections);
 
   return (
-    <div className="py-16 md:py-24">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeader
-          badge="Internal Ecosystem"
-          title="Knowledge Hub"
-          highlight="All-in-One Learning"
-          description="Stop hopping between tabs. Everything you need to master development is now consolidated within StackForge."
-        />
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
-          {internalCategories.map((cat) => (
-            <NextLink key={cat.title} href={cat.href}>
-              <div className="p-6 rounded-2xl border border-border bg-card hover:border-primary/50 transition-all group cursor-pointer hover:shadow-xl hover:shadow-primary/5">
-                <div className={`w-12 h-12 rounded-xl ${cat.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                  {cat.icon}
-                </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">{cat.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                  {cat.description}
-                </p>
-                <div className="flex items-center gap-2 text-primary font-semibold text-sm group-hover:gap-3 transition-all">
-                  Explore Now <ArrowRight className="w-4 h-4" />
-                </div>
-              </div>
-            </NextLink>
-          ))}
+    <div className="py-12 md:py-20 bg-background text-foreground space-y-16">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        {/* Developer Hub Header */}
+        <div className="space-y-4 max-w-3xl">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full text-xs font-semibold text-primary">
+            <Sparkles className="w-3.5 h-3.5" /> StackForge Developer Operating System
+          </div>
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">Developer Hub & Learning Engine</h1>
+          <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+            Interconnected learning paths, quality-ranked documentation, live GitHub portfolio tools, and curated developer collections.
+          </p>
         </div>
 
-        <div className="mt-24 grid grid-cols-1 lg:grid-cols-3 gap-12">
-          <div className="lg:col-span-2 space-y-12">
-            <div className="space-y-6">
-              <SectionHeader
-                title="Featured Content"
-                description="Hand-picked lessons and projects to jumpstart your learning."
-              />
-              <div className="grid gap-4">
-                <div className="p-4 rounded-xl border border-border bg-card flex items-center justify-between hover:bg-muted/50 transition-colors cursor-pointer group">
-                   <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">JS</div>
-                      <div>
-                         <p className="font-semibold text-foreground">Async/Await Mastery</p>
-                         <p className="text-xs text-muted-foreground">Learn the art of non-blocking code</p>
-                      </div>
-                   </div>
-                   <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </div>
-                <div className="p-4 rounded-xl border border-border bg-card flex items-center justify-between hover:bg-muted/50 transition-colors cursor-pointer group">
-                   <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center font-bold">TS</div>
-                      <div>
-                         <p className="font-semibold text-foreground">Generics Deep Dive</p>
-                         <p className="text-xs text-muted-foreground">Type-safe reusable components</p>
-                      </div>
-                   </div>
-                   <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </div>
-              </div>
+        {/* Section 1: Continue Learning & Recommended For You */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 p-6 rounded-2xl border border-border bg-card space-y-4 shadow-sm">
+            <div className="flex items-center justify-between border-b border-border/40 pb-3">
+              <h2 className="text-lg font-bold flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-primary" /> Active Learning Node
+              </h2>
+              <span className="text-xs bg-primary/10 text-primary border border-primary/20 px-2.5 py-0.5 rounded-full font-medium">
+                In Progress
+              </span>
             </div>
-
-            <div className="space-y-6">
-              <SectionHeader
-                title="Popular Cheatsheets"
-                description="The most referenced guides by the community."
-              />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <NextLink href="/cheatsheets/javascript" className="p-4 rounded-xl border border-border bg-card hover:border-primary/50 transition-all group">
-                   <p className="font-bold text-foreground mb-1 group-hover:text-primary transition-colors">JavaScript Modern Essentials</p>
-                   <p className="text-xs text-muted-foreground">ES6+, Async, DOM</p>
-                </NextLink>
-                <NextLink href="/cheatsheets/react" className="p-4 rounded-xl border border-border bg-card hover:border-primary/50 transition-all group">
-                   <p className="font-bold text-foreground mb-1 group-hover:text-primary transition-colors">React 19 Mastery</p>
-                   <p className="text-xs text-muted-foreground">Hooks, State, Perf</p>
-                </NextLink>
-              </div>
+            <div className="space-y-2">
+              <h3 className="text-xl font-bold">Full-Stack Next.js 15 & System Design</h3>
+              <p className="text-sm text-muted-foreground">
+                Connected Step: Lesson → Server Actions → Cheatsheet → Real-time Editor Project → Interview Practice
+              </p>
+            </div>
+            <div className="pt-2 flex items-center gap-3">
+              <NextLink
+                href="/learn/nextjs/overview"
+                className="px-4 py-2 bg-primary text-primary-foreground font-bold text-xs rounded-xl flex items-center gap-2 shadow-sm hover:opacity-90 transition-opacity"
+              >
+                Resume Next Step <ArrowRight className="w-4 h-4" />
+              </NextLink>
             </div>
           </div>
 
-          <div className="space-y-8">
-            <div className="p-6 rounded-2xl border border-border bg-card">
-              <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-yellow-500" /> 
-                Continue Learning
-              </h3>
-              <div className="space-y-4">
-                <div className="p-3 rounded-lg bg-muted/50 border border-border">
-                   <p className="text-sm font-medium text-foreground">Frontend Roadmap</p>
-                   <div className="w-full bg-secondary h-1.5 rounded-full mt-2">
-                      <div className="bg-primary h-full rounded-full w-[65%]" />
-                   </div>
-                   <p className="text-[10px] text-muted-foreground mt-2 text-right">65% Complete</p>
-                </div>
-                <Button variant="outline" className="w-full mt-6" asChild>
-                  <NextLink href="/dashboard">Go to Dashboard</NextLink>
-                </Button>
-              </div>
-            </div>
+          <div className="p-6 rounded-2xl border border-border bg-card space-y-4 shadow-sm">
+            <h2 className="text-lg font-bold flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-amber-500" /> Recommended For You
+            </h2>
+            <div className="space-y-3">
+              <NextLink
+                href="/projects/realtime-collab-editor"
+                className="block p-3 rounded-xl bg-secondary/50 border border-border/60 hover:border-primary/50 transition-colors group"
+              >
+                <div className="text-xs font-bold group-hover:text-primary transition-colors">Real-time CRDT Editor Project</div>
+                <div className="text-[11px] text-muted-foreground mt-0.5">Based on your recent React state diagnostic</div>
+              </NextLink>
 
-            <div className="p-6 rounded-2xl border border-border bg-gradient-to-br from-primary/10 to-purple-500/10">
-              <h3 className="text-lg font-bold text-foreground mb-2">Recommended For You</h3>
-              <p className="text-sm text-muted-foreground mb-4">Based on your progress in JavaScript</p>
-              <div className="space-y-3">
-                 <NextLink href="/learn/backend/node-runtime" className="block p-2 text-sm font-medium text-primary hover:underline">
-                    → Node.js Runtime
-                 </NextLink>
-                 <NextLink href="/learn/frontend/react-core" className="block p-2 text-sm font-medium text-primary hover:underline">
-                    → React Fundamentals
-                 </NextLink>
-              </div>
+              <NextLink
+                href="/interview"
+                className="block p-3 rounded-xl bg-secondary/50 border border-border/60 hover:border-primary/50 transition-colors group"
+              >
+                <div className="text-xs font-bold group-hover:text-primary transition-colors">System Design Mock Interview</div>
+                <div className="text-[11px] text-muted-foreground mt-0.5">Practice webhooks & queue architecture</div>
+              </NextLink>
             </div>
           </div>
         </div>
 
-        <div className="mt-24">
-          <SectionHeader
-            title="Developer Tools"
-            description="Utility tools to speed up your workflow."
-          />
-          <div className="max-w-6xl mx-auto mt-12">
-            <ResourceGrid />
+        {/* Section 2: Curated Learning Collections */}
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-2xl font-extrabold tracking-tight flex items-center gap-2">
+              <Layers className="w-6 h-6 text-primary" /> Curated Learning Collections
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1">Multi-asset learning tracks grouping lessons, articles, projects, and interview questions.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {collections.map((col) => (
+              <div key={col.id} className="p-6 rounded-2xl border border-border bg-card hover:border-primary/50 transition-all space-y-4 flex flex-col justify-between group">
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center font-bold">
+                    <Code2 className="w-5 h-5" />
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">{col.title}</h3>
+                  <p className="text-xs text-muted-foreground line-clamp-2">{col.description}</p>
+                </div>
+
+                <div className="pt-4 border-t border-border/40 flex items-center justify-between">
+                  <span className="text-[11px] font-semibold text-muted-foreground">{col.itemCount} Learning Assets</span>
+                  <NextLink
+                    href={`/collections/${col.slug}`}
+                    className="text-xs font-bold text-primary flex items-center gap-1 group-hover:gap-2 transition-all"
+                  >
+                    View Track <ArrowRight className="w-3.5 h-3.5" />
+                  </NextLink>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Section 3: Official Reference Documentation & GitHub Trending */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Official Docs */}
+          <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-emerald-500" /> Verified Official Documentation
+            </h2>
+            <div className="space-y-3">
+              {[
+                { name: "React 19 Official Documentation", url: "https://react.dev", tag: "Quality Score: 100" },
+                { name: "Next.js 15 App Router & Server Actions", url: "https://nextjs.org/docs", tag: "Quality Score: 100" },
+                { name: "TypeScript Handbook & Specs", url: "https://www.typescriptlang.org/docs/", tag: "Quality Score: 98" },
+                { name: "MDN Web Docs Specifications", url: "https://developer.mozilla.org", tag: "Quality Score: 96" },
+              ].map((doc, idx) => (
+                <a
+                  key={idx}
+                  href={doc.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-3 rounded-xl bg-secondary/50 border border-border/60 flex items-center justify-between hover:border-primary/50 transition-all group"
+                >
+                  <span className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors flex items-center gap-2">
+                    {doc.name} <ExternalLink className="w-3.5 h-3.5 text-muted-foreground" />
+                  </span>
+                  <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md">
+                    {doc.tag}
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* GitHub Open Source Projects */}
+          <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <Star className="w-5 h-5 text-amber-500" /> Featured Open-Source Projects
+            </h2>
+            <div className="space-y-3">
+              {[
+                { name: "vercel/next.js", stars: "141,152", lang: "TypeScript", url: "https://github.com/vercel/next.js" },
+                { name: "facebook/react", stars: "228,400", lang: "JavaScript", url: "https://github.com/facebook/react" },
+                { name: "prisma/prisma", stars: "39,800", lang: "TypeScript", url: "https://github.com/prisma/prisma" },
+                { name: "supabase/supabase", stars: "73,200", lang: "TypeScript", url: "https://github.com/supabase/supabase" },
+              ].map((repo, idx) => (
+                <a
+                  key={idx}
+                  href={repo.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-3 rounded-xl bg-secondary/50 border border-border/60 flex items-center justify-between hover:border-primary/50 transition-all group"
+                >
+                  <div>
+                    <div className="text-xs font-bold text-foreground group-hover:text-primary transition-colors flex items-center gap-2">
+                      {repo.name} <ExternalLink className="w-3.5 h-3.5 text-muted-foreground" />
+                    </div>
+                    <div className="text-[11px] text-muted-foreground mt-0.5">{repo.lang}</div>
+                  </div>
+                  <span className="text-xs font-bold text-amber-400 flex items-center gap-1">
+                    ★ {repo.stars}
+                  </span>
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </div>

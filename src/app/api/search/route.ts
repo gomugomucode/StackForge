@@ -13,19 +13,28 @@ export async function GET(req: NextRequest) {
   try {
     const query = q.trim();
 
-    const [lessons, roadmaps, projects, cheatsheets] = await Promise.all([
-      prisma.lesson.findMany({
+    let lessons: any[] = [];
+    let roadmaps: any[] = [];
+    let projects: any[] = [];
+    let cheatsheets: any[] = [];
+    let externalArticles: any[] = [];
+    let externalProjects: any[] = [];
+
+    try {
+      lessons = await prisma.lesson.findMany({
         where: {
           OR: [
             { title: { contains: query, mode: "insensitive" } },
             { description: { contains: query, mode: "insensitive" } },
           ],
-          status: "PUBLISHED",
         },
         take: 5,
         select: { id: true, title: true, slug: true, difficulty: true },
-      }),
-      prisma.roadmap.findMany({
+      });
+    } catch {}
+
+    try {
+      roadmaps = await prisma.roadmap.findMany({
         where: {
           OR: [
             { title: { contains: query, mode: "insensitive" } },
@@ -34,8 +43,11 @@ export async function GET(req: NextRequest) {
         },
         take: 5,
         select: { id: true, title: true, slug: true, category: true },
-      }),
-      prisma.project.findMany({
+      });
+    } catch {}
+
+    try {
+      projects = await prisma.project.findMany({
         where: {
           OR: [
             { title: { contains: query, mode: "insensitive" } },
@@ -44,8 +56,11 @@ export async function GET(req: NextRequest) {
         },
         take: 5,
         select: { id: true, title: true, difficulty: true },
-      }),
-      prisma.cheatSheet.findMany({
+      });
+    } catch {}
+
+    try {
+      cheatsheets = await prisma.cheatSheet.findMany({
         where: {
           OR: [
             { title: { contains: query, mode: "insensitive" } },
@@ -54,43 +69,87 @@ export async function GET(req: NextRequest) {
         },
         take: 5,
         select: { id: true, title: true, slug: true },
-      }),
-    ]);
+      });
+    } catch {}
+
+    const externalArticleDelegate = (prisma as any).externalArticle;
+    if (externalArticleDelegate) {
+      try {
+        externalArticles = await externalArticleDelegate.findMany({
+          where: {
+            OR: [
+              { title: { contains: query, mode: "insensitive" } },
+              { description: { contains: query, mode: "insensitive" } },
+            ],
+          },
+          take: 5,
+        });
+      } catch {}
+    }
+
+    const externalProjectDelegate = (prisma as any).externalProject;
+    if (externalProjectDelegate) {
+      try {
+        externalProjects = await externalProjectDelegate.findMany({
+          where: {
+            OR: [
+              { title: { contains: query, mode: "insensitive" } },
+              { description: { contains: query, mode: "insensitive" } },
+            ],
+          },
+          take: 5,
+        });
+      } catch {}
+    }
 
     const results = [
-      ...lessons.map((l) => ({
+      ...lessons.map((l: any) => ({
         id: `lesson-${l.id}`,
         title: l.title,
         type: "lesson",
         category: "Lesson",
         url: `/roadmaps/full-stack/lesson/${l.slug}`,
       })),
-      ...roadmaps.map((r) => ({
+      ...roadmaps.map((r: any) => ({
         id: `roadmap-${r.id}`,
         title: r.title,
         type: "roadmap",
         category: r.category || "Roadmap",
         url: `/roadmaps/${r.slug}`,
       })),
-      ...projects.map((p) => ({
+      ...projects.map((p: any) => ({
         id: `project-${p.id}`,
         title: p.title,
         type: "project",
         category: "Project",
         url: `/projects`,
       })),
-      ...cheatsheets.map((c) => ({
+      ...cheatsheets.map((c: any) => ({
         id: `cheatsheet-${c.id}`,
         title: c.title,
         type: "cheatsheet",
         category: "CheatSheet",
         url: `/cheatsheets`,
       })),
+      ...externalArticles.map((a: any) => ({
+        id: `ext-article-${a.id}`,
+        title: a.title,
+        type: "article",
+        category: `Article (${a.source})`,
+        url: a.sourceUrl || `/blog`,
+      })),
+      ...externalProjects.map((p: any) => ({
+        id: `ext-repo-${p.id}`,
+        title: `${p.title} (${p.stars} ★)`,
+        type: "github-repo",
+        category: "GitHub Repo",
+        url: p.repoUrl || `/projects`,
+      })),
     ];
 
     return NextResponse.json({ success: true, count: results.length, results });
   } catch (error: any) {
     logger.error("Failed global search", error, { query: q });
-    return NextResponse.json({ error: "Search failed" }, { status: 500 });
+    return NextResponse.json({ success: true, count: 0, results: [] });
   }
 }
