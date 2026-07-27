@@ -57,6 +57,8 @@ model User {
   interviewSessions  InterviewSession[]
   contentVersions    ContentVersion[]
   auditLogs          AdminAuditLog[]
+  notifications      Notification[]
+  spacedRepetitions  SpacedRepetition[]
 }
 
 model Profile {
@@ -642,4 +644,32 @@ model AssessmentQuality {
   qualityScore Float    @default(100.0)
   isAmbiguous  Boolean  @default(false)
   updatedAt    DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      String   // "ACHIEVEMENT" | "PROJECT_REVIEW" | "INTERVIEW_FEEDBACK" | "MENTOR_SUGGESTION" | "COMMUNITY_REPLY" | "ANNOUNCEMENT"
+  read      Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+}
+
+model SpacedRepetition {
+  id             String   @id @default(cuid())
+  userId         String
+  topicId        String
+  retentionScore Float    @default(100.0)
+  lastReviewedAt DateTime @default(now())
+  nextReviewDue  DateTime
+  intervalDays   Int      @default(1)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, topicId])
+  @@index([userId, nextReviewDue])
 }

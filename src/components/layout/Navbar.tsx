@@ -23,6 +23,7 @@ import { navLinks, brandName } from '../../data/navigation'
 import { Button } from '../ui/Button'
 import { ThemeToggle } from '../ui/theme-toggle'
 import { CommandMenu } from './CommandMenu'
+import { NotificationCenter } from './NotificationCenter'
 import { useUserStats } from '@/context/UserStatsContext'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { UserMenu } from '@/features/auth/components/UserMenu'
@@ -265,7 +266,12 @@ export function Navbar() {
 
             {/* Right-side Utilities & Profile */}
             <div className="hidden xl:flex items-center gap-3">
-              {isAuthenticated && !isLoading && <UserStatsBadge />}
+              {isAuthenticated && !isLoading && (
+                <>
+                  <UserStatsBadge />
+                  <NotificationCenter />
+                </>
+              )}
               <UserMenu />
 
               {/* CMD+K Search Button */}
