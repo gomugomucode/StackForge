@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSupabaseServerUser } from "@/lib/supabase-server";
 import { addXP } from "@/features/gamification/services/xpService";
+import { GithubSyncService } from "@/features/github/services/githubSyncService";
 
 export async function POST(req: Request) {
   const user = await getSupabaseServerUser();
@@ -26,15 +27,34 @@ export async function POST(req: Request) {
       },
     });
 
-    // Award XP for submitting a project. addXP writes to the Profile
-    // table (the spec's user_stats).
+    // Run Structured Multidimensional Project Review
+    const evaluation = await GithubSyncService.evaluateProjectRepository(repoUrl);
+    const autoReview = await prisma.projectReview.create({
+      data: {
+        submissionId: submission.id,
+        overallScore: evaluation.overallScore,
+        readmeScore: evaluation.readmeScore,
+        codeQuality: evaluation.codeQuality,
+        testCoverage: evaluation.testCoverage,
+        securityScore: evaluation.securityScore,
+        feedbackJson: JSON.stringify(evaluation.feedback),
+      },
+    });
+
+    // Award XP
     try {
-      await addXP(user.id, "QUIZ_PASS"); // nearest available reward; reward table is unchanged
+      await addXP(user.id, "CHALLENGE_COMPLETION");
     } catch (e) {
       console.warn("[projects/submit] xp reward skipped:", e);
     }
 
-    return NextResponse.json(submission);
+    return NextResponse.json({
+      submission,
+      autoReview: {
+        ...autoReview,
+        feedback: evaluation.feedback,
+      },
+    });
   } catch (error) {
     console.error("Submission Error:", error);
     return NextResponse.json(

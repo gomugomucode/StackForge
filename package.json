@@ -11,7 +11,8 @@
     "seed": "ts-node prisma/seed.ts",
     "generate:academy": "ts-node scripts/generate-curriculum.ts",
     "validate:curriculum": "ts-node scripts/validate-curriculum.ts",
-    "health-check": "ts-node scripts/content-health-check.ts"
+    "health-check": "ts-node scripts/content-health-check.ts",
+    "test": "vitest run"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",

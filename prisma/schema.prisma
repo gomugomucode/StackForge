@@ -8,6 +8,18 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+  RECRUITER
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
 model User {
   id                 String              @id @default(cuid())
   name               String?
@@ -15,6 +27,10 @@ model User {
   password           String?
   emailVerified      DateTime?
   avatar             String?
+  role               Role                @default(USER)
+  publicProfile      Boolean             @default(true)
+  githubUsername     String?
+  githubAvatar       String?
   plan               String              @default("FREE")
   stripeCustomerId   String?
   createdAt          DateTime            @default(now())
@@ -39,6 +55,8 @@ model User {
   xpTransactions     XpTransaction[]
   skillProficiencies SkillProficiency[]
   interviewSessions  InterviewSession[]
+  contentVersions    ContentVersion[]
+  auditLogs          AdminAuditLog[]
 }
 
 model Profile {
@@ -219,7 +237,7 @@ model Module {
 }
 
 model Lesson {
-  id             String     @id @default(cuid())
+  id             String             @id @default(cuid())
   moduleId       String
   slug           String
   title          String
@@ -234,14 +252,23 @@ model Lesson {
   quizId         String?
   cheatsheetId   String?
   interviewId    String?
-  difficulty     String     @default("beginner")
-  estimatedHours Int        @default(1)
+  difficulty     String             @default("beginner")
+  estimatedHours Int                @default(1)
   prerequisites  String[]
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
-  module         Module     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  status         ContentStatus      @default(PUBLISHED)
+  version        Int                @default(1)
+  skillsGained   String[]           @default([])
+  xpAwarded      Int                @default(50)
+  seoTitle       String?
+  seoDescription String?
+  seoKeywords    String[]           @default([])
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  module         Module             @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   resources      Resource[]
   progress       Progress[]
+  targetDeps     LessonDependency[] @relation("TargetLesson")
+  prereqDeps     LessonDependency[] @relation("PrereqLesson")
 }
 
 model Resource {
@@ -553,4 +580,66 @@ model FeatureFlag {
   enabled     Boolean  @default(false)
   description String?
   updatedAt   DateTime @updatedAt
+}
+
+model ContentVersion {
+  id          String   @id @default(cuid())
+  entityType  String
+  entityId    String
+  version     Int      @default(1)
+  dataJson    Json
+  createdById String
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([entityType, entityId])
+}
+
+model AdminAuditLog {
+  id         String   @id @default(cuid())
+  userId     String
+  action     String
+  entityType String
+  entityId   String?
+  details    Json?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model LessonDependency {
+  id              String @id @default(cuid())
+  lessonId        String
+  prerequisiteId  String
+  unlockCondition String @default("COMPLETED")
+  lesson          Lesson @relation("TargetLesson", fields: [lessonId], references: [id], onDelete: Cascade)
+  prerequisite    Lesson @relation("PrereqLesson", fields: [prerequisiteId], references: [id], onDelete: Cascade)
+
+  @@unique([lessonId, prerequisiteId])
+}
+
+model GithubSync {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  username     String
+  avatarUrl    String?
+  publicRepos  Int      @default(0)
+  totalCommits Int      @default(0)
+  totalPRs     Int      @default(0)
+  languages    Json?
+  lastSyncedAt DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model AssessmentQuality {
+  id           String   @id @default(cuid())
+  entityType   String
+  entityId     String   @unique
+  passRate     Float    @default(0.0)
+  attempts     Int      @default(0)
+  qualityScore Float    @default(100.0)
+  isAmbiguous  Boolean  @default(false)
+  updatedAt    DateTime @updatedAt
 }

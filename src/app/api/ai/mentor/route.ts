@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getSupabaseServerUser } from "@/lib/supabase-server";
 import { hasAccess } from "@/lib/access-control";
 import { AIService } from "@/features/ai/services/aiService";
+import { buildGroundedUserContext } from "@/features/ai/services/aiContextBuilder";
 
 export async function POST(req: Request) {
   const sessionUser = await getSupabaseServerUser();
@@ -27,13 +28,21 @@ export async function POST(req: Request) {
       }, { status: 403 });
     }
 
-    const { message, context } = await req.json();
+    const { message } = await req.json();
 
-    const aiResponse = await AIService.generateMentorResponse(message, context);
+    // Fetch Grounded Context from User Data & Learning Graph
+    const groundedContext = await buildGroundedUserContext(sessionUser.id);
+    const serializedContext = JSON.stringify(groundedContext);
+
+    const aiResponse = await AIService.generateMentorResponse(message, serializedContext);
 
     return NextResponse.json({ 
       role: "assistant", 
       content: aiResponse,
+      groundedContext: {
+        activeRoadmap: groundedContext.activeRoadmap?.title || "General",
+        recommendations: groundedContext.graphRecommendations,
+      },
       timestamp: new Date().toISOString() 
     });
 
