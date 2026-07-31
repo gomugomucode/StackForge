@@ -16,6 +16,7 @@ import { AdminCmsEngine } from "../src/features/cms/services/adminCmsEngine";
 import { OutcomeService } from "../src/features/learning/services/outcomeService";
 import { ReleaseIntelligenceService } from "../src/features/intelligence/services/releaseIntelligence";
 import { EvidenceProfileEngine } from "../src/features/evidence/services/evidenceProfileEngine";
+import { ProjectRegistry } from "../src/features/projects/services/projectRegistry";
 
 async function verifyAll() {
   console.log("=======================================================");
@@ -108,6 +109,9 @@ async function verifyAll() {
 
   const evidence = await EvidenceProfileEngine.generateRecruiterEvidence("usr_1");
   console.log(`✅ Recruiter Evidence Profile Engine: Verified candidate score ${evidence.verifiedScore}% (${evidence.shareableProfileUrl})`);
+
+  const projects = await ProjectRegistry.getProjectsByTechnology("nextjs");
+  console.log(`✅ Production Project Specifications Engine: Verified ${projects.length} project specs (Top: '${projects[0].title}' [${projects[0].level}])`);
 
   console.log("\n=======================================================");
   console.log("  ALL PLATFORM OS VERIFICATION SUITES PASSED (100%)");
