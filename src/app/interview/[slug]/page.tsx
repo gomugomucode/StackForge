@@ -24,7 +24,7 @@ export default function InterviewCategoryPage({ params }: { params: Promise<{ sl
   const [expandedId, setExpandedId] = useState<string | null>(null)
 
   const toggleB = (id: string) => {
-    toggleBookmark(id, category.category || 'interview')
+    toggleBookmark(id, category.title || 'interview')
   }
 
   const filteredQuestions = category.questions.filter(q => 

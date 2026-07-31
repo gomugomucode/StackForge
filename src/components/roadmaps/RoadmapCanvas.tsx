@@ -81,7 +81,7 @@ export function RoadmapCanvas({ roadmap }: { roadmap: Roadmap }) {
                         xpReward: lesson.xpReward
                       } as any} 
                       index={globalIndex} 
-                      isLocked={isLocked}
+                      isLocked={Boolean(isLocked)}
                     />
                   );
                 })}

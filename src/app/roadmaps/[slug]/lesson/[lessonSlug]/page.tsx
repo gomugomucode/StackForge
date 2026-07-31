@@ -114,7 +114,7 @@ export default function LessonPage() {
               <BookOpen className="w-4 h-4" /> Additional Resources
             </div>
             <div className="flex flex-wrap gap-2">
-              {currentLesson.resources.map(res => (
+              {((currentLesson as any).resources || []).map((res: any) => (
                 <Button key={res} variant="outline" size="sm" className="text-xs">
                   {res}
                 </Button>

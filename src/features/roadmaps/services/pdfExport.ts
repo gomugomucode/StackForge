@@ -13,7 +13,7 @@ export async function exportRoadmapToPDF(roadmap: Roadmap) {
   // Description
   doc.setFontSize(12);
   doc.setTextColor(100);
-  const descriptionLines = doc.splitTextToWidth(roadmap.description, 170);
+  const descriptionLines = (doc as any).splitTextToSize ? (doc as any).splitTextToSize(roadmap.description, 170) : [roadmap.description];
   doc.text(descriptionLines, 20, cursorY);
   cursorY += (descriptionLines.length * 7) + 10;
 

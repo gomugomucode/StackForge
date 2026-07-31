@@ -10,7 +10,7 @@
  */
 import { getSupabaseServerUser } from "@/lib/supabase-server";
 
-export const authOptions = {} as const;
+export const authOptions: any = { providers: [] };
 
 export async function auth() {
   const user = await getSupabaseServerUser();

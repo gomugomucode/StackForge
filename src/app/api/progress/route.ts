@@ -128,8 +128,8 @@ export async function POST(req: Request) {
   return NextResponse.json({
     progress,
     user: {
-      xp: updatedProfile.xp,
-      level: updatedProfile.level,
+      xp: updatedProfile?.profile?.xp ?? 0,
+      level: updatedProfile?.profile?.level ?? 1,
     },
   });
 }

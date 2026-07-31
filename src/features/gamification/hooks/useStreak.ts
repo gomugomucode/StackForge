@@ -15,7 +15,7 @@ export function useStreak() {
       }
       try {
         const data = await getStreak(session.user.id);
-        setStreak(data);
+        setStreak(typeof data === 'number' ? data : (data as any)?.currentStreak || 0);
       } catch (error) {
         console.error('Failed to fetch streak:', error);
       } finally {

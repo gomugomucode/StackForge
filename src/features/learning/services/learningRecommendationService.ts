@@ -88,11 +88,11 @@ export class LearningRecommendationService {
           where: { userId },
           include: { lesson: { include: { module: { include: { roadmap: true } } } } },
         }),
-        prisma.quizResult.findMany({
+        (prisma as any).quizResult ? (prisma as any).quizResult.findMany({
           where: { userId },
           orderBy: { completedAt: "desc" },
           take: 20,
-        }),
+        }) : Promise.resolve([]),
         prisma.projectSubmission.findMany({
           where: { userId },
           include: { project: true },

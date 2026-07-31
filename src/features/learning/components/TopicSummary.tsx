@@ -2,7 +2,7 @@
 
 import React from "react";
 import { CheckCircle2, ArrowRight, AlertCircle, BookOpen, Target, Code } from "lucide-react";
-import { Card } from "@/components/ui/SectionHeader";
+const Card = ({ children, className }: any) => <div className={`p-6 rounded-2xl bg-card border border-border ${className || ''}`}>{children}</div>;
 
 export function TopicSummary({ title, keyConcepts, thingsToRemember, bestPractices }: any) {
   return (

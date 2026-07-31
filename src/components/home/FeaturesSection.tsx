@@ -47,7 +47,7 @@ export function FeaturesSection() {
             We provide the tools, the maps, and the projects. All you need to bring is the curiosity and the grind.
           </p>
         </div>
-        <FeatureBento items={features} />
+        <FeatureBento items={features as any} />
       </div>
     </section>
   )

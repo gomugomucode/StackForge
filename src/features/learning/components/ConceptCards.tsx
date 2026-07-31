@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Card } from "@/components/ui/SectionHeader"; // Using existing Card style or generic
+const Card = ({ children, className }: any) => <div className={`p-6 rounded-2xl bg-card border border-border ${className || ''}`}>{children}</div>;
 import { Lightbulb, Target, Zap } from "lucide-react";
 
 interface ConceptCardProps {

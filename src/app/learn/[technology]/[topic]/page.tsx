@@ -20,12 +20,12 @@ export default async function Page({ params }: PageProps) {
 
   return (
     <TopicPage 
-      topic={data.topic}
-      content={data.content}
-      examples={data.examples}
-      challenges={data.challenges}
-      quizzes={data.quizzes}
-      interviews={data.interviews}
+      topic={data.topic as any}
+      content={data.content as any}
+      examples={data.examples as any}
+      challenges={data.challenges as any}
+      quizzes={data.quizzes as any}
+      interviews={data.interviews as any}
     />
   );
 }

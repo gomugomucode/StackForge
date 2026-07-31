@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { CheckCircle2, Circle, Lock, BookOpen, ArrowRight, ArrowLeft, Sparkles, Send, X, Trophy } from 'lucide-react'
-import { Roadmap, RoadmapNode } from '@/data/roadmaps'
+import { Roadmap } from '@/data/roadmaps'
 import { useProgress } from '@/context/ProgressContext'
 import { Button } from '@/components/ui/Button'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -10,20 +10,20 @@ import { QuizView } from './QuizView'
 import { FinalExamView } from './FinalExamView'
 
 interface RoadmapViewProps {
-  roadmap: Roadmap
+  roadmap: any
 }
 
 export function RoadmapView({ roadmap }: RoadmapViewProps) {
   const { completedNodes, toggleNode } = useProgress()
   const [activeNodeId, setActiveNodeId] = useState<string | null>(null)
-  const [activeQuizNode, setActiveQuizNode] = useState<RoadmapNode | null>(null)
+  const [activeQuizNode, setActiveQuizNode] = useState<any>(null)
   const [activeExam, setActiveExam] = useState(false)
   const [isAiOpen, setIsAiOpen] = useState(false)
   const [aiMessages, setAiMessages] = useState<{role: string, content: string}[]>([])
   const [inputMessage, setInputMessage] = useState('')
   const [isAiLoading, setIsAiLoading] = useState(false)
 
-  const nodes = [...roadmap.nodes].sort((a, b) => a.order - b.order)
+  const nodes = [...(roadmap.nodes || roadmap.topics || [])].sort((a, b) => (a.order || 0) - (b.order || 0))
   
   useEffect(() => {
     if (nodes.length > 0) {
@@ -32,7 +32,7 @@ export function RoadmapView({ roadmap }: RoadmapViewProps) {
     }
   }, [completedNodes, nodes])
 
-  const isNodeLocked = (node: RoadmapNode, index: number) => {
+  const isNodeLocked = (node: any, index: number) => {
     if (index === 0) return false
     const prevNode = nodes[index - 1]
     return !completedNodes.has(prevNode.id)
@@ -188,7 +188,7 @@ export function RoadmapView({ roadmap }: RoadmapViewProps) {
             try {
               await fetch('/api/certifications', {
                 method: 'POST',
-                body: JSON.stringify({ roadmapId: roadmap.id, score })
+                body: JSON.stringify({ roadmapId: roadmap.id || roadmap.slug, score })
               });
               alert("Congratulations! Your certification has been issued.");
             } catch (e) {

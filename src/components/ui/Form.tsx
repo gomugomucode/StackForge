@@ -41,7 +41,7 @@ export const FormField = <T extends FieldValues>({
     <Controller
       control={activeControl}
       name={name}
-      render={render}
+      render={render as any}
     />
   );
 };
