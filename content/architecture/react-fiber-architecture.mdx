@@ -1,0 +1,93 @@
+---
+title: "Architecture Explorer: React Fiber WorkLoop & Concurrent Rendering"
+slug: "arch-react-fiber-workloop"
+technology: "react"
+difficulty: "Advanced"
+estimatedReadingTime: 35
+summary: "Interactive architecture deep-dive into React Fiber tree traversal, double buffering, requestIdleCallback scheduling, and concurrent WorkLoop."
+prerequisites: ["react-hooks", "closures"]
+nextTopics: ["mastering-react-server-components"]
+tags: ["react", "architecture-explorer", "fiber", "concurrent-mode", "v8"]
+qualityScore: 99.0
+canonicalUrl: "https://stackforge.dev/content/architecture/react-fiber"
+---
+
+# Architecture Explorer: React Fiber WorkLoop & Concurrent Rendering
+
+## 1. Executive Summary & Why React Built Fiber
+Prior to React 16 (Stack Reconciler), React updated UI synchronously using recursive function calls. Large component trees blocked the main thread for over $100\text{ms}$, dropping frames and freezing user input typing.
+
+React 16+ replaced the stack reconciler with **Fiber**—a re-implementation of the reconciler using a virtual stack frame architecture where work can be **paused, aborted, prioritized, or resumed**.
+
+---
+
+## 2. Double Buffering & Fiber Node Structure
+
+React maintains two Fiber trees in memory simultaneously:
+1. **`current` tree**: Represents the UI currently visible on screen.
+2. **`workInProgress` tree**: Represents the tree being rendered asynchronously in memory.
+
+```
+          [ current Fiber Tree ]
+                   │
+                   ▼ (alternate pointer)
+       [ workInProgress Fiber Tree ]  <=== Asynchronous rendering occurs here!
+```
+
+### Fiber Node Interface Spec
+
+```typescript
+export interface FiberNode {
+  tag: WorkTag;              // FunctionComponent, HostComponent, etc.
+  key: null | string;
+  elementType: any;
+  type: any;
+  stateNode: any;            // DOM element reference
+
+  // Fiber Linked List Topology
+  return: FiberNode | null;  // Parent Fiber
+  child: FiberNode | null;   // First child Fiber
+  sibling: FiberNode | null; // Next sibling Fiber
+
+  // State & Flags
+  memoizedState: any;        // Singly linked list of Hooks
+  flags: Flags;              // Placement, Update, Deletion
+  alternate: FiberNode | null; // Pointer to current/workInProgress counterpart
+}
+```
+
+---
+
+## 3. The WorkLoop Execution Lifecycle
+
+The core loop in `ReactFiberWorkLoop.js` executes Fiber nodes unit-by-unit:
+
+```typescript
+function workLoopConcurrent() {
+  // Perform work until time slice expires (usually 5ms)
+  while (workInProgress !== null && !shouldYield()) {
+    performUnitOfWork(workInProgress);
+  }
+}
+
+function performUnitOfWork(unitOfWork: FiberNode): void {
+  const current = unitOfWork.alternate;
+
+  // 1. Render Phase: Call component function, compute new children
+  let next = beginWork(current, unitOfWork, renderLanes);
+
+  unitOfWork.memoizedProps = unitOfWork.pendingProps;
+
+  if (next === null) {
+    // 2. Complete Phase: Bubble up flags, construct DOM nodes
+    completeUnitOfWork(unitOfWork);
+  } else {
+    workInProgress = next;
+  }
+}
+```
+
+---
+
+## 4. Real Company Case Study: How Meta Uses Concurrent Fiber
+Meta uses Fiber's `useTransition` and `useDeferredValue` to prioritize urgent user interactions (e.g. typing into a search input) over heavy non-urgent UI rendering (e.g. updating a 500-item feed), guaranteeing $60\text{fps}$ responsiveness.

@@ -1,0 +1,114 @@
+---
+title: "Production Debugging Lab: React Stale Closures & Memory Leaks"
+slug: "lab-react-stale-closures"
+technology: "react"
+difficulty: "Advanced"
+estimatedReadingTime: 30
+summary: "Interactive production debugging lab: Diagnose, reproduce, and fix stale closure bugs and memory leaks in React custom hooks."
+prerequisites: ["closures", "react-hooks"]
+nextTopics: ["react-server-components-architecture"]
+tags: ["react", "debugging-lab", "stale-closures", "memory-leaks", "hooks"]
+qualityScore: 99.0
+canonicalUrl: "https://stackforge.dev/content/labs/react-stale-closures"
+---
+
+# Production Debugging Lab: React Stale Closure & Memory Leak
+
+## 1. Real Production Bug Scenario
+A high-volume real-time dashboard component at a fintech company experienced subtle data corruption: live stock ticker prices displayed on screen frozen at initial state values despite incoming WebSocket messages. Memory usage increased steadily by $50\text{MB/hour}$, eventually crashing browser tabs.
+
+---
+
+## 2. Broken Code Base (Reproduction)
+
+```typescript
+import { useState, useEffect } from "react";
+
+export function useLiveStockTicker(tickerSymbol: string) {
+  const [price, setPrice] = useState<number>(0);
+  const [history, setHistory] = useState<number[]>([]);
+
+  useEffect(() => {
+    const ws = new WebSocket(`wss://api.marketdata.com/ticks/${tickerSymbol}`);
+
+    ws.onmessage = (event) => {
+      const newPrice = JSON.parse(event.data).price;
+      
+      // BUG 1: Stale Closure! `history` array captured as empty [] forever
+      setHistory([...history, newPrice]); 
+      
+      // BUG 2: Stale Closure! `price` captured as 0
+      console.log(`Updated price from ${price} to ${newPrice}`);
+      setPrice(newPrice);
+    };
+
+    // BUG 3: Missing WebSocket cleanup causing memory leak on symbol change!
+  }, [tickerSymbol]); 
+
+  return { price, history };
+}
+```
+
+---
+
+## 3. Terminal Console Stack Trace & Reproduction Logs
+
+```
+[WebSocket] Connection established for ticker AAPL
+[Tick Received] Price: 185.50
+Updated price from 0 to 185.50
+[Tick Received] Price: 186.20
+Updated price from 0 to 186.20  <-- BUG: Initial price 0 is captured in stale closure!
+[Warning] Memory usage: 485MB (un-closed WebSocket handlers accumulating in heap)
+```
+
+---
+
+## 4. Guided Investigation & Root Cause Analysis
+
+### Why This Fails
+1. **Stale Closure**: `useEffect` receives a closure capturing `history` and `price` during initial render. Because `history` is missing from the dependency array, `ws.onmessage` retains a reference to the initial `[]` array forever, overwriting history on every tick rather than appending to it.
+2. **Un-Closed Connection Leak**: When `tickerSymbol` changes, `useEffect` re-runs without closing the previous WebSocket instance, resulting in multiple active sockets writing to component state.
+
+---
+
+## 5. Senior Production Solution & Fix
+
+```typescript
+import { useState, useEffect, useRef } from "react";
+
+export function useLiveStockTickerFixed(tickerSymbol: string) {
+  const [price, setPrice] = useState<number>(0);
+  const [history, setHistory] = useState<number[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const ws = new WebSocket(`wss://api.marketdata.com/ticks/${tickerSymbol}`);
+
+    ws.onmessage = (event) => {
+      if (!isMounted) return;
+      const newPrice = JSON.parse(event.data).price;
+
+      setPrice(newPrice);
+
+      // FIX 1: Functional state update breaks closure dependency on `history`
+      setHistory((prevHistory) => [...prevHistory, newPrice]);
+    };
+
+    // FIX 2: Explicit cleanup function tears down WebSocket on unmount/re-render
+    return () => {
+      isMounted = false;
+      ws.close();
+    };
+  }, [tickerSymbol]); // Clean dependencies
+
+  return { price, history };
+}
+```
+
+---
+
+## 6. Lab Verification & Postmortem Notes
+
+- **Verification Step**: Run component with `React.StrictMode` enabled. Verify that changing ticker symbol triggers `ws.close()` in network tab.
+- **Postmortem Lesson**: Always use functional state setters (`setCount(prev => ...)`), `useRef` for volatile values, and clean up subscriptions in effect return functions.

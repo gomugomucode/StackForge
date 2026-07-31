@@ -1,0 +1,56 @@
+---
+title: "Engineering Case Study: How PostgreSQL MVCC & Autovacuum Function at Scale"
+slug: "case-study-postgres-mvcc"
+technology: "postgresql"
+difficulty: "Advanced"
+estimatedReadingTime: 30
+summary: "Production case study: Multi-Version Concurrency Control (MVCC), tuple headers (xmin/xmax), dead tuple bloat, and autovacuum tuning at scale."
+prerequisites: ["postgres-query-optimization"]
+nextTopics: ["system-design-microservices-kafka"]
+tags: ["postgresql", "case-study", "mvcc", "autovacuum", "database-internals"]
+qualityScore: 99.0
+canonicalUrl: "https://stackforge.dev/content/case-studies/postgres-mvcc"
+---
+
+# Engineering Case Study: How PostgreSQL MVCC & Autovacuum Function at Scale
+
+## 1. Real Production Problem Statement
+At Stripe, high-concurrency database workloads executing millions of `UPDATE` and `DELETE` queries per second experienced progressive disk bloat, query latency spikes from $10\text{ms} \rightarrow 5,000\text{ms}$, and connection pool exhaustion.
+
+The root cause was **PostgreSQL MVCC Dead Tuple Bloat** exceeding autovacuum cleanup capacity.
+
+---
+
+## 2. PostgreSQL MVCC Architecture Internals
+
+Unlike databases that rewrite rows in-place or write to rollback undo logs, PostgreSQL implements **Multi-Version Concurrency Control (MVCC)** by appending a new version of the row tuple on every `UPDATE`.
+
+### Hidden Tuple Header Fields
+Every table row contains hidden metadata columns:
+- **`xmin`**: The transaction ID (XID) that inserted the tuple.
+- **`xmax`**: The transaction ID that deleted or replaced the tuple (0 if active).
+
+```
+[ Tuple 1 (Version 1) ]: xmin = 100, xmax = 105  <-- DEAD TUPLE (Replaced by XID 105)
+[ Tuple 2 (Version 2) ]: xmin = 105, xmax = 0    <-- ACTIVE TUPLE
+```
+
+---
+
+## 3. High-Concurrency Production Autovacuum Tuning
+
+```ini
+# postgresql.conf production tuning for high-write workloads
+autovacuum = on
+autovacuum_max_workers = 5
+autovacuum_naptime = 10s
+autovacuum_vacuum_scale_factor = 0.05       # Trigger vacuum when 5% of tuples are dead
+autovacuum_vacuum_insert_scale_factor = 0.05
+autovacuum_vacuum_cost_limit = 2000          # Increase cost limit to prevent throttling
+```
+
+---
+
+## 4. Engineering Takeaway & Key Lessons
+- **MVCC Isolation**: Readers never block writers, and writers never block readers.
+- **Bloat Prevention**: Monitor `pg_stat_user_tables.n_dead_tup` to prevent table bloat from degrading B-Tree index scan performance.
