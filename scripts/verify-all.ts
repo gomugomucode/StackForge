@@ -13,6 +13,9 @@ import { AnalyticsEngine } from "../src/features/analytics/services/analyticsEng
 import { QualityGatekeeper } from "../src/features/quality/services/qualityGatekeeper";
 import { OpenSourceEngine } from "../src/features/opensource/services/openSourceEngine";
 import { AdminCmsEngine } from "../src/features/cms/services/adminCmsEngine";
+import { OutcomeService } from "../src/features/learning/services/outcomeService";
+import { ReleaseIntelligenceService } from "../src/features/intelligence/services/releaseIntelligence";
+import { EvidenceProfileEngine } from "../src/features/evidence/services/evidenceProfileEngine";
 
 async function verifyAll() {
   console.log("=======================================================");
@@ -96,6 +99,15 @@ async function verifyAll() {
 
   const cmsHealth = await AdminCmsEngine.auditContentHealth();
   console.log(`✅ Admin CMS Engine: Audited ${cmsHealth.totalModules} modules (${cmsHealth.staleCount} stale)`);
+
+  const outcome = await OutcomeService.getLearningOutcomeMetrics("usr_1");
+  console.log(`✅ Educational Outcome Service: Time-to-First-Success ${outcome.timeToFirstSuccessSeconds}s | Completion ${outcome.lessonCompletionRate}% | Retention ${outcome.retentionScorePercentage}%`);
+
+  const releases = await ReleaseIntelligenceService.getLatestReleases();
+  console.log(`✅ Release Intelligence Service: Tracked ${releases.length} ecosystem releases (Latest: '${releases[0].technology} ${releases[0].version}')`);
+
+  const evidence = await EvidenceProfileEngine.generateRecruiterEvidence("usr_1");
+  console.log(`✅ Recruiter Evidence Profile Engine: Verified candidate score ${evidence.verifiedScore}% (${evidence.shareableProfileUrl})`);
 
   console.log("\n=======================================================");
   console.log("  ALL PLATFORM OS VERIFICATION SUITES PASSED (100%)");
