@@ -1,0 +1,135 @@
+---
+title: "Asynchronous JavaScript & Promise Architecture"
+slug: "async-javascript-promises"
+technology: "javascript"
+difficulty: "Advanced"
+estimatedReadingTime: 25
+summary: "Deep dive into Promise internals, async/await desugaring, concurrent promise combinators, and cancellation architectures."
+prerequisites: ["execution-context-event-loop", "closures-and-scope"]
+nextTopics: ["js-performance-architecture"]
+tags: ["javascript", "promises", "async-await", "concurrency", "abort-controller"]
+careerRelevance: "Mandatory for backend Node.js engineers, API integration leads, and system design practitioners."
+qualityScore: 98.0
+canonicalUrl: "https://stackforge.dev/content/javascript/async-javascript-promises"
+---
+
+# 1. Introduction
+
+## Why This Matters
+Modern applications rely entirely on asynchronous operations: network requests, database queries, file reads, and worker threads. Writing robust async code requires mastering Promise state machines, concurrent promise combinators (`Promise.all`, `Promise.allSettled`, `Promise.race`), error handling, and cancellation patterns.
+
+## Real World Example
+Building a checkout service in an e-commerce platform that must simultaneously verify inventory, charge a credit card via Stripe API, send an email confirmation, and log analytics. Doing these sequentially wastes hundreds of milliseconds; doing them concurrently without proper error isolation can charge a credit card while failing to reserve inventory.
+
+---
+
+# 2. Core Concepts
+
+## Promise State Machine
+A Promise is an object representing the eventual completion or failure of an asynchronous operation. A Promise exists in exactly one of three mutually exclusive states:
+1. `pending`: Initial state, neither fulfilled nor rejected.
+2. `fulfilled`: Operation completed successfully with a value.
+3. `rejected`: Operation failed with a reason/error.
+
+```
+                  +------------+
+                  |  PENDING   |
+                  +------------+
+                        |
+           +------------+------------+
+           |                         |
+           v                         v
+    +--------------+          +--------------+
+    |  FULFILLED   |          |   REJECTED   |
+    | (Result Val) |          | (Error Reas) |
+    +--------------+          +--------------+
+```
+
+## Promise Combinators Matrix
+
+| Combinator | Behavior | Resolves When | Rejects When |
+| :--- | :--- | :--- | :--- |
+| **`Promise.all`** | All or Nothing | ALL promises fulfill | ANY promise rejects |
+| **`Promise.allSettled`** | Complete Resilience | ALL promises settle (fulfill or reject) | Never rejects |
+| **`Promise.race`** | First Finisher | FIRST promise settles (fulfill or reject) | FIRST promise rejects |
+| **`Promise.any`** | First Success | FIRST promise fulfills | ALL promises reject (AggregateError) |
+
+---
+
+# 3. Code Examples
+
+## Production: Resilient Batch Fetching with Rate Limiting & AbortSignal
+
+```javascript
+/**
+ * Fetches multiple URLs concurrently with concurrency limit and timeout signal.
+ */
+export async function fetchWithLimit(urls, concurrencyLimit = 5, timeoutMs = 5000) {
+  const results = [];
+  const executing = new Set();
+
+  for (const url of urls) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+    const promise = fetch(url, { signal: controller.signal })
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+        return await res.json();
+      })
+      .finally(() => {
+        clearTimeout(timer);
+        executing.delete(promise);
+      });
+
+    results.push(promise);
+    executing.add(promise);
+
+    if (executing.size >= concurrencyLimit) {
+      await Promise.race(executing);
+    }
+  }
+
+  return Promise.allSettled(results);
+}
+```
+
+---
+
+# 4. Interview Questions
+
+### Beginner Questions
+1. **Q: What is a Promise?**
+   - *Answer*: An object representing eventual completion or failure of an async operation.
+2. **Q: What are the 3 states of a Promise?**
+   - *Answer*: Pending, Fulfilled, Rejected.
+3. **Q: What is the difference between `Promise.all` and `Promise.allSettled`?**
+   - *Answer*: `Promise.all` short-circuits on the first rejection; `Promise.allSettled` waits for all promises to resolve regardless of outcome.
+4. **Q: What does `async` keyword do to a function?**
+   - *Answer*: Forces the function to implicitly return a Promise resolving to the returned value.
+5. **Q: What does `await` do?**
+   - *Answer*: Pauses execution of the async function until the awaited Promise settles, resuming execution in the Microtask queue.
+
+### Intermediate Questions
+6. **Q: How does `Promise.race` differ from `Promise.any`?**
+   - *Answer*: `Promise.race` settles as soon as the first promise settles (success or failure); `Promise.any` ignores failures and resolves on the first success.
+7. **Q: What is unhandled promise rejection?**
+   - *Answer*: A promise that rejected without a `.catch()` block attached, triggering a process error in Node.js.
+8. **Q: How do you cancel a pending `fetch` request?**
+   - *Answer*: Pass an `AbortSignal` from an `AbortController` into `fetch()` options and invoke `controller.abort()`.
+9. **Q: Is `await` blocking?**
+   - *Answer*: It blocks code execution *inside* the async function, but yields thread control back to the event loop for other tasks.
+10. **Q: What is the output of `await null`?**
+    - *Answer*: `null` (non-promise values are wrapped in `Promise.resolve(null)`).
+
+### Advanced Questions
+11. **Q: How would you write a polyfill for `Promise.all`?**
+    - *Answer*: Return a new Promise, track count of resolved items in an array, resolve when count equals input length, reject immediately on any item failure.
+12. **Q: Explain how V8 desugars `async/await`.**
+    - *Answer*: V8 transforms `async/await` into generator functions wrapped in promise handlers, allocating async stack frames on the heap.
+13. **Q: How do you prevent memory leaks when creating thousands of Promises?**
+    - *Answer*: Use bounded concurrency pools (e.g. `p-limit`), avoid unbounded `Promise.all` arrays, and attach `.catch()` handlers promptly.
+14. **Q: What happens if you throw an error inside a Promise constructor vs `.then()` callback?**
+    - *Answer*: Both reject the Promise; throwing inside a constructor rejects synchronously during instantiation, while `.then()` rejects asynchronously during microtask execution.
+15. **Q: Explain how `queueMicrotask` can be used to defer work without creating a Promise instance.**
+    - *Answer*: `queueMicrotask(fn)` schedules `fn` directly into the V8 Microtask queue without instantiating Promise objects, avoiding memory allocation overhead.

@@ -1,0 +1,111 @@
+---
+title: "Prototypes & Object-Oriented JavaScript"
+slug: "prototypes-and-oop"
+technology: "javascript"
+difficulty: "Intermediate"
+estimatedReadingTime: 20
+summary: "Master prototypical inheritance, ES6 class mechanics, prototype chain delegation, and object composition."
+prerequisites: ["execution-context-event-loop"]
+nextTopics: ["js-performance-architecture"]
+tags: ["javascript", "prototypes", "oop", "classes", "inheritance"]
+careerRelevance: "Crucial for understanding JavaScript engine internals, library design, and core language mechanics."
+qualityScore: 96.0
+canonicalUrl: "https://stackforge.dev/content/javascript/prototypes-and-oop"
+---
+
+# 1. Introduction
+
+## Why This Matters
+Unlike Java or C++, JavaScript does not have traditional class-based inheritance; it uses **Prototypal Inheritance**. ES6 `class` syntax is purely syntactic sugar over prototype delegation. Understanding prototypes enables you to write memory-efficient libraries, extend built-ins safely, and avoid performance degradation from prototype chain lookups.
+
+---
+
+# 2. Core Concepts
+
+## Prototype Chain Delegation
+Every object in JavaScript has an internal link (`[[Prototype]]`, exposed as `__proto__` or accessed via `Object.getPrototypeOf()`) pointing to another object (its prototype). When accessing a property on an object:
+1. JavaScript checks if the property exists on the object itself.
+2. If not found, it traverses up the `[[Prototype]]` chain.
+3. It repeats this until the property is found or `null` is reached (`Object.prototype.__proto__ === null`).
+
+```
++---------------------+      [[Prototype]]      +------------------------+
+|   childUser         | ----------------------> |   User.prototype       |
+|  - name: "Alice"    |                         |  - login: function()   |
++---------------------+                         +------------------------+
+                                                            | [[Prototype]]
+                                                            v
+                                                +------------------------+
+                                                |   Object.prototype     |
+                                                |  - toString()          |
+                                                +------------------------+
+```
+
+---
+
+# 3. Code Examples
+
+## Production: Object Composition over Class Inheritance
+
+```javascript
+// Composition pattern: Building flexible capabilities without rigid class hierarchies
+const canEat = {
+  eat(food) {
+    return `${this.name} is eating ${food}`;
+  },
+};
+
+const canCode = {
+  code(language) {
+    return `${this.name} is writing ${language}`;
+  },
+};
+
+export function createDeveloper(name) {
+  const dev = { name };
+  return Object.assign(dev, canEat, canCode);
+}
+
+const dev = createDeveloper("Anupam");
+console.log(dev.code("TypeScript")); // "Anupam is writing TypeScript"
+```
+
+---
+
+# 4. Interview Questions
+
+### Beginner Questions
+1. **Q: What is a prototype in JavaScript?**
+   - *Answer*: An object from which other objects inherit properties and methods.
+2. **Q: What is the difference between `prototype` and `__proto__`?**
+   - *Answer*: `prototype` is a property on constructor functions used to build prototypes for instances; `__proto__` is an instance property pointing to its prototype object.
+3. **Q: Is ES6 `class` true class-based inheritance?**
+   - *Answer*: No, it is syntactic sugar over prototypal inheritance.
+4. **Q: How do you check if an object has a property on itself vs its prototype chain?**
+   - *Answer*: Use `Object.hasOwn(obj, 'prop')` or `obj.hasOwnProperty('prop')`.
+5. **Q: What is the top of the prototype chain?**
+   - *Answer*: `Object.prototype`, whose prototype is `null`.
+
+### Intermediate Questions
+6. **Q: What happens when you use the `new` keyword?**
+   - *Answer*: Creates a blank object, sets its `[[Prototype]]` to constructor's `prototype`, binds `this` to the object, executes the function, and returns the object.
+7. **Q: Why should you avoid extending `Object.prototype` directly?**
+   - *Answer*: It pollutes global scope for all objects and breaks `for...in` loops across libraries.
+8. **Q: Compare Composition vs Inheritance in JS.**
+   - *Answer*: Inheritance creates rigid IS-A relationships; Composition mixes HAS-A behaviors dynamically without deep hierarchy chains.
+9. **Q: What are private fields in ES6 classes?**
+   - *Answer*: Fields prefixed with `#` (e.g., `#privateVar`) enforced directly at the language level by V8.
+10. **Q: How does `Object.create(proto)` work?**
+    - *Answer*: Creates a brand new object with its internal `[[Prototype]]` explicitly linked to `proto`.
+
+### Advanced Questions
+11. **Q: Explain prototype chain performance degradation.**
+    - *Answer*: Deep prototype chains require V8 to traverse multiple pointer steps for missing properties, causing cache misses in TurboFan inlined code.
+12. **Q: How do V8 Hidden Classes interact with Prototypes?**
+    - *Answer*: Mutating prototypes at runtime invalidates V8 Map/Hidden Class transitions, forcing code back to unoptimized interpreter execution.
+13. **Q: How would you write a custom `instanceof` polyfill?**
+    - *Answer*: Traverse `Object.getPrototypeOf(left)` in a `while` loop, checking if it equals `right.prototype`.
+14. **Q: What is the difference between `Object.freeze()` and `Object.seal()` regarding prototypes?**
+    - *Answer*: Both prevent adding new properties; `Object.freeze()` also prevents modifying existing property descriptors, but neither freezes objects further up the prototype chain.
+15. **Q: How does `super` keyword resolve methods in class hierarchies?**
+    - *Answer*: `super` uses internal `[[HomeObject]]` bindings saved on class methods to perform prototype delegation lookups relative to the defining class.

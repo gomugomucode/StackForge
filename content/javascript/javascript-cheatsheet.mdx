@@ -1,0 +1,77 @@
+---
+title: "JavaScript Production Cheatsheet & Reference Guide"
+slug: "javascript-cheatsheet"
+technology: "javascript"
+difficulty: "Intermediate"
+estimatedReadingTime: 15
+summary: "Quick-reference cheatsheet covering ES2024 features, array time complexity, async patterns, V8 optimizations, and common pitfalls."
+prerequisites: ["execution-context-event-loop"]
+nextTopics: ["js-performance-architecture"]
+tags: ["javascript", "cheatsheet", "reference", "es2024", "syntax"]
+careerRelevance: "Handy desktop reference for day-to-day coding, technical interviews, and code reviews."
+qualityScore: 99.0
+canonicalUrl: "https://stackforge.dev/content/javascript/javascript-cheatsheet"
+---
+
+# JavaScript Production Cheatsheet
+
+## 1. Array Methods Time Complexity Matrix
+
+| Method | Mutates Array? | Time Complexity | Typical Use Case |
+| :--- | :---: | :---: | :--- |
+| `push()` / `pop()` | Yes | $O(1)$ | Stack operations at end |
+| `unshift()` / `shift()` | Yes | $O(n)$ | Queue operations at start (Re-indexes array) |
+| `indexOf()` / `includes()` | No | $O(n)$ | Linear element search |
+| `slice()` | No | $O(n)$ | Shallow copy segment |
+| `splice()` | Yes | $O(n)$ | Insert/delete at arbitrary index |
+| `sort()` | Yes | $O(n \log n)$ | TimSort in V8 |
+| `find()` / `filter()` / `map()` | No | $O(n)$ | Functional transformations |
+
+---
+
+## 2. Asynchronous Patterns Quick Reference
+
+```javascript
+// 1. Parallel execution (All or nothing)
+const [user, posts] = await Promise.all([fetchUser(), fetchPosts()]);
+
+// 2. Parallel resilient (Never rejects overall)
+const results = await Promise.allSettled([serviceA(), serviceB()]);
+
+// 3. Race condition (First to settle)
+const fastest = await Promise.race([primaryAPI(), backupAPI()]);
+
+// 4. First successful result
+const validData = await Promise.any([mirror1(), mirror2()]);
+
+// 5. Abort Signal Timeout
+const controller = new AbortController();
+setTimeout(() => controller.abort(), 3000);
+const res = await fetch("/api/data", { signal: controller.signal });
+```
+
+---
+
+## 3. Object & Prototype Methods
+
+```javascript
+// Safe property check (ES2022+)
+Object.hasOwn(obj, "key"); 
+
+// Immutable property merging
+const merged = { ...obj1, ...obj2 };
+
+// Freeze object (Shallow)
+Object.freeze(obj);
+
+// Get prototype safely
+const proto = Object.getPrototypeOf(obj);
+```
+
+---
+
+## 4. Top V8 Performance Pitfalls to Avoid
+
+1. **Avoid Sparse Arrays**: `const arr = []; arr[1000] = 1;` forces V8 from fast packed elements to slow dictionary elements.
+2. **Avoid Deleting Properties**: `delete obj.prop` mutates V8 Hidden Classes. Use `obj.prop = undefined` instead.
+3. **Keep Functions Monomorphic**: Do not pass different object shapes to hot functions; V8 cannot optimize polymorphic calls in TurboFan.
