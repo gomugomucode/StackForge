@@ -11,6 +11,8 @@ import { InterviewEngine } from "../src/features/interview/services/interviewEng
 import { PortfolioEngine } from "../src/features/portfolio/services/portfolioEngine";
 import { AnalyticsEngine } from "../src/features/analytics/services/analyticsEngine";
 import { QualityGatekeeper } from "../src/features/quality/services/qualityGatekeeper";
+import { OpenSourceEngine } from "../src/features/opensource/services/openSourceEngine";
+import { AdminCmsEngine } from "../src/features/cms/services/adminCmsEngine";
 
 async function verifyAll() {
   console.log("=======================================================");
@@ -88,6 +90,12 @@ async function verifyAll() {
 
   const analytics = await AnalyticsEngine.getUserAnalytics("usr_1");
   console.log(`✅ Analytics Engine: Career Readiness Score ${analytics.careerReadinessScore}% across ${analytics.totalStudyMinutes} study minutes`);
+
+  const repos = await OpenSourceEngine.getRecommendedRepositories("react");
+  console.log(`✅ Open Source Engine: Recommended ${repos.length} repos (Top: '${repos[0].repoName}' ${repos[0].stars} stars)`);
+
+  const cmsHealth = await AdminCmsEngine.auditContentHealth();
+  console.log(`✅ Admin CMS Engine: Audited ${cmsHealth.totalModules} modules (${cmsHealth.staleCount} stale)`);
 
   console.log("\n=======================================================");
   console.log("  ALL PLATFORM OS VERIFICATION SUITES PASSED (100%)");
