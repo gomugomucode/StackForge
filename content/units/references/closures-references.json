@@ -1,0 +1,18 @@
+{
+  "conceptId": "closures",
+  "technology": "javascript",
+  "references": [
+    {
+      "title": "MDN Web Docs: Closures",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures",
+      "publisher": "Mozilla Developer Network",
+      "official": true
+    },
+    {
+      "title": "V8 Engine Internals: Scope and Context",
+      "url": "https://v8.dev/blog",
+      "publisher": "V8 Project",
+      "official": true
+    }
+  ]
+}

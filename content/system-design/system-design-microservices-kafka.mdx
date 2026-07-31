@@ -1,0 +1,97 @@
+---
+title: "Microservices Architecture: Kafka Event Streaming & Transactional Outbox Pattern"
+slug: "system-design-microservices-kafka"
+technology: "system-design"
+difficulty: "Expert"
+estimatedReadingTime: 35
+summary: "Master enterprise microservice event-driven patterns, Apache Kafka partitioning, Transactional Outbox Pattern, Saga pattern distributed transactions, and CQRS."
+prerequisites: ["system-design-masterclass"]
+nextTopics: ["devops-observability-basics"]
+tags: ["system-design", "kafka", "microservices", "outbox-pattern", "saga-pattern", "cqrs"]
+careerRelevance: "Essential for Principal Architects, Staff Systems Engineers, and Lead Engineers at Uber, Netflix, DoorDash, and Airbnb."
+qualityScore: 99.0
+canonicalUrl: "https://stackforge.dev/content/system-design/system-design-microservices-kafka"
+---
+
+# 1. Introduction
+
+## Why Microservices & Event-Driven Systems Matter
+Monolithic applications become difficult to scale, deploy, and maintain as engineering teams grow. Moving to an **Event-Driven Microservices Architecture** backed by **Apache Kafka** decouples service dependencies, enables horizontal scaling, and guarantees high write throughput across distributed cloud datacenters.
+
+---
+
+# 2. Core Concepts
+
+## The Dual-Write Problem & Transactional Outbox Pattern
+
+```
+INCORRECT APPROACH (Dual-Write Bug):
+App Code ----(1. DB Insert)---> Database (Succeeds)
+   |
+   +---------(2. Publish Event)-> Kafka Broker (FAILS / Network Crash)
+   ==> RESULT: Database and Event Stream are INCONSISTENT!
+
+CORRECT APPROACH (Transactional Outbox Pattern):
+App Code ----(1. Single DB Transaction)---> Database
+                                            ├─ App Table (Insert Order)
+                                            └─ Outbox Table (Insert Event Record)
+                                                    |
+                                                    v CDC / Debezium Poller
+                                            Kafka Event Stream Broker
+```
+
+---
+
+# 3. Code Examples
+
+## Production: Transactional Outbox Pattern with Prisma & Event Publisher
+
+```typescript
+import { prisma } from "@/lib/prisma";
+
+export async function createOrderWithOutbox(userId: string, totalAmount: number, items: any[]) {
+  // Execute database mutation and outbox event insert within 1 atomic SQL transaction
+  return await prisma.$transaction(async (tx) => {
+    // 1. Create order record
+    const order = await tx.order.create({
+      data: {
+        userId,
+        totalAmount,
+        status: "PENDING",
+      },
+    });
+
+    // 2. Insert event to Outbox table
+    const outboxEvent = await tx.outboxEvent.create({
+      data: {
+        aggregateType: "ORDER",
+        aggregateId: order.id,
+        eventType: "ORDER_CREATED",
+        payload: JSON.stringify({ orderId: order.id, userId, totalAmount, items }),
+        processed: false,
+      },
+    });
+
+    return { order, outboxEvent };
+  });
+}
+```
+
+---
+
+# 4. Interview Questions
+
+### Question 1: What is the Dual-Write Problem in Microservices?
+- **Answer**: Occurs when a service attempts to update an internal database and send a message to a broker in separate non-atomic steps. If one step fails, data becomes corrupt or inconsistent. Solved using the **Transactional Outbox Pattern** or Change Data Capture (CDC with Debezium).
+
+### Question 2: Compare Saga Pattern Choreography vs Orchestration.
+- **Answer**: Choreography relies on services listening to events and publishing next events autonomously (decoupled, but hard to track); Orchestration uses a central Saga Manager directing workflow steps and triggering explicit compensation actions on failure.
+
+### Question 3: How does Kafka achieve high partition write throughput?
+- **Answer**: Uses sequential disk write logs, Page Cache in OS memory, Zero-Copy data transfers (`sendfile` system call), and batch message compression.
+
+### Question 4: What is CQRS (Command Query Responsibility Segregation)?
+- **Answer**: Separates read models (Queries) from write models (Commands). Enables optimizing read databases (Elasticsearch/Redis) independently from transactional write databases (PostgreSQL).
+
+### Question 5: How does Kafka guarantee in-order message processing per partition?
+- **Answer**: Kafka guarantees strict message ordering **only within a single partition**. Messages with the same partition key (e.g. `user_id`) are always routed to the same partition.

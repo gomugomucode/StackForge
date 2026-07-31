@@ -1,0 +1,126 @@
+---
+title: "Graph Data Structures, Algorithms & Topological Sorting"
+slug: "dsa-graphs-algorithms"
+technology: "dsa"
+difficulty: "Advanced"
+estimatedReadingTime: 30
+summary: "Master Graph representation, BFS/DFS traversals, Dijkstra shortest path, Kahn's Topological Sort, and cycle detection algorithms."
+prerequisites: ["type-system-fundamentals"]
+nextTopics: ["system-design-masterclass"]
+tags: ["dsa", "graphs", "algorithms", "bfs", "dfs", "dijkstra", "topological-sort"]
+careerRelevance: "Mandatory foundation for Technical Interviews at Google, Meta, Apple, Amazon, and Netflix."
+qualityScore: 99.0
+canonicalUrl: "https://stackforge.dev/content/dsa/dsa-graphs-algorithms"
+---
+
+# 1. Introduction
+
+## Why Graph Algorithms Matter
+Graphs model real-world interconnected systems: social network friendships, knowledge dependency trees, network routing topologies, and build dependency systems (like npm/webpack). Mastering graph representations and algorithms is essential for solving complex architectural challenges and passing FAANG coding interviews.
+
+---
+
+# 2. Core Concepts
+
+## Graph Representation Comparison
+
+| Property | Adjacency Matrix ($V \times V$) | Adjacency List (`Map<V, Set<V>>`) |
+| :--- | :--- | :--- |
+| **Space Complexity** | $O(V^2)$ | $O(V + E)$ (Optimal for Sparse Graphs) |
+| **Edge Lookup Time** | $O(1)$ | $O(\text{Degree}(V))$ |
+| **Find All Neighbors** | $O(V)$ | $O(\text{Degree}(V))$ |
+| **Best Used For** | Dense Graphs ($E \approx V^2$) | Sparse Graphs ($E \ll V^2$) |
+
+---
+
+# 3. Code Examples
+
+## Production: Kahn's Algorithm for Topological Sort & Cycle Detection
+
+```typescript
+export function topologicalSortKahn(
+  numNodes: number,
+  edges: [number, number][]
+): { order: number[]; hasCycle: boolean } {
+  const inDegree = new Array<number>(numNodes).fill(0);
+  const adjList = new Map<number, number[]>();
+
+  for (let i = 0; i < numNodes; i++) {
+    adjList.set(i, []);
+  }
+
+  // 1. Build adjacency list and compute in-degrees
+  for (const [u, v] of edges) {
+    adjList.get(u)!.push(v);
+    inDegree[v]++;
+  }
+
+  // 2. Queue nodes with 0 in-degree (no dependencies)
+  const queue: number[] = [];
+  for (let i = 0; i < numNodes; i++) {
+    if (inDegree[i] === 0) {
+      queue.push(i);
+    }
+  }
+
+  const order: number[] = [];
+
+  // 3. BFS Traversal
+  while (queue.length > 0) {
+    const node = queue.shift()!;
+    order.push(node);
+
+    for (const neighbor of adjList.get(node) || []) {
+      inDegree[neighbor]--;
+      if (inDegree[neighbor] === 0) {
+        queue.push(neighbor);
+      }
+    }
+  }
+
+  return {
+    order,
+    hasCycle: order.length !== numNodes,
+  };
+}
+```
+
+---
+
+# 4. Interview Questions
+
+### Easy Questions
+1. **Q: What is a Directed Acyclic Graph (DAG)?**
+   - *Answer*: A directed graph with no directed cycles, making it suitable for ordering dependencies and task scheduling.
+2. **Q: Compare Breadth-First Search (BFS) vs Depth-First Search (DFS).**
+   - *Answer*: BFS explores level-by-level using a Queue ($O(V+E)$ space); DFS explores as deep as possible along branches using a Stack/Recursion.
+3. **Q: What is a Spanning Tree?**
+   - *Answer*: A subgraph connecting all vertices with the minimum number of edges ($V-1$) without containing any cycles.
+4. **Q: What is Topological Sorting?**
+   - *Answer*: A linear ordering of vertices in a DAG such that for every directed edge $u \rightarrow v$, vertex $u$ comes before $v$.
+5. **Q: What is the Time Complexity of BFS/DFS on an Adjacency List?**
+   - *Answer*: $O(V + E)$ where $V$ is the number of vertices and $E$ is the number of edges.
+
+### Medium Questions
+6. **Q: Explain Dijkstra's Algorithm for Shortest Path.**
+   - *Answer*: A greedy algorithm using a Min-Priority Queue to find the shortest path from a single source to all nodes in non-negative weighted graphs ($O((V+E) \log V)$).
+7. **Q: How do you detect cycles in an Undirected Graph?**
+   - *Answer*: Use BFS/DFS tracking visited nodes and parent pointers; if a neighbor is already visited and not the parent, a cycle exists. Or use Union-Find.
+8. **Q: What is the Disjoint Set Union (DSU) / Union-Find data structure?**
+   - *Answer*: Data structure tracking partitioned sets supporting `find` (with path compression) and `union` (by rank/size) in near $O(\alpha(N))$ time.
+9. **Q: Compare Kruskal's vs Prim's Minimal Spanning Tree (MST) algorithms.**
+   - *Answer*: Kruskal's sorts all edges and uses Union-Find; Prim's grows a tree greedy node-by-node using a Priority Queue.
+10. **Q: How does Bellman-Ford algorithm handle negative edge weights?**
+    - *Answer*: Relaxes all edges $V-1$ times; a $V$-th relaxation that reduces distance indicates a negative-weight cycle ($O(V \cdot E)$ time).
+
+### Advanced Questions
+11. **Q: Walk through Tarjan's Algorithm for Strongly Connected Components (SCC).**
+    - *Answer*: Uses DFS with node discovery timestamps and low-link values on a recursion stack to identify maximal subgraphs where every vertex is reachable from every other vertex in $O(V+E)$.
+12. **Q: How do you find Articulation Points (Cut Vertices) in a network graph?**
+    - *Answer*: Use DFS tracking `discovery[u]` and `low[u]`; vertex $u$ is an articulation point if removing it disconnects the graph ($low[v] \ge discovery[u]$ for child $v$).
+13. **Q: What is A* Search Algorithm and how does its Heuristic function work?**
+    - *Answer*: An extension of Dijkstra's algorithm that evaluates nodes using $f(n) = g(n) + h(n)$, where $g(n)$ is path cost from start and $h(n)$ is an admissible heuristic estimating distance to target.
+14. **Q: How do you solve the All-Pairs Shortest Path problem using Floyd-Warshall?**
+    - *Answer*: Uses dynamic programming with 3 nested loops evaluating $dist[i][j] = \min(dist[i][j], dist[i][k] + dist[k][j])$ in $O(V^3)$ time.
+15. **Q: How does Google PageRank algorithm compute node importance on the Web graph?**
+    - *Answer*: Models web browsing as a random walk, computing the stationary probability distribution vector over the adjacency matrix using power iteration: $r = d M r + \frac{1-d}{N} \mathbf{1}$.

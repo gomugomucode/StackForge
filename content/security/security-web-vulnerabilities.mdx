@@ -1,0 +1,126 @@
+---
+title: "Web Security Hardening: OWASP Top 10, XSS, CSRF, SQLi & CORS"
+slug: "security-web-vulnerabilities"
+technology: "security"
+difficulty: "Advanced"
+estimatedReadingTime: 25
+summary: "Master modern web security defenses, OWASP Top 10 vulnerabilities, XSS sanitization, CSRF defenses, SQL injection prevention, and CORS security headers."
+prerequisites: ["authentication-authorization"]
+nextTopics: ["api-design-architecture", "devops-observability-basics"]
+tags: ["security", "owasp", "xss", "csrf", "sqli", "cors", "web-security"]
+careerRelevance: "Mandatory foundation for Security Engineers, Application Security Leads, and Fullstack Architects."
+qualityScore: 99.0
+canonicalUrl: "https://stackforge.dev/content/security/security-web-vulnerabilities"
+---
+
+# 1. Introduction
+
+## Why Web Security Architecture Matters
+Building high-traffic modern web applications requires embedding security into every architectural layer. Flaws in input sanitization, dynamic query construction, CORS header configurations, or session token storage can expose user sensitive data, corrupt database state, or grant remote code execution (RCE) access to bad actors.
+
+---
+
+# 2. Core Concepts
+
+## OWASP Top 10 Security Defenses Matrix
+
+| Vulnerability | Attack Vector | Primary Mitigation Strategy |
+| :--- | :--- | :--- |
+| **Broken Access Control** | Unauthorized API endpoints / horizontal privilege escalation | Enforce RLS / server-side RBAC middleware on every request |
+| **Cryptographic Failures** | Storing plaintext passwords or using weak MD5/SHA1 hashes | Use Argon2id / bcrypt / PBKDF2 with salted hashes |
+| **Injection (SQLi, Command)** | Unescaped string concatenation in database queries or shell commands | Use Parameterized Prepared Statements or ORMs (Prisma) |
+| **Insecure Design** | Architectural flaws without threat modeling | Implement Zero-Trust principles, Rate Limiting, and Least Privilege |
+| **Security Misconfiguration** | Default passwords, verbose stack traces in production, open CORS (`*`) | Strict CSP headers, disable debug flags, restrict origin headers |
+
+---
+
+# 3. Code Examples
+
+## Production: Express Security Hardening Middleware Stack
+
+```typescript
+import express from "express";
+import helmet from "helmet";
+import cors from "cors";
+import rateLimit from "express-rate-limit";
+
+const app = express();
+
+// 1. Helmet HTTP Security Headers
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'nonce-rAnd0m123'"],
+        styleSrc: ["'self'", "https://fonts.googleapis.com"],
+        imgSrc: ["'self'", "data:", "https://images.unsplash.com"],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: [],
+      },
+    },
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+  })
+);
+
+// 2. Strict CORS Configuration
+app.use(
+  cors({
+    origin: ["https://stackforge.dev", "https://app.stackforge.dev"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    credentials: true, // Allow cookies over HTTPS
+  })
+);
+
+// 3. Global DDoS & Brute-Force Rate Limiting
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many requests, please try again later." },
+});
+
+app.use("/api/", apiLimiter);
+```
+
+---
+
+# 4. Interview Questions
+
+### Easy Questions
+1. **Q: What is the OWASP Top 10?**
+   - *Answer*: A standard awareness document representing a broad consensus on the most critical security risks facing web applications.
+2. **Q: What is Cross-Site Scripting (XSS)?**
+   - *Answer*: A vulnerability where malicious scripts are injected into trusted web applications and executed in end-users' browsers.
+3. **Q: What is SQL Injection (SQLi)?**
+   - *Answer*: An attack vector where malicious SQL statements are inserted into user entry fields to manipulate backend database queries.
+4. **Q: What is CORS (Cross-Origin Resource Sharing)?**
+   - *Answer*: An HTTP-header based mechanism allowing a server to indicate any origins other than its own from which a browser should permit loading resources.
+5. **Q: What does the `SameSite` cookie attribute do?**
+   - *Answer*: Controls whether cookies are sent with cross-site requests, mitigating Cross-Site Request Forgery (CSRF) attacks (`Strict` vs `Lax` vs `None`).
+
+### Medium Questions
+6. **Q: Compare Reflected XSS vs Stored XSS vs DOM-based XSS.**
+   - *Answer*: Reflected XSS echoes malicious input in immediate response; Stored XSS saves payload permanently in DB; DOM XSS mutates client DOM without server interaction.
+7. **Q: How do Parameterized Prepared Statements prevent SQL Injection?**
+   - *Answer*: Separates the SQL query structure from data parameters; the database compiles the SQL code statement first before substituting parameters as literal values.
+8. **Q: What is Server-Side Request Forgery (SSRF)?**
+   - *Answer*: Vulnerability where an attacker tricks a backend web application into sending crafted HTTP requests to intranet internal microservices or cloud metadata endpoints.
+9. **Q: Explain how Content Security Policy (CSP) headers protect against XSS.**
+   - *Answer*: CSP restricts executable script sources (`script-src`), blocks inline script execution unless signed with a cryptographic nonce, and restricts external network connections (`connect-src`).
+10. **Q: What is the Subresource Integrity (SRI) hash check?**
+    - *Answer*: A security feature (`integrity="sha384-..."`) enabling browsers to verify that resources fetched from CDNs have not been tampered with.
+
+### Advanced Questions
+11. **Q: Walk through how an attacker exploits a Blind SQL Injection vulnerability using Time Delays.**
+    - *Answer*: Attacker injects conditional SQL logic containing sleep functions (`SELECT IF(substr(password,1,1)='a', SLEEP(5), 0)`) and infers character values based on response latency.
+12. **Q: How do you defend against Server-Side Template Injection (SSTI)?**
+    - *Answer*: Avoid passing user input directly into template string rendering engines; use sandboxed template context and strict input sanitization.
+13. **Q: Explain how Clickjacking attacks work and how `X-Frame-Options` or CSP `frame-ancestors` mitigate them.**
+    - *Answer*: Attacker overlays an invisible iframe of a target site over a decoy page; `X-Frame-Options: DENY` or CSP `frame-ancestors 'none'` prevents external sites from embedding the app inside iframes.
+14. **Q: What is HTTP Request Smuggling and how does it occur at reverse proxies?**
+    - *Answer*: Discrepancies between how front-end proxies and backend servers parse `Content-Length` and `Transfer-Encoding: chunked` headers allow attackers to prepend arbitrary HTTP requests to next socket streams.
+15. **Q: How do you implement Zero-Trust Security in cloud-native applications?**
+    - *Answer*: Never trust, always verify: enforce mutual TLS (mTLS) between all microservices, validate fine-grained IAM roles, enforce identity-aware API gateways, and encrypt all data in transit and at rest.

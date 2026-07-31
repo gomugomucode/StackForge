@@ -2,6 +2,8 @@ import fs from "fs";
 import path from "path";
 import { parseMDXContent, ParsedMDXFile } from "./parser";
 
+export type { ParsedMDXFile };
+
 export class ContentRegistry {
   private static contentDir = path.join(process.cwd(), "content");
 

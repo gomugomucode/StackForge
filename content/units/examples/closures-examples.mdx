@@ -1,0 +1,17 @@
+---
+title: "Closure Production Examples: Module Pattern & Memoization"
+conceptId: "closures"
+technology: "javascript"
+---
+
+```typescript
+// Production Encapsulation Pattern using Closure
+export function createCounter() {
+  let count = 0;
+  return {
+    increment: () => ++count,
+    decrement: () => --count,
+    getCount: () => count,
+  };
+}
+```
