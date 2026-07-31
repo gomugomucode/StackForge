@@ -17,6 +17,7 @@ import { OutcomeService } from "../src/features/learning/services/outcomeService
 import { ReleaseIntelligenceService } from "../src/features/intelligence/services/releaseIntelligence";
 import { EvidenceProfileEngine } from "../src/features/evidence/services/evidenceProfileEngine";
 import { ProjectRegistry } from "../src/features/projects/services/projectRegistry";
+import { LearningFrictionDiagnostics } from "../src/features/analytics/services/learningFrictionDiagnostics";
 
 async function verifyAll() {
   console.log("=======================================================");
@@ -112,6 +113,11 @@ async function verifyAll() {
 
   const projects = await ProjectRegistry.getProjectsByTechnology("nextjs");
   console.log(`✅ Production Project Specifications Engine: Verified ${projects.length} project specs (Top: '${projects[0].title}' [${projects[0].level}])`);
+
+  const abandons = await LearningFrictionDiagnostics.analyzeLessonAbandonment();
+  const searchFriction = await LearningFrictionDiagnostics.auditSearchQueryFriction();
+  const retentionFunnel = await LearningFrictionDiagnostics.getRetentionFunnels();
+  console.log(`✅ Learning Friction Diagnostics Engine: Scanned ${abandons.length} lesson dropoff funnels & ${searchFriction.length} search friction queries (D1 Return Rate: ${retentionFunnel.d1ReturnRate}%)`);
 
   console.log("\n=======================================================");
   console.log("  ALL PLATFORM OS VERIFICATION SUITES PASSED (100%)");
