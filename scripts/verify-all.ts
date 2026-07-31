@@ -10,6 +10,7 @@ import { DashboardService } from "../src/features/dashboard/services/dashboardSe
 import { InterviewEngine } from "../src/features/interview/services/interviewEngine";
 import { PortfolioEngine } from "../src/features/portfolio/services/portfolioEngine";
 import { AnalyticsEngine } from "../src/features/analytics/services/analyticsEngine";
+import { QualityGatekeeper } from "../src/features/quality/services/qualityGatekeeper";
 
 async function verifyAll() {
   console.log("=======================================================");
@@ -21,8 +22,20 @@ async function verifyAll() {
   console.log(`--- 1. Content Registry Check ---`);
   console.log(`✅ Discovered ${files.length} production MDX files across repository.`);
 
-  // 2. Knowledge Graph Check
-  console.log(`\n--- 2. Knowledge Graph DAG Check ---`);
+  // 2. Educational Quality Gatekeeper Check
+  console.log(`\n--- 2. 20-Point Educational Quality Audit ---`);
+  let totalQuality = 0;
+  let passedQuality = 0;
+  for (const f of files) {
+    const qRes = QualityGatekeeper.evaluateMDXContent(f);
+    totalQuality += qRes.overallScore;
+    if (qRes.passed) passedQuality++;
+  }
+  const avgScore = Math.round(totalQuality / files.length);
+  console.log(`✅ Educational Quality Score: ${avgScore}/100 across ${files.length} modules (${passedQuality} passing high bar)`);
+
+  // 3. Knowledge Graph Check
+  console.log(`\n--- 3. Knowledge Graph DAG Check ---`);
   const graph = await GraphEngine.validateGraphIntegrity();
   console.log(`- Total Nodes: ${graph.totalNodes}`);
   console.log(`- Total Edges: ${graph.totalEdges}`);
@@ -33,8 +46,8 @@ async function verifyAll() {
   }
   console.log("✅ Knowledge Graph DAG integrity PASSED.");
 
-  // 3. Search Engine Check
-  console.log(`\n--- 3. Search Engine V5 Check ---`);
+  // 4. Search Engine Check
+  console.log(`\n--- 4. Search Engine V5 Check ---`);
   const searchQueries = ["react", "typescript", "postgres", "fastapi", "kafka", "dsa"];
   let searchPassed = 0;
   for (const q of searchQueries) {
@@ -45,13 +58,13 @@ async function verifyAll() {
   }
   console.log(`✅ Search Engine V5 queries returning weighted results: ${searchPassed}/${searchQueries.length}`);
 
-  // 4. Content Ingestion Check
-  console.log(`\n--- 4. Content Ingestion Check ---`);
+  // 5. Content Ingestion Check
+  console.log(`\n--- 5. Content Ingestion Check ---`);
   const sources = IngestionService.defaultSources;
   console.log(`✅ Verified ${sources.length} configured external RSS & API sources.`);
 
-  // 5. OS Feature Modules Verification
-  console.log(`\n--- 5. Platform OS Feature Modules Verification ---`);
+  // 6. Platform OS Feature Modules Verification
+  console.log(`\n--- 6. Platform OS Feature Modules Verification ---`);
   const note = await VaultService.createNote({ userId: "usr_1", title: "Closure Memory Notes", content: "Scope binding retain test" });
   console.log(`✅ Personal Vault Service: Created note '${note.title}' (${note.id})`);
 
