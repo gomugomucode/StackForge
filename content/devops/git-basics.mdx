@@ -1,43 +1,102 @@
-# Getting Started with Git: Essential Commands
+---
+title: "Git Architecture, Object Store & DAG History Recovery"
+slug: "git-basics"
+technology: "devops"
+difficulty: "Intermediate"
+estimatedReadingTime: 25
+summary: "Master Git DAG object storage internals, Blobs, Trees, Commits, Reflog disaster recovery, interactive rebase, and branching strategies."
+prerequisites: ["execution-context-event-loop"]
+nextTopics: ["git-github-mastery"]
+tags: ["git", "devops", "dag", "version-control", "github"]
+careerRelevance: "Mandatory foundation for all Software Engineers, DevOps Engineers, and Platform Leads."
+qualityScore: 99.0
+canonicalUrl: "https://stackforge.dev/content/devops/git-github-mastery"
+---
 
-Git is the industry-standard distributed version control system. Mastering Git workflow commands is a fundamental requirement for modern software engineers.
+# 1. Introduction & Real Production Problem Statement
+
+## Why Git Internals Matter
+Git is not merely a file backup tool; it is a content-addressable **Directed Acyclic Graph (DAG)** data structure powered by SHA-1/SHA-256 cryptographic hashes.
+
+Understanding `.git/objects` and `git reflog` transforms Git from a source of anxiety into a surgical instrument for history cleanup and code recovery.
 
 ---
 
-## 1. Core Daily Workflow
+# 2. Core Concepts & Mental Model
+
+## 1. The 4 Core Git Objects
+1. **Blob**: Stores raw binary file contents (without filenames or permissions).
+2. **Tree**: Represents a directory, linking filenames and file permissions to Blob SHAs.
+3. **Commit**: Contains pointer to root Tree SHA, parent commit SHAs, author metadata, and commit message.
+4. **Tag**: An annotated pointer referencing a specific commit SHA.
+
+```
+[ COMMIT: a1b2c3... ] ---> [ TREE: e4f5g6... ] ---> [ BLOB: 3a2b1c... ("app.ts") ]
+```
+
+## 2. Reflog Disaster Recovery
+Every update to `HEAD` (commits, checkouts, resets, rebases) is logged in `.git/logs/HEAD` for 90 days. Even if a branch is deleted or rebased incorrectly, `git reflog` allows restoring deleted commits cleanly.
+
+---
+
+# 3. Code Examples & Production History Cleanup
+
+## Production: Interactive Rebase & Reflog Disaster Recovery
 
 ```bash
-# Check status of changed files
-git status
+# 1. Inspect local reflog history to find lost commit SHA
+git reflog
 
-# Stage specific changes
-git add src/index.ts
+# Output example:
+# a1b2c3d HEAD@{0}: reset: moving to HEAD~3 (LOST COMMITS!)
+# e4f5g6h HEAD@{1}: commit: Implement user auth endpoint
 
-# Commit staged changes with message
-git commit -m "feat: add user authentication handler"
+# 2. Instantly recover lost commit by creating recovery branch
+git checkout -b recovery-branch e4f5g6h
 
-# Push branch to remote repository
-git push origin feature/user-auth
+# 3. Clean up interactive commit history before opening PR
+git rebase -i HEAD~4
 ```
 
 ---
 
-## 2. Branching & Merging Best Practices
+# 4. Debugging Guide & Common Mistakes
 
-Always isolate new feature development inside dedicated feature branches:
+## Fixing a Detached HEAD State
 
 ```bash
-# Create and switch to new branch
-git checkout -b feature/interactive-dashboard
+# SPREAD BUG: Checking out a raw commit SHA creates a Detached HEAD
+git checkout a1b2c3d
 
-# Rebase onto main to stay updated
-git fetch origin
-git rebase origin/main
+# FIX: Create a new branch pointing to detached HEAD state
+git switch -c fix-detached-branch
 ```
 
 ---
 
-## Key Rules
+# 5. Performance & Security Notes
 
-- Keep commits atomic and focused on single tasks.
-- Write clear, present-tense commit messages (`feat: add...`, `fix: resolve...`).
+## Performance Notes
+- **Garbage Collection (`git gc`)**: Packs loose Zlib objects into packed delta binary files (`.pack`), significantly reducing repository size on disk.
+
+## Security Notes
+- **Commit Signing**: Enforce GPG or SSH commit signing (`git config --global commit.gpgsign true`) to verify committer identity against impersonation attacks.
+
+---
+
+# 6. Interview Questions & Practice Exercises
+
+### Q1: Compare `git merge` vs `git rebase`.
+- *Answer*: `git merge` executes a 3-way merge commit preserving true historical topology; `git rebase` rewrites commits linearly on top of a target branch.
+
+### Q2: How do you purge a leaked `.env` secret from all historical Git commits?
+- *Answer*: Use `git filter-repo` or `BFG Repo-Cleaner` to purge the secret string from all historical tree objects, force push to remotes, and immediately invalidate the leaked credentials.
+
+## Hands-on Exercise
+- **Exercise**: Create a local git repository, commit 3 files, delete the branch, and recover the deleted branch using `git reflog`.
+
+---
+
+# 7. Official References & Further Reading
+- [Pro Git Book (Official Documentation)](https://git-scm.com/book/en/v2)
+- [GitHub Docs: About Git Version Control](https://docs.github.com)
