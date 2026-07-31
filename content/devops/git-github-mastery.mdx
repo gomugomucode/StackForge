@@ -1,0 +1,134 @@
+---
+title: "Git DAG Architecture, Advanced Rebase & GitHub Actions CI/CD"
+slug: "git-github-mastery"
+technology: "devops"
+difficulty: "Advanced"
+estimatedReadingTime: 25
+summary: "Master Git Directed Acyclic Graph (DAG) object store, rebase vs merge internals, reflog disaster recovery, and GitHub Actions CI/CD automation."
+prerequisites: ["execution-context-event-loop"]
+nextTopics: ["devops-observability-basics"]
+tags: ["git", "github", "cicd", "github-actions", "devops", "dag"]
+careerRelevance: "Mandatory foundation for all software engineers, DevOps leads, and open-source maintainers."
+qualityScore: 98.0
+canonicalUrl: "https://stackforge.dev/content/devops/git-github-mastery"
+---
+
+# 1. Introduction
+
+## Why Git DAG Architecture Matters
+Git is not just a collection of file snapshots; it is a content-addressable **Directed Acyclic Graph (DAG)** data structure powered by SHA-1/SHA-256 hashes. Understanding how Git stores objects (Blobs, Trees, Commits, Tags) in `.git/objects` transforms Git from a source of frustration into a surgical tool for code versioning, clean commit history, and automated CI/CD deployment.
+
+---
+
+# 2. Core Concepts
+
+## Git Object Store Architecture
+
+```
++--------------------------------------------------------------+
+| COMMIT OBJECT (SHA: a1b2c3d...)                              |
+|  - tree: e4f5g6h...                                          |
+|  - parent: 9x8y7z...                                         |
+|  - author / committer / message                              |
++--------------------------------------------------------------+
+                              |
+                              v
++--------------------------------------------------------------+
+| TREE OBJECT (Directory Listing: e4f5g6h...)                  |
+|  - 100644 blob 3a2b1c...  src/index.ts                       |
+|  - 040000 tree 8d9e0f...  src/components                     |
++--------------------------------------------------------------+
+                              |
+                              v
++--------------------------------------------------------------+
+| BLOB OBJECT (Raw File Content: 3a2b1c...)                    |
+|  - "console.log('Hello World');"                             |
++--------------------------------------------------------------+
+```
+
+---
+
+# 3. Code Examples
+
+## Production: GitHub Actions CI/CD Workflow with Caching & Testing
+
+```yaml
+# .github/workflows/ci.yml
+name: Continuous Integration Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history for git diff checking
+
+      - name: Setup Node.js & pnpm
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Type Check & Lint
+        run: |
+          npx tsc --noEmit
+          npm run lint
+
+      - name: Run Unit & Integration Tests
+        run: npm test
+
+      - name: Build Application
+        run: npm run build
+```
+
+---
+
+# 4. Interview Questions
+
+### Easy Questions
+1. **Q: What is Git?**
+   - *Answer*: A distributed version control system tracking changes in source code using a Directed Acyclic Graph (DAG).
+2. **Q: What is the difference between Git and GitHub?**
+   - *Answer*: Git is the local CLI version control tool; GitHub is a cloud-based hosting platform providing pull requests, CI/CD, and collaboration tools.
+3. **Q: What is the difference between `git fetch` and `git pull`?**
+   - *Answer*: `git fetch` downloads remote commits without modifying local branches; `git pull` performs a `fetch` followed immediately by a `merge` or `rebase`.
+4. **Q: What are the 3 states of files in Git?**
+   - *Answer*: Modified, Staged (Index), Committed.
+5. **Q: What is `.gitignore`?**
+   - *Answer*: A file specifying intentionally untracked files (e.g. `node_modules`, `.env`) that Git should ignore.
+
+### Medium Questions
+6. **Q: Compare `git merge` vs `git rebase`.**
+   - *Answer*: `git merge` creates a 3-way merge commit preserving exact branch history; `git rebase` rewrites commit history linearly on top of a target branch.
+7. **Q: How does `git reflog` assist in disaster recovery?**
+   - *Answer*: Records every update to HEAD (commits, rebases, resets) for 90 days, allowing recovery of lost or deleted commits.
+8. **Q: What are the 4 fundamental Git Object Types?**
+   - *Answer*: Blob (file content), Tree (directory structure), Commit (snapshot metadata & tree pointer), Tag (annotated pointer).
+9. **Q: Compare Trunk-Based Development vs GitFlow.**
+   - *Answer*: Trunk-Based development uses short-lived feature branches merged frequently into `main` behind feature flags; GitFlow uses long-lived `develop`, `release`, and `feature` branches.
+10. **Q: What is `git cherry-pick`?**
+    - *Answer*: Applies the changes introduced by a specific existing commit from another branch onto the current HEAD.
+
+### Advanced Questions
+11. **Q: Explain how Git stores files efficiently using Zlib and Packfiles.**
+    - *Answer*: Loose objects are Zlib-compressed individually; periodically, `git gc` packs objects into single `.pack` files using delta compression (storing differences between similar file versions).
+12. **Q: How do you fix a detached HEAD state without losing commits?**
+    - *Answer*: Create a new branch pointing to the current detached HEAD commit via `git branch recovery-branch`, then switch to it `git checkout recovery-branch`.
+13. **Q: How would you remove a leaked `.env` secret from all historical Git commits?**
+    - *Answer*: Use `git filter-repo` or `BFG Repo-Cleaner` to purge the secret from all tree objects, force push to remotes, and invalidate the leaked credentials immediately.
+14. **Q: Explain how GitHub Actions uses SHA pinning for Action security.**
+    - *Answer*: Pinning actions to exact commit SHAs (e.g. `uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11`) prevents supply-chain attacks if a tag is maliciously re-pointed.
+15. **Q: Walk through 3-way merge resolution using Common Ancestor.**
+    - *Answer*: Git identifies the closest shared ancestor commit ($O$), compares modifications from $O \rightarrow \text{Branch A}$ and $O \rightarrow \text{Branch B}$, and auto-merges non-overlapping file changes while flagging conflicting line edits.

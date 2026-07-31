@@ -1,0 +1,79 @@
+---
+title: "Backend & Database Production Cheatsheet"
+slug: "backend-cheatsheet"
+technology: "backend"
+difficulty: "Intermediate"
+estimatedReadingTime: 15
+summary: "Quick-reference cheatsheet covering Node.js streams, PostgreSQL indexing, Prisma transactions, Supabase RLS policies, and Docker CLI."
+prerequisites: ["nodejs-internals-streams", "postgresql-indexing-performance"]
+nextTopics: ["prisma-orm-architecture", "supabase-rls-realtime"]
+tags: ["backend", "cheatsheet", "sql", "postgresql", "prisma", "docker", "nodejs"]
+careerRelevance: "Essential desktop reference for day-to-day backend development, database optimization, and DevOps workflows."
+qualityScore: 99.0
+canonicalUrl: "https://stackforge.dev/content/backend/backend-cheatsheet"
+---
+
+# Backend & Database Production Cheatsheet
+
+## 1. PostgreSQL Indexing Selection Matrix
+
+| Access Pattern | Recommended Index Type | Example Syntax |
+| :--- | :--- | :--- |
+| **Exact & Range Lookups (`=`, `<`, `>`)** | B-Tree (Default) | `CREATE INDEX idx_user_email ON users(email);` |
+| **JSONB Document Search** | GIN (Generalized Inverted) | `CREATE INDEX idx_user_meta ON users USING GIN (metadata);` |
+| **Partial Condition Query** | Partial Index | `CREATE INDEX idx_active ON users(id) WHERE status = 'ACTIVE';` |
+| **Time-Series / Large Tables** | BRIN (Block Range) | `CREATE INDEX idx_logs_date ON logs USING BRIN (created_at);` |
+
+---
+
+## 2. Prisma Interactive Transaction Reference
+
+```typescript
+import { prisma } from "@/lib/prisma";
+
+// Safe atomic multi-operation transaction with custom timeouts
+const result = await prisma.$transaction(
+  async (tx) => {
+    const user = await tx.user.update({
+      where: { id: "user_1" },
+      data: { points: { increment: 100 } },
+    });
+
+    const audit = await tx.auditLog.create({
+      data: { userId: user.id, action: "POINTS_AWARDED" },
+    });
+
+    return { user, audit };
+  },
+  { maxWait: 5000, timeout: 10000 }
+);
+```
+
+---
+
+## 3. Supabase RLS Policy Quick Reference
+
+```sql
+-- Enable RLS
+ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
+
+-- Owner Read/Write Policy
+CREATE POLICY "Owner access" ON posts
+FOR ALL USING (auth.uid() = user_id)
+WITH CHECK (auth.uid() = user_id);
+
+-- Public Read-Only Policy
+CREATE POLICY "Public read" ON posts
+FOR SELECT USING (is_published = true);
+```
+
+---
+
+## 4. Docker Production Security Checklist
+
+- [x] Run containers as **Non-Root User** (`USER nodeuser`).
+- [x] Use **Multi-stage Builds** to eliminate build tools from runtime image.
+- [x] Enable **Healthchecks** in Dockerfile.
+- [x] Limit container resources (`--memory="512m" --cpus="1.0"`).
+- [x] Mount root filesystem as **Read-Only** (`--read-only`).
+- [x] Drop Linux capabilities (`--cap-drop ALL`).

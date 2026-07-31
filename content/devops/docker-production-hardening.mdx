@@ -1,0 +1,124 @@
+---
+title: "Docker Container Architecture & Production Security Hardening"
+slug: "docker-production-hardening"
+technology: "docker"
+difficulty: "Advanced"
+estimatedReadingTime: 25
+summary: "Master Docker container engine internals, cgroups, namespaces, multi-stage builds, non-root user execution, and container security hardening."
+prerequisites: ["execution-context-event-loop"]
+nextTopics: ["nextjs-production-deployment"]
+tags: ["docker", "containers", "security", "devops", "namespaces", "cgroups"]
+careerRelevance: "Essential for DevOps Engineers, Site Reliability Engineers (SRE), and Platform Engineers."
+qualityScore: 98.0
+canonicalUrl: "https://stackforge.dev/content/devops/docker-production-hardening"
+---
+
+# 1. Introduction
+
+## Why Docker Production Hardening Matters
+Containers have revolutionized application deployment by packaging applications with their runtime dependencies. However, running default root-privileged Docker containers in production exposes host Linux kernels to container breakout exploits, privilege escalation, and resource starvation attacks.
+
+Hardening Docker containers involves leveraging Linux Kernel **Namespaces**, **cgroups (Control Groups)**, **Multi-stage Builds**, non-root user execution, and dropping unnecessary Linux capabilities.
+
+---
+
+# 2. Core Concepts
+
+## Container Isolation Architecture
+
+```
++--------------------------------------------------------------+
+| DOCKER CONTAINER                                             |
+|  - App Process (node / python)                               |
+|  - Non-Root User (uid: 10001)                                |
++--------------------------------------------------------------+
+                              |
+   ISOLATION primitives provided by Linux Kernel:
+   1. Namespaces (pid, net, mnt, ipc, uts, user) -> What container CAN SEE
+   2. cgroups (cpu, memory, blkio)               -> What container CAN USE
+                              v
++--------------------------------------------------------------+
+| HOST LINUX KERNEL                                            |
++--------------------------------------------------------------+
+```
+
+---
+
+# 3. Code Examples
+
+## Production: Hardened Non-Root Node.js Containerfile
+
+```dockerfile
+# Stage 1: Build Dependencies
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Stage 2: Production Hardened Runtime Image
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+
+# Create dedicated non-root user and group
+RUN addgroup --system --gid 10001 nodejs && \
+    adduser --system --uid 10001 nodeuser
+
+# Copy only built artifacts
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY package.json ./
+
+# Set ownership to non-root user
+USER nodeuser
+
+# Security Hardening Flags
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
+
+CMD ["node", "dist/server.js"]
+```
+
+---
+
+# 4. Interview Questions
+
+### Easy Questions
+1. **Q: What is a Docker Container?**
+   - *Answer*: A standardized, lightweight executable package containing application code and dependencies isolated at the OS level.
+2. **Q: What is the difference between an Image and a Container?**
+   - *Answer*: An Image is a read-only template/blueprint; a Container is a runnable instance of an Image.
+3. **Q: What does `docker-compose` do?**
+   - *Answer*: A tool for defining and running multi-container Docker applications using a declarative YAML file.
+4. **Q: What is a Multi-stage Build?**
+   - *Answer*: A Dockerfile strategy using multiple `FROM` statements to separate build dependencies from minimal production runtime images.
+5. **Q: Why should you avoid running containers as `root`?**
+   - *Answer*: If a container vulnerability is exploited, root privileges allow attackers to compromise the underlying host Linux kernel.
+
+### Medium Questions
+6. **Q: How do Linux Namespaces provide container isolation?**
+   - *Answer*: Namespaces partition kernel resources so a container sees its own isolated view of processes (PID), network (NET), mounts (MNT), and users (USER).
+7. **Q: What are cgroups (Control Groups)?**
+   - *Answer*: A Linux kernel feature that limits, accounts for, and isolates resource usage (CPU, RAM, disk I/O) per container.
+8. **Q: Compare Docker Alpine vs Distroless base images.**
+   - *Answer*: Alpine uses lightweight musl libc and busybox (~5MB); Distroless contains only application runtime binaries without package managers or shell tools (maximum security).
+9. **Q: What is the purpose of Docker Healthchecks?**
+   - *Answer*: Allows Docker daemon and orchestrators (K8s/ECS) to determine if an application container is functioning correctly beyond process existence.
+10. **Q: What is the difference between Docker `CMD` and `ENTRYPOINT`?**
+    - *Answer*: `ENTRYPOINT` specifies the default executable command; `CMD` specifies default arguments passed to `ENTRYPOINT` that can be overridden at runtime.
+
+### Advanced Questions
+11. **Q: Explain container breakout attacks and how to mitigate them.**
+    - *Answer*: Escape from container isolation to host kernel caused by running `--privileged`, mounting `/var/run/docker.sock`, or kernel vulnerabilities. Mitigated by using non-root users, dropping capabilities (`--cap-drop ALL`), and enabling `seccomp` profiles.
+12. **Q: How does Overlay2 storage driver work in Docker?**
+    - *Answer*: Operates as a union filesystem combining multiple read-only image layers (`lowerdir`) with a single writable container layer (`upperdir`) using copy-on-write (CoW).
+13. **Q: What is the risk of mounting the Docker Socket (`/var/run/docker.sock`) into a container?**
+    - *Answer*: Grants the container full root control over the host Docker daemon, allowing it to spawn privileged containers and compromise the host node completely.
+14. **Q: Compare Host, Bridge, and Overlay network drivers in Docker.**
+    - *Answer*: Bridge provides isolated software network on a single host; Host removes network isolation sharing host stack; Overlay connects multiple Docker daemon hosts in a Swarm cluster.
+15. **Q: How do `read-only` root filesystems (`--read-only`) harden containers?**
+    - *Answer*: Prevents attackers from writing malware or modifying binaries inside the container, requiring explicit `tmpfs` mounts for temporary file writes.

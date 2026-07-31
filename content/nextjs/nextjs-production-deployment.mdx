@@ -1,0 +1,87 @@
+---
+title: "Next.js Production Deployment, Docker & Vercel Engineering"
+slug: "nextjs-production-deployment"
+technology: "nextjs"
+difficulty: "Expert"
+estimatedReadingTime: 30
+summary: "Master Next.js standalone Docker deployment, self-hosted infrastructure, Vercel Edge Network architecture, OpenTelemetry observability, and Vercel interview questions."
+prerequisites: ["nextjs-app-router-architecture", "nextjs-caching-and-performance", "nextjs-middleware-and-security"]
+nextTopics: []
+tags: ["nextjs", "deployment", "docker", "vercel", "opentelemetry", "standalone", "devops"]
+careerRelevance: "Essential for Principal Fullstack Engineers, DevOps Leads, Platform Architects, and candidates interviewing at Vercel, Stripe, and Meta."
+qualityScore: 99.0
+canonicalUrl: "https://stackforge.dev/content/nextjs/nextjs-production-deployment"
+---
+
+# 1. Introduction
+
+## Why Deployment Architecture Matters
+Deploying Next.js in production is not just running `npm run build`. Enterprise deployments require choosing between managed edge infrastructure (Vercel) and self-hosted containerized clusters (AWS ECS, Kubernetes, GCP Cloud Run). 
+
+Configuring **Standalone Output**, multi-stage Docker builds, OpenTelemetry tracing, and custom persistent data cache handlers guarantees sub-50ms global latency and multi-region high availability.
+
+---
+
+# 2. Production Docker Multi-Stage Build
+
+```dockerfile
+# 1. Base Image
+FROM node:20-alpine AS base
+WORKDIR /app
+RUN apk add --no-libc6-compat
+
+# 2. Dependencies Stage
+FROM base AS deps
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# 3. Builder Stage
+FROM base AS builder
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV production
+RUN npm run build
+
+# 4. Production Runner Stage (Minimal Size ~120MB)
+FROM base AS runner
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy standalone build output
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3000
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
+CMD ["node", "server.js"]
+```
+
+---
+
+# 3. Vercel & Stripe Level Interview Database
+
+### Question 1: How does `output: 'standalone'` reduce Docker container size?
+- **Answer**: It analyzes the production dependency graph and copies only the minimal required `node_modules` into `.next/standalone`, dropping unused packages and reducing container size from > 1GB to ~120MB.
+
+### Question 2: Compare Vercel Managed Edge Deployment vs Self-Hosted Kubernetes.
+- **Answer**: 
+  - **Vercel**: Instant multi-region edge deployment, managed global Data Cache KV, native image optimization, zero DevOps maintenance.
+  - **Self-Hosted K8s**: Full control over network security perimeters, lower bandwidth costs at extreme scale, but requires manual Redis Data Cache handlers, custom Satori servers, and ingress management.
+
+### Question 3: How do you integrate OpenTelemetry into a Next.js App Router application?
+- **Answer**: Enable `experimental.instrumentationHook: true` in `next.config.js`, create an `instrumentation.ts` file in project root, and initialize `@opentelemetry/sdk-node` to capture HTTP traces, RSC renders, and DB queries.
+
+### Question 4: How does `next/image` optimize images dynamically on self-hosted servers?
+- **Answer**: Uses `sharp` C++ library to resize, compress, and convert images into WebP/AVIF formats on-the-fly, caching output on local disk or custom CDN storage.
+
+### Question 5: How would you debug an out-of-memory (OOM) error during `next build` on CI/CD servers?
+- **Answer**: Increase Node.js heap limit (`NODE_OPTIONS="--max-old-space-size=8192"`), set `experimental.webpackBuildWorker: true`, and ensure heavy source maps (`productionBrowserSourceMaps: false`) are disabled in production builds.

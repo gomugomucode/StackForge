@@ -1,0 +1,127 @@
+---
+title: "Authentication, Authorization & OAuth 2.0 / JWT Security"
+slug: "authentication-authorization"
+technology: "authentication"
+difficulty: "Advanced"
+estimatedReadingTime: 25
+summary: "Master authentication and authorization protocols, OAuth 2.0 PKCE, OIDC, JWT RS256 signing, Passkeys/WebAuthn, and RBAC security architecture."
+prerequisites: ["execution-context-event-loop", "type-system-fundamentals"]
+nextTopics: ["api-design-architecture", "system-design-masterclass"]
+tags: ["auth", "authentication", "oauth2", "jwt", "passkeys", "security", "rbac"]
+careerRelevance: "Essential for Security Architects, Senior Backend Engineers, and System Integrators."
+qualityScore: 98.0
+canonicalUrl: "https://stackforge.dev/content/backend/authentication-authorization"
+---
+
+# 1. Introduction
+
+## Why Authentication & Security Architecture Matter
+Authentication (**Who are you?**) and Authorization (**What are you allowed to do?**) form the perimeter defense of modern web applications. Implementing weak authentication, exposing JWT secrets, or choosing unsafe token storage leads to account takeovers, credential stuffing, and data breaches.
+
+---
+
+# 2. Core Concepts
+
+## OAuth 2.0 PKCE Flow Architecture
+
+```
++--------+                               +---------------+
+|        |--(A)- Authorization Request ->|   Resource    |
+|        |       (with Code Challenge)   |     Owner     |
+|        |<-(B)- Authorization Code -----| (Auth Server) |
+| Client |                               +---------------+
+|        |                                       |
+|        |--(C)- Code + Code Verifier ---------->|
+|        |<-(D)- Access Token + Refresh Token ---|
++--------+                               +---------------+
+```
+
+## JWT Storage Security Comparison
+
+| Storage Mechanism | Vulnerable to XSS? | Vulnerable to CSRF? | Security Rating & Best Practice |
+| :--- | :---: | :---: | :--- |
+| **`localStorage` / `sessionStorage`** | ❌ YES (Severe) | ✅ NO | **UNSAFE**: Any injected XSS script can steal tokens. |
+| **Standard Cookie** | ✅ NO | ❌ YES | Requires CSRF Tokens or `SameSite=Strict`. |
+| **`HttpOnly` `SameSite=Strict` Cookie** | ✅ NO | ✅ NO | **RECOMMENDED**: Inaccessible to JS XSS scripts. |
+
+---
+
+# 3. Code Examples
+
+## Production: Secure RS256 JWT Verification & RBAC Middleware
+
+```typescript
+import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
+
+export interface AuthenticatedUser {
+  userId: string;
+  role: "USER" | "ADMIN" | "RECRUITER";
+}
+
+const RSA_PUBLIC_KEY = process.env.RSA_PUBLIC_KEY!;
+
+// RS256 Asymmetric JWT Verification Middleware
+export function authenticateToken(req: Request & { user?: AuthenticatedUser }, res: Response, next: NextFunction) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) return res.status(401).json({ error: "Missing authorization token" });
+
+  jwt.verify(token, RSA_PUBLIC_KEY, { algorithms: ["RS256"] }, (err, decoded) => {
+    if (err) return res.status(403).json({ error: "Invalid or expired token" });
+    req.user = decoded as AuthenticatedUser;
+    next();
+  });
+}
+
+// Role-Based Access Control (RBAC) Guard
+export function requireRole(...allowedRoles: Array<AuthenticatedUser["role"]>) {
+  return (req: Request & { user?: AuthenticatedUser }, res: Response, next: NextFunction) => {
+    if (!req.user || !allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ error: "Insufficient permissions for operation" });
+    }
+    next();
+  };
+}
+```
+
+---
+
+# 4. Interview Questions
+
+### Easy Questions
+1. **Q: What is the difference between Authentication and Authorization?**
+   - *Answer*: Authentication verifies identity (Who you are); Authorization verifies permissions (What you can access).
+2. **Q: What is a JWT (JSON Web Token)?**
+   - *Answer*: An open, RFC 7519 standard compact URL-safe token containing Header, Payload, and Signature.
+3. **Q: What is OAuth 2.0?**
+   - *Answer*: An authorization framework allowing third-party applications to obtain limited access to user resources.
+4. **Q: What does `HttpOnly` flag on a cookie do?**
+   - *Answer*: Prevents client-side JavaScript (`document.cookie`) from reading the cookie, neutralizing XSS token theft.
+5. **Q: What is a Passkey?**
+   - *Answer*: A passwordless authentication credential built on FIDO2/WebAuthn standard using asymmetric public-key cryptography.
+
+### Medium Questions
+6. **Q: What is PKCE in OAuth 2.0 and why is it required for SPAs?**
+   - *Answer*: Proof Key for Code Exchange; generates dynamic `code_verifier` and `code_challenge` to prevent authorization code interception attacks on public clients.
+7. **Q: Compare HS256 vs RS256 JWT Signing.**
+   - *Answer*: HS256 uses a symmetric shared secret for signing and verification; RS256 uses an asymmetric key pair (Private key signs, Public key verifies).
+8. **Q: How does Refresh Token Rotation prevent replay attacks?**
+   - *Answer*: Every time a Refresh Token is used to issue a new Access Token, a new Refresh Token is returned and the old one is invalidated; using a revoked token invalidates the entire token family.
+9. **Q: What is OpenID Connect (OIDC)?**
+   - *Answer*: An identity layer built on top of OAuth 2.0 that introduces the `id_token` to return user profile information.
+10. **Q: Compare RBAC vs ABAC.**
+    - *Answer*: RBAC (Role-Based) assigns permissions to user roles (e.g. ADMIN); ABAC (Attribute-Based) evaluates fine-grained rules based on user, resource, and environmental attributes.
+
+### Advanced Questions
+11. **Q: Walk through how WebAuthn (Passkeys) registers and authenticates a user without passwords.**
+    - *Answer*: Server sends challenge $\rightarrow$ client device uses biometrics (TouchID/FaceID) to sign challenge with hardware private key $\rightarrow$ server verifies signature using registered public key.
+12. **Q: How do you revoke a stateless JWT immediately before its expiration date?**
+    - *Answer*: Maintain a fast Redis token revocation blocklist (`jti` claim), or track a `tokenVersion` / `pwdTimestamp` counter in the user database record.
+13. **Q: What is Cross-Site Request Forgery (CSRF) and how do SameSite cookie attributes prevent it?**
+    - *Answer*: CSRF tricks a victim browser into sending authenticated requests to a target site; `SameSite=Strict` prevents the browser from attaching cookies to cross-site origin requests.
+14. **Q: How does Session Hijacking differ from Session Fixation?**
+    - *Answer*: Session Hijacking steals a valid active session ID; Session Fixation forces a victim to authenticate using a attacker-defined session ID.
+15. **Q: How do you implement Zero-Trust Microservice Authentication with SPIFFE/SPIRE?**
+    - *Answer*: Assign short-lived X.509 SVID certificates to workloads, enforcing mutual TLS (mTLS) authentication between all inter-service RPC calls.

@@ -1,0 +1,51 @@
+---
+title: "System Design & Distributed Architecture Cheatsheet"
+slug: "system-design-cheatsheet"
+technology: "career"
+difficulty: "Intermediate"
+estimatedReadingTime: 15
+summary: "Quick-reference cheatsheet covering back-of-the-envelope estimation formulas, system design tradeoff matrix, and distributed system patterns."
+prerequisites: ["system-design-masterclass"]
+nextTopics: ["devops-observability-basics"]
+tags: ["system-design", "cheatsheet", "distributed-systems", "scalability", "estimation"]
+careerRelevance: "Handy desktop reference for System Design interviews, architectural reviews, and capacity planning."
+qualityScore: 99.0
+canonicalUrl: "https://stackforge.dev/content/career/system-design-cheatsheet"
+---
+
+# System Design & Distributed Architecture Cheatsheet
+
+## 1. Back-of-the-Envelope Estimation Constants
+
+| Benchmark | Value | Useful Conversion |
+| :--- | :--- | :--- |
+| **Seconds per day** | 86,400 $\approx 10^5$ | 100K seconds / day |
+| **1 Million Requests / Day** | $\approx 12$ QPS | Average throughput |
+| **100 Million Requests / Day** | $\approx 1,200$ QPS | High throughput |
+| **1 Billion Requests / Day** | $\approx 12,000$ QPS | Very High throughput |
+| **Latency: L1 Cache** | 0.5 ns | Memory read |
+| **Latency: RAM** | 100 ns | Main memory |
+| **Latency: SSD Read** | 150 $\mu$s | Fast disk |
+| **Latency: Datacenter RTT** | 0.5 ms | Cross-rack network |
+| **Latency: Cross-Atlantic RTT** | 150 ms | Global network |
+
+---
+
+## 2. Storage Estimation Quick Formula
+
+$$\text{Storage Per Year} = \text{Daily Active Users} \times \text{Writes Per User} \times \text{Bytes Per Write} \times 365$$
+
+*Example*: 100M users $\times$ 2 posts/day $\times$ 1 KB/post = 200 GB/day = 73 TB/year.
+
+---
+
+## 3. Database Selection Matrix
+
+| Requirement | Database Type | Examples |
+| :--- | :--- | :--- |
+| **ACID Transactions & Complex Joins** | Relational SQL | PostgreSQL, MySQL, CockroachDB |
+| **High Write Throughput & Dynamic Schema** | Document NoSQL | MongoDB, DynamoDB |
+| **Low-Latency Key-Value Caching** | In-Memory KV | Redis, Memcached |
+| **Time-Series Metrics & Logs** | Time-Series | TimescaleDB, InfluxDB |
+| **Graph Relationships (Social Networks)** | Graph DB | Neo4j, Amazon Neptune |
+| **Vector Similarity Search (AI/RAG)** | Vector DB | pgvector, Pinecone, Qdrant |

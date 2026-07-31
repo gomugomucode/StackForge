@@ -1,0 +1,134 @@
+---
+title: "AI Development Fundamentals, Embeddings, Vector DBs & RAG Architecture"
+slug: "ai-development-fundamentals"
+technology: "ai"
+difficulty: "Advanced"
+estimatedReadingTime: 25
+summary: "Master LLM integration, prompt engineering, vector embeddings, pgvector similarity search, Retrieval-Augmented Generation (RAG), and Function Calling."
+prerequisites: ["execution-context-event-loop", "type-system-fundamentals"]
+nextTopics: ["system-design-masterclass"]
+tags: ["ai", "llm", "embeddings", "vector-database", "rag", "pgvector", "openai"]
+careerRelevance: "Essential for AI Engineers, Fullstack AI Developers, and Machine Learning System Architects."
+qualityScore: 98.0
+canonicalUrl: "https://stackforge.dev/content/ai/ai-development-fundamentals"
+---
+
+# 1. Introduction
+
+## Why AI Development Architecture Matters
+Integrating Large Language Models (LLMs) into production web applications requires moving beyond basic API calls. Building enterprise AI applications demands mastering **Vector Embeddings**, **Retrieval-Augmented Generation (RAG)**, **pgvector** similarity search, **Function Calling / Tool Use**, and strict structured output validation.
+
+---
+
+# 2. Core Concepts
+
+## Retrieval-Augmented Generation (RAG) Architecture
+
+```
+1. INGESTION PHASE:
+   Documents --> Chunking --> Embeddings Model --> Vector DB (pgvector)
+
+2. QUERY PHASE:
+   User Query --> Embeddings Model --> Vector Search (Top K Chunks)
+                                                |
+                                                v
+   User Query + Relevant Chunks Context --> LLM Generation --> Structured Response
+```
+
+---
+
+# 3. Code Examples
+
+## Production: Type-Safe Function Calling with OpenAI & Zod Schema
+
+```typescript
+import OpenAI from "openai";
+import { z } from "zod";
+
+const openai = new OpenAI();
+
+// Define Zod schema for structured output
+const SearchQuerySchema = z.object({
+  query: z.string().describe("Search query for database"),
+  limit: z.number().default(5),
+});
+
+export async function handleUserAIChat(userPrompt: string) {
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [{ role: "user", content: userPrompt }],
+    tools: [
+      {
+        type: "function",
+        function: {
+          name: "searchKnowledgeBase",
+          description: "Searches the developer knowledge base for specific topics",
+          parameters: {
+            type: "object",
+            properties: {
+              query: { type: "string" },
+              limit: { type: "number" },
+            },
+            required: ["query"],
+          },
+        },
+      },
+    ],
+    tool_choice: "auto",
+  });
+
+  const message = response.choices[0].message;
+
+  if (message.tool_calls) {
+    for (const toolCall of message.tool_calls) {
+      if (toolCall.function.name === "searchKnowledgeBase") {
+        const args = SearchQuerySchema.parse(JSON.parse(toolCall.function.arguments));
+        // Execute tool call in system...
+        return `Searching database for: ${args.query}`;
+      }
+    }
+  }
+
+  return message.content;
+}
+```
+
+---
+
+# 4. Interview Questions
+
+### Easy Questions
+1. **Q: What is an Embedding in AI?**
+   - *Answer*: A high-dimensional vector representation of text/data capturing semantic meaning where similar concepts sit close together in vector space.
+2. **Q: What is RAG (Retrieval-Augmented Generation)?**
+   - *Answer*: An architecture that retrieves relevant external context documents from a database and injects them into the LLM prompt to eliminate hallucinations.
+3. **Q: What is a Context Window?**
+   - *Answer*: The maximum number of tokens an LLM can process in a single prompt and response interaction.
+4. **Q: What is `pgvector`?**
+   - *Answer*: An open-source PostgreSQL extension for storing vector embeddings and executing fast vector similarity searches.
+5. **Q: What is Function Calling in LLMs?**
+   - *Answer*: The capability of an LLM to detect when a user request requires external tool execution and return structured JSON arguments.
+
+### Medium Questions
+6. **Q: Compare Cosine Distance vs Euclidean Distance vs Dot Product for vector search.**
+   - *Answer*: Cosine measures angle orientation between vectors (normalized length); Dot Product measures magnitude + direction; Euclidean measures straight-line distance.
+7. **Q: How does Document Chunking affect RAG search quality?**
+   - *Answer*: Too small chunks lose surrounding context; too large chunks dilute semantic density and waste LLM token context windows.
+8. **Q: What is Temperature parameter in LLM completion?**
+   - *Answer*: Controls randomness of token selection (0 = deterministic/focused; 1 = creative/diverse).
+9. **Q: How do you enforce structured JSON responses from LLMs?**
+   - *Answer*: Use JSON Mode / Structured Outputs with JSON Schema or validate output with Zod schemas.
+10. **Q: What is Semantic Search vs Keyword Search?**
+    - *Answer*: Keyword search matches exact word strings (BM25); Semantic search matches conceptual intent using vector embedding similarity.
+
+### Advanced Questions
+11. **Q: Walk through how HNSW (Hierarchical Navigable Small World) index works in `pgvector`.**
+    - *Answer*: Builds a multi-layer graph structure where upper layers allow fast long-distance hops and lower layers perform fine-grained nearest-neighbor searches.
+12. **Q: What is HyDE (Hypothetical Document Embeddings) in RAG?**
+    - *Answer*: Generates a hypothetical answer using the LLM first, embeds the generated answer, and uses its embedding to retrieve actual matching documents.
+13. **Q: How do you prevent Prompt Injection attacks in AI applications?**
+    - *Answer*: Separate untrusted user input from system instructions, validate tool arguments with schemas, and run function calls with restricted least-privilege permissions.
+14. **Q: Explain ReRankers in Advanced RAG pipelines.**
+    - *Answer*: Uses a cross-encoder model to re-score and re-rank the top K vector search results before passing them into the final LLM prompt.
+15. **Q: How do you handle Context Window exhaustion for long conversations?**
+    - *Answer*: Summarize older conversation turns, use sliding window history truncation, or retrieve historical turns dynamically via vector search.

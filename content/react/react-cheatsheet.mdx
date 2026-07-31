@@ -1,0 +1,90 @@
+---
+title: "React 19 Production Cheatsheet & Component Patterns"
+slug: "react-cheatsheet"
+technology: "react"
+difficulty: "Intermediate"
+estimatedReadingTime: 15
+summary: "Quick-reference cheatsheet covering React 19 hooks, Concurrent Mode APIs, Compound Component patterns, and ARIA accessibility standards."
+prerequisites: ["react-hooks-and-state"]
+nextTopics: ["react-performance-and-design-systems"]
+tags: ["react", "react19", "cheatsheet", "hooks", "design-system", "accessibility"]
+careerRelevance: "Handy desktop reference for day-to-day React engineering, component library design, and code reviews."
+qualityScore: 99.0
+canonicalUrl: "https://stackforge.dev/content/react/react-cheatsheet"
+---
+
+# React 19 Production Cheatsheet
+
+## 1. React 19 Hooks Quick Reference
+
+| Hook | Returns | Primary Use Case |
+| :--- | :--- | :--- |
+| **`useState(initial)`** | `[state, setState]` | Managing local component reactive state |
+| **`useReducer(reducer, initial)`** | `[state, dispatch]` | Complex state transitions & action dispatching |
+| **`useEffect(fn, deps)`** | `void` | Passive side-effects after browser paint |
+| **`useLayoutEffect(fn, deps)`** | `void` | Synchronous DOM measurements before paint |
+| **`useRef(initial)`** | `{ current: val }` | Mutable ref holding value without triggering re-render |
+| **`useMemo(fn, deps)`** | `memoizedVal` | Cache expensive calculations across renders |
+| **`useCallback(fn, deps)`** | `memoizedFn` | Cache function references across renders |
+| **`useTransition()`** | `[isPending, startTransition]` | Mark non-urgent state updates as interruptible |
+| **`useDeferredValue(value)`** | `deferredVal` | Defer updating non-critical UI subtrees |
+| **`useOptimistic(state, updateFn)`** | `[optimisticState, setOptimistic]` | Optimistic UI updates during server actions |
+| **`useActionState(fn, initial)`** | `[state, formAction, isPending]` | Form action handling in React 19 |
+| **`use(promiseOrContext)`** | `value` | Read promise or context values dynamically in render |
+
+---
+
+## 2. Compound Component Design System Pattern
+
+```tsx
+import React, { createContext, useContext, useState } from "react";
+
+// 1. Context for compound state
+const AccordionContext = createContext<{
+  openId: string | null;
+  toggle: (id: string) => void;
+} | null>(null);
+
+// 2. Main Parent Container Component
+export function Accordion({ children }: { children: React.ReactNode }) {
+  const [openId, setOpenId] = useState<string | null>(null);
+  const toggle = (id: string) => setOpenId((prev) => (prev === id ? null : id));
+
+  return (
+    <AccordionContext.Provider value={{ openId, toggle }}>
+      <div className="border rounded divide-y">{children}</div>
+    </AccordionContext.Provider>
+  );
+}
+
+// 3. Child Sub-Components
+Accordion.Item = function AccordionItem({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
+  const ctx = useContext(AccordionContext);
+  if (!ctx) throw new Error("Accordion.Item must be used inside <Accordion>");
+
+  const isOpen = ctx.openId === id;
+
+  return (
+    <div>
+      <button
+        onClick={() => ctx.toggle(id)}
+        aria-expanded={isOpen}
+        className="w-full p-4 text-left font-semibold flex justify-between"
+      >
+        {title}
+        <span>{isOpen ? "−" : "+"}</span>
+      </button>
+      {isOpen && <div className="p-4 bg-gray-50">{children}</div>}
+    </div>
+  );
+};
+```
+
+---
+
+## 3. ARIA & Accessibility Checklist for React Components
+
+- **Modals**: Must trap focus using `focus-trap-react`, set `aria-modal="true"`, and handle `Escape` key close events.
+- **Buttons**: Custom div buttons MUST include `role="button"`, `tabIndex={0}`, and handle both `Click` and `Enter/Space` key events.
+- **Form Controls**: All `<input>` elements MUST have associated `<label htmlFor="...">` or `aria-label`.
+- **Dynamic Content**: Use `aria-live="polite"` for non-disruptive notifications; use `aria-live="assertive"` for critical error alerts.

@@ -1,0 +1,156 @@
+---
+title: "Node.js Architecture, Libuv Event Loop & Streams Engine"
+slug: "nodejs-internals-streams"
+technology: "nodejs"
+difficulty: "Advanced"
+estimatedReadingTime: 30
+summary: "Master Node.js Libuv event loop 6 phases, Stream backpressure management, Worker Threads, and high-throughput backend architecture."
+prerequisites: ["execution-context-event-loop", "async-javascript-promises"]
+nextTopics: ["postgresql-indexing-performance", "prisma-orm-architecture"]
+tags: ["nodejs", "libuv", "streams", "backpressure", "worker-threads", "backend"]
+careerRelevance: "Essential for Senior Backend Engineers, Node.js Core contributors, and Distributed Systems Leads."
+qualityScore: 99.0
+canonicalUrl: "https://stackforge.dev/content/backend/nodejs-internals-streams"
+---
+
+# 1. Introduction
+
+## Why Node.js Architecture Matters
+Node.js is built on the V8 JavaScript Engine, Libuv, and c-ares. Unlike multi-threaded backend environments (Java, Go, C#) where each incoming HTTP connection is assigned to an OS thread, Node.js uses an **event-driven non-blocking I/O model** managed by Libuv.
+
+To build system-critical services capable of handling millions of concurrent requests, backend engineers must understand the 6 Libuv event loop phases, handle **stream backpressure**, and offload CPU-intensive tasks using Worker Threads.
+
+---
+
+# 2. Core Concepts
+
+## Libuv Event Loop 6 Phases
+
+```
+   +-------------------------------+
+   | 1. TIMERS                     | --> setTimeout(), setInterval()
+   +-------------------------------+
+                   |
+                   v
+   +-------------------------------+
+   | 2. PENDING I/O CALLBACKS       | --> Deferred OS I/O callbacks (e.g. TCP errors)
+   +-------------------------------+
+                   |
+                   v
+   +-------------------------------+
+   | 3. IDLE, PREPARE              | --> Node.js internal engine tasks
+   +-------------------------------+
+                   |
+                   v
+   +-------------------------------+
+   | 4. POLL                       | --> Retrieve new I/O events; execute I/O callbacks
+   +-------------------------------+
+                   |
+                   v
+   +-------------------------------+
+   | 5. CHECK                      | --> setImmediate() callbacks
+   +-------------------------------+
+                   |
+                   v
+   +-------------------------------+
+   | 6. CLOSE CALLBACKS            | --> socket.on('close', ...)
+   +-------------------------------+
+```
+
+*Note: Microtasks (`process.nextTick` and Promises) are completely drained immediately after every individual callback completes in ANY phase!*
+
+## Streams & Backpressure
+A **Stream** is an abstract interface for working with streaming data in Node.js. **Backpressure** occurs when data is read from a Readable stream faster than the Writable stream can write it. If backpressure is ignored, un-flushed data accumulates in RAM (`highWaterMark` buffer limit), triggering Node.js Out-Of-Memory (OOM) process crashes.
+
+---
+
+# 3. Code Examples
+
+## Production: Non-Blocking File Transform Stream with Backpressure Management
+
+```typescript
+import fs from "node:fs";
+import { pipeline } from "node:stream/promises";
+import { Transform } from "node:stream";
+
+// High-throughput Transform Stream with memory safety
+class LineTransformStream extends Transform {
+  private remainder = "";
+
+  constructor() {
+    super({ highWaterMark: 64 * 1024 }); // 64KB buffer limit
+  }
+
+  _transform(chunk: Buffer, encoding: string, callback: Function) {
+    const text = this.remainder + chunk.toString("utf-8");
+    const lines = text.split("\n");
+
+    this.remainder = lines.pop() || "";
+
+    for (const line of lines) {
+      if (line.includes("ERROR")) {
+        // Push processed line to output buffer
+        this.push(JSON.stringify({ log: line, timestamp: Date.now() }) + "\n");
+      }
+    }
+
+    callback();
+  }
+
+  _flush(callback: Function) {
+    if (this.remainder && this.remainder.includes("ERROR")) {
+      this.push(JSON.stringify({ log: this.remainder, timestamp: Date.now() }) + "\n");
+    }
+    callback();
+  }
+}
+
+export async function processHugeLogFile(inputPath: string, outputPath: string) {
+  // Uses pipeline to manage backpressure and auto-destroy streams on error
+  await pipeline(
+    fs.createReadStream(inputPath),
+    new LineTransformStream(),
+    fs.createWriteStream(outputPath)
+  );
+}
+```
+
+---
+
+# 4. Interview Questions
+
+### Easy Questions
+1. **Q: What is Node.js?**
+   - *Answer*: An open-source, cross-platform JavaScript runtime environment built on Chrome's V8 engine and Libuv C++ library.
+2. **Q: What is Libuv?**
+   - *Answer*: A multi-platform C library providing asynchronous I/O, event loop, and thread pool execution in Node.js.
+3. **Q: What are the 4 fundamental stream types in Node.js?**
+   - *Answer*: Readable, Writable, Duplex (read/write independent), Transform (duplex modifying data).
+4. **Q: What is `highWaterMark` in streams?**
+   - *Answer*: The maximum byte buffer threshold a stream holds in memory before pausing data reading (backpressure).
+5. **Q: Compare `process.nextTick` vs `setImmediate`.**
+   - *Answer*: `process.nextTick` runs immediately after the current operation before the next microtask; `setImmediate` runs during the Check phase of the event loop.
+
+### Medium Questions
+6. **Q: What is Backpressure in Node.js Streams and how do you handle it?**
+   - *Answer*: Occurs when a Writable stream cannot consume data as fast as a Readable stream emits it. Handled automatically via `stream.pipeline()` or checking `.write()` return boolean.
+7. **Q: How does Libuv thread pool work for non-async OS calls?**
+   - *Answer*: Libuv maintains a thread pool (default 4 threads, configurable via `UV_THREADPOOL_SIZE`) to run blocking tasks like file system I/O, `crypto.pbkdf2`, and DNS lookups asynchronously off the main thread.
+8. **Q: Compare Cluster module vs Worker Threads.**
+   - *Answer*: Cluster spawns independent Node.js processes sharing a server port (separate memory); Worker Threads run multiple JS execution threads sharing memory inside a single process.
+9. **Q: Why should you use `stream.pipeline()` instead of `.pipe()`?**
+   - *Answer*: `.pipe()` does not properly forward error handlers across chained streams, leading to memory leaks; `stream.pipeline()` auto-destroys all streams on failure and returns a promise.
+10. **Q: How does `Buffer` memory allocation differ from standard V8 Heap memory?**
+    - *Answer*: `Buffer` objects allocate raw, fixed-size C++ memory outside the V8 V8 Garbage Collection Heap via `malloc`, avoiding GC overhead for binary data.
+
+### Advanced Questions
+11. **Q: Walk through all 6 phases of the Libuv Event Loop in sequence.**
+    - *Answer*: Timers $\rightarrow$ Pending I/O $\rightarrow$ Idle/Prepare $\rightarrow$ Poll (I/O) $\rightarrow$ Check $\rightarrow$ Close Callbacks.
+12. **Q: How would you debug an Event Loop delay spiking to 500ms in a Node.js production service?**
+    - *Answer*: Use `@nearform/doctor` or `perf_hooks.monitorEventLoopDelay()`, check for synchronous JSON parsing, large sync regex, or blocking sync crypto operations on the main thread.
+13. **Q: How does Node.js handle TCP connection sockets at the OS kernel level?**
+    - *Answer*: Uses OS epoll (Linux), kqueue (macOS), or IOCP (Windows) registered via Libuv in the Poll phase to handle thousands of concurrent file descriptors without thread blocking.
+14. **Q: What happens if `UV_THREADPOOL_SIZE` is overwhelmed by simultaneous file reads?**
+    - *Answer*: Additional file/crypto operations queue up waiting for an available thread pool slot, causing artificial I/O latency spikes.
+15. **Q: Explain zero-copy buffer operations using `Buffer.allocUnsafe()`.**
+    - *Answer*: `allocUnsafe()` allocates un-initialized C++ memory without zero-filling bytes, providing maximum speed but risking sensitive memory leaks if written improperly.

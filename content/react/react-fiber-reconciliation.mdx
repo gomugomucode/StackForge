@@ -1,0 +1,112 @@
+---
+title: "React Fiber Architecture & Reconciliation Engine"
+slug: "react-fiber-reconciliation"
+technology: "react"
+difficulty: "Advanced"
+estimatedReadingTime: 25
+summary: "Master the React Fiber architecture, reconciliation workloop, double buffering, render vs commit phases, and lane priority model."
+prerequisites: ["execution-context-event-loop", "closures-and-scope", "type-system-fundamentals"]
+nextTopics: ["react-hooks-and-state", "react-server-components-architecture"]
+tags: ["react", "fiber", "reconciliation", "virtual-dom", "concurrent-mode"]
+careerRelevance: "Mandatory for Senior Frontend Engineers, React Core contributors, and Meta/Google candidates."
+qualityScore: 98.0
+canonicalUrl: "https://stackforge.dev/content/react/react-fiber-reconciliation"
+---
+
+# 1. Introduction
+
+## Why Fiber Architecture Exists
+Prior to React 16, React used the **Stack Reconciler**. It traversed the component tree recursively and synchronously. Once rendering started, it could not be interrupted. For large component trees, a render pass could take 100ms+, blocking the browser main thread, dropping 60fps animation frames, and causing visible input latency (jank).
+
+**React Fiber** is a complete rewrite of React's core reconciliation engine. It turns rendering into an interruptible, priority-based cooperative task scheduler.
+
+---
+
+# 2. Core Concepts
+
+## Fiber Node Mental Model
+A **Fiber** is a JavaScript object that represents a unit of work and a virtual stack frame. Unlike JavaScript's native call stack (which cannot be paused or inspected), Fiber nodes are stored on the heap as a singly linked list tree:
+
+```
+                  +-------------------+
+                  |   App (Fiber)     |
+                  +-------------------+
+                    | child
+                    v
+                  +-------------------+
+                  |   Header (Fiber)  |  --- sibling ---> +-------------------+
+                  +-------------------+                  |   Main (Fiber)    |
+                    | child                              +-------------------+
+                    v
+                  +-------------------+
+                  |   Logo (Fiber)    |
+                  +-------------------+
+```
+
+### Key Fiber Properties
+- `child`: Pointer to its first child node.
+- `sibling`: Pointer to its next sibling node.
+- `return`: Pointer to its parent node (return address when stack pops).
+- `alternate`: Pointer to its corresponding node in the double-buffered tree (`workInProgress <-> current`).
+- `lanes`: Bitmask representing the priority of updates pending on this fiber.
+
+## Two-Phase Execution Architecture
+
+```
+1. RENDER PHASE (Asynchronous, Interruptible, Pure)
+   - WorkLoop traverses Fiber tree (child -> sibling -> return)
+   - Calculates diffs and constructs workInProgress tree
+   - May be paused, aborted, or restarted by Priority Scheduler
+
+2. COMMIT PHASE (Synchronous, Uninterruptible)
+   - Takes side-effects list (flags) from Render phase
+   - Mutates actual DOM in one atomic operation
+   - Executes layout effects (useLayoutEffect) and passive effects (useEffect)
+```
+
+---
+
+# 3. Security Notes
+
+## XSS Defense via `$$typeof`
+React elements contain a special `$typeof` property set to `Symbol.for('react.element')`. Because JSON payloads sent from malicious APIs cannot transport JavaScript `Symbol` primitives, React automatically rejects raw JSON objects attempted to be rendered as JSX elements, preventing XSS injection attacks.
+
+---
+
+# 4. Interview Questions
+
+### Easy Questions
+1. **Q: What is the Virtual DOM?**
+   - *Answer*: A lightweight in-memory JavaScript representation of the real DOM used to compute minimal DOM mutations during reconciliation.
+2. **Q: What is React Fiber?**
+   - *Answer*: React's priority-based, interruptible reconciliation engine introduced in React 16.
+3. **Q: What is the difference between Render phase and Commit phase?**
+   - *Answer*: Render phase is asynchronous and interruptible (calculates diffs); Commit phase is synchronous and uninterruptible (mutates the real DOM).
+4. **Q: Why are `key` props important in lists?**
+   - *Answer*: Keys give elements persistent identity across renders, allowing Fiber reconciler to reuse, move, or delete DOM nodes efficiently ($O(n)$ complexity vs $O(n^3)$).
+5. **Q: What is Double Buffering in React?**
+   - *Answer*: Fiber maintains two trees: `current` (currently visible UI) and `workInProgress` (being computed in background), swapping pointers upon commit.
+
+### Medium Questions
+6. **Q: How does the Fiber WorkLoop pause and resume rendering?**
+   - *Answer*: The WorkLoop checks `shouldYield()` continuously (using `MessageChannel` / `requestIdleCallback`); if the frame budget (~5ms) is exceeded, it saves the current fiber pointer and yields back to the browser.
+7. **Q: What is the Lane Model in React Concurrent Mode?**
+   - *Answer*: A 31-bit bitmask system assigning priorities to different tasks (e.g. Discrete User Input = High Priority Lane; Network Fetch = Transition Lane).
+8. **Q: Why must Render Phase functions (components, `useMemo`) be pure?**
+   - *Answer*: Because Concurrent Mode can pause, discard, or re-run the Render phase multiple times before committing.
+9. **Q: What happens when you pass an inline arrow function as a `key` prop?**
+   - *Answer*: Key identity changes every render, forcing Fiber to destroy the existing subtree DOM nodes and re-mount from scratch.
+10. **Q: How does `useTransition` interact with Fiber lanes?**
+    - *Answer*: `useTransition` marks state updates with lower-priority Transition Lanes, allowing high-priority input events to interrupt rendering.
+
+### Advanced Questions
+11. **Q: Walk through Fiber linked-list traversal (`child`, `sibling`, `return`).**
+    - *Answer*: WorkLoop starts at root $\rightarrow$ goes down `child` links as deep as possible $\rightarrow$ when child is null, calls `completeWork` and moves to `sibling` $\rightarrow$ if no sibling, moves up `return` parent until root is reached.
+12. **Q: How does React prevent XSS attacks when rendering dynamic HTML?**
+    - *Answer*: JSX escapes strings by default; React tags elements with `$$typeof: Symbol.for('react.element')` to block raw JSON injection.
+13. **Q: Compare `useEffect` vs `useLayoutEffect` relative to the Commit Phase.**
+    - *Answer*: `useLayoutEffect` runs synchronously *before* the browser paints (blocking paint); `useEffect` runs asynchronously *after* the browser paints.
+14. **Q: What is Automatic Batching in React 18+?**
+    - *Answer*: React automatically batches all state updates inside promises, timeouts, and native event handlers into a single Render phase pass.
+15. **Q: How would you write a custom React renderer?**
+    - *Answer*: Implement the `react-reconciler` package interface, providing host config methods (`createInstance`, `appendInitialChild`, `commitUpdate`, etc.) to target canvas, terminal, or native UI.

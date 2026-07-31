@@ -1,0 +1,145 @@
+---
+title: "API Design Architecture: REST, GraphQL, gRPC, WebSockets & Rate Limiting"
+slug: "api-design-architecture"
+technology: "api"
+difficulty: "Advanced"
+estimatedReadingTime: 30
+summary: "Master API design paradigms (REST, GraphQL, gRPC, WebSockets, SSE), OpenAPI specs, and distributed rate-limiting algorithms."
+prerequisites: ["execution-context-event-loop", "type-system-fundamentals"]
+nextTopics: ["system-design-masterclass"]
+tags: ["api", "rest", "graphql", "grpc", "websockets", "rate-limiting", "system-design"]
+careerRelevance: "Essential for API Architects, Senior Fullstack Developers, and Backend Infrastructure Leads."
+qualityScore: 98.0
+canonicalUrl: "https://stackforge.dev/content/backend/api-design-architecture"
+---
+
+# 1. Introduction
+
+## Why API Architecture Matters
+APIs are the digital contracts connecting frontend applications, mobile clients, external partners, and internal microservices. Choosing the right API paradigm (REST, GraphQL, gRPC, WebSockets) and protecting backend servers with rate limiting algorithms guarantees operational reliability and developer ergonomics.
+
+---
+
+# 2. Core Concepts
+
+## API Paradigm Comparison Matrix
+
+| Paradigm | Transport Protocol | Serialization | Best Use Case | Performance Characteristics |
+| :--- | :--- | :--- | :--- | :--- |
+| **REST** | HTTP/1.1 / HTTP/2 | JSON / XML | Standard public web APIs | Human-readable, ubiquitous, but prone to over-fetching |
+| **GraphQL** | HTTP (POST) | JSON | Complex frontends with variable data needs | Solves over/under-fetching; query parsing overhead |
+| **gRPC** | HTTP/2 | Protocol Buffers (Protobuf) | Microservice-to-microservice RPC | Ultra-fast binary serialization, multiplexed, strongly typed |
+| **WebSockets** | TCP (WS/WSS) | Framing Text/Binary | Real-time bi-directional chats/feeds | Persistent TCP connection, low overhead per message |
+| **SSE (Server-Sent Events)** | HTTP/1.1 / HTTP/2 | Event Stream Text | Unidirectional server-to-client updates | Native browser auto-reconnect, lightweight |
+
+---
+
+# 3. Code Examples
+
+## Production: Distributed Token Bucket Rate Limiter with Redis
+
+```typescript
+import Redis from "ioredis";
+
+const redis = new Redis(process.env.REDIS_URL!);
+
+export interface RateLimitResult {
+  allowed: boolean;
+  tokensRemaining: number;
+  resetMs: number;
+}
+
+// Token Bucket Algorithm implementation using Atomic Redis Lua Script
+export async function checkRateLimitTokenBucket(
+  key: string,
+  capacity: number = 10,
+  refillRatePerSec: number = 2
+): Promise<RateLimitResult> {
+  const luaScript = `
+    local key = KEYS[1]
+    local capacity = tonumber(ARGV[1])
+    local refill_rate = tonumber(ARGV[2])
+    local now = tonumber(ARGV[3])
+    
+    local data = redis.call("HMGET", key, "tokens", "last_updated")
+    local tokens = tonumber(data[1])
+    local last_updated = tonumber(data[2])
+    
+    if not tokens then
+      tokens = capacity
+      last_updated = now
+    else
+      local elapsed = (now - last_updated) / 1000
+      tokens = math.min(capacity, tokens + elapsed * refill_rate)
+      last_updated = now
+    end
+    
+    local allowed = false
+    if tokens >= 1 then
+      tokens = tokens - 1
+      allowed = true
+    end
+    
+    redis.call("HMSET", key, "tokens", tokens, "last_updated", last_updated)
+    redis.call("EXPIRE", key, 60)
+    
+    return { allowed and 1 or 0, math.floor(tokens), 0 }
+  `;
+
+  const now = Date.now();
+  const res = (await redis.eval(
+    luaScript,
+    1,
+    `rate_limit:${key}`,
+    capacity,
+    refillRatePerSec,
+    now
+  )) as [number, number, number];
+
+  return {
+    allowed: res[0] === 1,
+    tokensRemaining: res[1],
+    resetMs: 1000 / refillRatePerSec,
+  };
+}
+```
+
+---
+
+# 4. Interview Questions
+
+### Easy Questions
+1. **Q: What is REST?**
+   - *Answer*: Representational State Transfer; an architectural style for HTTP APIs relying on standard HTTP verbs (`GET`, `POST`, `PUT`, `DELETE`) and stateless requests.
+2. **Q: What is GraphQL?**
+   - *Answer*: A query language for APIs allowing clients to request exact fields they need, avoiding over-fetching and under-fetching.
+3. **Q: What is gRPC?**
+   - *Answer*: A high-performance remote procedure call (RPC) framework using HTTP/2 and Protocol Buffers binary serialization.
+4. **Q: What is OpenAPI / Swagger?**
+   - *Answer*: A machine-readable specification standard for describing RESTful APIs in YAML or JSON.
+5. **Q: What is Idempotency in APIs?**
+   - *Answer*: An API property where making multiple identical requests has the exact same side-effect as making a single request (e.g. `GET`, `PUT`, `DELETE`).
+
+### Medium Questions
+6. **Q: What is the N+1 Query Problem in GraphQL and how do you solve it?**
+   - *Answer*: Resolving nested fields causes separate DB queries per child item; solved using `DataLoader` batching and caching.
+7. **Q: Compare WebSockets vs Server-Sent Events (SSE).**
+   - *Answer*: WebSockets provide bi-directional TCP communication; SSE provides unidirectional HTTP server-to-client streaming with native browser reconnect.
+8. **Q: Explain the Token Bucket Rate Limiting Algorithm.**
+   - *Answer*: A bucket holds a maximum capacity of tokens refilled at a constant rate; each request consumes 1 token. If the bucket is empty, requests are rejected (HTTP 429).
+9. **Q: What is HTTP/2 Multiplexing and how does gRPC benefit from it?**
+   - *Answer*: Allows sending multiple concurrent requests and responses over a single TCP connection simultaneously, eliminating head-of-line blocking.
+10. **Q: What are Idempotency Keys in Payment APIs (e.g. Stripe)?**
+    - *Answer*: Unique client-generated header keys (`Idempotency-Key`) stored in a database to ensure duplicate POST requests (e.g. retried charges) execute only once.
+
+### Advanced Questions
+11. **Q: Compare Rate-Limiting Algorithms: Token Bucket, Leaky Bucket, Sliding Window Log, Sliding Window Counter.**
+    - *Answer*: Token Bucket handles bursty traffic; Leaky Bucket smooths output to constant rate; Sliding Window Log has high memory cost; Sliding Window Counter provides memory-efficient rolling approximations.
+12. **Q: How do Protocol Buffers achieve smaller binary payloads than JSON?**
+    - *Answer*: Encodes data using binary field tags (varints) instead of text field strings, omitting field names and whitespace.
+13. **Q: How do you handle schema evolution and backward compatibility in GraphQL vs gRPC?**
+    - *Answer*: GraphQL marks deprecated fields with `@deprecated`; gRPC reserves tag numbers (`reserved 2, 15;`) to prevent tag reuse while adding new optional fields.
+14. **Q: What is HATEOAS in REST API Maturity Model (Level 3)?**
+    - *Answer*: Hypermedia As The Engine Of Application State; API responses contain dynamic hypermedia links informing the client of valid next actions.
+15. **Q: How do you scale WebSockets to millions of concurrent connections across cluster nodes?**
+    - *Answer*: Terminate WebSockets at an Event Gateway, maintain connection state, and use Redis Pub/Sub or Kafka backplane to route messages to target connection nodes.

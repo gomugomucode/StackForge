@@ -1,0 +1,67 @@
+---
+title: "TypeScript Production Cheatsheet & Diagnostic Reference"
+slug: "typescript-cheatsheet"
+technology: "typescript"
+difficulty: "Intermediate"
+estimatedReadingTime: 15
+summary: "Quick-reference cheatsheet covering TypeScript utility types, mapped types, conditional types, compiler flags, and error diagnostics."
+prerequisites: ["type-system-fundamentals"]
+nextTopics: ["generics-and-type-manipulation"]
+tags: ["typescript", "cheatsheet", "utility-types", "tsconfig", "diagnostics"]
+careerRelevance: "Essential desktop reference for day-to-day coding, code reviews, and TypeScript error resolution."
+qualityScore: 99.0
+canonicalUrl: "https://stackforge.dev/content/typescript/typescript-cheatsheet"
+---
+
+# TypeScript Production Cheatsheet
+
+## 1. Built-In Utility Types Reference
+
+| Utility Type | Definition | Description |
+| :--- | :--- | :--- |
+| **`Partial<T>`** | `{ [P in keyof T]?: T[P] }` | Makes all properties in `T` optional |
+| **`Required<T>`** | `{ [P in keyof T]-?: T[P] }` | Makes all properties in `T` required |
+| **`Readonly<T>`** | `{ readonly [P in keyof T]: T[P] }` | Makes all properties in `T` readonly |
+| **`Record<K, T>`** | `{ [P in K]: T }` | Constructs object type with keys `K` and values `T` |
+| **`Pick<T, K>`** | `{ [P in K]: T[P] }` | Extracts subset of properties `K` from `T` |
+| **`Omit<T, K>`** | `Pick<T, Exclude<keyof T, K>>` | Removes properties `K` from `T` |
+| **`Exclude<T, U>`** | `T extends U ? never : T` | Excludes types in `U` from union `T` |
+| **`Extract<T, U>`** | `T extends U ? T : never` | Extracts types in `U` from union `T` |
+| **`NonNullable<T>`** | `T extends null \| undefined ? never : T` | Removes `null` and `undefined` from `T` |
+| **`ReturnType<T>`** | `T extends (...args: any) => infer R ? R : any` | Obtains return type of function `T` |
+| **`Parameters<T>`** | `T extends (...args: infer P) => any ? P : any` | Obtains tuple of parameter types of function `T` |
+| **`Awaited<T>`** | Recursively unwraps promises | Unwraps Promise return values |
+
+---
+
+## 2. Advanced Type Patterns Quick Reference
+
+```typescript
+// 1. User-Defined Type Guard
+function isString(val: unknown): val is string {
+  return typeof val === "string";
+}
+
+// 2. Mapped Type with Key Remapping
+type GetterKeys<T> = {
+  [K in keyof T as `get${Capitalize<string & K>}`]: () => T[K];
+};
+
+// 3. Conditional Type with infer
+type ArrayItem<T> = T extends (infer Item)[] ? Item : T;
+
+// 4. Template Literal Type
+type Route = `/user/${string}`;
+```
+
+---
+
+## 3. Top Compiler Diagnostic Errors Lookup
+
+| TS Error Code | Meaning | Resolution |
+| :--- | :--- | :--- |
+| **TS2322** | Type 'X' is not assignable to type 'Y' | Verify object shapes or narrow type before assignment. |
+| **TS2345** | Argument of type 'X' is not assignable to parameter of type 'Y' | Check function argument types and strict null checks. |
+| **TS2339** | Property 'X' does not exist on type 'Y' | Narrow union type or add missing field to interface. |
+| **TS2589** | Type instantiation is excessively deep | Check for infinite recursive conditional types without base cases. |
+| **TS7053** | Element implicitly has an 'any' type because index expression is not of type 'keyof X' | Type the index variable or use `keyof typeof X`. |

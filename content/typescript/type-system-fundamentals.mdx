@@ -1,0 +1,186 @@
+---
+title: "TypeScript Type System Fundamentals & Structural Subtyping"
+slug: "type-system-fundamentals"
+technology: "typescript"
+difficulty: "Intermediate"
+estimatedReadingTime: 25
+summary: "Master TypeScript's structural type system, set-theoretic mental models, type inference, narrowing, and type predicates."
+prerequisites: ["execution-context-event-loop", "closures-and-scope"]
+nextTopics: ["generics-and-type-manipulation", "tsconfig-and-compiler-architecture"]
+tags: ["typescript", "type-system", "structural-typing", "type-inference", "narrowing"]
+careerRelevance: "Mandatory foundation for mid to senior frontend and fullstack engineers building production applications."
+qualityScore: 98.0
+canonicalUrl: "https://stackforge.dev/content/typescript/type-system-fundamentals"
+---
+
+# 1. Introduction
+
+## Why TypeScript Exists
+JavaScript is a dynamically and weakly typed language. Type errors that could be caught statically during development—such as calling `undefined.map()`, accessing misspelled object keys, or passing string IDs where numbers are expected—frequently leak into production runtime environments, causing application crashes for end users.
+
+TypeScript extends JavaScript by adding a **compile-time static type system**.
+
+## Problem Solved: Nominal vs Structural Typing
+Most classical languages (Java, C++) use **Nominal Typing**, where compatibility is determined solely by explicit class names and inheritance declarations.
+
+TypeScript uses **Structural Typing** (Duck Typing mathematically formalized): Type compatibility is determined exclusively by the *shape and structure* of an object, not its explicit instantiation class or declaration name.
+
+```typescript
+interface Point2D {
+  x: number;
+  y: number;
+}
+
+class Vector2D {
+  constructor(public x: number, public y: number) {}
+}
+
+function logPoint(p: Point2D) {
+  console.log(`Point: ${p.x}, ${p.y}`);
+}
+
+// Structurally identical! Vector2D passes as Point2D without explicit 'implements'
+logPoint(new Vector2D(10, 20)); // ✅ Valid TypeScript!
+```
+
+---
+
+# 2. Core Concepts
+
+## Mental Model: Types as Sets of Values
+To understand advanced TypeScript, stop thinking of types as rigid labels. Think of a type as a **Set of permissible JavaScript runtime values**:
+
+- `never`: The empty set $\emptyset$ (no values possible).
+- `literal "hello"`: A unit set containing exactly 1 string value `{"hello"}`.
+- `boolean`: A 2-element set `{true, false}`.
+- `number`: The set of all IEEE-754 double precision floats.
+- `unknown`: The universal set containing all possible values.
+- `Union (A | B)`: Set Union ($A \cup B$).
+- `Intersection (A & B)`: Set Intersection ($A \cap B$).
+
+```
++-----------------------------------------------------------+
+|                      UNKNOWN (Universal Set)              |
+|  +---------------------+         +---------------------+  |
+|  |       STRING        |         |       NUMBER        |  |
+|  |  +---------------+  |         |  +---------------+  |  |
+|  |  | "hello" (Lit) |  |         |  |   42 (Lit)    |  |  |
+|  |  +---------------+  |         |  +---------------+  |  |
+|  +---------------------+         +---------------------+  |
+|                                                           |
+|                     +---------------+                     |
+|                     | NEVER (Empty) |                     |
+|                     +---------------+                     |
++-----------------------------------------------------------+
+```
+
+## Control Flow Analysis & Type Narrowing
+TypeScript continuously tracks variable assignments and conditional guards down control flow branches:
+
+```typescript
+function processInput(input: string | number | null) {
+  if (input === null) return; // Narrowed out null -> input is string | number
+  
+  if (typeof input === "string") {
+    // Narrowed to string -> string methods accessible
+    console.log(input.toUpperCase());
+  } else {
+    // Narrowed to number -> number methods accessible
+    console.log(input.toFixed(2));
+  }
+}
+```
+
+---
+
+# 3. Code Examples
+
+## Anti-Pattern vs Production Pattern
+
+### ❌ Bad Example: Dangerous Type Assertions & `any` Abuse
+
+```javascript
+// Unsafe code: Swallowing type safety with 'any' and type assertion casting
+function parseUserData(rawResponse: any) {
+  const user = rawResponse as any;
+  // Runtime crash if user.profile or user.profile.email is undefined!
+  return user.profile.email.toLowerCase();
+}
+```
+
+### ✅ Good Example: Discriminated Unions & Custom Type Predicates
+
+```typescript
+// Production pattern: Discriminated Union & Custom User-Defined Type Guard
+export type NetworkState<T> =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "success"; data: T; timestamp: number }
+  | { status: "error"; error: Error };
+
+// User-Defined Type Guard (Type Predicate)
+export function isSuccessState<T>(state: NetworkState<T>): state is { status: "success"; data: T; timestamp: number } {
+  return state.status === "success";
+}
+
+export function renderUI(state: NetworkState<{ id: string; name: string }>) {
+  switch (state.status) {
+    case "idle":
+      return "Click to load";
+    case "loading":
+      return "Loading spinner...";
+    case "error":
+      return `Error: ${state.error.message}`;
+    case "success":
+      // Exhaustive narrowing! TypeScript guarantees data exists here
+      return `Welcome ${state.data.name}`;
+  }
+}
+```
+
+---
+
+# 4. Performance & Security Notes
+
+- **Zero Runtime Bundle Footprint**: All TypeScript annotations, interfaces, and type aliases are completely stripped out by the compiler (`tsc`, Babel, SWC, esbuild). Output `.js` contains zero overhead.
+- **Unchecked Index Access Security**: Accessing out-of-bound array elements `arr[10]` in JavaScript returns `undefined`, but TypeScript defaults array access to type `T` rather than `T | undefined`. Enable `"noUncheckedIndexedAccess": true` in `tsconfig.json` to enforce null checks.
+
+---
+
+# 5. Interview Questions
+
+### Easy Questions
+1. **Q: What is the difference between `unknown` and `any`?**
+   - *Answer*: `any` completely disables type checking; `unknown` is a type-safe counterpart requiring type narrowing before performing operations.
+2. **Q: Compare `interface` vs `type` alias.**
+   - *Answer*: `interface` supports declaration merging and is tailored for object shapes; `type` alias can represent primitives, unions, tuples, and mapped types.
+3. **Q: What is structural typing?**
+   - *Answer*: A type system where type compatibility is based on object shape and structure rather than explicit class names.
+4. **Q: What is type inference?**
+   - *Answer*: The TypeScript compiler's ability to automatically deduce variable types based on initial values and return statements.
+5. **Q: What is a literal type?**
+   - *Answer*: A type that represents an exact value (e.g. `'GET' | 'POST'` or `404`).
+
+### Medium Questions
+6. **Q: How do custom Type Predicates (`is`) work?**
+   - *Answer*: Functions returning `arg is TargetType` that tell the compiler's control flow analyzer to narrow `arg` to `TargetType` in true conditional branches.
+7. **Q: What is a Discriminated Union?**
+   - *Answer*: A union of object types containing a common literal property (the discriminant tag) allowing compiler switch/if narrowing.
+8. **Q: What is exhaustive type checking using `never`?**
+   - *Answer*: Assigning the unhandled case in a `switch` statement to a variable of type `never`, triggering a compile error if a new union member is added without updating the switch.
+9. **Q: Explain Excess Property Checking.**
+   - *Answer*: When passing fresh object literals directly to a typed location, TypeScript throws an error if unlisted properties are present to catch typos.
+10. **Q: What is covariance vs contravariance in function arguments?**
+    - *Answer*: Return types are covariant (can return subtypes); method parameters are contravariant under `strictFunctionTypes`.
+
+### Advanced Questions
+11. **Q: Explain how Soundness differs in TypeScript compared to Rust or Haskell.**
+    - *Answer*: TypeScript's type system is intentionally unsound in specific areas (e.g. array index access, type assertions, `any`, bivariant method parameters) to pragmatically model dynamic JavaScript patterns.
+12. **Q: How does the TypeScript Compiler handle declaration merging for interfaces?**
+    - *Answer*: Multiple interface declarations with the same name in the same namespace automatically merge their member fields, enabling ambient global library extensions.
+13. **Q: How do you implement a strictly typed Event Emitter using TypeScript?**
+    - *Answer*: Define an event map interface mapping event names to listener payload tuples, then genericize `on` and `emit` methods with `keyof EventMap`.
+14. **Q: What is the impact of `"noImplicitAny"` and `"strictNullChecks"` in `tsconfig.json`?**
+    - *Answer*: `"noImplicitAny"` requires explicit typing when types cannot be inferred; `"strictNullChecks"` ensures `null` and `undefined` are distinct set values rather than assignable to every type.
+15. **Q: Why does `typeof []` evaluate to `'object'` in TypeScript narrowing?**
+    - *Answer*: JavaScript `typeof` operator returns `'object'` for arrays; to narrow arrays specifically, use `Array.isArray(val)`.

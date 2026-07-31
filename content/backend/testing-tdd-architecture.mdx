@@ -1,0 +1,119 @@
+---
+title: "Testing Architecture, TDD & Automated Pipeline Quality"
+slug: "testing-tdd-architecture"
+technology: "testing"
+difficulty: "Intermediate"
+estimatedReadingTime: 20
+summary: "Master testing pyramid architecture, Test-Driven Development (TDD), Vitest unit testing, Playwright E2E automation, and Mock Service Worker (MSW)."
+prerequisites: ["type-system-fundamentals"]
+nextTopics: ["devops-observability-basics"]
+tags: ["testing", "tdd", "vitest", "playwright", "msw", "qa", "ci"]
+careerRelevance: "Essential for Senior Software Engineers, QA Architects, and Technical Leads."
+qualityScore: 98.0
+canonicalUrl: "https://stackforge.dev/content/backend/testing-tdd-architecture"
+---
+
+# 1. Introduction
+
+## Why Automated Testing Architecture Matters
+Shipping software without robust automated tests forces teams into slow, error-prone manual QA testing. A comprehensive testing architecture—spanning **Unit Tests**, **Integration Tests**, and **End-to-End (E2E) Automation**—gives developers the confidence to refactor code continuously and ship code to production multiple times a day.
+
+---
+
+# 2. Core Concepts
+
+## The Testing Pyramid
+
+```
+          / \
+         /   \       E2E Tests (Playwright)
+        / E2E \      - Slowest, highest confidence, covers user flows
+       /-------\
+      / Int-    \    Integration Tests (Vitest + DB)
+     / egration  \   - Validates module interactions & API routes
+    /-------------\
+   /   Unit Tests  \ Unit Tests (Vitest)
+  /-----------------\ - Fastest, isolated function logic
+```
+
+---
+
+# 3. Code Examples
+
+## Production: Vitest Unit Test with MSW Mock API
+
+```typescript
+import { describe, it, expect, beforeAll, afterAll, afterEach } from "vitest";
+import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
+import { fetchUserProfile } from "./userService";
+
+// Setup MSW Mock Server to intercept network calls
+const server = setupServer(
+  http.get("https://api.example.com/users/1", () => {
+    return HttpResponse.json({ id: "1", name: "Alice", email: "alice@example.com" });
+  })
+);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+describe("userService", () => {
+  it("fetches user profile successfully", async () => {
+    const user = await fetchUserProfile("1");
+    expect(user.name).toBe("Alice");
+    expect(user.email).toBe("alice@example.com");
+  });
+
+  it("handles HTTP 404 errors gracefully", async () => {
+    server.use(
+      http.get("https://api.example.com/users/99", () => {
+        return new HttpResponse(null, { status: 404 });
+      })
+    );
+
+    await expect(fetchUserProfile("99")).rejects.toThrow("User not found");
+  });
+});
+```
+
+---
+
+# 4. Interview Questions
+
+### Easy Questions
+1. **Q: What is the Testing Pyramid?**
+   - *Answer*: An architectural model suggesting a large base of fast unit tests, a middle layer of integration tests, and a top layer of E2E tests.
+2. **Q: What is TDD (Test-Driven Development)?**
+   - *Answer*: A development cycle: Write failing test (Red) $\rightarrow$ Write minimum code to pass (Green) $\rightarrow$ Clean up code (Refactor).
+3. **Q: Compare Unit Tests vs Integration Tests.**
+   - *Answer*: Unit tests verify isolated functions in memory; Integration tests verify combined interactions between modules, databases, and APIs.
+4. **Q: What is MSW (Mock Service Worker)?**
+   - *Answer*: An API mocking library that intercepts network requests at the network level using Service Workers or Node.js hooks.
+5. **Q: What is Playwright?**
+   - *Answer*: A modern cross-browser automation framework for testing Chromium, Firefox, and WebKit applications.
+
+### Medium Questions
+6. **Q: Compare Mocks, Stubs, and Spies.**
+   - *Answer*: Stubs return canned dummy data; Spies record call counts and parameters; Mocks verify specific behavior assertions.
+7. **Q: What is Code Coverage and why shouldn't you target 100% blindly?**
+   - *Answer*: Measures percentage of code executed during tests; 100% target often leads to testing implementation details rather than business outcomes.
+8. **Q: How do you handle asynchronous testing in Vitest?**
+   - *Answer*: Return a Promise or use `async/await` inside test callbacks, combined with `rejects` matchers for failure cases.
+9. **Q: What is Snapshot Testing?**
+   - *Answer*: Compares rendered component output against a saved text snapshot; best for catching unintentional UI regressions.
+10. **Q: How do you run tests in parallel without database state collisions?**
+    - *Answer*: Assign unique schema names per test worker thread or wrap each test inside an interactive transaction that rolls back upon completion.
+
+### Advanced Questions
+11. **Q: How do you design tests to avoid testing implementation details?**
+    - *Answer*: Test public API contracts and user-visible behaviors (e.g. testing DOM elements via accessible roles using React Testing Library rather than internal state variables).
+12. **Q: What is Mutation Testing?**
+    - *Answer*: A technique where a tool (Stryker) automatically mutates source code (e.g. `>` to `<`) to verify if existing test suites catch the injected bugs.
+13. **Q: How do you mock `Date.now()` deterministically in tests?**
+    - *Answer*: Use `vi.useFakeTimers()` and `vi.setSystemTime(new Date('2026-01-01'))` to lock system clock execution.
+14. **Q: How do you set up Visual Regression Testing in Playwright?**
+    - *Answer*: Capture page screenshots using `expect(page).toHaveScreenshot()` and compare against baseline images using threshold pixel diff algorithms.
+15. **Q: How do you integrate test suites into GitHub Actions with parallel matrix builds?**
+    - *Answer*: Use GitHub Actions matrix strategy to split test suites across multiple parallel runner nodes, reducing CI pipeline runtimes.

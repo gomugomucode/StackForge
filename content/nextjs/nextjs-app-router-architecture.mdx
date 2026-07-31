@@ -1,0 +1,107 @@
+---
+title: "Next.js App Router Architecture & Parallel Routing"
+slug: "nextjs-app-router-architecture"
+technology: "nextjs"
+difficulty: "Advanced"
+estimatedReadingTime: 25
+summary: "Master Next.js App Router architecture, file conventions, layouts, streaming SSR, parallel routes (@slot), and intercepting routes."
+prerequisites: ["react-server-components-architecture", "react-hooks-and-state"]
+nextTopics: ["nextjs-caching-and-performance", "nextjs-middleware-and-security"]
+tags: ["nextjs", "app-router", "routing", "parallel-routes", "server-components"]
+careerRelevance: "Essential for Fullstack Engineers, Next.js Specialists, and modern Web Architects."
+qualityScore: 98.0
+canonicalUrl: "https://stackforge.dev/content/nextjs/nextjs-app-router-architecture"
+---
+
+# 1. Introduction
+
+## Why App Router Replaced Pages Router
+The legacy Pages Router (`pages/api`, `getServerSideProps`, `getStaticProps`) forced entire page subtrees to be either completely static or completely server-side rendered. Data fetching was centralized at the page root, creating deep prop-drilling waterfalls.
+
+The **Next.js App Router** built on React Server Components (RSC) allows **co-located data fetching inside any component**, streaming HTML via Suspense boundaries, and advanced routing patterns like Parallel and Intercepting Routes.
+
+---
+
+# 2. Core Concepts
+
+## File Conventions Hierarchy
+
+```
+app/
+├── layout.tsx       # Shared UI wrap across routes (does NOT re-render on navigation)
+├── template.tsx     # Like layout, but instantiates NEW instance on route change
+├── page.tsx         # Unique UI route leaf
+├── loading.tsx      # Automatic Suspense fallback boundary
+├── error.tsx        # Automatic React Error Boundary (must be 'use client')
+├── not-found.tsx    # 404 UI boundary
+└── route.ts         # Server-side API endpoint handler
+```
+
+## Parallel & Intercepting Routes
+- **Parallel Routes (`@slot`)**: Render multiple independent pages simultaneously in the same layout (e.g., Dashboard with Analytics and Feed slots).
+- **Intercepting Routes (`(..)photo`)**: Intercept a route from within the current context to load a modal (e.g., Feed item opening in modal URL `/photo/123` while preserving feed background).
+
+---
+
+# 3. Code Examples
+
+## Production: Parallel Modal Routing Layout
+
+```tsx
+// app/feed/layout.tsx
+export default function FeedLayout({
+  children,
+  modal,
+}: {
+  children: React.ReactNode;
+  modal: React.ReactNode;
+}) {
+  return (
+    <div className="relative">
+      <main>{children}</main>
+      {/* Renders photo modal if intercepted, otherwise empty slot */}
+      <div>{modal}</div>
+    </div>
+  );
+}
+```
+
+---
+
+# 4. Interview Questions
+
+### Easy Questions
+1. **Q: What is the main difference between App Router and Pages Router?**
+   - *Answer*: App Router is built on React Server Components, enabling co-located server data fetching and streaming without full client JS hydration.
+2. **Q: What is the difference between `layout.tsx` and `template.tsx`?**
+   - *Answer*: `layout.tsx` persists state and does not re-mount across route changes; `template.tsx` creates a fresh instance and re-mounts on every navigation.
+3. **Q: Why must `error.tsx` be a Client Component (`'use client'`)?**
+   - *Answer*: Error Boundaries require client-side React lifecycle methods (`componentDidCatch` / state) to catch runtime render errors.
+4. **Q: What does `loading.tsx` automatically do?**
+   - *Answer*: Wraps the child `page.tsx` inside a React `<Suspense fallback={<Loading />}>` boundary.
+5. **Q: How do Route Groups `(folder)` work?**
+   - *Answer*: Folders wrapped in parentheses group routes logically without altering the URL path structure.
+
+### Medium Questions
+6. **Q: Explain Parallel Routes (`@slot`).**
+   - *Answer*: Allows rendering one or more slots simultaneously in the same layout, maintaining independent state and error handling per slot.
+7. **Q: How do Intercepting Routes (`(.)photo`) work?**
+   - *Answer*: Intercepts navigation to display a lightweight route (e.g. modal) while preserving the current page context on soft navigation, while rendering full page on hard refresh.
+8. **Q: What is the difference between dynamic `route.ts` and Server Actions?**
+   - *Answer*: `route.ts` handlers build REST/Webhooks endpoints for external clients; Server Actions are inline RPC functions called from React components.
+9. **Q: How does `generateMetadata()` function work in App Router?**
+   - *Answer*: An async server function inside `page.tsx` or `layout.tsx` that fetches data dynamically to compute OpenGraph, title, and JSON-LD metadata before streaming.
+10. **Q: How do you handle 404 errors dynamically in App Router?**
+    - *Answer*: Call `notFound()` from `next/navigation` inside a Server Component to immediately trigger the nearest `not-found.tsx` boundary.
+
+### Advanced Questions
+11. **Q: How does Next.js handle link prefetching (`<Link href="...">`)?**
+    - *Answer*: Next.js automatically prefetches RSC Flight payloads for visible `<Link>` components in the viewport using Intersection Observer, making soft navigations instant.
+12. **Q: Walk through how `layout.tsx` component state is preserved during soft navigation.**
+    - *Answer*: App Router uses a client-side Router Cache; during soft navigation, only the changing `page.tsx` leaf subtree is unmounted and replaced, leaving parent layout Fiber nodes untouched.
+13. **Q: How do you implement dynamic OpenGraph image generation in App Router?**
+    - *Answer*: Use `ImageResponse` from `next/og` inside an `opengraph-image.tsx` file to render JSX into PNG images using Satori at the Edge.
+14. **Q: Explain how `default.tsx` is used in Parallel Routes.**
+    - *Answer*: `default.tsx` serves as the fallback UI rendered when Next.js cannot recover a parallel slot's active state during hard page reloads.
+15. **Q: How does Next.js prevent client bundle environment variable leaks?**
+    - *Answer*: Only environment variables prefixed with `NEXT_PUBLIC_` are injected into client-side JS bundles during build time; all others remain server-only.

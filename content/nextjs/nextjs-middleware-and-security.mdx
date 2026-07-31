@@ -1,0 +1,130 @@
+---
+title: "Next.js Edge Middleware & Security Architecture"
+slug: "nextjs-middleware-and-security"
+technology: "nextjs"
+difficulty: "Advanced"
+estimatedReadingTime: 25
+summary: "Master Next.js Edge Middleware, session guarding, request rewrites/redirects, Content Security Policy (CSP) nonces, and security hardening."
+prerequisites: ["nextjs-app-router-architecture"]
+nextTopics: ["nextjs-production-deployment"]
+tags: ["nextjs", "middleware", "edge-runtime", "security", "csp", "auth"]
+careerRelevance: "Essential for Security Engineers, Lead Fullstack Developers, and Enterprise Architects."
+qualityScore: 98.0
+canonicalUrl: "https://stackforge.dev/content/nextjs/nextjs-middleware-and-security"
+---
+
+# 1. Introduction
+
+## Why Edge Middleware & Security Matter
+Next.js **Edge Middleware** operates as a global request interceptor running *before* requests hit the cache or render pipeline. Running at the Edge network layer (Vercel Edge, Cloudflare Workers), Middleware handles session authentication, A/B testing splits, geo-routing, and security header injection with sub-5ms latency.
+
+---
+
+# 2. Core Concepts
+
+## Edge Runtime Constraints
+Middleware runs inside the lightweight **V8 Edge Runtime** (not full Node.js). Key constraints:
+- ❌ No native Node.js C++ modules (e.g. `fs`, `child_process`).
+- ❌ No arbitrary dynamic `eval()`.
+- ✅ Standard Web APIs supported (`fetch`, `Request`, `Response`, `Web Crypto`, `URLPattern`).
+
+---
+
+# 3. Code Examples
+
+## Production: Authentication & CSP Nonce Injection Middleware
+
+```typescript
+// middleware.ts
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+export function middleware(request: NextRequest) {
+  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+  const { pathname } = request.nextUrl;
+
+  // 1. Session Token Validation
+  const sessionToken = request.cookies.get("session_token")?.value;
+  const isProtectedRoute = pathname.startsWith("/dashboard") || pathname.startsWith("/settings");
+
+  if (isProtectedRoute && !sessionToken) {
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("redirect", pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  // 2. Content Security Policy (CSP) with Nonce
+  const cspHeader = `
+    default-src 'self';
+    script-src 'self' 'nonce-${nonce}' 'strict-dynamic';
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' blob: data:;
+    font-src 'self';
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    frame-ancestors 'none';
+  `.replace(/\s{2,}/g, " ").trim();
+
+  // Clone headers and inject CSP + Nonce
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-nonce", nonce);
+  requestHeaders.set("Content-Security-Policy", cspHeader);
+
+  const response = NextResponse.next({
+    request: { headers: requestHeaders },
+  });
+
+  response.headers.set("Content-Security-Policy", cspHeader);
+  response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  return response;
+}
+
+export const config = {
+  matcher: [
+    /* Match all request paths except static files, _next, and favicon */
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
+};
+```
+
+---
+
+# 4. Interview Questions
+
+### Easy Questions
+1. **Q: What is Next.js Middleware?**
+   - *Answer*: Code that runs before a request is completed, allowing you to modify requests/responses, redirect, or rewrite headers globally.
+2. **Q: Where does `middleware.ts` file reside?**
+   - *Answer*: In the root directory of the project (or inside `src/`).
+3. **Q: What is the Edge Runtime?**
+   - *Answer*: A high-performance V8-based JavaScript runtime environment optimized for low latency without full Node.js API overhead.
+4. **Q: What is the difference between `NextResponse.redirect` and `NextResponse.rewrite`?**
+   - *Answer*: `redirect` returns a 307/308 HTTP response altering browser URL; `rewrite` proxies the request internally without changing browser URL.
+5. **Q: How do you filter which routes trigger Middleware?**
+   - *Answer*: Define an exported `config` object with a `matcher` regex array.
+
+### Medium Questions
+6. **Q: Why can't you use `fs` or Node.js native modules in Middleware?**
+   - *Answer*: Middleware runs on the V8 Edge Runtime which excludes Node.js C++ bindings for minimal cold-start times.
+7. **Q: How do you pass custom data from Middleware to Server Components?**
+   - *Answer*: Set custom HTTP request headers in Middleware (`requestHeaders.set('x-custom', val)`) and read them via `headers()` in Server Components.
+8. **Q: What is a CSP Nonce and why is it used?**
+   - *Answer*: A cryptographically random single-use token generated per request to allow specific inline `<script>` execution while blocking XSS script injections.
+9. **Q: How does cookie manipulation work inside Middleware?**
+   - *Answer*: Use `request.cookies.get/set` to inspect or mutate HTTP cookies attached to requests and responses.
+10. **Q: What is the risk of performing heavy DB calls inside Middleware?**
+    - *Answer*: Middleware intercepts *every* matching request; executing slow external DB calls stalls TTFB globally across the application.
+
+### Advanced Questions
+11. **Q: Walk through how to implement A/B testing splits in Middleware.**
+    - *Answer*: Check for existing variant cookie $\rightarrow$ if absent, generate random bucket (A vs B) $\rightarrow$ set cookie on response $\rightarrow$ use `NextResponse.rewrite` to route to variant directory (`/app/_variants/b`).
+12. **Q: How do you handle CORS preflight requests inside Middleware?**
+    - *Answer*: Intercept `OPTIONS` method requests, validate `Origin` header against an allowlist, and return `new NextResponse(null, { status: 204, headers: corsHeaders })`.
+13. **Q: What is the difference between `middleware.ts` and API Route Handlers for authorization?**
+    - *Answer*: Middleware performs quick boundary check (e.g. JWT signature verification); API Route Handlers perform fine-grained resource permission logic.
+14. **Q: How do you prevent secret leakages in Client Components?**
+    - *Answer*: Keep sensitive keys un-prefixed (no `NEXT_PUBLIC_`), use `server-only` package in modules containing API secrets, and restrict database calls to Server Components/Actions.
+15. **Q: How does `X-Frame-Options: DENY` protect Next.js applications?**
+    - *Answer*: Prevents malicious third-party websites from embedding the Next.js site inside an `<iframe>`, eliminating Clickjacking attacks.

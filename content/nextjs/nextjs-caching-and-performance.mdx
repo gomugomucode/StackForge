@@ -1,0 +1,130 @@
+---
+title: "Next.js 4-Tier Caching Infrastructure & Performance"
+slug: "nextjs-caching-and-performance"
+technology: "nextjs"
+difficulty: "Expert"
+estimatedReadingTime: 30
+summary: "Deep dive into Next.js 4-tier caching architecture (Request Memoization, Data Cache, Full Route Cache, Router Cache), revalidation strategies, and Partial Prerendering."
+prerequisites: ["nextjs-app-router-architecture", "react-server-components-architecture"]
+nextTopics: ["nextjs-middleware-and-security", "nextjs-production-deployment"]
+tags: ["nextjs", "caching", "data-cache", "revalidateTag", "revalidatePath", "ppr"]
+careerRelevance: "Essential for Principal Engineers, Tech Leads, and Vercel/Next.js Infrastructure Architects."
+qualityScore: 99.0
+canonicalUrl: "https://stackforge.dev/content/nextjs/nextjs-caching-and-performance"
+---
+
+# 1. Introduction
+
+## Why Next.js Caching Architecture Matters
+Caching in Next.js is one of the most powerful—and most misunderstood—systems in modern web architecture. Next.js implements a **4-tier caching system** spanning the request lifecycle, server memory, persistent key-value storage, and browser memory. 
+
+Understanding how these tiers interact enables you to achieve sub-50ms TTFB (Time to First Byte) while avoiding stale data bugs in production applications.
+
+---
+
+# 2. Core Concepts
+
+## The 4-Tier Caching Architecture Matrix
+
+| Cache Tier | Location | Scope | Lifecycle / Invalidation | Purpose |
+| :--- | :--- | :--- | :--- | :--- |
+| **1. Request Memoization** | Server Memory | Single Request / Render | Erased after request finishes | Deduplicates identical `fetch` calls in single render |
+| **2. Data Cache** | Server Persistent KV | Across Requests & Users | Persistent until `revalidateTag` or TTL | Caches HTTP fetch responses across user sessions |
+| **3. Full Route Cache** | Server Disk / Edge | Across Requests | Invalidated on Data Cache revalidation | Caches static HTML & RSC Flight payloads |
+| **4. Router Cache** | Browser Memory | Single User Session | Cleared on page refresh / TTL (30s static, 0s dynamic) | Fast client-side soft navigation back/forward |
+
+```
+[ Incoming Request ]
+         |
+         v
++-----------------------------+
+| 1. Request Memoization      | (Same fetch URL called 5x in tree? Executed ONCE)
++-----------------------------+
+         |
+         v
++-----------------------------+
+| 2. Data Cache (Persistent)  | (Cache HIT? Return cached JSON; MISS? Call origin API)
++-----------------------------+
+         |
+         v
++-----------------------------+
+| 3. Full Route Cache         | (Static HTML + Flight Payload stored on Edge)
++-----------------------------+
+         |
+         v
++-----------------------------+
+| 4. Client Router Cache      | (In-memory browser cache for fast soft navigation)
++-----------------------------+
+```
+
+---
+
+# 3. Code Examples
+
+## Production: Tag-Based Cache Revalidation Pattern
+
+```typescript
+// lib/products.ts
+import { revalidateTag } from "next/cache";
+
+export async function getProduct(id: string) {
+  const res = await fetch(`https://api.example.com/products/${id}`, {
+    // Attach cache tags for targeted revalidation
+    next: { tags: [`product:${id}`, "products"] },
+  });
+  return res.json();
+}
+
+// app/actions/productActions.ts
+"use server";
+
+export async function updateProductPrice(productId: string, newPrice: number) {
+  await db.product.update({
+    where: { id: productId },
+    data: { price: newPrice },
+  });
+
+  // Targeted cache invalidation across all 4 cache tiers!
+  revalidateTag(`product:${productId}`);
+}
+```
+
+---
+
+# 4. Interview Questions
+
+### Easy Questions
+1. **Q: What is `revalidateTag()` in Next.js?**
+   - *Answer*: On-demand server action function that purges all Data Cache entries associated with a specific cache tag.
+2. **Q: What is `revalidatePath()`?**
+   - *Answer*: Purges the cached Data Cache and Full Route Cache entries for a specific URL route path.
+3. **Q: How do you opt out of caching for a `fetch` request?**
+   - *Answer*: Pass `{ cache: 'no-store' }` in `fetch()` options or use `export const revalidate = 0`.
+4. **Q: What is Request Memoization?**
+   - *Answer*: React feature that automatically deduplicates identical `fetch` GET requests called across multiple components in the same render pass.
+5. **Q: What is the Router Cache?**
+   - *Answer*: Browser in-memory cache that stores RSC payloads of visited segments during a user session.
+
+### Medium Questions
+6. **Q: Explain Partial Prerendering (PPR).**
+   - *Answer*: A feature combining static shell rendering with dynamic streaming; static HTML is served instantly from Edge, while dynamic `<Suspense>` holes stream in parallel.
+7. **Q: How does `export const dynamic = 'force-dynamic'` affect caching?**
+   - *Answer*: Disables Full Route Caching and forces the route segment to execute dynamically on every request.
+8. **Q: Compare `revalidateTag` vs `revalidatePath`.**
+   - *Answer*: `revalidateTag` is targeted and granular across multiple routes sharing data; `revalidatePath` invalidates all cached data on a specific route hierarchy.
+9. **Q: How do you handle static generation with dynamic route params?**
+   - *Answer*: Implement `generateStaticParams()` to return an array of route param objects pre-rendered at build time.
+10. **Q: What is the difference between Time-based Revalidation and On-demand Revalidation?**
+    - *Answer*: Time-based uses `next: { revalidate: 60 }` (ISR interval); On-demand uses `revalidateTag`/`revalidatePath` triggered by mutations.
+
+### Advanced Questions
+11. **Q: Walk through what happens across all 4 cache tiers when `revalidateTag('products')` is invoked.**
+    - *Answer*: 1. Data Cache entry marked stale $\rightarrow$ 2. Full Route Cache for routes using tag invalidated $\rightarrow$ 3. Next request triggers background re-fetch $\rightarrow$ 4. Router Cache updated on next soft navigation.
+12. **Q: How do you configure custom persistent Data Cache handlers in self-hosted Node.js deployment?**
+    - *Answer*: Implement a custom `incrementalCacheHandlerPath` in `next.config.js` pointing to a Redis or S3-backed cache handler class.
+13. **Q: How does `unstable_cache` work for non-fetch database queries?**
+    - *Answer*: Wraps arbitrary async functions (e.g. Prisma/ORM queries) inside Next.js Data Cache with tag and TTL support.
+14. **Q: What causes hydration mismatch errors related to `Date.now()` or `Math.random()`?**
+    - *Answer*: Evaluating non-deterministic functions during render produces different values on server HTML vs client hydration; fix using `useEffect` or stable props.
+15. **Q: Explain the stale-while-revalidate behavior in Next.js Data Cache.**
+    - *Answer*: When a cached item expires, Next.js returns the stale item immediately to the user while asynchronously fetching fresh data in the background to populate the cache for subsequent requests.

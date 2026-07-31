@@ -1,0 +1,77 @@
+---
+title: "React Performance Tuning & Design System Architecture"
+slug: "react-performance-and-design-systems"
+technology: "react"
+difficulty: "Expert"
+estimatedReadingTime: 30
+summary: "Master React DevTools profiling, render tree optimization, virtualized list rendering, design system architecture, and Meta React interview questions."
+prerequisites: ["react-fiber-reconciliation", "react-hooks-and-state", "react-server-components-architecture"]
+nextTopics: []
+tags: ["react", "performance", "profiling", "design-system", "interview-questions"]
+careerRelevance: "Critical for Principal Frontend Engineers, Staff UI Architects, and candidates interviewing at Meta, Google, Vercel, and Stripe."
+qualityScore: 99.0
+canonicalUrl: "https://stackforge.dev/content/react/react-performance-and-design-systems"
+---
+
+# 1. Introduction
+
+## Why React Performance Architecture Matters
+In large applications (hundreds of components on screen, real-time WebSocket feeds, complex dashboards), un-optimized React rendering can cause UI freezes, sluggish input response times, and battery drain on mobile devices.
+
+Building high-performance React applications requires diagnosing render bottlenecks with the **React DevTools Profiler**, applying **virtualization**, and structuring clean **Design System Component Libraries**.
+
+---
+
+# 2. Performance Tuning & Profiling
+
+## Profiling with React DevTools
+The React DevTools Profiler records every render pass, capturing:
+- **Flamegraph Chart**: Visualizes component hierarchy and color-codes render durations (Yellow = Long render; Blue = Fast render).
+- **Ranked Chart**: Orders components by individual render duration to quickly isolate hot spots.
+- **Why Did This Render?**: Enabling "Record why each component rendered" in DevTools settings pinpoints prop mutations, state changes, or parent context updates.
+
+## Virtualized List Rendering
+Rendering 10,000 DOM elements causes massive DOM tree size and layout recalculations. Virtualization renders **only the visible window** of items:
+
+```tsx
+import { FixedSizeList as List } from "react-window";
+
+export function LargeVirtualList({ items }: { items: string[] }) {
+  return (
+    <List
+      height={500}
+      itemCount={items.length}
+      itemSize={35}
+      width="100%"
+    >
+      {({ index, style }) => (
+        <div style={style} className="p-2 border-b">
+          Item #{index}: {items[index]}
+        </div>
+      )}
+    </List>
+  );
+}
+```
+
+---
+
+# 3. Meta & Google Level React Interview Database
+
+### Question 1: How does React determine if a component should re-render?
+- **Answer**: A component re-renders whenever its internal state changes (`useState`/`useReducer`), its parent component re-renders (unless wrapped in `React.memo`), or a Context value it consumes changes.
+
+### Question 2: What are the performance trade-offs of wrapping every component in `React.memo`?
+- **Answer**: `React.memo` incurs a shallow prop comparison cost on every render pass. If props change frequently or contain newly instantiated object/array literals, the comparison overhead exceeds the cost of re-rendering, wasting CPU cycles.
+
+### Question 3: How do you prevent Context API from causing app-wide re-renders?
+- **Answer**: 
+  1. Separate rarely-changing state from frequently-changing state into distinct context providers.
+  2. Memoize context provider values using `useMemo`.
+  3. Decompose components or use custom state managers (Zustand/Jotai) that support fine-grained selector subscriptions.
+
+### Question 4: How would you build a micro-frontend architecture using React?
+- **Answer**: Use Module Federation (Webpack 5 / Vite), single-spa routing, or Module Script Boundaries, isolating global state stores and sharing common peer dependencies (`react`, `react-dom`) via window singletons to prevent multiple React instance conflicts.
+
+### Question 5: Explain how `useDeferredValue` improves input responsiveness during heavy filtering.
+- **Answer**: `useDeferredValue` keeps the search input state immediate and interactive, while marking the heavy list filtering computation as deferred. React renders the input immediately and computes the filtered list in background interruptible transition lanes.

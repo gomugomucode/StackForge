@@ -1,0 +1,128 @@
+---
+title: "Generics & Advanced Type Manipulation Architecture"
+slug: "generics-and-type-manipulation"
+technology: "typescript"
+difficulty: "Advanced"
+estimatedReadingTime: 30
+summary: "Master TypeScript generics, constraints, mapped types, conditional types, infer pattern matching, and template literal type metaprogramming."
+prerequisites: ["type-system-fundamentals"]
+nextTopics: ["tsconfig-and-compiler-architecture", "ts-performance-and-type-challenges"]
+tags: ["typescript", "generics", "conditional-types", "infer", "mapped-types", "type-manipulation"]
+careerRelevance: "Essential for library authors, senior platform engineers, and design system architects."
+qualityScore: 99.0
+canonicalUrl: "https://stackforge.dev/content/typescript/generics-and-type-manipulation"
+---
+
+# 1. Introduction
+
+## Why Generics & Type Manipulation Matter
+Static type systems are useless if they force developers to duplicate type definitions for every payload structure. **Generics** provide type-level variables, allowing functions, interfaces, and classes to operate flexibly across diverse data structures while preserving complete end-to-end type safety.
+
+Advanced **Type Manipulation** (Mapped Types, Conditional Types, `infer`, Template Literals) enables type-level metaprogramming—transforming types automatically based on API definitions, database schemas, or route paths.
+
+---
+
+# 2. Core Concepts
+
+## Generics & Constraints
+A Generic parameter `<T>` is a variable at the type level:
+
+```typescript
+// Generic constraint enforcing that T must have an 'id' string property
+export function indexById<T extends { id: string }>(items: T[]): Map<string, T> {
+  const map = new Map<string, T>();
+  for (const item of items) {
+    map.set(item.id, item);
+  }
+  return map;
+}
+```
+
+## Conditional Types & `infer` Keyword
+Conditional Types take the form: `T extends U ? X : Y`.
+The `infer` keyword allows pattern matching and extracting type variables dynamically during conditional type evaluation:
+
+```typescript
+// Extracts the unwrapped payload type from a Promise
+export type UnwrappedPromise<T> = T extends Promise<infer U> ? U : T;
+
+type Test1 = UnwrappedPromise<Promise<string>>; // string
+type Test2 = UnwrappedPromise<number>;          // number
+```
+
+## Template Literal Types
+Template Literal Types allow string manipulation directly inside the type system:
+
+```typescript
+type EventName = "click" | "hover";
+type EventListener = `on${Capitalize<EventName>}`; // "onClick" | "onHover"
+```
+
+---
+
+# 3. Code Examples
+
+## Production: Building Type-Safe Deep Readonly & API Router
+
+```typescript
+// Deep Readonly utility type using recursive mapped conditional types
+export type DeepReadonly<T> = T extends Function | boolean | number | string | null | undefined
+  ? T
+  : T extends Array<infer U>
+  ? ReadonlyArray<DeepReadonly<U>>
+  : T extends Map<infer K, infer V>
+  ? ReadOnlyMap<DeepReadonly<K>, DeepReadonly<V>>
+  : { readonly [P in keyof T]: DeepReadonly<T[P]> };
+
+// Production Type-Safe API Endpoint Path Parameter Extractor
+export type ExtractRouteParams<Path extends string> =
+  Path extends `${string}:${infer Param}/${infer Rest}`
+    ? { [K in Param | keyof ExtractRouteParams<`/${Rest}`>]: string }
+    : Path extends `${string}:${infer Param}`
+    ? { [K in Param]: string }
+    : {};
+
+// Usage:
+type Params = ExtractRouteParams<"/api/users/:userId/posts/:postId">;
+// Equivalent to: { userId: string; postId: string }
+```
+
+---
+
+# 4. Interview Questions
+
+### Easy Questions
+1. **Q: What is a generic parameter in TypeScript?**
+   - *Answer*: A type-level parameter `<T>` that acts as a placeholder for types passed upon invocation.
+2. **Q: What does `T extends K` mean in a generic constraint?**
+   - *Answer*: Constrains `T` such that it must be structurally compatible with type `K`.
+3. **Q: What is `keyof` operator?**
+   - *Answer*: Produces a string or number literal union of all public property names of an object type.
+4. **Q: What is `typeof` operator in TypeScript type space?**
+   - *Answer*: Obtains the static TypeScript type of a runtime JavaScript variable or value.
+5. **Q: What is a Mapped Type?**
+   - *Answer*: A type that creates new property keys by iterating over a keyset using `[K in keyof T]`.
+
+### Medium Questions
+6. **Q: How does the `infer` keyword work in conditional types?**
+   - *Answer*: Declares a type variable inside the true branch of a conditional type (`extends`) to extract and capture type parameters.
+7. **Q: What are Distributive Conditional Types?**
+   - *Answer*: When conditional types operate on a naked generic type parameter `T`, unions automatically distribute over the condition: `(A | B) extends U ? X : Y` becomes `(A extends U ? X : Y) | (B extends U ? X : Y)`.
+8. **Q: How do you prevent union distribution in conditional types?**
+   - *Answer*: Wrap both sides of the `extends` clause in tuple brackets: `[T] extends [U] ? X : Y`.
+9. **Q: How would you write a custom `Omit<T, K>` polyfill?**
+   - *Answer*: `type MyOmit<T, K extends keyof any> = Pick<T, Exclude<keyof T, K>>;` or using key remapping `[P in keyof T as P extends K ? never : P]: T[P]`.
+10. **Q: What is Key Remapping in Mapped Types?**
+    - *Answer*: Using `as` inside mapped type syntax (`[K in keyof T as NewKey]: T[K]`) to filter, transform, or rename object property keys.
+
+### Advanced Questions
+11. **Q: Write a recursive type that flattens nested array types.**
+    - *Answer*: `type Flatten<T> = T extends Array<infer Item> ? Flatten<Item> : T;`
+12. **Q: Explain how template literal types enable type-safe SQL or GraphQL queries in TypeScript.**
+    - *Answer*: Template literal types extract table names, column selectors, and variables at compile-time by pattern matching string literal inputs.
+13. **Q: What causes `TS2589: Type instantiation is excessively deep and possibly infinite`?**
+    - *Answer*: Recursively evaluating conditional types without a terminating base case or exceeding TypeScript's compiler instantiation stack limit (~50-100 recursion depth).
+14. **Q: How do you build a type-safe Event Emitter mapping event strings to payload interfaces?**
+    - *Answer*: Define `type EventMap = { "user:login": { id: string }; "cart:clear": void }`, then define `on<K extends keyof EventMap>(event: K, cb: (payload: EventMap[K]) => void): void`.
+15. **Q: Compare `Readonly<T>` vs `as const` assertions.**
+    - *Answer*: `Readonly<T>` shallowly marks object properties as readonly at the type level; `as const` locks primitive values to exact literals and recursively sets objects/arrays to readonly tuple states.

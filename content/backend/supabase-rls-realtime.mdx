@@ -1,0 +1,125 @@
+---
+title: "Supabase Architecture, Row Level Security (RLS) & Realtime Engine"
+slug: "supabase-rls-realtime"
+technology: "supabase"
+difficulty: "Advanced"
+estimatedReadingTime: 25
+summary: "Master Supabase backend architecture, Row Level Security (RLS) policies, Realtime WebSocket subscriptions, and Edge Functions."
+prerequisites: ["postgresql-indexing-performance"]
+nextTopics: ["docker-production-hardening"]
+tags: ["supabase", "postgresql", "rls", "realtime", "auth", "edge-functions"]
+careerRelevance: "Essential for Fullstack Engineers, Serverless Architects, and Supabase Practitioners."
+qualityScore: 98.0
+canonicalUrl: "https://stackforge.dev/content/backend/supabase-rls-realtime"
+---
+
+# 1. Introduction
+
+## Why Supabase Architecture Matters
+Supabase is an open-source Firebase alternative built natively on PostgreSQL. Instead of wrapping the database in traditional custom REST/GraphQL backend servers, Supabase exposes your database directly to client applications using **PostgREST**, secured by **Row Level Security (RLS)** policies enforced directly at the PostgreSQL engine level.
+
+---
+
+# 2. Core Concepts
+
+## Supabase Open-Source Stack Architecture
+
+```
++--------------------------------------------------------------+
+| Client Application (Web / Mobile)                            |
++--------------------------------------------------------------+
+                              |
+                              v
++--------------------------------------------------------------+
+| Supabase API Gateway (Kong / Envoy)                          |
++--------------------------------------------------------------+
+      |                       |                       |
+      v                       v                       v
++---------------+     +---------------+     +------------------+
+| GoTrue (Auth) |     | PostgREST     |     | Realtime Engine  |
+| (JWT Issuance)|     | (Auto REST)   |     | (Elixir / WS)    |
++---------------+     +---------------+     +------------------+
+      |                       |                       |
+      +-----------------------+-----------------------+
+                              |
+                              v
++--------------------------------------------------------------+
+| PostgreSQL Engine (Enforces RLS Policies & CDC WAL)           |
++--------------------------------------------------------------+
+```
+
+---
+
+# 3. Code Examples
+
+## Production: Row Level Security (RLS) Policy Setup
+
+```sql
+-- 1. Enable RLS on target table
+ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
+
+-- 2. Policy: Users can SELECT only their own documents or public documents
+CREATE POLICY "Users can read own or public documents"
+ON documents
+FOR SELECT
+USING (
+  auth.uid() = owner_id 
+  OR is_public = true
+);
+
+-- 3. Policy: Authenticated users can INSERT documents with their own owner_id
+CREATE POLICY "Users can insert own documents"
+ON documents
+FOR INSERT
+WITH CHECK (
+  auth.role() = 'authenticated' 
+  AND auth.uid() = owner_id
+);
+
+-- 4. Policy: Users can UPDATE only their own documents
+CREATE POLICY "Users can update own documents"
+ON documents
+FOR UPDATE
+USING (auth.uid() = owner_id)
+WITH CHECK (auth.uid() = owner_id);
+```
+
+---
+
+# 4. Interview Questions
+
+### Easy Questions
+1. **Q: What is Supabase?**
+   - *Answer*: An open-source Backend-as-a-Service (BaaS) platform built on PostgreSQL providing Auth, Auto APIs, Realtime, Storage, and Vector embeddings.
+2. **Q: What is Row Level Security (RLS)?**
+   - *Answer*: A PostgreSQL feature that restricts which table rows a user can SELECT, INSERT, UPDATE, or DELETE based on security policy rules.
+3. **Q: What is PostgREST?**
+   - *Answer*: A standalone web server that automatically turns any PostgreSQL database directly into a RESTful API.
+4. **Q: What is `auth.uid()` in Supabase RLS?**
+   - *Answer*: A SQL function returning the authenticated user's unique ID extracted from the incoming JWT token.
+5. **Q: How does Supabase Realtime work?**
+   - *Answer*: Listens to PostgreSQL Change Data Capture (CDC) WAL logs and broadcasts row changes over WebSockets using Elixir Phoenix channels.
+
+### Medium Questions
+6. **Q: Compare `USING` clause vs `WITH CHECK` clause in RLS policies.**
+   - *Answer*: `USING` checks existing rows before operations (SELECT, UPDATE, DELETE); `WITH CHECK` validates newly created or modified rows after operation (INSERT, UPDATE).
+7. **Q: How do you bypass RLS in server-side administrative scripts?**
+   - *Answer*: Use the Supabase `service_role` secret key, which bypasses RLS policies completely.
+8. **Q: What is the risk of putting `anon` public key in client-side Web apps?**
+   - *Answer*: None; the `anon` key is designed to be public because security is enforced by database RLS policies.
+9. **Q: What runtime do Supabase Edge Functions use?**
+   - *Answer*: Deno runtime, providing TypeScript native execution at Edge locations with low cold starts.
+10. **Q: How do you optimize slow RLS policy evaluations?**
+    - *Answer*: Add index on columns used in RLS policies (e.g. `owner_id`), wrap complex policy queries in `SECURITY DEFINER` functions, and avoid subqueries inside RLS where possible.
+
+### Advanced Questions
+11. **Q: Walk through how Supabase GoTrue authenticates a request.**
+    - *Answer*: Client logs in $\rightarrow$ GoTrue issues signed JWT containing `sub` (userId) and `role` $\rightarrow$ client attaches JWT to HTTP Authorization header $\rightarrow$ PostgREST sets local transaction config (`request.jwt.claim.sub`) $\rightarrow$ PostgreSQL evaluates RLS policies using `auth.uid()`.
+12. **Q: Why should you avoid `auth.uid() = user_id` without an index on `user_id`?**
+    - *Answer*: Without an index, PostgreSQL executes a Full Sequential Scan over all table rows to evaluate RLS for every single query request, causing catastrophic performance degradation.
+13. **Q: Explain `SECURITY DEFINER` vs `SECURITY INVOKER` functions in PostgreSQL RLS.**
+    - *Answer*: `SECURITY INVOKER` executes function with permissions of calling user; `SECURITY DEFINER` executes function with permissions of function creator (bypassing caller RLS).
+14. **Q: How do you handle file upload security in Supabase Storage?**
+    - *Answer*: Write RLS policies on the `storage.objects` table using bucket ID and user path prefixes (`(storage.foldername(name))[1] = auth.uid()::text`).
+15. **Q: How does Supabase Vector enable AI Search & RAG applications?**
+    - *Answer*: Uses PostgreSQL `pgvector` extension to store vector embeddings and perform cosine distance similarity searches (`<=>` operator) directly in SQL queries.

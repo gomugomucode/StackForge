@@ -1,0 +1,86 @@
+---
+title: "Next.js Production Cheatsheet & App Router Reference"
+slug: "nextjs-cheatsheet"
+technology: "nextjs"
+difficulty: "Intermediate"
+estimatedReadingTime: 15
+summary: "Quick-reference cheatsheet covering Next.js App Router conventions, cache revalidation APIs, Server Actions syntax, and navigation hooks."
+prerequisites: ["nextjs-app-router-architecture"]
+nextTopics: ["nextjs-caching-and-performance"]
+tags: ["nextjs", "cheatsheet", "app-router", "server-actions", "cache", "navigation"]
+careerRelevance: "Essential desktop reference for day-to-day Next.js fullstack development, code reviews, and architecture decisions."
+qualityScore: 99.0
+canonicalUrl: "https://stackforge.dev/content/nextjs/nextjs-cheatsheet"
+---
+
+# Next.js Production Cheatsheet
+
+## 1. App Router Directory Conventions
+
+| File | Purpose | Environment |
+| :--- | :--- | :--- |
+| **`layout.tsx`** | Persistent UI layout wrapper | Server Component (Default) |
+| **`page.tsx`** | Unique URL route leaf | Server Component (Default) |
+| **`loading.tsx`** | Automatic Suspense fallback | Server Component |
+| **`error.tsx`** | React Error Boundary | Client Component (`'use client'`) |
+| **`not-found.tsx`** | 404 UI boundary | Server Component |
+| **`route.ts`** | Server HTTP API Endpoint | Server Only |
+| **`template.tsx`** | Re-mounting layout instance | Server / Client |
+| **`default.tsx`** | Parallel route fallback UI | Server Component |
+
+---
+
+## 2. Navigation Hooks Quick Reference
+
+```tsx
+"use client";
+
+import { useRouter, usePathname, useSearchParams, useParams } from "next/navigation";
+
+export function NavigationToolbar() {
+  const router = useRouter();             // Programmatic navigation (.push, .replace, .refresh)
+  const pathname = usePathname();         // Current pathname (e.g. "/dashboard")
+  const searchParams = useSearchParams(); // Query params (e.g. ?search=term)
+  const params = useParams();             // Dynamic route params (e.g. { id: "123" })
+
+  return (
+    <button onClick={() => router.push("/checkout")}>
+      Checkout on {pathname}
+    </button>
+  );
+}
+```
+
+---
+
+## 3. Cache & Revalidation Reference
+
+```typescript
+// 1. Time-based revalidation (Fetch option)
+fetch("https://api.example.com/data", { next: { revalidate: 3600 } });
+
+// 2. Tag-based revalidation (Fetch option)
+fetch("https://api.example.com/data", { next: { tags: ["users"] } });
+
+// 3. Opt out of Data Cache completely
+fetch("https://api.example.com/data", { cache: "no-store" });
+
+// 4. Server Action: On-demand Tag Invalidation
+import { revalidateTag, revalidatePath } from "next/cache";
+
+export async function clearUserCache() {
+  "use server";
+  revalidateTag("users");       // Invalidates all fetches tagged 'users'
+  revalidatePath("/dashboard"); // Invalidates full route cache at /dashboard
+}
+```
+
+---
+
+## 4. Top Next.js Production Build Errors Lookup
+
+| Error Code / Message | Cause | Solution |
+| :--- | :--- | :--- |
+| **`You are attempting to export 'useX' from a component marked 'use server'`** | Exporting client hooks from Server Action files. | Keep Server Actions in separate file with `'use server'` at top. |
+| **`Text content does not match server-rendered HTML`** | SSR Hydration mismatch (e.g. `Date.now()`, `window`). | Move browser-only APIs into `useEffect` or use `suppressHydrationWarning`. |
+| **`Failed to parse src prop on next/image`** | Remote image domain not listed in `next.config.js`. | Add domain to `images.remotePatterns` in `next.config.js`. |

@@ -1,0 +1,121 @@
+---
+title: "DevOps Observability, OpenTelemetry & Kubernetes Fundamentals"
+slug: "devops-observability-basics"
+technology: "devops"
+difficulty: "Advanced"
+estimatedReadingTime: 25
+summary: "Master the 3 pillars of observability (Metrics, Logs, Traces), OpenTelemetry (OTel) instrumentation, Prometheus, Grafana, and Kubernetes primitives."
+prerequisites: ["docker-production-hardening"]
+nextTopics: ["system-design-masterclass"]
+tags: ["devops", "observability", "opentelemetry", "prometheus", "grafana", "kubernetes", "sre"]
+careerRelevance: "Essential for SREs, DevOps Engineers, and Distributed Systems Leads."
+qualityScore: 98.0
+canonicalUrl: "https://stackforge.dev/content/devops/devops-observability-basics"
+---
+
+# 1. Introduction
+
+## Why Observability & Kubernetes Matter
+Deploying distributed applications across dozens of microservices makes traditional log inspection impossible. **Observability** provides deep visibility into complex systems using the **3 Pillars (Metrics, Logs, Traces)**. Combining OpenTelemetry instrumentation with **Kubernetes** orchestration enables automated self-healing, autoscaling, and zero-downtime deployments.
+
+---
+
+# 2. Core Concepts
+
+## The 3 Pillars of Observability (MELT)
+
+```
+                       +-------------------------------+
+                       | 1. METRICS                    |
+                       |  - Aggregated numeric values  |
+                       |  - CPU %, Request Rate, Latency|
+                       +-------------------------------+
+                                       |
+                                       v
+                       +-------------------------------+
+                       | 2. LOGS                       |
+                       |  - Timestamped text records   |
+                       |  - Stack traces, error events |
+                       +-------------------------------+
+                                       |
+                                       v
+                       +-------------------------------+
+                       | 3. TRACES (OpenTelemetry)     |
+                       |  - End-to-end request path    |
+                       |  - TraceID / SpanID graph     |
+                       +-------------------------------+
+```
+
+## Kubernetes Core Primitives Matrix
+
+| Primitive | Description | Typical Usage |
+| :--- | :--- | :--- |
+| **Pod** | Smallest deployable unit containing 1+ containers | Encapsulates app container |
+| **Deployment** | Manages declarative updates & scaling of Pods | Rolling updates & replica counts |
+| **Service** | Stable IP & DNS abstraction over a set of Pods | Load balancing internal Pod traffic |
+| **Ingress** | HTTP/HTTPS router managing external access to Services | SSL termination & path routing |
+| **ConfigMap / Secret** | Stores non-confidential / encrypted config data | Injecting environment variables |
+
+---
+
+# 3. Code Examples
+
+## Production: OpenTelemetry Automatic Tracing Initialization
+
+```typescript
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-grpc";
+
+// Initialize OpenTelemetry SDK before loading application modules
+const sdk = new NodeSDK({
+  serviceName: "stackforge-api-service",
+  traceExporter: new OTLPTraceExporter({
+    url: process.env.OTEL_EXPORTER_OTLP_ENDPOINT || "grpc://localhost:4317",
+  }),
+  instrumentations: [getNodeAutoInstrumentations()],
+});
+
+sdk.start();
+console.log("OpenTelemetry Auto-Instrumentation Started");
+```
+
+---
+
+# 4. Interview Questions
+
+### Easy Questions
+1. **Q: What are the 3 Pillars of Observability?**
+   - *Answer*: Metrics, Logs, Traces.
+2. **Q: What is OpenTelemetry (OTel)?**
+   - *Answer*: A vendor-neutral CNCF framework for collecting, processing, and exporting telemetry data (metrics, logs, traces).
+3. **Q: What is a Kubernetes Pod?**
+   - *Answer*: The smallest execution unit in Kubernetes representing one or more co-located containers sharing network and storage.
+4. **Q: What is Prometheus?**
+   - *Answer*: An open-source metrics monitoring and alerting toolkit using a time-series pull model.
+5. **Q: What is Grafana?**
+   - *Answer*: A multi-platform open-source analytics and visualization web application for constructing dashboards.
+
+### Medium Questions
+6. **Q: Compare Pull vs Push metrics collection.**
+   - *Answer*: Prometheus uses Pull (scrapes HTTP `/metrics` endpoints periodically); Datadog/StatsD uses Push (apps send metrics actively to agent).
+7. **Q: How does Distributed Tracing work using TraceID and SpanID?**
+   - *Answer*: A `TraceID` uniquely tracks a request across all microservices; `SpanID` tracks individual work segments within a specific service node.
+8. **Q: What is a Kubernetes Deployment Rolling Update?**
+   - *Answer*: Replaces old Pods with new Pods gradually without downtime, verifying readiness probes before terminating old replicas.
+9. **Q: What is a Kubernetes Readiness Probe vs Liveness Probe?**
+   - *Answer*: Liveness probe checks if container is alive (restarts container if failed); Readiness probe checks if container is ready to accept network traffic.
+10. **Q: What is the Golden Signals of Monitoring (Google SRE)?**
+    - *Answer*: Latency, Traffic, Errors, and Saturation.
+
+### Advanced Questions
+11. **Q: Walk through W3C Trace Context headers (`traceparent`) propagation.**
+    - *Answer*: Formatted as `00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01`; passed in HTTP headers across microservice boundaries to correlate distributed spans.
+12. **Q: How does Kubernetes Horizontal Pod Autoscaler (HPA) scale Pods dynamically?**
+    - *Answer*: Queries Metrics Server for target utilization (CPU/Memory/Custom OTel metrics) and calculates target replica count: `desiredReplicas = ceil[currentReplicas * (currentMetric / targetMetric)]`.
+13. **Q: What is a Kubernetes Operator?**
+    - *Answer*: An application-specific controller extending the Kubernetes API to automate complex stateful application management (e.g. Postgres operator backups/failover).
+14. **Q: Explain how eBPF enables zero-code observability.**
+    - *Answer*: Extended Berkeley Packet Filter runs sandboxed programs directly inside the Linux Kernel, capturing network packets, syscalls, and tracepoints without modifying app code.
+15. **Q: How do you prevent Cascading Failures in microservice architectures?**
+    - *Answer*: Implement Circuit Breakers (Resilience4j/Opossum), strict request timeouts, backoff retries with jitter, and rate limiting shed-load policies.
