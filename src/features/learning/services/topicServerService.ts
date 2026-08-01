@@ -2,10 +2,10 @@ import { prisma } from "@/lib/prisma";
 import { Topic } from "@/features/content/types/topic";
 
 export async function getTopicData(technology: string, slug: string) {
-  const topic = await prisma.topic.findFirst({
+  let topic = await prisma.topic.findFirst({
     where: {
       slug,
-      technology,
+      technology: { equals: technology, mode: "insensitive" },
     },
     include: {
       content: true,
@@ -15,6 +15,19 @@ export async function getTopicData(technology: string, slug: string) {
       interviews: true,
     },
   });
+
+  if (!topic) {
+    topic = await prisma.topic.findFirst({
+      where: { slug },
+      include: {
+        content: true,
+        examples: true,
+        challenges: true,
+        quizzes: true,
+        interviews: true,
+      },
+    });
+  }
 
   if (!topic) return null;
 

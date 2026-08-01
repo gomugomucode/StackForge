@@ -1,0 +1,133 @@
+---
+title: "HTML & CSS Architecture, Layout Engines, Box Model & Modern CSS Mastery"
+slug: "html-css"
+technology: "frontend"
+difficulty: "Beginner"
+summary: "Master HTML5 semantic document architecture, CSS Box Model mechanics, Flexbox vs Grid layout engines, CSS custom properties, and responsive design patterns."
+prerequisites: []
+qualityScore: 98.0
+---
+
+# Introduction & Overview
+
+HTML5 and CSS3 form the foundational presentation tier of modern web development. Beyond writing simple tags, building enterprise web applications requires a deep understanding of DOM node construction, CSS layout engines (Flexbox, CSS Grid), specificity rules, cascade resolution, and GPU-accelerated rendering pipelines.
+
+---
+
+# Mental Model & Core Concepts
+
+## The CSS Box Model Mental Model
+Every HTML element rendered in the browser viewport is treated as a rectangular box governed by the Box Model:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                        MARGIN                           │
+│   ┌─────────────────────────────────────────────────┐   │
+│   │                    BORDER                       │   │
+│   │   ┌─────────────────────────────────────────┐   │   │
+│   │   │                PADDING                  │   │   │
+│   │   │   ┌─────────────────────────────────┐   │   │   │
+│   │   │   │             CONTENT             │   │   │   │
+│   │   │   │   Width x Height (box-sizing)   │   │   │   │
+│   │   │   └─────────────────────────────────┘   │   │   │
+│   │   └─────────────────────────────────────────┘   │   │
+│   └─────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────┘
+```
+
+Always specify `box-sizing: border-box;` globally in CSS to include padding and border within an element's total declared width and height.
+
+---
+
+# Layout Engines: Flexbox vs CSS Grid
+
+- **CSS Flexbox (1-Dimensional)**: Best suited for linear component layouts (navbars, toolbars, vertical item stacks).
+- **CSS Grid (2-Dimensional)**: Best suited for complex layout grids (dashboard layouts, responsive card grids).
+
+```css
+/* Responsive Modern CSS Grid Layout */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+```
+
+---
+
+# Progressive Implementation Examples
+
+## Beginner: Semantic HTML Structure
+```html
+<article class="card">
+  <header class="card-header">
+    <h2>HTML5 Semantic Architecture</h2>
+  </header>
+  <section class="card-body">
+    <p>Semantic tags improve accessibility (a11y) and SEO parsing.</p>
+  </section>
+</article>
+```
+
+## Advanced: Modern Responsive Design System with Custom Properties
+```css
+:root {
+  --primary-color: #6366f1;
+  --surface-color: #0f172a;
+  --text-color: #f8fafc;
+  --radius-lg: 0.75rem;
+}
+
+.card {
+  background-color: var(--surface-color);
+  color: var(--text-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.3);
+}
+```
+
+---
+
+# Debugging & Common Gotchas
+
+- **Margin Collapsing**: Vertical margins of adjacent block elements collapse into a single margin equal to the largest margin. Fix by using CSS Flexbox/Grid gaps or padding.
+- **Z-Index Stacking Context**: `z-index` only works on positioned elements (`relative`, `absolute`, `fixed`, `sticky`) or grid/flex children. Creating a transform or opacity property creates a new stacking context.
+
+---
+
+# Performance Notes & GPU Rendering
+
+- Animate transform (`transform: translate3d(0, 0, 0)`) and `opacity` properties to trigger GPU compositor layers, avoiding costly Reflow and Repaint layout calculation passes.
+
+---
+
+# Security Notes & Protection
+
+- Sanitize all user-generated HTML rendered via `dangerouslySetInnerHTML` using `DOMPurify` to prevent Cross-Site Scripting (XSS) attacks.
+
+---
+
+# Practice Exercises & Challenges
+
+1. **Exercise 1**: Create a 3-column responsive pricing grid using CSS Grid `auto-fit` and `minmax()` without media queries.
+2. **Exercise 2**: Implement a dark mode design system using CSS Custom Properties toggled via data attribute `data-theme="dark"`.
+
+---
+
+# Official References & Canonical Links
+
+- [MDN Web Docs: HTML & CSS Guide](https://developer.mozilla.org/en-US/docs/Web/HTML)
+- [W3C CSS Grid Layout Specification](https://www.w3.org/TR/css-grid-1/)
+
+---
+
+# Interview Questions & Discussion
+
+- **Q: What is the difference between `display: none` and `visibility: hidden`?**
+  - **A**: `display: none` completely removes the element from the layout flow, consuming 0 space. `visibility: hidden` hides the element visually, but it continues to occupy space in the document layout flow.
