@@ -1,4 +1,5 @@
 import { ContentRegistry } from "../src/lib/mdx/content-registry";
+import { SyncEngine } from "../src/features/content/services/syncEngine";
 import { GraphEngine } from "../src/features/graph/services/graphEngine";
 import { SearchService } from "../src/features/search/services/searchService";
 import { IngestionService } from "../src/features/content/services/ingestionService";
@@ -41,8 +42,9 @@ async function verifyAll() {
   const avgScore = Math.round(totalQuality / files.length);
   console.log(`✅ Educational Quality Score: ${avgScore}/100 across ${files.length} modules (${passedQuality} passing high bar)`);
 
-  // 3. Knowledge Graph Check
+  // 3. Database Metadata Sync & Knowledge Graph Check
   console.log(`\n--- 3. Knowledge Graph DAG Check ---`);
+  await SyncEngine.syncGitMDXToDatabase();
   const graph = await GraphEngine.validateGraphIntegrity();
   console.log(`- Total Nodes: ${graph.totalNodes}`);
   console.log(`- Total Edges: ${graph.totalEdges}`);

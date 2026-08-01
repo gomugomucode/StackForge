@@ -71,5 +71,39 @@ export const interviewCategories: InterviewCategory[] = [
       { id: 'sq4', question: 'Explain the difference between Vertical and Horizontal Scaling.', answer: 'Vertical scaling (Scaling Up) means adding more power (CPU, RAM) to an existing server. Horizontal scaling (Scaling Out) means adding more servers to the pool. Horizontal scaling is generally preferred for large-scale systems as it provides better fault tolerance.', difficulty: 'Easy', category: 'Scaling', tags: ['Architecture'] },
       { id: 'sq5', question: 'What are Microservices and when should you use them?', answer: 'Microservices are an architectural style that divides an application into a collection of small, independent services. They should be used when a system becomes too large for a single team to manage or when different parts of the system have different scaling needs.', difficulty: 'Medium', category: 'Architecture', tags: ['Microservices', 'Scaling'] },
     ]
+  },
+  {
+    id: 'ts-1',
+    slug: 'typescript',
+    title: 'TypeScript Type System & Compiler',
+    description: 'Generics, conditional types, mapped types, and compiler internals.',
+    icon: 'FileCode',
+    questions: [
+      { id: 'tq1', question: 'Explain Conditional Types and infer keyword in TypeScript.', answer: 'Conditional types pick one of two possible types based on a condition expressed as a type relationship (T extends U ? X : Y). The infer keyword allows introducing a type variable within the extends clause to extract component types (e.g. ReturnType<T>).', difficulty: 'Hard', category: 'Type System', tags: ['Generics', 'Infer'] },
+      { id: 'tq2', question: 'What is the difference between type aliases and interfaces?', answer: 'Interfaces are declaration-merged across multiple definitions and designed for object/class shapes, whereas type aliases can represent primitives, unions, tuples, and mapped types directly. Types cannot be reopened for declaration merging.', difficulty: 'Easy', category: 'Fundamentals', tags: ['Interfaces', 'Types'] },
+      { id: 'tq3', question: 'How do Mapped Types work in TypeScript?', answer: 'Mapped types build new types by transforming property types of an existing type. They iterate over keys using `in keyof` syntax, allowing modification of property modifiers like `readonly` or optional `?`.', difficulty: 'Medium', category: 'Generics', tags: ['MappedTypes'] },
+    ]
+  },
+  {
+    id: 'next-1',
+    slug: 'nextjs',
+    title: 'Next.js & Full-Stack Web',
+    description: 'App Router, RSC, Streaming SSR, Edge Runtime, and Caching.',
+    icon: 'Globe',
+    questions: [
+      { id: 'nq_app1', question: 'Explain how Next.js App Router caching layers work.', answer: 'Next.js has 4 caching layers: Request Memoization (per fetch request in a render pass), Data Cache (cross-request server HTTP fetch cache), Full Route Cache (server HTML & RSC payload at build/revalidate time), and Router Cache (in-memory client-side cache of RSC segments).', difficulty: 'Hard', category: 'Architecture', tags: ['Caching', 'AppRouter'] },
+      { id: 'nq_app2', question: 'What is Server Action and how is security enforced?', answer: 'Server Actions are server-side functions invoked directly from client UI components via RPC-like POST requests. Security is enforced via Action IDs, CORS origin verification, host headers, and anti-CSRF tokens.', difficulty: 'Medium', category: 'Security', tags: ['ServerActions', 'RSC'] },
+    ]
+  },
+  {
+    id: 'pg-1',
+    slug: 'postgresql',
+    title: 'PostgreSQL & Database Internals',
+    description: 'MVCC, Indexing, Query Planning, Locks, and Memory Architecture.',
+    icon: 'Database',
+    questions: [
+      { id: 'pq1', question: 'Explain MVCC (Multi-Version Concurrency Control) in PostgreSQL.', answer: 'PostgreSQL implements MVCC by maintaining multiple physical tuple versions for each row on disk. Each tuple contains xmin (creation TX ID) and xmax (deletion/update TX ID) fields. Transactions view snapshots based on their isolation level without locking read operations.', difficulty: 'Hard', category: 'Internals', tags: ['MVCC', 'Concurrency'] },
+      { id: 'pq2', question: 'What is the difference between B-Tree and GIN indexes in PostgreSQL?', answer: 'B-Tree indexes are optimized for scalar comparison operators (<, <=, =, >=, >) and range queries. GIN (Generalized Inverted Index) indexes map component values (e.g. elements of arrays, JSONB keys/values, tsvector lexemes) to tuple IDs, making them ideal for composite/document fields.', difficulty: 'Medium', category: 'Indexing', tags: ['BTree', 'GIN'] },
+    ]
   }
-]
+];

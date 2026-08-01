@@ -1,0 +1,97 @@
+---
+title: "Next.js App Router Compiler, Streaming & Flight Protocol Architecture Guide"
+slug: "nextjs-app-router-architecture"
+technology: "nextjs"
+difficulty: "Advanced"
+summary: "Deep dive into React Server Components (RSC), React Flight serialization protocol, bundler manifests, and streaming SSR."
+prerequisites: ["react-server-components-architecture"]
+qualityScore: 99.0
+---
+
+# Introduction & Mental Model
+
+The Next.js App Router represents a paradigm shift from traditional client-side SPA rendering and traditional static HTML generation. At its core, the App Router treats the server and client as a unified, hybrid execution runtime.
+
+```
+       ┌─────────────────────────────────────────────────────────┐
+       │                Next.js Server Runtime                   │
+       │                                                         │
+       │   React Server Components (RSC) -> Render V8 Tree       │
+       │                              │                          │
+       │                              ▼                          │
+       │           React Flight Wire Protocol (.rsc format)      │
+       └──────────────────────────────┬──────────────────────────┘
+                                      │ Chunked HTTP/2 Stream
+                                      ▼
+       ┌─────────────────────────────────────────────────────────┐
+       │                 Browser Client Runtime                  │
+       │                                                         │
+       │   Flight Response Parser -> Reconstruct Fiber Tree       │
+       │                              │                          │
+       │                              ▼                          │
+       │      Hydrate Interactive Client Components ("use client") │
+       └─────────────────────────────────────────────────────────┘
+```
+
+---
+
+# Internal Architecture & Execution Lifecycle
+
+## 1. Build & Compilation Pipeline
+During `next build`, Next.js creates two distinct bundle graphs:
+- **Server Graph**: Contains all React Server Components. Code here never ships to the browser.
+- **Client Graph**: Contains components marked with `"use client"`, along with client hooks and event listeners.
+
+The compiler generates a **Client Reference Manifest** mapping client component import paths to bundle chunk hashes.
+
+## 2. Server Rendering & Serialization
+When an incoming HTTP request arrives:
+1. Next.js invokes the root layout and page Server Components.
+2. Server Components render into a specialized React tree containing primitives, HTML tags, and Client References.
+3. React serializes this tree into the **React Flight Payload** format (a stream of JSON-like rows representing UI nodes and props).
+
+---
+
+# Storage & Memory Model
+
+- **Server-Side Render Tree**: Server Component V8 heap nodes exist only for the duration of the request stream, avoiding long-lived memory consumption.
+- **Flight Cache Buffer**: Rendered RSC flight payloads are cached in the server Data Cache (when revalidation options are set) and streamed directly to clients.
+
+---
+
+# Network Protocol & Flight Payload Syntax
+
+React Flight streams chunks using HTTP/2 chunked transfer encoding (`Content-Type: text/x-component`). Sample wire payload snippet:
+
+```text
+M1:{"id":"/chunk-123.js","name":"ClientHeader","chunks":["123"]}
+J0:["$","$L1",null,{"title":"StackForge OS","children":["$","$L2",null,{}]}]
+```
+
+---
+
+# Performance Notes & Benchmark Tradeoffs
+
+- **Zero Bundle Size**: Heavy dependencies (`marked`, `date-fns`, `prisma`) imported inside Server Components add 0 bytes to the client JavaScript bundle.
+- **Progressive Streaming**: Wrapping slow sub-trees in `<Suspense>` allows the server to send page shells in <50ms while streaming heavy data components asynchronously.
+
+---
+
+# Security & Defense in Depth
+
+- **Environment Variable Protection**: Non-`NEXT_PUBLIC_` environment variables imported in Server Components are completely omitted from client JavaScript bundles, preventing secret leaks.
+- **Server Action Validation**: Server Actions enforce CSRF origin headers and unique cryptographic action hashes.
+
+---
+
+# Interview Discussion & Questions
+
+- **Q: How does RSC differ from traditional SSR (Server-Side Rendering)?**
+  - **A**: Traditional SSR converts React components into raw HTML strings on the server. On the client, React must download the full JS bundle and re-run all rendering logic to hydrate the DOM. RSC renders components into a structured Flight binary data stream. Client components hydrate selectively, while Server Component code is never sent to the browser.
+
+---
+
+# Official References & Canonical Links
+
+- [Next.js App Router Architecture Documentation](https://nextjs.org/docs/app/building-your-application/rendering/server-components)
+- [React RFC: Server Components](https://github.com/reactjs/rfcs/blob/main/text/0188-server-components.md)

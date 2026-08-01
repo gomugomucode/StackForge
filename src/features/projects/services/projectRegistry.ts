@@ -17,7 +17,7 @@ export interface ProductionProjectSpec {
 }
 
 export class ProjectRegistry {
-  public static async getProjectsByTechnology(technology: string): Promise<ProductionProjectSpec[]> {
+  public static async getAllProjects(): Promise<ProductionProjectSpec[]> {
     return [
       {
         id: "proj_stackforge_os",
@@ -109,6 +109,102 @@ export class ProjectRegistry {
         hiringSkills: ["React", "WebSockets", "CRDTs (Yjs)", "Redis Pub/Sub", "Distributed Systems"],
         realCompaniesUsingSimilar: ["Figma", "Notion", "Linear", "Excalidraw"],
       },
+      {
+        id: "proj_event_streaming_analytics",
+        title: "High-Throughput Distributed Event Analytics Engine",
+        slug: "distributed-event-analytics-engine",
+        technology: "nodejs",
+        level: "Level 4: Enterprise Architecture",
+        businessProblem: "High-scale applications require sub-second ingestion of telemetry events with sliding window aggregation.",
+        functionalRequirements: [
+          "Apache Kafka consumer group partitioning and offset management",
+          "Sliding time-window event aggregation using Redis Sorted Sets",
+          "PostgreSQL pgvector / timescale hypertable persistence",
+        ],
+        architectureDiagramSpec: "graph TD; EventProducers-->KafkaInbound; KafkaInbound-->NodeConsumers; NodeConsumers-->RedisWindow; NodeConsumers-->TimescaleDB;",
+        databaseSchemaDDL: `
+          CREATE TABLE "TelemetryEvent" (
+            "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            "tenantId" TEXT NOT NULL,
+            "eventName" TEXT NOT NULL,
+            "payload" JSONB NOT NULL,
+            "timestamp" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+          );
+        `,
+        apiEndpoints: [
+          { method: "POST", path: "/api/v1/events/ingest", description: "Batch ingest telemetry events" },
+          { method: "GET", path: "/api/v1/analytics/metrics", description: "Query sliding window metrics" },
+        ],
+        folderStructure: `
+          src/
+          ├── consumers/
+          │   └── eventConsumer.ts
+          ├── agg/
+          │   └── windowAggregator.ts
+          └── storage/
+              └── timescaleClient.ts
+        `,
+        deploymentGuide: "Deploy Node.js workers to Kubernetes (EKS) with Helm chart and Strimzi Kafka operator.",
+        evaluationRubric: [
+          { criteria: "Ingestion Throughput & Backpressure", weight: 40 },
+          { criteria: "Fault Tolerance & Rebalance Handling", weight: 30 },
+          { criteria: "Data Compression & Storage Efficiency", weight: 30 },
+        ],
+        hiringSkills: ["Node.js", "Apache Kafka", "PostgreSQL / TimescaleDB", "Redis", "Kubernetes"],
+        realCompaniesUsingSimilar: ["Datadog", "Mixpanel", "Segment", "PostHog"],
+      },
+      {
+        id: "proj_vector_search_engine",
+        title: "Edge AI Hybrid Semantic Vector Search Engine",
+        slug: "edge-ai-vector-search-engine",
+        technology: "typescript",
+        level: "Level 4: Enterprise Architecture",
+        businessProblem: "Modern applications require hybrid BM25 lexical + Cosine dense vector search over high-dimensional embeddings.",
+        functionalRequirements: [
+          "Transformer embedding generation via ONNX runtime in WebAssembly",
+          "HNSW index vector similarity search with pgvector",
+          "Reciprocal Rank Fusion (RRF) score merging",
+        ],
+        architectureDiagramSpec: "graph LR; UserQuery-->BM25Search; UserQuery-->EmbeddingEngine; EmbeddingEngine-->HNSWVectorIndex; BM25Search & HNSWVectorIndex-->RRFMerger;",
+        databaseSchemaDDL: `
+          CREATE EXTENSION IF NOT EXISTS vector;
+          CREATE TABLE "DocumentEmbedding" (
+            "id" TEXT PRIMARY KEY,
+            "content" TEXT NOT NULL,
+            "embedding" vector(1536) NOT NULL,
+            "createdAt" TIMESTAMP DEFAULT NOW()
+          );
+          CREATE INDEX ON "DocumentEmbedding" USING hnsw ("embedding" vector_cosine_ops);
+        `,
+        apiEndpoints: [
+          { method: "POST", path: "/api/search/hybrid", description: "Hybrid lexical + vector search query" },
+          { method: "POST", path: "/api/documents/index", description: "Generate embeddings & index document" },
+        ],
+        folderStructure: `
+          src/
+          ├── vector/
+          │   └── hnswIndex.ts
+          ├── search/
+          │   └── rrfMerger.ts
+          └── embeddings/
+              └── onnxEngine.ts
+        `,
+        deploymentGuide: "Deploy to Cloudflare Workers Edge with Supabase pgvector.",
+        evaluationRubric: [
+          { criteria: "Search Recall & Precision (NDCG@10)", weight: 40 },
+          { criteria: "Vector Index Build & Search Latency", weight: 30 },
+          { criteria: "TypeScript Type Safety & Abstractions", weight: 30 },
+        ],
+        hiringSkills: ["TypeScript", "pgvector", "Vector Databases", "ONNX Runtime", "RAG Systems"],
+        realCompaniesUsingSimilar: ["Pinecone", "Elasticsearch", "Algolia", "OpenAI"],
+      },
     ];
+  }
+
+  public static async getProjectsByTechnology(technology: string): Promise<ProductionProjectSpec[]> {
+    const all = await this.getAllProjects();
+    const tech = technology.toLowerCase();
+    const filtered = all.filter((p) => p.technology.toLowerCase() === tech);
+    return filtered.length > 0 ? filtered : all;
   }
 }

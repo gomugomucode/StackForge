@@ -70,6 +70,7 @@ export class SyncEngine {
       }
 
       // Step 2: Build graph relationships (LearningEdge) for prerequisites
+      await prisma.learningEdge.deleteMany({});
       for (const parsed of parsedFiles) {
         const fm = parsed.frontmatter;
         const targetSlug = fm.slug.toLowerCase();

@@ -1,0 +1,91 @@
+---
+title: "V8 Engine Heap Layout & Generational Garbage Collection Mechanics Guide"
+slug: "v8-engine-memory-gc"
+technology: "javascript"
+difficulty: "Senior"
+summary: "Deep dive into V8 JavaScript engine heap spaces, Cheney's Scavenger algorithm, Major Mark-Sweep-Compact, and memory optimization."
+prerequisites: ["js-performance-architecture", "execution-context-event-loop"]
+qualityScore: 99.0
+---
+
+# Introduction & Mental Model
+
+Google V8 is the high-performance C++ JavaScript engine powering Node.js, Chrome, and Deno. To execute JavaScript code at near-native speed while offering automatic memory management, V8 organizes process memory into a structured **Generational Heap**.
+
+The fundamental mental model relies on the **Weak Generational Hypothesis**: *Most objects die young.*
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        V8 Heap Memory Layout                           │
+│                                                                        │
+│   ┌───────────────────────────┐      ┌─────────────────────────────┐   │
+│   │     New Space (Young)     │      │      Old Space (Senior)     │   │
+│   │ ┌───────────┬───────────┐ │      │ ┌─────────────┬───────────┐ │   │
+│   │ │  Nursery  │ From-Space│ │----->│ │ Old Pointer │ Old Data  │ │   │
+│   │ └───────────┴─────────┬─┘ │      │ └─────────────┴───────────┘ │   │
+│   │                       │   │      └─────────────────────────────┘   │
+│   │           To-Space◄───┘   │      ┌─────────────────────────────┐   │
+│   └───────────────────────────┘      │ Large Object & Code Spaces  │   │
+│                                      └─────────────────────────────┘   │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+# Internal Components & Memory Layout
+
+V8 divides its memory heap into distinct logical spaces:
+
+1. **New Space (Young Generation)**: Small contiguous buffer (typically 1MB - 64MB) divided into two semi-spaces: `From-Space` and `To-Space`. New allocations occur here.
+2. **Old Pointer Space**: Stores senior objects that contain references to other objects.
+3. **Old Data Space**: Stores raw payload data (strings, raw byte arrays, numbers) that contain no outgoing pointers.
+4. **Large Object Space**: Stores allocations exceeding single-page thresholds, bypassing young generation GC.
+5. **Code Space**: Holds compiled Just-In-Time (JIT) Machine Code (Ignition bytecode / TurboFan machine instructions).
+
+---
+
+# Execution Timeline & Garbage Collection Algorithms
+
+## 1. Minor GC (Scavenger / Cheney's Copying Algorithm)
+- **Trigger**: When `From-Space` fills during new allocations.
+- **Mechanism**:
+  1. V8 traverses root pointers targeting `From-Space`.
+  2. Live objects are copied sequentially into `To-Space`, compacting memory automatically.
+  3. Dead objects are left behind.
+  4. Roles of `From-Space` and `To-Space` swap.
+  5. Objects surviving 2 Scavenge cycles are promoted to **Old Space**.
+
+## 2. Major GC (Full Mark-Sweep-Compact)
+- **Trigger**: When Old Space memory exceeds dynamically calculated heap limits.
+- **Phases**:
+  1. **Marking**: Tri-color marking (White = unvisited, Grey = visited but children pending, Black = live) identifies reachable object graphs concurrently.
+  2. **Sweeping**: Memory pages containing dead objects are recycled into free-lists.
+  3. **Compacting**: Fragmented memory pages are evacuated and defragmented to eliminate external memory fragmentation.
+
+---
+
+# Performance Notes & Memory Leak Debugging
+
+- **Hidden Classes (Shapes)**: Avoid mutating object properties dynamically after instantiation (`obj.x = 1; delete obj.x;`). Shape transitions force V8 to bail out of optimized inline caches.
+- **Detached DOM Nodes / Closure Leaks**: Retaining references to unmounted elements or outer scope variables inside long-lived event listeners traps objects in Old Space.
+
+---
+
+# Security & V8 Hardening
+
+- **Pointer Compression**: V8 uses 32-bit compressed pointers inside 64-bit processes, cutting heap memory footprint by ~40% and improving CPU cache locality.
+- **W^X (Write XOR Execute)**: Code Space pages are marked executable but not writable, preventing Arbitrary Code Execution (ACE) security exploits.
+
+---
+
+# Practice Exercises & Debugging Challenges
+
+1. **Challenge**: Use Node.js `--trace-gc` and `--max-old-space-size=64` flags to analyze scavenger promotion rates under object allocation loops.
+2. **Exercise**: Take heap snapshots using Chrome DevTools Memory tab to locate detached DOM memory leaks.
+
+---
+
+# Official References & Canonical Links
+
+- [V8 Trash Talk: Garbage Collection in V8](https://v8.dev/blog/trash-talk)
+- [Node.js Memory Management Best Practices](https://nodejs.org/en/docs/guides/diagnostics/memory/)

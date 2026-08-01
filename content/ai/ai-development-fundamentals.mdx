@@ -20,9 +20,10 @@ Integrating Large Language Models (LLMs) into production web applications requir
 
 ---
 
-# 2. Core Concepts
+# 2. Core Concepts & Mental Model
 
-## Retrieval-Augmented Generation (RAG) Architecture
+## Mental Model: The RAG Search Pipeline
+Think of a RAG pipeline as a specialized librarian. When a user asks a question, the librarian looks up matching index cards in the vector catalog, pulls the top matching book excerpts, and hands them to an expert writer (the LLM) to compose a precise answer based strictly on facts.
 
 ```
 1. INGESTION PHASE:
@@ -95,7 +96,35 @@ export async function handleUserAIChat(userPrompt: string) {
 
 ---
 
-# 4. Interview Questions
+# 4. Debugging & Common Gotchas
+
+- **Context Window Overflows**: Passing excessively large chunk context causes API runtime errors. Always compute token length using `tiktoken`.
+- **Hallucinated Tool Arguments**: Ensure all tool parameter types match strict Zod validation schemas to catch bad JSON output.
+
+---
+
+# 5. Performance & Latency Optimization
+
+- Use HNSW index in `pgvector` for sub-10ms vector similarity searches across 1,000,000+ embeddings.
+- Stream LLM completions progressively using Server-Sent Events (SSE) to reduce perceived user latency to <200ms TTFB.
+
+---
+
+# 6. Practice Exercises & Coding Challenges
+
+1. **Exercise 1**: Build a similarity search query using `pgvector` HNSW index with `cosine_distance` operator.
+2. **Exercise 2**: Implement an automated fallback prompt strategy when RAG document retrieval score is below threshold.
+
+---
+
+# 7. Official References & Canonical Documentation
+
+- [OpenAI Function Calling Guide](https://platform.openai.com/docs/guides/function-calling)
+- [pgvector Documentation](https://github.com/pgvector/pgvector)
+
+---
+
+# 8. Interview Questions
 
 ### Easy Questions
 1. **Q: What is an Embedding in AI?**
