@@ -17,6 +17,9 @@ import { useTopicProgress } from "../hooks/useTopicProgress";
 import { projectService } from "../services/projectService";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { CheckCircle2, ArrowRight, ArrowLeft, BookOpen, BarChart } from "lucide-react";
+import NextLink from "next/link";
+import { Button } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
 import { ProductTrustHeader } from "@/components/content/ProductTrustHeader";
 import { ConnectedLearningFooter } from "@/components/content/ConnectedLearningFooter";
 import { 
