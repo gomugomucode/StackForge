@@ -19,8 +19,6 @@ export async function runDeadLinkAudit() {
   return deadCount === 0;
 }
 
-if (require.main === module) {
-  runDeadLinkAudit().then((success) => {
-    if (!success) process.exit(1);
-  });
-}
+runDeadLinkAudit().then((success) => {
+  if (!success) process.exit(1);
+});

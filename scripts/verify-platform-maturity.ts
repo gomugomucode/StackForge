@@ -1,6 +1,5 @@
 import { ContentRegistry } from "../src/lib/mdx/content-registry";
 import { ContentCompletenessEngine } from "../src/features/quality/services/contentCompletenessEngine";
-import { auditLinkDestination } from "./find-dead-links";
 
 export async function verifyPlatformMaturity() {
   console.log("====================================================");
@@ -30,8 +29,6 @@ export async function verifyPlatformMaturity() {
   return overallMaturityScore >= 90;
 }
 
-if (require.main === module) {
-  verifyPlatformMaturity().then((pass) => {
-    if (!pass) process.exit(1);
-  });
-}
+verifyPlatformMaturity().then((pass) => {
+  if (!pass) process.exit(1);
+});
