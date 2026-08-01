@@ -29,6 +29,7 @@ import { useEffect, useState } from "react";
 import { Resource } from "@/features/resources/types/resource";
 import { exportRoadmapPDF } from "@/features/roadmaps/export/roadmapExport";
 
+import { ConnectedLearningFooter } from "@/components/content/ConnectedLearningFooter";
 import { getRoadmapBySlug } from "@/features/roadmaps/services/roadmapService";
 import { Roadmap } from "@/data/roadmaps";
 
@@ -248,6 +249,12 @@ export default function RoadmapPage() {
         </div>
         <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-primary/10 blur-3xl rounded-full" />
       </div>
+
+      <ConnectedLearningFooter
+        technology={roadmap.slug}
+        topicSlug={roadmap.slug}
+        topicTitle={roadmap.title}
+      />
     </div>
   );
 }

@@ -17,9 +17,8 @@ import { useTopicProgress } from "../hooks/useTopicProgress";
 import { projectService } from "../services/projectService";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { CheckCircle2, ArrowRight, ArrowLeft, BookOpen, BarChart } from "lucide-react";
-import NextLink from "next/link";
-import { Button } from "@/components/ui/Button";
-import { cn } from "@/lib/utils";
+import { ProductTrustHeader } from "@/components/content/ProductTrustHeader";
+import { ConnectedLearningFooter } from "@/components/content/ConnectedLearningFooter";
 import { 
   Topic, 
   TopicContent, 
@@ -65,6 +64,15 @@ export function TopicPage({
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-12">
+      <ProductTrustHeader
+        title={topic.title}
+        updatedDate="July 2026"
+        difficulty={topic.difficulty as any || "Intermediate"}
+        estimatedMinutes={topic.estimatedTime || 25}
+        qualityScore={95}
+        prerequisitesCount={topic.prerequisites?.length || 2}
+      />
+
       <TopicHero 
         title={topic.title} 
         description={topic.description} 
@@ -271,26 +279,13 @@ export function TopicPage({
 
         <div className="space-y-8">
           <SectionHeader title="Related Topics" description="Continue your learning journey with these connected concepts." />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {topic.nextTopics && topic.nextTopics.length > 0 ? (
-              topic.nextTopics.map(nextSlug => (
-                <NextLink 
-                  key={nextSlug} 
-                  href={`/learn/${topic.technology}/${nextSlug}`}
-                  className="p-4 rounded-xl border border-border bg-card hover:border-primary/50 transition-all group flex items-center justify-between"
-                >
-                  <span className="font-medium text-foreground group-hover:text-primary transition-colors capitalize">
-                    {nextSlug.replace(/-/g, ' ')}
-                  </span>
-                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </NextLink>
-              ))
-            ) : (
-              <div className="col-span-2 p-8 text-center border-2 border-dashed border-border rounded-2xl bg-muted/30">
-                <p className="text-muted-foreground">No related topics found for this module.</p>
-              </div>
-            )}
-          </div>
+          <ConnectedLearningFooter
+            technology={topic.technology}
+            topicSlug={topic.slug}
+            topicTitle={topic.title}
+            nextTopics={topic.nextTopics}
+            prerequisites={topic.prerequisites}
+          />
         </div>
       </div>
 
