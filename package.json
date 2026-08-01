@@ -13,6 +13,7 @@
     "validate:curriculum": "ts-node scripts/validate-curriculum.ts",
     "audit:dead-links": "npx tsx scripts/find-dead-links.ts",
     "validate:maturity": "npx tsx scripts/verify-platform-maturity.ts",
+    "audit:v4": "npx tsx scripts/verify-v4-content.ts",
     "health-check": "ts-node scripts/content-health-check.ts",
     "test": "vitest run"
   },
