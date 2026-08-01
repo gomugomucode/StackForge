@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getDebuggingLabsByTechnology } from "../../../src/features/labs/data/debuggingLabs";
+import { getDebuggingLabsByTechnology } from "@/features/labs/data/debuggingLabs";
 
 describe("debuggingLabs", () => {
   it("returns debugging labs for react", () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { validateAtomicLesson } from "../../../src/features/content/types/atomic-entities";
+import { validateAtomicLesson } from "@/features/content/types/atomic-entities";
 
 describe("validateAtomicLesson", () => {
   it("validates valid atomic lesson structures", () => {

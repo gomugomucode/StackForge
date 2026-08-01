@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getArchitectureGuidesByTechnology } from "../../../src/features/architecture/data/architectureGuides";
+import { getArchitectureGuidesByTechnology } from "@/features/architecture/data/architectureGuides";
 
 describe("architectureGuides", () => {
   it("returns architecture guides for react", () => {
