@@ -112,6 +112,10 @@ export function QuizSection({ title, questions, onComplete, quizId }: QuizSectio
     );
   }
 
+  if (!questions || questions.length === 0 || !questions[currentQuestion]) {
+    return null;
+  }
+
   const q = questions[currentQuestion];
 
   return (

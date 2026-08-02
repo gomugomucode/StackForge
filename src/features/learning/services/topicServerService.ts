@@ -11,7 +11,11 @@ export async function getTopicData(technology: string, slug: string) {
       content: true,
       examples: true,
       challenges: true,
-      quizzes: true,
+      quizzes: {
+        include: {
+          questions: true,
+        },
+      },
       interviews: true,
     },
   });
@@ -23,7 +27,11 @@ export async function getTopicData(technology: string, slug: string) {
         content: true,
         examples: true,
         challenges: true,
-        quizzes: true,
+        quizzes: {
+        include: {
+          questions: true,
+        },
+      },
         interviews: true,
       },
     });
